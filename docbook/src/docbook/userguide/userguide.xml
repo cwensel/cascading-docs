@@ -1,0 +1,1403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:ns6="http://www.w3.org/1999/xlink"
+      xmlns:ns5="http://www.w3.org/1998/Math/MathML"
+      xmlns:ns4="http://www.w3.org/2000/svg"
+      xmlns:ns3="http://www.w3.org/1999/xhtml"
+      xmlns:ns="http://docbook.org/ns/docbook">
+
+
+  <info>
+    <title>Cascading - A User Guide</title>
+
+    <pubdate>October, 2008</pubdate>
+
+    <copyright>
+      <year>2007</year>
+
+      <year>2008</year>
+
+      <holder>Concurrent, Inc</holder>
+    </copyright>
+
+    <releaseinfo>V 1.0-beta</releaseinfo>
+
+    <productname>Cascading</productname>
+
+    <authorgroup>
+      <author>
+        <orgname>Concurrent, Inc</orgname>
+      </author>
+    </authorgroup>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata contentwidth="1.5in" fileref="images/cascading-logo.svg" />
+      </imageobject>
+    </mediaobject>
+  </info>
+
+
+
+  <toc />
+
+
+
+  <chapter>
+    <info>
+      <title>Cascading</title>
+    </info>
+
+    <section>
+      <info>
+        <title>What is Cascading?</title>
+      </info>
+
+      <para>Cascading is an API for defining, sharing, and executing data
+      processing workflows on a distributed data grid or cluster.</para>
+
+      <para>Cascading relies on Apache Hadoop. To use Cascading, Hadoop must
+      be installed locally for development and testing, and a Hadoop cluster
+      must be deployed for production applications.</para>
+
+      <para>Cascading greating simplifies the complexities with Hadoop
+      application development, job creation, and job scheduling.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Who should use Cascading?</title>
+      </info>
+
+      <para>Cascading was developed to allow organizations to rapidly develop
+      complex data processing applications. These applications come in two
+      extremes.</para>
+
+      <para>On one hand, there is too much data for a single computing system
+      to manage effecitively. Developers have decided to adopt Apache Hadoop
+      as the base computing infrastructure, but realize that developing
+      reasonably useful applications on Hadoop is not trivial. Cascadig eases
+      the burden on developers by allowing them to rapidly create, refactor,
+      test, and execute complex applications that scale linearly across a
+      cluster of computers.</para>
+
+      <para>On the other hand, managers and developers realize the complexity
+      of the processes in their datacenter is getting out of hand with one-off
+      data-processing applications living wherever there is enough disk space.
+      Subsequently they have decided to adopt Apache Hadoop to gain access to
+      its "Global Namespace" filesystem which allows for a single reliable
+      storage framework. Cascading eases the learning curve for developers to
+      convert their existing applications for execution on a Hadoop cluster.
+      It further allows for developers to create re-usable libraries and
+      application for use by analysts who need to extract data from the Hadoop
+      filesystem.</para>
+
+      <para>Cascading was designed to support three user roles. The
+      application Executor, process Assembler, and the operation
+      Developer.</para>
+
+      <para>The application Executor is someone, a developer or analyst, or
+      some system (like a cron job) which runs a data processing application
+      on a given cluster. This is typically done via the command line using a
+      pre-packaged jar compiled against the Hadoop and Cascading libraries.
+      This application may accept parameters to customize it for an given
+      execution and generally results in a set of data the user will export
+      from the Hadoop filesystem for some specific purpose.</para>
+
+      <para>The process Assembler is someone who assembles data processing
+      workflows into unique applications. This is generally a development task
+      of chaining together operations that act on input data sets to produce
+      one or more output data sets. This task can be done using the raw Java
+      Cascading API or via a scripting language like Groovy, JRuby, or
+      Jython.</para>
+
+      <para>The operation Developer is someone who writes individual functions
+      or operations, typically in Java, or reusable sub-assemblies that act on
+      the data that pass through the data processing workflow. A simple
+      example would be a parser that takes a string and converts it to an
+      Integer. Operations are equivalent to Java functions in the sense that
+      they take input arguments and return data. And they can execute at any
+      granularity, simply parsing a string, or performing some complex routine
+      on the argument data using third-party libraries.</para>
+
+      <para>All three roles can be a developer, but the API allows for a clean
+      separation of responsibilities for larger organizations that need
+      non-developers to run ad-hoc applications on a given Hadoop
+      cluster.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>What is Apache Hadoop</title>
+      </info>
+
+      <para>From the Hadoop website, it<quote>is a software platform that lets
+      one easily write and run applications that process vast amounts of
+      data</quote>.</para>
+
+      <para>To be a little more specific, Hadoop provides a storage layer that
+      holds vast amounts of data, and an execution layer for running an
+      application in parallel across the cluster against parts of the stored
+      data.</para>
+
+      <para>The storage layer, the Hadoop File System (HDFS), looks like a
+      single storage volume that has been optimized for many concurrent
+      serialized reads of large data files. Where large ranges from Gigabytes
+      to Petabytes. But it only support a single writer. Thus random access to
+      the data is not really possible in an efficient manner. But this is why
+      it is so performant and reliable. Reliable in part because this
+      restriction allows for the data to be replicated across the cluster
+      reducing the chance of data loss.</para>
+
+      <para>The execution layer relies on a "divide and conquer" strategy
+      called MapReduce. MapReduce is beyond the scope of this document, but
+      suffice it to say, it can be so difficult to develop applications
+      against that Cascading was created to offset the complexity.</para>
+
+      <para>Apache Hadoop is an Open Source Apache project and is freely
+      available.</para>
+    </section>
+  </chapter>
+
+
+
+  <chapter>
+    <info>
+      <title>Diving In</title>
+    </info>
+
+    <para>Counting words in a document is the most common example presented to
+    new Hadoop (and MapReduce) developers, it is the Hadoop equivalent to
+    "Hello World" application.</para>
+
+    <para>Word counting is where a document is parsed into individual words,
+    and those words are counted.</para>
+
+    <para>For example, if we counted the last paragraph "is" would be counted
+    twice, and "document" counted once.</para>
+
+    <para>In the code example below, we will use Cascading to read each line
+    of text from a file (our document), parse it into words, then count the
+    number of time the word is encountered.</para>
+
+    <example>
+      <title>Word Counting</title>
+
+      <xi:include href="basic-word-count.xml" />
+    </example>
+
+    <para>There are a couple things to take away from this example.</para>
+
+    <para>First, the pipe assembly is not coupled to the data (the Tap
+    instances) until the last momement before execution. That is, file paths
+    or references are not embedded in the pipe assembly. The pipe assembly
+    remains independent of <emphasis>which</emphasis> data it processes until
+    execution. The only dependency is <emphasis>what</emphasis> the data looks
+    like, its "scheme", or the field names that make it up.</para>
+
+    <para>That brings up fields. Every input and output file has field names
+    associated with it, and every processing element of the pipe assembly
+    either expects certain fields, or creates new fields. This allows the
+    developer to self document their code, and allows the Cascading planner to
+    "fail fast" during planning if a dependency between elements isn't
+    satisfied.</para>
+
+    <para>It is also important to point out that pipe assemblies are
+    assemblied through constructor chaining. This may seem odd but is done for
+    two reasons. It keeps the code more concise. And it prevents developers
+    from creating "cycles" in the resulting pipe assembly. Pipe assemblies are
+    Directed Acyclic Graphs (or DAGs). The Cascading planner cannot handle
+    processes that feed themselves, that have cycles (not to say there are
+    ways around this that are much safer).</para>
+
+    <para>Notice the very first <code>Pipe</code> instance has a name. That
+    instance is the "head" of this particular pipe assembly. Pipe assemblies
+    can have any number of heads, and any number of tails. This example does
+    not name the tail assembly, but for complex asssemblies tails must be
+    named for reasons described below.</para>
+
+    <para>Heads and tails of pipe assemblies generally need names, this is how
+    sources and sinks are "bound" to them during planning. In our example
+    above, there is only one head and one tail, and subsequently only one
+    source and one sink, respectively. So naming in this case is optional,
+    it's obvious what goes where. Naming is also useful for self documenting
+    pipe assemblies, especially where there are splits, joins, and merges in
+    the assembly.</para>
+
+    <para>To paraphrase, our example:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>will read each line of text and give it the field name
+        "line",</para>
+      </listitem>
+
+      <listitem>
+        <para>parse each "line" into words by the <code>RegexGenerator</code>
+        object which in turn returns each word in the field named
+        "word",</para>
+      </listitem>
+
+      <listitem>
+        <para>groups on the field named "word" using the <code>GroupBy</code>
+        object,</para>
+      </listitem>
+
+      <listitem>
+        <para>then counts the number of elements in each grouping using the
+        <code>Count()</code> object and stores this value in the "count"
+        field,</para>
+      </listitem>
+
+      <listitem>
+        <para>finally the "word" and "count" fields are written out.</para>
+      </listitem>
+    </itemizedlist>
+  </chapter>
+
+
+
+  <chapter>
+    <info>
+      <title>Data Processing</title>
+    </info>
+
+    <section>
+      <info>
+        <title>Introduction</title>
+      </info>
+
+      <para>The Cascading processing model is based on a "pipes and filters"
+      metaphor. The developer uses the Cascading API to assemble pipelines
+      that split, merge, group, or join streams of data while applying
+      operations to each data record or groups of records.</para>
+
+      <para>In Cascading, we call a data record a Tuple, a pipeline a pipe
+      assembly, and a series of Tuples passing through a pipe assembly is
+      called a a tuple stream.</para>
+
+      <para>Pipe assemblies are assemblied independently from what data they
+      will process. Before a pipe assembly can be executed, it must be bound
+      to data sources and data sinks, called Taps. The process of binding pipe
+      assemblies to sources and sinks is called planning, and the result of a
+      planner is a Flow. Flows can be executed on a data cluster.</para>
+
+      <para>Finally, many Flows can be grouped together and executed as a
+      single job. If one Flow depends on the output of another Flow, it will
+      not be executed until all its data dependencies are satisfied. This
+      collection of Flows is called a Cascade.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Pipe Assemblies</title>
+      </info>
+
+      <para>Pipe assemblies define what work should be done against a tuple
+      stream, where during runtime tuple streams are read from Tap sources and
+      are written to Tap sinks. Pipe assemblies may have multiple sources and
+      multiple sinks and they can define splits, merges, and joins to
+      manipulate how the tuple streams interact.</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" contentwidth="3in"
+                     fileref="images/pipes.svg" />
+        </imageobject>
+      </mediaobject>
+
+      <para>There are only four Pipe types: Pipe, Each, GroupBy, CoGroup, and
+      Every.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Pipe</term>
+
+          <listitem>
+            <para>The Pipe class is used to name branches of pipe assemblies.
+            These names are used during planning to bind Taps as either
+            sources or sinks (or as traps, an advanced topic). It is also the
+            base class for all other pipes described below.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Each</term>
+
+          <listitem>
+            <para>The Each pipe applies a Function or Filter Operation to each
+            Tuple that passes through it. The results of the Function are
+            appended, by default, to the Each input Tuple and returned to the
+            next Pipe.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>GroupBy</term>
+
+          <listitem>
+            <para>GroupBy manages one input Tuple stream and does exactly as
+            it sounds, that is, groups the stream on selected fields in the
+            tuple stream.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>CoGroup</term>
+
+          <listitem>
+            <para>CoGroup allows for "joins" on a common set of values, just
+            like a SQL join. The output tuple stream of CoGroup is the joined
+            input tuple streams, where a join can be an Inner, Outer, Left, or
+            Right join.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Every</term>
+
+          <listitem>
+            <para>The Every pipe applies an Aggregator (like count, or sum) or
+            Buffer Operation to every group of Tuples that pass through
+            it.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Pipe assemblies are created by chaining Pipe classes and Pipe
+      subclasses together. Chaining is accomplished by passing previous Pipe
+      instances to the constructor of the next Pipe instance.</para>
+
+      <example>
+        <title>Chaining Pipes</title>
+
+        <xi:include href="simple-pipe-assembly.xml" />
+      </example>
+
+      <para>The above example, if visualized, would look like the diagram
+      below.</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" contentwidth="5in"
+                     fileref="images/simple-pipe-assembly.svg" />
+        </imageobject>
+      </mediaobject>
+
+      <para>Besides defining the paths tuple streams take through splits,
+      merges, grouping, and joining, pipe assemblies transform or filter the
+      stored values in each Tuple. This is accomplished by applying an
+      Operation to each Tuple or group of Tuples as the tuple stream passes
+      through the pipe assembly. To do that, the values in the Tuple typically
+      are given field names, in the same fashion columns are named in a
+      database so that they can be referenced or selected.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Operation</term>
+
+          <listitem>
+            <para>Operations accept an input argument Tuple, and output zero
+            or more result Tuples. There are a few sub-types of operations
+            defined below. Cascading has a number of generic Operations that
+            can be reused, or developers can create their own custom
+            Operations.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Tuple</term>
+
+          <listitem>
+            <para>In Cascading, we call each record of data a Tuple, and a
+            series of Tuples are a tuple stream. Think of a Tuple as an Array
+            of values whre each value can be any Comparable Java type.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Fields</term>
+
+          <listitem>
+            <para>Fields either declare the field names in a Tuple. Or
+            reference values in a Tuple as a selector. Fields can either be
+            string names ("first_name"), integer positions (-1 for the last
+            value), or a substitution ( <code>Fields.ALL</code> to select all
+            values in the Tuple, kinda like an asterisk (<code>*</code>) in
+            SQL).</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>The Each and Every pipe types are the only pipes that can be used
+      to apply Operations to the tuple stream. The Each pipe applies an
+      Operation to "each" Tuple as it passes through the pipe assembly. The
+      Every pipe applies an Operation to "every" group of Tuples as they pass
+      through the pipe assembly, on the tail end of a GroupBy or CoGroup
+      pipe.</para>
+
+      <para>
+        <programlisting>new Each( argumentSelector, operation, outputSelector )
+
+new Every( argumentSelector, operation, outputSelector )</programlisting>
+      </para>
+
+      <para>Both the Each and Every pipe take an argument selector, Operation
+      instance, and a output selector on the constructor. Where each selector
+      is a Fields instance.</para>
+
+      <para>The Each pipe may only apply Functions and Filters to the tuple
+      stream as these operations may only operate on one Tuple at a
+      time.</para>
+
+      <para>The Every pipe may only apply Aggregators and Buffers to the tuple
+      stream as these operations may only operate on groups of tuples, one
+      grouping at a time.</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-operation-relationship.svg" />
+        </imageobject>
+      </mediaobject>
+
+      <para>The argument selector selects values from the input Tuple to be
+      passed to the Operation as argument values. The output selector selects
+      the output Tuple from from the input Tuple and the Operation result
+      Tuple. The output Tuple becomes the input Tuple to the next pipe in the
+      pipe assembly.</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/each-operation-relationship.svg" />
+        </imageobject>
+      </mediaobject>
+
+      <para>If the argument selector is not given, the whole input Tuple
+      (<code>Fields.ALL</code>) is passed to the Operation as argument values.
+      If the result selector is not given on an Each pipe, the Operation
+      results are returned by default (<code>Fields.RESULTS</code>), replacing
+      the input Tuple values in the tuple stream. This really only applies to
+      Functions as Filters either discard the input Tuple, or return the input
+      Tuple intact. There is no opportunity to provide an output
+      selector.</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/every-operation-relationship.svg" />
+        </imageobject>
+      </mediaobject>
+
+      <para>For the Every pipe, the Operation results are appended to the
+      input Tuple (<code>Fields.ALL</code>).</para>
+
+      <para>It is important to note that the Every pipe associates Operation
+      results with the current group Tuple. For example, if you are grouping
+      on the field "department" and counting the number of "names" grouped by
+      that department, the output Fields would be
+      ["department","num_employees"]. This is true for both Aggregator, seen
+      above, and Buffer.</para>
+
+      <para>If you were also adding up the salaries associated with each
+      "name" in each "department", the output Fields would be
+      ["department","num_employees","total_salaries"]. This is only true for
+      chains of Aggregator Operations, you may not chain Buffer
+      Operations.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Data Sources and Sinks</title>
+      </info>
+
+      <para>A Tap represents a resource like a data file on the local
+      filesystem, on a Hadoop distributed filesystem, or even on Amazon S3.
+      Taps can be read from, which makes it a "source", or written to, which
+      makes it a "sink". Or, more commonly, Taps can act as both sinks and
+      sources when shared between Flows.</para>
+
+      <para>All Taps must have a Scheme associated with them. If the Tap is
+      about where the data is, and how to get it, the Scheme is about what the
+      data is. Cascading provides two Scheme classes, TextLine and
+      SequenceFile.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>TextLine</term>
+
+          <listitem>
+            <para>TextLine reads and writes text files and returns Tuples with
+            two field names by default, "offset" and "line". These values are
+            inherited from Hadoop. When written to, all Tuple values are
+            converted to Strings and joined with the TAB character
+            (\t).</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>SequenceFile</term>
+
+          <listitem>
+            <para>SequenceFile is based on the Hadoop Sequence file, which is
+            a binary format. When written or read from all Tuple values are
+            saved in their native binary form. This is the most efficient file
+            format, but being binary, the result files can only be read by
+            Hadoop applications.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>
+        <example>
+          <title>Creating a new Tap</title>
+
+          <xi:include href="simple-tap.xml" />
+        </example>
+      </para>
+
+      <para>The above example creates a new Hadoop Filesytem Tap that can
+      read/write text files. Since only one field name was provided, the
+      "offset" field is discarded, resulting in an input tuple stream with
+      only "line" values.</para>
+
+      <para>The three most common Tap classes used are, Hfs, Dfs, and Lfs. The
+      MultiTap is a utility Tap.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Lfs</term>
+
+          <listitem>
+            <para>The Lfs Tap is used to reference local files. Local files
+            are files on the same machine your Cascading application is
+            started. Even if a remote Hadoop cluster is configured, if a Lfs
+            Tap is used as either a source or sink in a Flow, Cascading will
+            be forced to run in "local mode" and not on the cluster. This is
+            useful when creating applications to read local files onto the
+            Hadoop distributed filesystem.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Dfs</term>
+
+          <listitem>
+            <para>The Dfs Tap is used to reference files on the Hadoop
+            distributed filesystem.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Hfs</term>
+
+          <listitem>
+            <para>The Hfs Tap uses the current Hadoop default filesystem. If
+            Hadoop is configured for "local mode" its default filesystem will
+            be the local filesystem. If configured as a cluster, the default
+            filesystem is likey the Hadoop distributed filesystem. The Hfs is
+            convenient when writing Cascading applications that may or may not
+            be run on a cluster. Lhs and Dfs subclass the Hfs Tap.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>MultiTap</term>
+
+          <listitem>
+            <para>The MultiTap is used to tie multiple Tap instances into a
+            single Tap. The only restriction is that all the Tap instances
+            passed to a new MultiTap share the same Scheme classes (not
+            necessarily the same Scheme instance).</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+
+    <section>
+      <info>
+        <title>Flows</title>
+      </info>
+
+      <para>When pipe assemblies are bound to source and sink Taps, a Flow is
+      created. Flows are executable, in the sense that once created they can
+      be "started" and will begin execution on a configured Hadoop
+      cluster.</para>
+
+      <para>Think of a Flow as a data processing workflow that reads data from
+      sources, processes the data as defined by the pipe assembly, and writes
+      data to the sinks. Input source data does not need to exist when the
+      Flow is created, but it must exist when the Flow is executed (unless
+      executed as part of a Cascade).</para>
+
+      <example>
+        <title>Creating a new Flow</title>
+
+        <xi:include href="simple-flow.xml" />
+      </example>
+
+      <para>To create a Flow, it must be planned though the FlowConnector
+      object. The <code>connect()</code> method is used to create new Flow
+      instances based on a set of sink Taps, source Taps, and a pipe assembly.
+      The example above is quite trivial.</para>
+
+      <example>
+        <title>Binding Taps in a Flow</title>
+
+        <xi:include href="complex-flow.xml" />
+      </example>
+
+      <para>The example above expands on our previous pipe assembly example by
+      creating source and sink Taps and planning a Flow. Note there are two
+      branches in the pipe assembly, one named "lhs" and the other "rhs".
+      Cascading uses those names to bind the source Taps to the pipe assembly.
+      A HashMap of names and taps must be passed to FlowConnector in order to
+      bind Taps to branches.</para>
+
+      <para>Since there is only one tail, the "join" pipe, we don't need to
+      bind the sink to a branch name. Nor do we need to pass the heads of the
+      assembly to the FlowConnector, it can determine the heads of the pipe
+      assembly on the fly. When creating more complex Flows with multiple
+      heads and tails, all Taps will need to be explicitly named, and the
+      proper <code>connect()</code> method will need be called.</para>
+
+      <para>Flows support event listeners through the
+      <classname>FlowListener</classname> interface. The FlowListener
+      interface supports four events, onStarting, onStopping, onCompleted, and
+      onThrowable.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>onStarting</term>
+
+          <listitem>
+            <para>The onStarting event is fired when a Flow instance receives
+            the <code>start()</code> message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>onStopping</term>
+
+          <listitem>
+            <para>The onStopping event is fired when a Flow instance receives
+            the <code>stop()</code> message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>onCompleted</term>
+
+          <listitem>
+            <para>The onCompleted event is fired when a Flow instance has
+            completed all work whether if was success or failed. If there was
+            a thrown exception, onThrowable will be fired before this
+            event.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>onThrowable</term>
+
+          <listitem>
+            <para>The onThrowable event is fired if any internal job client
+            throws a Throwable type. This throwable is passed as an argument
+            to the event. onThrowable should return true if the given
+            throwable was handled and should not be rethrown from the
+            <code>Flow.complete()</code> method.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>FlowListeners are useful when external systems must be notified
+      when a Flow has completed or failed.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Cascades</title>
+      </info>
+
+      <para>A Cascade allows multiple Flow instances to be executed as a
+      single logical unit. If there are dependencies between the Flows, they
+      will be executed in the correct order.</para>
+
+      <para>Cascades act like ant build or unix "make" files. When run, a
+      Cascade will only execute Flows that have stale sinks (output data that
+      is older than the input data).</para>
+
+      <example>
+        <title>Creating a new Cascade</title>
+
+        <xi:include href="simple-cascade.xml" />
+      </example>
+
+      <para>When passig Flows to the CascadeConnector, order is not important.
+      The CascadeConnector will automatically determine what the dependencies
+      are between the given Flows and create a scheduler that will start each
+      flow as its data sources become available. If two or more Flow instances
+      have no dependencies, they will be submitted together so they can
+      execute in parallel.</para>
+    </section>
+  </chapter>
+
+
+
+  <chapter>
+    <info>
+      <title>Executing Processes</title>
+    </info>
+
+    <section>
+      <info>
+        <title>Introduction</title>
+      </info>
+
+      <para>Cascading is nothing more than a Java library that should be
+      included in both your development and runtime CLASSPATH.</para>
+
+      <para>When executing Cascading as a Hadoop job, the Cascading jar
+      (cascading-lib-x.y.z.jar) file should be added to the job jar 'lib'
+      directory along with all cascadings dependent jar files. Alternately
+      cascading-x.y.z.jar can be unpacked into a directory containing your
+      class files, and then packed back up as it already includes the 'lib'
+      directory.</para>
+
+      <para>Each of the available examples includes a generalized Ant build
+      script that can be used as a starting point for most any Cascading
+      project. Alternatively, you can get a sample build file directly from
+      svn.</para>
+
+    </section>
+
+    <section>
+      <info>
+        <title>Hadoop</title>
+      </info>
+
+      <para />
+    </section>
+
+    <section>
+      <info>
+        <title>Building</title>
+      </info>
+
+      <para />
+    </section>
+
+    <section>
+      <info>
+        <title>Executing</title>
+      </info>
+
+      <para />
+    </section>
+  </chapter>
+
+
+
+  <chapter>
+    <info>
+      <title>Using and Developing Operations</title>
+    </info>
+
+    <section>
+      <info>
+        <title>Introduction</title>
+      </info>
+
+      <para>There are four kinds of Operations: Function, Filter, Aggregator,
+      and Buffer.</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" contentwidth="3in"
+                     fileref="images/operations.svg" />
+        </imageobject>
+      </mediaobject>
+
+      <para>All Operations operate on an input argument Tuple and all
+      Operations other than Filter may return zero or more Tuple object
+      results. That is, a Function can parse a string and return a new Tuple
+      for every value parsed out (one Tuple for each 'word'), or it may create
+      a single Tuple with every parsed value as an element in the Tuple object
+      (one Tuple with "first-name" and "last-name" fields).</para>
+
+      <para>In practice, a Function that returns no results is a Filter, but
+      the Filter type has been optimized and can be combined with "logical"
+      filter Operations like Not, And, Or, etc.</para>
+
+      <para>During runtime, Operations actually receive arguments as an
+      instance of the TupleEntry object. The TupleEntry object holds both an
+      instance of <classname>Fields</classname> and the current
+      <classname>Tuple</classname> the <classname>Fields</classname> object
+      defines fields for. <classname>TupleEntry</classname> is a helper class
+      that allows for tuple operations by using simple field names and is
+      typically only exposed to developers writing custom Operations.</para>
+
+      <para>All Operations, other than Filter, must declare result Fields. For
+      example, if a Function was written to parse words out of a String and
+      return a new Tuple for each word, this Function must declare that it
+      intends to return a Tuple with one field named "word". If the Function
+      mistakenly returns more values in the Tuple other than a 'word', the
+      process will fail. Operations that do return arbitrary numbers of values
+      in a result Tuple may declare<code>Fields.UNKNOWN</code>.</para>
+
+      <para>The Cascading planner always attempts to "fail fast" where
+      possible by checking the field name dependencies between Pipes and
+      Operations, but some cases the planner can't account for.</para>
+
+      <para>All Operations must be wrapped by either an Each or an Every pipe
+      instance. The pipe is responsible for passing in an argument Tuple and
+      accepting the result Tuple.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Functions</title>
+      </info>
+
+      <para>A Function expects a single argument<classname>Tuple</classname>,
+      and may return zero or more result Tuples.</para>
+
+      <para>A Function may only be used with a <classname>Each</classname>
+      pipe, and it may follow any other pipe type.</para>
+
+      <para>To create a custom Function, subclass the class
+      <code>cascading.operation.BaseOperation</code> and implement the
+      interface<code>cascading.operation.Function</code>. Because
+      <code>BaseOperation</code> has been subclassed, the <code>operate</code>
+      method, as defined on the <code>Function</code> interface, is the only
+      method that must be implemented.</para>
+
+      <example>
+        <title>Custom Function</title>
+
+        <xi:include href="custom-function.xml" />
+      </example>
+
+      <para>Functions should declare both the number of argument values they
+      expect, and the field names of the Tuple they will return.</para>
+
+      <para>Functions must accept 1 or more values in a Tuple as arguments, by
+      default they will accept any number (<code>Operation.ANY</code>) of
+      values. Cascading will verify the number of arguments selected match the
+      number of arguments expected.</para>
+
+      <para>Functions may optionally declare the field names they return, by
+      default Functions declare<code> Fields.UNKNOWN</code>.</para>
+
+      <para>Both declarations must be done on the constructor, either by
+      passing default values to the <code>super</code> constructor, or by
+      accepting the values from the user via a constructor
+      implementation.</para>
+
+      <example>
+        <title>Sum Function</title>
+
+        <xi:include href="sum-function.xml" />
+      </example>
+
+      <para>The example above implements a fully functional Function that
+      accepts two arguments, adds them together, and returns the
+      result.</para>
+
+      <para>The first constructor assumes a default field name this function
+      will return, but it is a best practice to always give the user the
+      option to override the declared field names to prevent any field name
+      collisions that would cause the planner to fail.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Filter</title>
+      </info>
+
+      <para>A Filter expects a single argument Tuple and returns a boolean
+      value stating whether or not the current Tuple in the tuple stream
+      should be discarded.</para>
+
+      <para>A Filter may only be used with a <classname>Each</classname> pipe,
+      and it may follow any other pipe type.</para>
+
+      <para>To create a custom Filter, subclass the class
+      <code>cascading.operation.BaseOperation</code> and implement the
+      interface<code>cascading.operation.Filter</code>. Because
+      <code>BaseOperation</code> has been subclassed, the
+      <code>isRemove</code> method, as defined on the <code>Filter</code>
+      interface, is the only method that must be implemented.</para>
+
+      <example>
+        <title>Custom Filter</title>
+
+        <xi:include href="custom-filter.xml" />
+      </example>
+
+      <para>Filters should declare the number of argument values they
+      expect.</para>
+
+      <para>Filters must accept 1 or more values in a Tuple as arguments, by
+      default they will accept any number (<code> Operation.ANY</code>) of
+      values. Cascading will verify the number of arguments selected match the
+      number of arguments expected.</para>
+
+      <para>The number of arguments declarations must be done on the
+      constructor, either by passing a default value to the <code>super</code>
+      constructor, or by accepting the value from the user via a constructor
+      implementation.</para>
+
+      <example>
+        <title>String Length Filter</title>
+
+        <xi:include href="stringlength-filter.xml" />
+      </example>
+
+      <para>The example above implements a fully functional Filter that
+      accepts two arguments and filters out the current Tuple if the first
+      argument String length is greater than the integer value of the second
+      argument.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Aggregator</title>
+      </info>
+
+      <para>An Aggregator expects set of argument Tuples in the same grouping,
+      and may return zero or more result Tuples.</para>
+
+      <para>An Aggregator may only be used with an
+      <classname>Every</classname> pipe, and it may only follow a
+      <classname>GroupBy</classname>,<classname>CoGroup</classname>, or
+      another <classname>Every</classname> pipe type.</para>
+
+      <para>To create a custom Aggregator, subclass the class
+      <code>cascading.operation.BaseOperation</code> and implement the
+      interface<code>cascading.operation.Aggregator</code>. Because
+      <code>BaseOperation</code> has been subclassed, the<code>start</code>,
+      <code>aggregate</code>, and <code>complete</code> methods, as defined on
+      the <code>Aggregator</code> interface, are the only methods that must be
+      implemented.</para>
+
+      <example>
+        <title>Custom Aggregator</title>
+
+        <xi:include href="custom-aggregator.xml" />
+      </example>
+
+      <para>Aggregators should declare both the number of argument values they
+      expect, and the field names of the Tuple they will return.</para>
+
+      <para>Aggregators must accept 1 or more values in a Tuple as arguments,
+      by default they will accept any number ( <code>Operation.ANY</code>) of
+      values. Cascading will verify the number of arguments selected match the
+      number of arguments expected.</para>
+
+      <para>Aggregators may optionally declare the field names they return, by
+      default Aggregators declare<code> Fields.UNKNOWN</code>.</para>
+
+      <para>Both declarations must be done on the constructor, either by
+      passing default values to the <code>super</code> constructor, or by
+      accepting the values from the user via a constructor
+      implementation.</para>
+
+      <example>
+        <title>Sum Aggregator</title>
+
+        <xi:include href="sum-aggregator.xml" />
+      </example>
+
+      <para>The example above implements a fully functional Aggregator that
+      accepts one argument, adds all the arguments in the current grouping,
+      and returns the result.</para>
+
+      <para>The first constructor assumes a default field name this Aggregator
+      will return, but it is a best practice to always give the user the
+      option to override the declared field names to prevent any field name
+      collisions that would cause the planner to fail.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Buffer</title>
+      </info>
+
+      <para>A Buffer expects set of argument Tuples in the same grouping, and
+      may return zero or more result Tuples.</para>
+
+      <para>The Buffer is very similiar to an Aggregator except it receives
+      the current Grouping Tuple and an iterator of all the arguments it
+      expects for every value Tuple in the current grouping, all on the same
+      method call. This is very similar to the typical Reducer interface, and
+      is best used for operations that need greater visibility to the previous
+      and next elements in the stream. For example, smoothing a series of
+      time-stamps where there are missing values.</para>
+
+      <para>An Buffer may only be used with an <classname>Every</classname>
+      pipe, and it may only follow a <classname>GroupBy</classname> or
+      <classname>CoGroup</classname> pipe type.</para>
+
+      <para>To create a custom Buffer, subclass the class
+      <code>cascading.operation.BaseOperation</code> and implement the
+      interface<code>cascading.operation.Buffer</code>. Because
+      <code>BaseOperation</code> has been subclassed, the<code>buffer</code>
+      method, as defined on the <code>Buffer</code> interface, is the only
+      method that must be implemented.</para>
+
+      <example>
+        <title>Custom Buffer</title>
+
+        <xi:include href="custom-buffer.xml" />
+      </example>
+
+      <para>Buffer should declare both the number of argument values they
+      expect, and the field names of the Tuple they will return.</para>
+
+      <para>Buffers must accept 1 or more values in a Tuple as arguments, by
+      default they will accept any number ( <code>Operation.ANY</code>) of
+      values. Cascading will verify the number of arguments selected match the
+      number of arguments expected.</para>
+
+      <para>Buffers may optionally declare the field names they return, by
+      default Buffers declare <code>Fields.UNKNOWN</code>.</para>
+
+      <para>Both declarations must be done on the constructor, either by
+      passing default values to the <code>super</code> constructor, or by
+      accepting the values from the user via a constructor
+      implementation.</para>
+
+      <example>
+        <title>Average Buffer</title>
+
+        <xi:include href="average-buffer.xml" />
+      </example>
+
+      <para>The example above implements a fully functional buffer that
+      accepts one argument, adds all the arguments in the current grouping,
+      and returns the result divided by the number of argument tuples
+      counted.</para>
+
+      <para>The first constructor assumes a default field name this Buffer
+      will return, but it is a best practice to always give the user the
+      option to override the declared field names to prevent any field name
+      collisions that would cause the planner to fail.</para>
+
+      <para>Note this example is somewhat fabricated, in practice a
+      <classname>Aggregator</classname> should be implemented to compute
+      averages.</para>
+    </section>
+  </chapter>
+
+
+
+  <chapter>
+    <info>
+      <title>Advanced Processing</title>
+    </info>
+
+    <section>
+      <info>
+        <title>SubAssemblies</title>
+      </info>
+
+      <para />
+    </section>
+
+    <section>
+      <info>
+        <title>Stream Assertions</title>
+      </info>
+
+      <para>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/stream-assertions.svg" />
+          </imageobject>
+
+          <textobject>
+            <phrase>A Flow with Stream Assertions</phrase>
+          </textobject>
+        </inlinemediaobject>
+      </para>
+
+      <para>Stream assertions are simply a mechanism to 'assert' that one or
+      more values in a data stream meet certain criteria. This is similar to
+      the Java language 'assert' keyword, or a unit test.</para>
+
+      <para>An example would be 'assertNotNull' or 'assertMatches'. Here are a
+      few more assertions.</para>
+
+      <para>Assertions are treated like any other function or aggregator in
+      Cascading. They are embedded directly into the data processing work flow
+      or 'pipe assembly' by the developer. If an assertion fails, the
+      processing stops, by default. Alternately they can trigger a Failure
+      Trap.</para>
+
+      <para>As with any test, sometimes they are wanted, and sometimes they
+      are unnecessary. Thus stream assertions are embedded as either 'strict'
+      or 'validating'.</para>
+
+      <para>When running a tests against regression data, it makes sense to
+      use strict assertions. This data should be small and represent many of
+      the edge cases the processing assembly must support robustly. When
+      running tests in staging, or with data that may vary in quality since it
+      is from an unmanaged source, using validating assertions make much
+      sense. Then there are obvious cases where assertions just get in the way
+      and slow down processing and it would be nice to just bypass
+      them.</para>
+
+      <para>During runtime, Cascading can be instructed to 'plan out' strict,
+      validating, or all assertions before building the final MapReduce jobs
+      via the MapReduce Job Planner. And they are truly planned out of the
+      resulting job, not just switched off, providing the best
+      performance.</para>
+
+      <para>This is just one feature of lazily building MapReduce jobs via a
+      planner, instead of hard coding them.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Failure Traps</title>
+      </info>
+
+      <para>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/failure-traps.svg" />
+          </imageobject>
+
+          <textobject>
+            <phrase>A Flow with Failure Traps</phrase>
+          </textobject>
+        </inlinemediaobject>
+      </para>
+
+      <para>Failure Traps are the same as a data output sink (opposed to a
+      source), except being bound to a particular tail element of the pipe
+      assembly, traps can be bound to intermediate Pipe steps, like a Stream
+      Assertion.</para>
+
+      <para>Whenever an operation fails and throws an exception, and there is
+      an associated trap, the offending data will be saved to the file
+      resource specified by the trap. This allows the job to continue
+      processing without any data loss.</para>
+
+      <para>By design, clusters are hardware fault tolerant. Lose a node, the
+      cluster continues working.</para>
+
+      <para>But software fault tolerance is a little different. Failure Traps
+      provide a means for the processing to continue without losing track of
+      the data that caused the fault. For high fidelity applications, this may
+      not be so attractive, but low fidelity applications (like web page
+      indexing) this can dramatically improve processing reliability.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Event Handling</title>
+      </info>
+
+      <para>Each cluster job, or Flow, has the ability to execute callbacks
+      via an event listener. This is very useful when external application
+      need to be notified that a Flow has completed.</para>
+
+      <para>A good example is when running Flows on an Amazon EC2 Hadoop
+      cluster. After the Flow is completed, a SQS event can be sent notifying
+      another application it can now fetch the job results from S3. In tandem,
+      it can start the process of shutting down the cluster if no more work is
+      queued up for it.</para>
+
+      <para>Listeners listen for the following four events; starting,
+      stopping, completed, and the catching of an Exception from the
+      job.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Scripting</title>
+      </info>
+
+      <para>Cascading was designed with scripting in mind. Since it is just an
+      API, any Java compatible scripting language can import and instantiate
+      Cascading classes and create pipe assemblies, flows, and execute those
+      flows.</para>
+
+      <para>And if the scripting language in question supports Domain Specific
+      Language (DSL) creation, the user can create her own DSL to handle
+      common idioms.</para>
+
+      <para>See the Cascading website for publicly available scripting
+      languate binding.</para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <info>
+      <title>Built-In Operations</title>
+    </info>
+
+    <section>
+      <info>
+        <title>Identity Function</title>
+      </info>
+      <para></para>
+    </section>
+
+    <section>
+      <info>
+        <title>Debug Function</title>
+      </info>
+      <para></para>
+    </section>
+
+    <section>
+      <info>
+        <title>Insert Function</title>
+      </info>
+      <para></para>
+    </section>
+
+    <section>
+      <info>
+        <title>Text Functions</title>
+      </info>
+      <para></para>
+    </section>
+
+    <section>
+      <info>
+        <title>Regular Expression Operations</title>
+      </info>
+      <para></para>
+    </section>
+
+    <section>
+      <info>
+        <title>Java Expression Operations</title>
+      </info>
+      <para></para>
+    </section>
+
+    <section>
+      <info>
+        <title>XML Operations</title>
+      </info>
+      <para></para>
+    </section>
+
+    <section>
+      <info>
+        <title>Assertions</title>
+      </info>
+      <para></para>
+    </section>
+
+    <section>
+      <info>
+        <title>Logical Filter Operators</title>
+      </info>
+      <para></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <info>
+      <title>How It Works</title>
+    </info>
+
+    <section>
+      <info>
+        <title>MapReduce Job Planner</title>
+      </info>
+
+      <para>
+        <inlinemediaobject>
+          <imageobject>
+            <imagedata align="center" contentwidth="7in"
+                       fileref="images/planned-flow.svg" />
+          </imageobject>
+
+          <textobject>
+            <phrase>A Flow partitioned by MapReduce tasks</phrase>
+          </textobject>
+        </inlinemediaobject>
+      </para>
+
+      <para>The MapReduce Job Planner is an internal feature of
+      Cascading.</para>
+
+      <para>When a collection of functions, splits, and joins are all tied up
+      together into a 'pipe assembly', the FlowConnector object is used to
+      create a new Flow instance against input and output data paths. This
+      Flow is a single Cascading job.</para>
+
+      <para>Internally the FlowConnector employs an intelligent planner to
+      convert the pipe assembly to a graph of dependent MapReduce jobs that
+      can be executed on a Hadoop cluster.</para>
+
+      <para>All this happens under the scenes. As is the scheduling of the
+      individual MapReduce jobs, and the clean up of intermediate data sets
+      that bind the jobs together.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Topological Scheduler</title>
+      </info>
+
+      <para>Cascading has a simple utility that will take a collection of
+      Cascading jobs, or Flows as they are called, groups them into a Cascade
+      object, and will execute them on the target cluster in dependency
+      order.</para>
+
+      <para>Consider the following example.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Job, or Flow, 'first' reads input file A and outputs B.</para>
+        </listitem>
+
+        <listitem>
+          <para>Flow 'second' expects input B and outputs C and D.</para>
+        </listitem>
+
+        <listitem>
+          <para>Flow 'third' expects input C and outputs E.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>A Cascade is constructed through the <code>CascadeConnector</code>
+      class, by building an internal graph that makes each Flow a 'vertex',
+      and each file an 'edge'. A topological walk on this graph will touch
+      each vertex in order of its dependencies. When a vertex has all it's
+      incoming edges (files) available, it will be scheduled on the
+      cluster.</para>
+
+      <para>In the example above, 'first' goes first, 'second' goes second,
+      and 'third' is last.</para>
+
+      <para>If two or more Flows are independent of one another, they will be
+      scheduled concurrently.</para>
+
+      <para>And by default, if any outputs from a Flow are newer than the
+      inputs, the Flow is skipped. The assumption is that the Flow was
+      executed recently, since the output isn't stale. So there is no reason
+      to re-execute it and use up resources or add time to the job. This is
+      similiar behaviour a compiler would exhibit if a source file wasn't
+      updated before a recompile.</para>
+
+      <para>This is very handy if you have a large number of jobs that should
+      be executed as a logical unit with varying dependencies between them.
+      Just pass them to the CascadeConnector, and let it sort them all
+      out.</para>
+    </section>
+  </chapter>
+
+
+</book>

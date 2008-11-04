@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="21 110 689 365"
+     width="689pt" height="365pt">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:date>2008-10-30 20:26Z</dc:date>
+    <!-- Produced by OmniGraffle Professional 5.0.2 -->
+  </metadata>
+  <defs>
+    <font-face font-family="Helvetica" font-size="10" units-per-em="1000" underline-position="-75.683594"
+               underline-thickness="49.316406" slope="0" x-height="550" cap-height="700" ascent="770.01953"
+               descent="-229.98047" font-weight="bold">
+      <font-face-src>
+        <font-face-name name="Helvetica-Bold"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" viewBox="-1 -4 10 8"
+            markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica" font-size="18" units-per-em="1000" underline-position="-75.683594"
+               underline-thickness="49.316406" slope="0" x-height="555.55554" cap-height="722.22223" ascent="770.01953"
+               descent="-229.98047" font-weight="bold">
+      <font-face-src>
+        <font-face-name name="Helvetica-Bold"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>Features</title>
+    <g>
+      <title>base</title>
+      <circle cx="230.959" cy="264.05798" r="28.80005" fill="#5eb4ff"/>
+      <circle cx="230.959" cy="264.05798" r="28.80005" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(212.91899 258.05798)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="3.0424404" y="10" textLength="29.995117">
+          Group
+        </tspan>
+      </text>
+      <circle cx="141.483" cy="264.05798" r="28.800049" fill="#5eb4ff"/>
+      <circle cx="141.483" cy="264.05798" r="28.800049" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(123.443 258.05798)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.4858" y="10" textLength="21.108398">func
+        </tspan>
+      </text>
+      <circle cx="320.434" cy="264.05798" r="28.800058" fill="#5eb4ff"/>
+      <circle cx="320.434" cy="264.05798" r="28.800058" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(302.39401 258.05798)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.205038" y="10" textLength="21.669922">aggr
+        </tspan>
+      </text>
+      <circle cx="678.338" cy="264.05798" r="28.800068" fill="#9cdf1e"/>
+      <circle cx="678.338" cy="264.05798" r="28.800068" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(660.29803 258.05798)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.480917" y="10" textLength="21.118164">Sink
+        </tspan>
+      </text>
+      <circle cx="52.006802" cy="264.05798" r="28.800049" fill="#9cdf1e"/>
+      <circle cx="52.006802" cy="264.05798" r="28.800049" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(33.9668 258.05798)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="1.0893154" y="10" textLength="33.901367">
+          Source
+        </tspan>
+      </text>
+      <line x1="81.30681" y1="264.05798" x2="102.28298" y2="264.05798" marker-end="url(#FilledArrow_Marker)"
+            stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="260.25903" y1="264.05798" x2="281.23398" y2="264.05798" marker-end="url(#FilledArrow_Marker)"
+            stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <circle cx="409.90997" cy="264.05798" r="28.800058" fill="#5eb4ff"/>
+      <circle cx="409.90997" cy="264.05798" r="28.800058" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(391.87 258.05798)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="3.0424404" y="10" textLength="29.995117">
+          Group
+        </tspan>
+      </text>
+      <circle cx="141.483" cy="346.654" r="28.800053" fill="#5eb4ff"/>
+      <circle cx="141.483" cy="346.654" r="28.800053" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(123.443 340.65402)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.4858" y="10" textLength="21.108398">func
+        </tspan>
+      </text>
+      <circle cx="499.38596" cy="264.05798" r="28.800062" fill="#5eb4ff"/>
+      <circle cx="499.38596" cy="264.05798" r="28.800062" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(481.346 258.05798)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.205038" y="10" textLength="21.669922">aggr
+        </tspan>
+      </text>
+      <circle cx="52.006802" cy="346.654" r="28.800055" fill="#9cdf1e"/>
+      <circle cx="52.006802" cy="346.654" r="28.800055" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(33.9668 340.65402)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="1.0893154" y="10" textLength="33.901367">
+          Source
+        </tspan>
+      </text>
+      <line x1="81.30681" y1="346.654" x2="102.28298" y2="346.654" marker-end="url(#FilledArrow_Marker)" stroke="black"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="439.21" y1="264.05798" x2="460.18597" y2="264.05798" marker-end="url(#FilledArrow_Marker)"
+            stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="349.734" y1="264.05798" x2="370.70996" y2="264.05798" marker-end="url(#FilledArrow_Marker)"
+            stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="528.68604" y1="264.05798" x2="549.662" y2="264.05798" marker-end="url(#FilledArrow_Marker)"
+            stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <circle cx="230.959" cy="346.654" r="28.800055" fill="#5eb4ff"/>
+      <circle cx="230.959" cy="346.654" r="28.800055" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(212.91899 340.65402)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.4858" y="10" textLength="21.108398">func
+        </tspan>
+      </text>
+      <line x1="230.959" y1="317.35397" x2="230.959" y2="303.258" marker-end="url(#FilledArrow_Marker)" stroke="black"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <circle cx="588.862" cy="264.05798" r="28.800068" fill="#5eb4ff"/>
+      <circle cx="588.862" cy="264.05798" r="28.800068" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(570.82202 258.05798)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.4858" y="10" textLength="21.108398">func
+        </tspan>
+      </text>
+    </g>
+    <g>
+      <title>assertions</title>
+      <line x1="141.483" y1="234.75797" x2="141.483" y2="220.66202" marker-end="url(#FilledArrow_Marker)" stroke="black"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="141.483" y1="375.954" x2="141.483" y2="390.04999" marker-end="url(#FilledArrow_Marker)" stroke="black"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="588.862" y1="234.758" x2="588.862" y2="220.66202" marker-end="url(#FilledArrow_Marker)" stroke="black"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <circle cx="141.483" cy="181.46199" r="28.800043" fill="#ffac73"/>
+      <circle cx="141.483" cy="181.46199" r="28.800043" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(123.443 175.46201)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="3.3061123" y="10" textLength="29.467773">
+          assert
+        </tspan>
+      </text>
+      <line x1="163.01271" y1="201.33624" x2="202.15485" y2="237.46866" marker-end="url(#FilledArrow_Marker)"
+            stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <circle cx="588.862" cy="181.46199" r="28.800062" fill="#ffac73"/>
+      <circle cx="588.862" cy="181.46199" r="28.800062" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(570.82202 175.46201)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="3.3061123" y="10" textLength="29.467773">
+          assert
+        </tspan>
+      </text>
+      <line x1="610.42657" y1="201.29843" x2="649.6328" y2="237.3627" marker-end="url(#FilledArrow_Marker)"
+            stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <circle cx="141.483" cy="429.25" r="28.800053" fill="#ffac73"/>
+      <circle cx="141.483" cy="429.25" r="28.800053" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(123.443 423.25003)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="3.3061123" y="10" textLength="29.467773">
+          assert
+        </tspan>
+      </text>
+      <line x1="163.0127" y1="409.37576" x2="202.15483" y2="373.24335" marker-end="url(#FilledArrow_Marker)"
+            stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+    </g>
+    <g>
+      <title>assert final</title>
+      <path
+        d="M 108.005997 165.73975 L 108.005997 123.035 L 617.66302 123.035 L 617.66302 165.73975 M 617.66302 421.96826 L 617.66302 464.673 L 108.005997 464.673 L 108.005997 421.96826"
+        stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
+      <text transform="translate(113.006 123.035)" fill="gray">
+        <tspan font-family="Helvetica" font-size="18" font-weight="bold" fill="gray" x="0" y="18"
+               textLength="43.013672">Pipe
+        </tspan>
+        <tspan font-family="Helvetica" font-size="18" font-weight="bold" fill="gray" x="42.354492" y="18"
+               textLength="85.04297">Assembly
+        </tspan>
+      </text>
+      <path
+        d="M 23.206787 157.50436 L 23.206787 112.461 L 707.1378 112.461 L 707.1378 157.50436 M 707.1378 427.76462 L 707.1378 472.80798 L 23.206787 472.80798 L 23.206787 427.76462"
+        stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(28.206787 112.461)" fill="black">
+        <tspan font-family="Helvetica" font-size="18" font-weight="bold" x="0" y="18" textLength="40.992188">Flow
+        </tspan>
+      </text>
+    </g>
+  </g>
+</svg>
