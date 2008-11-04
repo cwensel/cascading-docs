@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+  $Id: //depot/calku/cascading.org/build.xml#10 $
+  $Change: 1410 $
+  $DateTime: 2008/07/15 14:24:06 $
+  $Author: cwensel $
+-->
+<project name="cascading.org" default="build" basedir=".">
+
+  <property name="cascading.home" location="../cascading"/>
+  <import file="${cascading.home}/build.xml"/>
+
+  <property name="cascading.groovy.home" location="../cascading.groovy"/>
+
+  <property file="${basedir}/build.properties"/>
+
+  <property name="website.host" value=""/>
+  <property name="website.path" value="site"/>
+  <property name="website.port" value="22"/>
+
+  <property name="site" location="${basedir}/site/"/>
+  <property name="site.javadoc" location="${basedir}/site/javadoc"/>
+
+  <path id="all.javadoc.src.path">
+    <pathelement location="${cascading.home}/src/java"/>
+    <pathelement location="${cascading.groovy.home}/src/java"/>
+  </path>
+
+  <target name="site-javadoc" depends="init">
+    <echo message="creating cascading javadoc..."/>
+    <delete dir="${site.javadoc}"/>
+    <mkdir dir="${site.javadoc}"/>
+
+    <javadoc sourcepathref="all.javadoc.src.path"
+             destdir="${site.javadoc}"
+             packagenames="cascading.*"
+             windowtitle="Cascading">
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+      <link href="http://www.janino.net/javadoc/"/>
+      <link href="http://hadoop.apache.org/core/docs/r0.16.3/api/"/>
+      <bottom>
+        <![CDATA[<i>Copyright &#169; 2007-2008 Concurrent, Inc. All Rights Reserved.</i>]]>
+        <![CDATA[<script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-188528-5"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]>
+      </bottom>
+    </javadoc>
+
+  </target>
+
+  <target name="rsync-javadoc" depends="site-javadoc">
+    <echo message="Starting file transfer to ${website.host}"/>
+    <exec dir="." executable="rsync" failonerror="true">
+      <arg value="-r"/>
+      <arg value="-v"/>
+      <arg value="--delete"/>
+      <!--<arg value="-n"/>-->
+      <arg value="--rsh=ssh"/>
+      <arg value="${site.javadoc}"/>
+      <arg
+        value="${website.host}:${website.path}"/>
+    </exec>
+  </target>
+
+  <target name="push-dist" depends="package">
+
+  </target>
+
+  <target name="clean" depends="cascading.clean">
+    <delete dir="${site}"/>
+  </target>
+
+</project>
