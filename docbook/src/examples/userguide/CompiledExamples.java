@@ -24,6 +24,7 @@ package userguide;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Properties;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
@@ -146,6 +147,28 @@ public class CompiledExamples
 
     //@extract-start simple-cascade
     Cascade cascade = new CascadeConnector().connect( flowFirst, flowSecond, flowThird );
+    //@extract-end
+    }
+
+  public static class Main
+    {
+
+    }
+  public void compileFlowConnector()
+    {
+    String pathToJar = null;
+
+    //@extract-start flow-properties
+    Properties properties = new Properties();
+
+    // pass in the class name of your application
+    // this will find the parent jar at runtime
+    FlowConnector.setApplicationJarClass( properties, Main.class );
+
+    // or pass in the path to the parent jar
+    FlowConnector.setApplicationJarPath( properties, pathToJar );
+
+    FlowConnector flowConnector = new FlowConnector( properties );
     //@extract-end
     }
 

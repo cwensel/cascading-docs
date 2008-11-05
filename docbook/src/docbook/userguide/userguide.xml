@@ -6,8 +6,6 @@
       xmlns:ns4="http://www.w3.org/2000/svg"
       xmlns:ns3="http://www.w3.org/1999/xhtml"
       xmlns:ns="http://docbook.org/ns/docbook">
-
-
   <info>
     <title>Cascading - A User Guide</title>
 
@@ -33,16 +31,12 @@
 
     <mediaobject>
       <imageobject>
-        <imagedata contentwidth="1.5in" fileref="images/cascading-logo.svg" />
+        <imagedata contentwidth="1.5in" fileref="images/cascading-logo.svg"></imagedata>
       </imageobject>
     </mediaobject>
   </info>
 
-
-
-  <toc />
-
-
+  <toc></toc>
 
   <chapter>
     <info>
@@ -160,8 +154,6 @@
     </section>
   </chapter>
 
-
-
   <chapter>
     <info>
       <title>Diving In</title>
@@ -256,8 +248,6 @@
     </itemizedlist>
   </chapter>
 
-
-
   <chapter>
     <info>
       <title>Data Processing</title>
@@ -303,7 +293,7 @@
       <mediaobject>
         <imageobject>
           <imagedata align="center" contentwidth="3in"
-                     fileref="images/pipes.svg" />
+                     fileref="images/pipes.svg"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -381,7 +371,7 @@
       <mediaobject>
         <imageobject>
           <imagedata align="center" contentwidth="5in"
-                     fileref="images/simple-pipe-assembly.svg" />
+                     fileref="images/simple-pipe-assembly.svg"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -437,11 +427,9 @@
       through the pipe assembly, on the tail end of a GroupBy or CoGroup
       pipe.</para>
 
-      <para>
-        <programlisting>new Each( argumentSelector, operation, outputSelector )
+      <para><programlisting>new Each( argumentSelector, operation, outputSelector )
 
-new Every( argumentSelector, operation, outputSelector )</programlisting>
-      </para>
+new Every( argumentSelector, operation, outputSelector )</programlisting></para>
 
       <para>Both the Each and Every pipe take an argument selector, Operation
       instance, and a output selector on the constructor. Where each selector
@@ -458,7 +446,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <mediaobject>
         <imageobject>
           <imagedata align="center" contentwidth="6in"
-                     fileref="images/pipe-operation-relationship.svg" />
+                     fileref="images/pipe-operation-relationship.svg"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -471,7 +459,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <mediaobject>
         <imageobject>
           <imagedata align="center" contentwidth="6in"
-                     fileref="images/each-operation-relationship.svg" />
+                     fileref="images/each-operation-relationship.svg"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -487,7 +475,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <mediaobject>
         <imageobject>
           <imagedata align="center" contentwidth="6in"
-                     fileref="images/every-operation-relationship.svg" />
+                     fileref="images/every-operation-relationship.svg"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -550,13 +538,11 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         </varlistentry>
       </variablelist>
 
-      <para>
-        <example>
+      <para><example>
           <title>Creating a new Tap</title>
 
           <xi:include href="simple-tap.xml" />
-        </example>
-      </para>
+        </example></para>
 
       <para>The above example creates a new Hadoop Filesytem Tap that can
       read/write text files. Since only one field name was provided, the
@@ -713,12 +699,51 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
 
       <para>FlowListeners are useful when external systems must be notified
       when a Flow has completed or failed.</para>
+
+      <para>The FlowConnector contructor accepts the
+      <classname>java.util.Property</classname> object so that default
+      Cascading and Hadoop properties can be passed down through the planner
+      to the Hadoop runtime. Subsequently any relevant Hadoop
+      <code>hadoop-default.xml</code> properties may be added
+      (<code>mapred.map.tasks.speculative.execution</code>,
+      <code>mapred.reduce.tasks.speculative.execution</code>, or
+      <code>mapred.child.java.opts</code> would be very common).</para>
+
+      <para>One property that must be set for production applications is the
+      application Jar class or Jar path.</para>
+
+      <example>
+        <title>Creating a new Cascade</title>
+
+        <xi:include href="flow-properties.xml" />
+      </example>
+
+      <para>More information on packaging production applications can be found
+      in <xref linkend="executing-processes" />.</para>
+
+      <para>Note the pattern of using a static property setter method
+      (<classname>FlowConnector.setApplicationJarPath</classname>), other
+      classes that can be used to set properties are
+      <classname>MultiMapReducePlanner</classname> and
+      <classname>Flow</classname>.</para>
+
+      <para>Since the FlowConnector can be reused, any properties passed on
+      the constructor will be handed to all the Flows it is used to create. If
+      Flows need to be created with different default properties, a new
+      FlowConnector will need to be instantiated with those properties.</para>
     </section>
 
     <section>
       <info>
         <title>Cascades</title>
       </info>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" contentwidth="2 in"
+                     fileref="images/cascade.svg"></imagedata>
+        </imageobject>
+      </mediaobject>
 
       <para>A Cascade allows multiple Flow instances to be executed as a
       single logical unit. If there are dependencies between the Flows, they
@@ -734,20 +759,19 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         <xi:include href="simple-cascade.xml" />
       </example>
 
-      <para>When passig Flows to the CascadeConnector, order is not important.
-      The CascadeConnector will automatically determine what the dependencies
-      are between the given Flows and create a scheduler that will start each
-      flow as its data sources become available. If two or more Flow instances
-      have no dependencies, they will be submitted together so they can
-      execute in parallel.</para>
+      <para>When passing Flows to the CascadeConnector, order is not
+      important. The CascadeConnector will automatically determine what the
+      dependencies are between the given Flows and create a scheduler that
+      will start each flow as its data sources become available. If two or
+      more Flow instances have no dependencies, they will be submitted
+      together so they can execute in parallel.</para>
     </section>
   </chapter>
 
-
-
   <chapter>
     <info>
-      <title>Executing Processes</title>
+      <title xreflabel="Executing Processes"
+      xml:id="executing-processes">Executing Processes</title>
     </info>
 
     <section>
@@ -769,7 +793,6 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       script that can be used as a starting point for most any Cascading
       project. Alternatively, you can get a sample build file directly from
       svn.</para>
-
     </section>
 
     <section>
@@ -777,7 +800,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         <title>Hadoop</title>
       </info>
 
-      <para />
+      <para></para>
     </section>
 
     <section>
@@ -785,7 +808,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         <title>Building</title>
       </info>
 
-      <para />
+      <para></para>
     </section>
 
     <section>
@@ -793,11 +816,9 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         <title>Executing</title>
       </info>
 
-      <para />
+      <para></para>
     </section>
   </chapter>
-
-
 
   <chapter>
     <info>
@@ -815,7 +836,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <mediaobject>
         <imageobject>
           <imagedata align="center" contentwidth="3in"
-                     fileref="images/operations.svg" />
+                     fileref="images/operations.svg"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -1091,8 +1112,6 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
     </section>
   </chapter>
 
-
-
   <chapter>
     <info>
       <title>Advanced Processing</title>
@@ -1103,7 +1122,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         <title>SubAssemblies</title>
       </info>
 
-      <para />
+      <para></para>
     </section>
 
     <section>
@@ -1111,18 +1130,16 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         <title>Stream Assertions</title>
       </info>
 
-      <para>
-        <inlinemediaobject>
+      <para><inlinemediaobject>
           <imageobject>
             <imagedata align="center" contentwidth="6in"
-                       fileref="images/stream-assertions.svg" />
+                       fileref="images/stream-assertions.svg"></imagedata>
           </imageobject>
 
           <textobject>
             <phrase>A Flow with Stream Assertions</phrase>
           </textobject>
-        </inlinemediaobject>
-      </para>
+        </inlinemediaobject></para>
 
       <para>Stream assertions are simply a mechanism to 'assert' that one or
       more values in a data stream meet certain criteria. This is similar to
@@ -1165,18 +1182,16 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         <title>Failure Traps</title>
       </info>
 
-      <para>
-        <inlinemediaobject>
+      <para><inlinemediaobject>
           <imageobject>
             <imagedata align="center" contentwidth="6in"
-                       fileref="images/failure-traps.svg" />
+                       fileref="images/failure-traps.svg"></imagedata>
           </imageobject>
 
           <textobject>
             <phrase>A Flow with Failure Traps</phrase>
           </textobject>
-        </inlinemediaobject>
-      </para>
+        </inlinemediaobject></para>
 
       <para>Failure Traps are the same as a data output sink (opposed to a
       source), except being bound to a particular tail element of the pipe
@@ -1246,6 +1261,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>Identity Function</title>
       </info>
+
       <para></para>
     </section>
 
@@ -1253,6 +1269,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>Debug Function</title>
       </info>
+
       <para></para>
     </section>
 
@@ -1260,6 +1277,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>Insert Function</title>
       </info>
+
       <para></para>
     </section>
 
@@ -1267,6 +1285,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>Text Functions</title>
       </info>
+
       <para></para>
     </section>
 
@@ -1274,6 +1293,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>Regular Expression Operations</title>
       </info>
+
       <para></para>
     </section>
 
@@ -1281,6 +1301,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>Java Expression Operations</title>
       </info>
+
       <para></para>
     </section>
 
@@ -1288,6 +1309,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>XML Operations</title>
       </info>
+
       <para></para>
     </section>
 
@@ -1295,6 +1317,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>Assertions</title>
       </info>
+
       <para></para>
     </section>
 
@@ -1302,6 +1325,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       <info>
         <title>Logical Filter Operators</title>
       </info>
+
       <para></para>
     </section>
   </chapter>
@@ -1316,18 +1340,16 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
         <title>MapReduce Job Planner</title>
       </info>
 
-      <para>
-        <inlinemediaobject>
+      <para><inlinemediaobject>
           <imageobject>
             <imagedata align="center" contentwidth="7in"
-                       fileref="images/planned-flow.svg" />
+                       fileref="images/planned-flow.svg"></imagedata>
           </imageobject>
 
           <textobject>
             <phrase>A Flow partitioned by MapReduce tasks</phrase>
           </textobject>
-        </inlinemediaobject>
-      </para>
+        </inlinemediaobject></para>
 
       <para>The MapReduce Job Planner is an internal feature of
       Cascading.</para>
@@ -1398,6 +1420,4 @@ new Every( argumentSelector, operation, outputSelector )</programlisting>
       out.</para>
     </section>
   </chapter>
-
-
 </book>
