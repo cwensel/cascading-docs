@@ -25,22 +25,22 @@
   <property file="../build.properties"/>
   <property file="build.properties"/>
 
-  <property name="dbf.basedir" location="docbook-framework"/>
-
+  <property name="dbf.basedir" location="${basedir}/docbook-framework"/>
 
   <property name="src.docbook.dir" value="${basedir}/src/docbook"/>
   <property name="src.tools.dir" value="${basedir}/src/tools"/>
   <property name="src.examples.dir" value="${basedir}/src/examples"/>
   <property name="src.images.dir" value="${basedir}/src/images"/>
 
-  <property name="build.dir" value="build"/>
+  <property name="build.dir" value="${basedir}/build"/>
 
-  <property name="build.tools.dir" value="build/tools"/>
-  <property name="build.examples.dir" value="build/examples"/>
+  <property name="build.images.dir" value="${build.dir}/images"/>
+  <property name="build.tools.dir" value="${build.dir}/tools"/>
+  <property name="build.examples.dir" value="${build.dir}/examples"/>
 
-  <property name="edit.dir" value="edit"/>
+  <property name="edit.dir" value="${basedir}/edit"/>
 
-  <property name="target.dir" value="target"/>
+  <property name="target.dir" value="${basedir}/target"/>
 
   <property name="docbook.src.dir" value="${build.dir}/docbook"/>
 
@@ -128,6 +128,12 @@
       </fileset>
     </copy>
 
+  </target>
+
+  <target name="clean-svg">
+    <xslt basedir="${src.images.dir}" destdir="${build.images.dir}"
+          style="${basedir}/src/styles/clean-svg.xsl" extension=".svg"
+          includes="**/*.svg"/>
   </target>
 
   <target name="test-examples" description="--> generates all dynamic includes" unless="skip.tests">
@@ -220,16 +226,6 @@
 
   </target>
 
-  <!-- == Build all the Docbook Documentation                                == -->
-  <target name="all" description="--> Build all documentation" depends="includes">
-
-    <!-- Build the Users Guide -->
-    <ant antfile="${dbf.basedir}/build-docbook.xml" target="all">
-      <property name="docbook.dir" value="userguide"/>
-      <property name="docbook.file" value="userguide"/>
-    </ant>
-  </target>
-
   <!-- == Clean up the target directory                                      == -->
   <target name="clean" description="--> Delete temporary and distribution directories for docs"
           depends="clean-avail,clean-edit">
@@ -266,6 +262,9 @@
 
   </target>
 
+  <!-- == Build all the Docbook Documentation                                == -->
+  <target name="all" description="--> Build all documentation" depends="pdf,html,htmlsingle"/>
+
   <target name="pdf" description="---> build pdf" depends="includes">
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="pdf">
       <property name="docbook.dir" value="userguide"/>
@@ -273,17 +272,19 @@
     </ant>
   </target>
 
-  <target name="html" description="---> build chunked html" depends="includes">
+  <target name="html" description="---> build chunked html" depends="includes,clean-svg">
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="html">
       <property name="docbook.dir" value="userguide"/>
       <property name="docbook.file" value="userguide"/>
+      <property name="images.src.dir" value="${build.images.dir}"/>
     </ant>
   </target>
 
-  <target name="htmlsingle" description="---> build single html" depends="includes">
+  <target name="htmlsingle" description="---> build single html" depends="includes,clean-svg">
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="htmlsingle">
       <property name="docbook.dir" value="userguide"/>
       <property name="docbook.file" value="userguide"/>
+      <property name="images.src.dir" value="${build.images.dir}"/>
     </ant>
   </target>
 

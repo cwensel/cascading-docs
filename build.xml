@@ -20,6 +20,7 @@
 
   <property name="site" location="${basedir}/site/"/>
   <property name="site.javadoc" location="${basedir}/site/javadoc"/>
+  <property name="site.userguide" location="${basedir}/site/userguide"/>
 
   <path id="all.javadoc.src.path">
     <pathelement location="${cascading.home}/src/java"/>
@@ -46,7 +47,34 @@
 
   </target>
 
-  <target name="rsync-javadoc" depends="site-javadoc">
+  <target name="site-userguide">
+    <echo message="creating cascading userguide..."/>
+
+    <delete dir="${site.userguide}"/>
+    <mkdir dir="${site.userguide}"/>
+
+    <ant antfile="docbook/build.xml" target="all" inheritall="false"/>
+
+    <copy todir="${site.userguide}">
+      <fileset dir="docbook/target/userguide/">
+        <exclude name="**/tmp/**"/>
+        <exclude name="**/*.html"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${site.userguide}">
+      <fileset dir="docbook/target/userguide/">
+        <exclude name="**/tmp/**"/>
+        <include name="**/*.html"/>
+      </fileset>
+      <filterset recurse="false">
+        <filtersfile file="etc/filters.properties"/>
+      </filterset>
+    </copy>
+
+  </target>
+
+  <target name="rsync-javadocs" depends="site-javadoc">
     <echo message="Starting file transfer to ${website.host}"/>
     <exec dir="." executable="rsync" failonerror="true">
       <arg value="-r"/>
@@ -60,12 +88,27 @@
     </exec>
   </target>
 
+  <target name="rsync-userguide" depends="site-userguide">
+    <echo message="Starting file transfer to ${website.host}"/>
+    <exec dir="." executable="rsync" failonerror="true">
+      <arg value="-r"/>
+      <arg value="-v"/>
+      <arg value="--delete"/>
+      <!--<arg value="-n"/>-->
+      <arg value="--rsh=ssh"/>
+      <arg value="${site.userguide}"/>
+      <arg
+        value="${website.host}:${website.path}"/>
+    </exec>
+  </target>
+
   <target name="push-dist" depends="package">
 
   </target>
 
   <target name="clean" depends="cascading.clean">
     <delete dir="${site}"/>
+    <ant antfile="docbook/build.xml" target="clean" inheritall="false"/>
   </target>
 
 </project>
