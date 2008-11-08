@@ -294,9 +294,13 @@
       manipulate how the tuple streams interact.</para>
 
       <mediaobject>
-        <imageobject>
-          <imagedata format="SVG" align="center" contentwidth="3in"
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="3in"
                      fileref="images/pipes.svg"></imagedata>
+        </imageobject>
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="3in"
+                     fileref="images/pipes.png"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -372,9 +376,13 @@
       below.</para>
 
       <mediaobject>
-        <imageobject>
-          <imagedata format="SVG" align="center" contentwidth="5in"
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="5in"
                      fileref="images/simple-pipe-assembly.svg"></imagedata>
+        </imageobject>
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="5in"
+                     fileref="images/simple-pipe-assembly.png"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -447,9 +455,13 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       grouping at a time.</para>
 
       <mediaobject>
-        <imageobject>
-          <imagedata format="SVG" align="center" contentwidth="6in"
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
                      fileref="images/pipe-operation-relationship.svg"></imagedata>
+        </imageobject>
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-operation-relationship.png"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -460,9 +472,13 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       pipe assembly.</para>
 
       <mediaobject>
-        <imageobject>
-          <imagedata format="SVG" align="center" contentwidth="6in"
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
                      fileref="images/each-operation-relationship.svg"></imagedata>
+        </imageobject>
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/each-operation-relationship.png"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -476,9 +492,13 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       selector.</para>
 
       <mediaobject>
-        <imageobject>
-          <imagedata format="SVG" align="center" contentwidth="6in"
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
                      fileref="images/every-operation-relationship.svg"></imagedata>
+        </imageobject>
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/every-operation-relationship.png"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -742,9 +762,13 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       </info>
 
       <mediaobject>
-        <imageobject>
-          <imagedata format="SVG" align="center" contentwidth="2 in"
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="2 in"
                      fileref="images/cascade.svg"></imagedata>
+        </imageobject>
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="2 in"
+                     fileref="images/cascade.png"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -837,9 +861,13 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       and Buffer.</para>
 
       <mediaobject>
-        <imageobject>
-          <imagedata format="SVG" align="center" contentwidth="3in"
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="3in"
                      fileref="images/operations.svg"></imagedata>
+        </imageobject>
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="3in"
+                     fileref="images/operations.png"></imagedata>
         </imageobject>
       </mediaobject>
 
@@ -1134,9 +1162,13 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       </info>
 
       <para><inlinemediaobject>
-          <imageobject>
-            <imagedata format="SVG" align="center" contentwidth="6in"
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="6in"
                        fileref="images/stream-assertions.svg"></imagedata>
+          </imageobject>
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/stream-assertions.png"></imagedata>
           </imageobject>
 
           <textobject>
@@ -1186,9 +1218,13 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       </info>
 
       <para><inlinemediaobject>
-          <imageobject>
-            <imagedata format="SVG" align="center" contentwidth="6in"
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="6in"
                        fileref="images/failure-traps.svg"></imagedata>
+          </imageobject>
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/failure-traps.png"></imagedata>
           </imageobject>
 
           <textobject>
@@ -1344,9 +1380,13 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       </info>
 
       <para><inlinemediaobject>
-          <imageobject>
-            <imagedata format="SVG" align="center" contentwidth="7in"
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="7in"
                        fileref="images/planned-flow.svg"></imagedata>
+          </imageobject>
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="7in"
+                       fileref="images/planned-flow.png"></imagedata>
           </imageobject>
 
           <textobject>
