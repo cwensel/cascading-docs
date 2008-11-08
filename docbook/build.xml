@@ -116,7 +116,6 @@
   <property name="test.haltonerror" value="true"/>
   <property name="test.results" location="${build.dir}/testresults"/>
 
-
   <!-- == Generate Docbook includes                                          == -->
   <target name="copy-docbooks">
 
@@ -130,10 +129,30 @@
 
   </target>
 
-  <target name="clean-svg">
-    <xslt basedir="${src.images.dir}" destdir="${build.images.dir}"
-          style="${basedir}/src/styles/clean-svg.xsl" extension=".svg"
-          includes="**/*.svg"/>
+  <target name="gen-png">
+
+    <java classname="org.apache.batik.apps.rasterizer.Main"
+          fork="true"
+          failonerror="true"
+          maxmemory="512m">
+
+             <arg value="-scriptSecurityOff"/>
+             <arg value="-d"/>
+             <arg value="${build.images.dir}"/>
+             <arg value="-m"/>
+             <arg value="image/png"/>
+             <arg value="${src.images.dir}"/>
+
+             <classpath>
+               <pathelement location="${dbf.basedir}/lib/batik-all-1.7.jar"/>
+               <pathelement location="${dbf.basedir}/lib/xmlgraphics-commons-1.3.1.jar"/>
+               <pathelement location="${dbf.basedir}/lib/xml-apis-1.3.04.jar"/>
+               <pathelement location="${dbf.basedir}/lib/xml-apis-ext-1.3.04.jar"/>
+
+               <pathelement path="${java.class.path}"/>
+             </classpath>
+           </java>
+
   </target>
 
   <target name="test-examples" description="--> generates all dynamic includes" unless="skip.tests">
@@ -204,7 +223,7 @@
   <target name="includes" depends="extract, copy-docbooks"/>
 
 
-  <target name="edit" description="--> Make editable copy in edit dir" depends="extract">
+  <target name="edit" description="--> Make editable copy in edit dir" depends="extract, gen-png">
     <mkdir dir="${edit.dir}"/>
 
     <copy todir="${edit.dir}">
@@ -216,6 +235,9 @@
 
     <copy todir="${edit.dir}/userguide/images">
       <fileset dir="${src.images.dir}">
+        <include name="**/*"/>
+      </fileset>
+      <fileset dir="${build.images.dir}">
         <include name="**/*"/>
       </fileset>
     </copy>
@@ -272,7 +294,7 @@
     </ant>
   </target>
 
-  <target name="html" description="---> build chunked html" depends="includes,clean-svg">
+  <target name="html" description="---> build chunked html" depends="includes,gen-png">
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="html">
       <property name="docbook.dir" value="userguide"/>
       <property name="docbook.file" value="userguide"/>
@@ -280,7 +302,7 @@
     </ant>
   </target>
 
-  <target name="htmlsingle" description="---> build single html" depends="includes,clean-svg">
+  <target name="htmlsingle" description="---> build single html" depends="includes,gen-png">
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="htmlsingle">
       <property name="docbook.dir" value="userguide"/>
       <property name="docbook.file" value="userguide"/>

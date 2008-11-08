@@ -30,8 +30,11 @@
     </authorgroup>
 
     <mediaobject>
-      <imageobject>
-        <imagedata format="SVG" contentwidth="1.5in" fileref="images/cascading-logo.svg"></imagedata>
+      <imageobject role="fo">
+        <imagedata contentwidth="1.5in" fileref="images/cascading-logo.svg"></imagedata>
+      </imageobject>
+      <imageobject role="html">
+        <imagedata contentwidth="1.5in" fileref="images/cascading-logo.png"></imagedata>
       </imageobject>
     </mediaobject>
   </info>
