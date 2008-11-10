@@ -33,6 +33,7 @@
       <imageobject role="fo">
         <imagedata contentwidth="1.5in" fileref="images/cascading-logo.svg"></imagedata>
       </imageobject>
+
       <imageobject role="html">
         <imagedata contentwidth="1.5in" fileref="images/cascading-logo.png"></imagedata>
       </imageobject>
@@ -298,6 +299,7 @@
           <imagedata align="center" contentwidth="3in"
                      fileref="images/pipes.svg"></imagedata>
         </imageobject>
+
         <imageobject role="html">
           <imagedata align="center" contentwidth="3in"
                      fileref="images/pipes.png"></imagedata>
@@ -380,6 +382,7 @@
           <imagedata align="center" contentwidth="5in"
                      fileref="images/simple-pipe-assembly.svg"></imagedata>
         </imageobject>
+
         <imageobject role="html">
           <imagedata align="center" contentwidth="5in"
                      fileref="images/simple-pipe-assembly.png"></imagedata>
@@ -459,6 +462,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
           <imagedata align="center" contentwidth="6in"
                      fileref="images/pipe-operation-relationship.svg"></imagedata>
         </imageobject>
+
         <imageobject role="html">
           <imagedata align="center" contentwidth="6in"
                      fileref="images/pipe-operation-relationship.png"></imagedata>
@@ -476,6 +480,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
           <imagedata align="center" contentwidth="6in"
                      fileref="images/each-operation-relationship.svg"></imagedata>
         </imageobject>
+
         <imageobject role="html">
           <imagedata align="center" contentwidth="6in"
                      fileref="images/each-operation-relationship.png"></imagedata>
@@ -496,6 +501,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
           <imagedata align="center" contentwidth="6in"
                      fileref="images/every-operation-relationship.svg"></imagedata>
         </imageobject>
+
         <imageobject role="html">
           <imagedata align="center" contentwidth="6in"
                      fileref="images/every-operation-relationship.png"></imagedata>
@@ -766,6 +772,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
           <imagedata align="center" contentwidth="2 in"
                      fileref="images/cascade.svg"></imagedata>
         </imageobject>
+
         <imageobject role="html">
           <imagedata align="center" contentwidth="2 in"
                      fileref="images/cascade.png"></imagedata>
@@ -806,28 +813,8 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
         <title>Introduction</title>
       </info>
 
-      <para>Cascading is nothing more than a Java library that should be
-      included in both your development and runtime CLASSPATH.</para>
-
-      <para>When executing Cascading as a Hadoop job, the Cascading jar
-      (cascading-lib-x.y.z.jar) file should be added to the job jar 'lib'
-      directory along with all cascadings dependent jar files. Alternately
-      cascading-x.y.z.jar can be unpacked into a directory containing your
-      class files, and then packed back up as it already includes the 'lib'
-      directory.</para>
-
-      <para>Each of the available examples includes a generalized Ant build
-      script that can be used as a starting point for most any Cascading
-      project. Alternatively, you can get a sample build file directly from
-      svn.</para>
-    </section>
-
-    <section>
-      <info>
-        <title>Hadoop</title>
-      </info>
-
-      <para></para>
+      <para>Cascading requires Hadoop to be installed and correctly
+      configured.</para>
     </section>
 
     <section>
@@ -835,7 +822,54 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
         <title>Building</title>
       </info>
 
-      <para></para>
+      <para>Cascading ships with a handful of jars.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>cascading.jar</term>
+
+          <listitem>
+            <para>all relevant Cascading class files and libraries, with a 'lib' folder containing all third-party dependencies</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>cascading-core.jar</term>
+
+          <listitem>
+            <para>all Cascading Core class files, should be packaged with 'lib/*.jar'</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>cascading-xml.jar</term>
+
+          <listitem>
+            <para>all Cascading XML module class files, should be packeaged with 'lib/xml/*.jar</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Cascading will run with Hadoop in its default 'local' mode, or
+      configured as a distributed cluster.</para>
+
+      <para>When used on a cluster, a Hadoop job jar must be created with
+      Cascading jars and dependent thrid-party jars in the job jar 'lib'
+      directory, per the Hadoop documentation.</para>
+
+      <example>
+        <title>Sample Ant Build</title>
+
+        <xi:include href="sample-build.xml" />
+      </example>
+
+      <para>The above Ant snippet can be used in your project to create a Hadoop jar for submission on your cluster.</para>
+
+      <para>Note, the snippet above is only intended to show how to include Cascading libraries, you still need to compile your project into the 'build.classes'
+      path.</para>
+
+    </section>
+
+    <section>
+      <para />
     </section>
 
     <section>
@@ -865,6 +899,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
           <imagedata align="center" contentwidth="3in"
                      fileref="images/operations.svg"></imagedata>
         </imageobject>
+
         <imageobject role="html">
           <imagedata align="center" contentwidth="3in"
                      fileref="images/operations.png"></imagedata>
@@ -1153,7 +1188,35 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
         <title>SubAssemblies</title>
       </info>
 
-      <para></para>
+      <para>Cascading SubAssemblies are reusable pipe assemblies that are
+      linked into larger pipe assemblies. Think of them as subroutines in a
+      programming language. The help organize complex pipe assemblies and
+      allow for commonly used pipe assemblies to be packaged into libraries
+      for inclusion by other users.</para>
+
+      <para>To create a SubAssembly, the
+      <classname>cascading.pipe.SubAssembly</classname> class must be
+      subclasses.</para>
+
+      <example>
+        <title>Creating a SubAssembly</title>
+
+        <xi:include href="custom-subassembly.xml" />
+      </example>
+
+      <para>In the above example, we pass in via the constructor pipes we wish
+      to continue assembling against, and the last line we register the 'join'
+      pipe as a tail. This allows SubAssemblies to be nested within larger
+      pipe assemblies or other SubAssemblies.</para>
+
+      <example>
+        <title>Using a SubAssembly</title>
+
+        <xi:include href="simple-subassembly.xml" />
+      </example>
+
+      <para>Above we see how natural it is to include a SubAssembly into a new
+      pipe assembly.</para>
     </section>
 
     <section>
@@ -1166,6 +1229,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
             <imagedata align="center" contentwidth="6in"
                        fileref="images/stream-assertions.svg"></imagedata>
           </imageobject>
+
           <imageobject role="html">
             <imagedata align="center" contentwidth="6in"
                        fileref="images/stream-assertions.png"></imagedata>
@@ -1222,6 +1286,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
             <imagedata align="center" contentwidth="6in"
                        fileref="images/failure-traps.svg"></imagedata>
           </imageobject>
+
           <imageobject role="html">
             <imagedata align="center" contentwidth="6in"
                        fileref="images/failure-traps.png"></imagedata>
@@ -1384,6 +1449,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
             <imagedata align="center" contentwidth="7in"
                        fileref="images/planned-flow.svg"></imagedata>
           </imageobject>
+
           <imageobject role="html">
             <imagedata align="center" contentwidth="7in"
                        fileref="images/planned-flow.png"></imagedata>

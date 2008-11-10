@@ -78,6 +78,22 @@ public class CompiledExamples
     //@extract-end
     }
 
+  public void compilePipeSubAssembly()
+    {
+    //@extract-start simple-subassembly
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    // our custom SubAssembly
+    Pipe pipe = new SomeSubAssembly( lhs, rhs );
+
+    pipe = new Each( pipe, new SomeFunction() );
+    //@extract-end
+    }
+
   public void compileTap()
     {
     String path = "some/path";
@@ -125,12 +141,12 @@ public class CompiledExamples
     // the tail of the assembly
     join = new Each( join, new SomeFunction() );
 
-    Tap lhsSource = new Hfs(new TextLine(), "lhs.txt");
-    Tap rhsSource = new Hfs(new TextLine(), "rhs.txt");
+    Tap lhsSource = new Hfs( new TextLine(), "lhs.txt" );
+    Tap rhsSource = new Hfs( new TextLine(), "rhs.txt" );
 
-    Tap sink = new Hfs(new TextLine(), "output");
+    Tap sink = new Hfs( new TextLine(), "output" );
 
-    Map<String, Tap> sources = new HashMap<String,Tap>();
+    Map<String, Tap> sources = new HashMap<String, Tap>();
 
     sources.put( "lhs", lhsSource );
     sources.put( "rhs", rhsSource );
@@ -154,6 +170,7 @@ public class CompiledExamples
     {
 
     }
+
   public void compileFlowConnector()
     {
     String pathToJar = null;

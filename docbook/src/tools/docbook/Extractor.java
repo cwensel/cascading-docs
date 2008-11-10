@@ -38,8 +38,9 @@ import java.io.InputStreamReader;
 public class Extractor
   {
 
-  protected String startAnnotation = "//@extract-start";
-  protected String endAnnotation = "//@extract-end";
+  protected String startAnnotation1 = "//@extract-start";
+  protected String startAnnotation2 = "<!-- @extract-start";
+  protected String endAnnotation = "@extract-end";
 
   protected File targetDir;
   protected String root;
@@ -80,7 +81,7 @@ public class Extractor
         {
         extractCode( file );
         }
-      else if( file.getName().endsWith( ".java" ) && !file.getName().equals( "Extractor.java" ) )
+      else if( ( file.getName().endsWith( ".java" ) || file.getName().endsWith( ".xml" ) ) && !file.getName().equals( "Extractor.java" ) )
         {
         extractAnnotatedCode( file );
         } // fi
@@ -89,6 +90,7 @@ public class Extractor
 
   public void extractAnnotatedCode( File file ) throws Exception
     {
+//    System.out.println( "Handling: " + file );
     String packageName = file.getParentFile().getName();
 
     BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( file ) ) );
@@ -130,11 +132,19 @@ public class Extractor
         }
       else
         {
-        offset = line.indexOf( startAnnotation );
+        String start = startAnnotation1;
+        offset = line.indexOf( startAnnotation1 );
+
+        if( offset == -1 )
+          {
+          start = startAnnotation2;
+          offset = line.indexOf( startAnnotation2 );
+          }
 
         if( offset > -1 )
           {
-          String name = line.substring( offset + startAnnotation.length() + 1 ).trim();
+          System.out.println( "Extracting from: " + file );
+          String name = line.substring( offset + start.length() + 1 ).trim().split( "\\s" )[ 0 ];
           extract = true;
           writer = createXiIncludeFile( packageName, name );
           }

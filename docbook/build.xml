@@ -129,7 +129,7 @@
 
   </target>
 
-  <target name="gen-png">
+  <target name="gen-png" unless="skip.png">
 
     <java classname="org.apache.batik.apps.rasterizer.Main"
           fork="true"
@@ -223,6 +223,7 @@
 
   <target name="edit" description="--> Make editable copy in edit dir" depends="extract, gen-png">
     <mkdir dir="${edit.dir}"/>
+    <mkdir dir="${build.images.dir}"/>
 
     <copy todir="${edit.dir}">
       <fileset dir="${docbook.src.dir}">
