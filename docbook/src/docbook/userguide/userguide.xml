@@ -818,7 +818,8 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
     </section>
 
     <section>
-      <info>
+      <info xreflabel="Building Cascading Applications"
+            xml:id="building-processes">
         <title>Building</title>
       </info>
 
@@ -826,34 +827,51 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
 
       <variablelist>
         <varlistentry>
-          <term>cascading.jar</term>
+          <term>cascading-1.0.x.jar</term>
 
           <listitem>
-            <para>all relevant Cascading class files and libraries, with a 'lib' folder containing all third-party dependencies</para>
+            <para>all relevant Cascading class files and libraries, with a
+            <filename>lib</filename> folder containing all third-party
+            dependencies</para>
           </listitem>
         </varlistentry>
+
         <varlistentry>
-          <term>cascading-core.jar</term>
+          <term>cascading-core-1.0.x.jar</term>
 
           <listitem>
-            <para>all Cascading Core class files, should be packaged with 'lib/*.jar'</para>
+            <para>all Cascading Core class files, should be packaged with
+            <filename>lib/*.jar</filename></para>
           </listitem>
         </varlistentry>
+
         <varlistentry>
-          <term>cascading-xml.jar</term>
+          <term>cascading-xml-1.0.x.jar</term>
 
           <listitem>
-            <para>all Cascading XML module class files, should be packeaged with 'lib/xml/*.jar</para>
+            <para>all Cascading XML module class files, should be packeaged
+            with <filename>lib/xml/*.jar</filename></para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>cascading-test-1.0.x.jar</term>
+
+          <listitem>
+            <para>all Cascading unit tests. If writing custom modules for
+            cascading, subclassing
+            <classname>cascading.CascadingTestCase</classname> might be
+            helpful</para>
           </listitem>
         </varlistentry>
       </variablelist>
 
-      <para>Cascading will run with Hadoop in its default 'local' mode, or
-      configured as a distributed cluster.</para>
+      <para>Cascading will run with Hadoop in its default 'local' or 'stand
+      alone' mode, or configured as a distributed cluster.</para>
 
       <para>When used on a cluster, a Hadoop job jar must be created with
-      Cascading jars and dependent thrid-party jars in the job jar 'lib'
-      directory, per the Hadoop documentation.</para>
+      Cascading jars and dependent thrid-party jars in the job jar
+      <filename>lib</filename> directory, per the Hadoop documentation.</para>
 
       <example>
         <title>Sample Ant Build</title>
@@ -861,15 +879,12 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
         <xi:include href="sample-build.xml" />
       </example>
 
-      <para>The above Ant snippet can be used in your project to create a Hadoop jar for submission on your cluster.</para>
+      <para>The above Ant snippet can be used in your project to create a
+      Hadoop jar for submission on your cluster.</para>
 
-      <para>Note, the snippet above is only intended to show how to include Cascading libraries, you still need to compile your project into the 'build.classes'
-      path.</para>
-
-    </section>
-
-    <section>
-      <para />
+      <para>Note, the snippet above is only intended to show how to include
+      Cascading libraries, you still need to compile your project into the
+      <property>build.classes</property> path.</para>
     </section>
 
     <section>
@@ -877,7 +892,24 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
         <title>Executing</title>
       </info>
 
-      <para></para>
+      <para>Running a Cascading application is exactly the same as running a
+      Hadoop application. After packaging your application classes and all
+      dependent libraries, including Casdading, into a single jar (see <xref
+      linkend="building-processes" />).</para>
+
+      <para>To execute an application stuffed into
+      <filename>your-application.jar</filename>, call the Hadoop shell
+      script:</para>
+
+      <example>
+        <title>Running Cascading</title>
+
+        <para><programlisting>$HADOOP_HOME/bin/hadoop jar your-application.jar [params]</programlisting></para>
+      </example>
+
+      <para>If the configuration scripts in <envar>$HADOOP_CONF_DIR</envar>
+      are configured to use a cluster, the jar will be pushed into the cluster
+      for execution.</para>
     </section>
   </chapter>
 
