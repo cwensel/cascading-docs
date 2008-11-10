@@ -325,7 +325,7 @@
       <fileset dir="${css.src.dir}/html"/>
     </copy>
 
-    <move file="${htmlsingle.target.file}.xml" tofile="${htmlsingle.target.file}.html"/>
+    <move file="${htmlsingle.target.file}.xml" tofile="${htmlsingle.target.dir}/index.html"/>
 
     <delete quiet="true" file="${htmlsingle.target.file}.zip"/>
     <zip basedir="${target.dir}/${docbook.dir}" destfile="${htmlsingle.target.file}.zip">
