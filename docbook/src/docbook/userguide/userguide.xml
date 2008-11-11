@@ -917,57 +917,6 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       heads and tails, all Taps will need to be explicitly named, and the
       proper <code>connect()</code> method will need be called.</para>
 
-      <para>Flows support event listeners through the
-      <classname>FlowListener</classname> interface. The FlowListener
-      interface supports four events, onStarting, onStopping, onCompleted, and
-      onThrowable.</para>
-
-      <variablelist>
-        <varlistentry>
-          <term>onStarting</term>
-
-          <listitem>
-            <para>The onStarting event is fired when a Flow instance receives
-            the <code>start()</code> message.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>onStopping</term>
-
-          <listitem>
-            <para>The onStopping event is fired when a Flow instance receives
-            the <code>stop()</code> message.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>onCompleted</term>
-
-          <listitem>
-            <para>The onCompleted event is fired when a Flow instance has
-            completed all work whether if was success or failed. If there was
-            a thrown exception, onThrowable will be fired before this
-            event.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>onThrowable</term>
-
-          <listitem>
-            <para>The onThrowable event is fired if any internal job client
-            throws a Throwable type. This throwable is passed as an argument
-            to the event. onThrowable should return true if the given
-            throwable was handled and should not be rethrown from the
-            <code>Flow.complete()</code> method.</para>
-          </listitem>
-        </varlistentry>
-      </variablelist>
-
-      <para>FlowListeners are useful when external systems must be notified
-      when a Flow has completed or failed.</para>
-
       <para>The FlowConnector contructor accepts the
       <classname>java.util.Property</classname> object so that default
       Cascading and Hadoop properties can be passed down through the planner
@@ -1604,9 +1553,56 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       it can start the process of shutting down the cluster if no more work is
       queued up for it.</para>
 
-      <para>Listeners listen for the following four events; starting,
-      stopping, completed, and the catching of an Exception from the
-      job.</para>
+      <para>Flows support event listeners through the
+      <classname>cascading.flow.FlowListener</classname> interface. The
+      FlowListener interface supports four events, onStarting, onStopping,
+      onCompleted, and onThrowable.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>onStarting</term>
+
+          <listitem>
+            <para>The onStarting event is fired when a Flow instance receives
+            the <code>start()</code> message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>onStopping</term>
+
+          <listitem>
+            <para>The onStopping event is fired when a Flow instance receives
+            the <code>stop()</code> message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>onCompleted</term>
+
+          <listitem>
+            <para>The onCompleted event is fired when a Flow instance has
+            completed all work whether if was success or failed. If there was
+            a thrown exception, onThrowable will be fired before this
+            event.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>onThrowable</term>
+
+          <listitem>
+            <para>The onThrowable event is fired if any internal job client
+            throws a Throwable type. This throwable is passed as an argument
+            to the event. onThrowable should return true if the given
+            throwable was handled and should not be rethrown from the
+            <code>Flow.complete()</code> method.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>FlowListeners are useful when external systems must be notified
+      when a Flow has completed or failed.</para>
     </section>
 
     <section>
@@ -1638,7 +1634,69 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Identity Function</title>
       </info>
 
-      <para></para>
+      <para>The <classname>cascading.operation.Identify</classname> function
+      is used to "shape" a tuple stream.</para>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>Discard unused fields</term>
+
+            <listitem>
+              <para>Here Identity passes its arguments out as results, thanks
+              to the <code>Fields.ARGS</code> field declaration.</para>
+
+              <xi:include href="identity-discard-fields-long.xml" />
+
+              <para>In practice the field declaration can be left out as
+              <code>Field.ARGS</code> is the default declaration for the
+              Identity function. Additionally <code>Fields.RESULTs</code> can
+              be left off as it is the default for the Every pipe.</para>
+
+              <xi:include href="identity-discard-fields.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Rename all fields</term>
+
+            <listitem>
+              <para>Here Identity renames the incoming arguments. Since
+              Fields.RESULTS is implied, the incoming Tuple is replaced by the
+              arguments selected and given new field names as declared on
+              Identity.</para>
+
+              <xi:include href="identity-rename-fields-explicit.xml" />
+
+              <para>In the above example, if there were more fields than "ip"
+              and "method", it would work fine, all the extra fields would be
+              discared. If the same was true for the next example, the planner
+              would fail.</para>
+
+              <xi:include href="identity-rename-fields-long.xml" />
+
+              <para>Since <code>Fields.ALL</code> is the default argument
+              selector for the Each pipe, it can be left out.</para>
+
+              <xi:include href="identity-rename-fields.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Rename a single field</term>
+
+            <listitem>
+              <para></para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Coerce values to specific primitive types</term>
+
+            <listitem>
+              <para></para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
     </section>
 
     <section>
