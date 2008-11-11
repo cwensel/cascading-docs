@@ -239,19 +239,4 @@ public class CompiledExamples
     //@extract-end
     }
 
-  public void compileCoGroupMany()
-    {
-    Pipe first = new Pipe( "first" );
-    Pipe second = new Pipe( "second" );
-    Pipe third = new Pipe( "third" );
-
-    //@extract-start simple-cogroup
-    Fields lhsFields = new Fields( "fieldA", "fieldB" );
-    Fields rhsFields = new Fields( "fieldC", "fieldD" );
-    Pipe merge = new CoGroup( first, lhsFields, third, rhsFields, new InnerJoin() );
-    //@extract-end
-    }
-
-
-
   }
