@@ -603,8 +603,8 @@ new Every( previousPipe, argumentSelector, operation, outputSelector )</programl
         if there were any common field names, the Cascading planner would
         throw an error as duplicate field names are not allowed.</para>
 
-        <para>This is significant because of the nature of joining streams.
-        </para>
+        <para>This is significant because of the nature of joining
+        streams.</para>
 
         <para>The first stage of joining has to do with identifying field
         names that represent the grouping key for a given stream. The second
@@ -613,21 +613,23 @@ new Every( previousPipe, argumentSelector, operation, outputSelector )</programl
 
         <mediaobject>
           <imageobject role="fo">
-            <imagedata align="center" contentwidth="6in"
+            <imagedata align="center" contentwidth="5in"
                        fileref="images/cogrouping-fields-fail.svg"></imagedata>
           </imageobject>
 
           <imageobject role="html">
-            <imagedata align="center" contentwidth="6in"
+            <imagedata align="center" contentwidth="5in"
                        fileref="images/cogrouping-fields-fail.png"></imagedata>
           </imageobject>
         </mediaobject>
 
-        <para>In the above example, we see what "logically" happens during a join. Here we join two streams on the
-        "url" field which happens to be common to both streams. The result is simply two Tuple instances with the same
-        "url" appended together into a new Tuple. In practice this would fail since the result Tuple has duplicate field
-        names. The CoGroup pipe has the declaredFields argument allowing the developer to declare new unique field names
-        for the resulting tuple.</para>
+        <para>In the above example, we see what "logically" happens during a
+        join. Here we join two streams on the "url" field which happens to be
+        common to both streams. The result is simply two Tuple instances with
+        the same "url" appended together into a new Tuple. In practice this
+        would fail since the result Tuple has duplicate field names. The
+        CoGroup pipe has the declaredFields argument allowing the developer to
+        declare new unique field names for the resulting tuple.</para>
 
         <example>
           <title>Joining a Tuple Stream with Duplicate Fields</title>
@@ -637,18 +639,128 @@ new Every( previousPipe, argumentSelector, operation, outputSelector )</programl
 
         <mediaobject>
           <imageobject role="fo">
-            <imagedata align="center" contentwidth="6in"
+            <imagedata align="center" contentwidth="5in"
                        fileref="images/cogrouping-fields-pass.svg"></imagedata>
           </imageobject>
 
           <imageobject role="html">
-            <imagedata align="center" contentwidth="6in"
+            <imagedata align="center" contentwidth="5in"
                        fileref="images/cogrouping-fields-pass.png"></imagedata>
           </imageobject>
         </mediaobject>
 
-        <para>Here we see an example of what the developer could have named the fields so the planner would not fail.</para>
+        <para>Here we see an example of what the developer could have named
+        the fields so the planner would not fail.</para>
 
+        <para>In the example above, we explicitly set a Joiner class to join
+        our data. The reason CoGroup is named CoGroup and not Join is becuase
+        joining data is done after all the parallel streams are co-grouped by
+        their common keys. The details are not terribly important, but note
+        that a "bag" of data for every input tuple stream must be created
+        before an join operation can be performed. Each bag consists of all
+        the Tuple instances associated with a given grouping Tuple.</para>
+
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="5in"
+                       fileref="images/cogrouped-values.svg"></imagedata>
+          </imageobject>
+
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="5in"
+                       fileref="images/cogrouped-values.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+
+        <para>Above we see two bags, one for each tuple stream ("lhs" and
+        "rhs"). Each Tuple in bag is independent but all Tuples in both bags
+        have the same "url" value since we are grouping on url, from the
+        previous example. A Joiner will match up every Tuple on the "lhs" with
+        a Tuple on the "rhs". An InnerJoin is the most common. This is where
+        each Tuple on the "lhs" is matched with every Tuple on the "rhs". This
+        is the default behaviour one would see in SQL when doing a join. If
+        one of the bags was empty, no Tuples would be joined. An OuterJoin
+        allows for either bag to be empty, and if that is the case, a Tuple
+        full of <code>null</code> values would be substituted.</para>
+
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="3in"
+                       fileref="images/joins.svg"></imagedata>
+          </imageobject>
+
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="3in"
+                       fileref="images/joins.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+
+        <para>Above we see all supported Joiner types.</para>
+
+        <para><programlisting>LHS = [0,a] [1,b] [2,c]
+RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
+        will define each join type where the values are joined on the first
+        position, a numeric value.<variablelist>
+            <varlistentry>
+              <term>InnerJoin</term>
+
+              <listitem>
+                <para>An Inner join will only return a joined Tuple if neither
+                bag has is empty.<programlisting>[0,a,A] [2,c,C]</programlisting></para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term>OuterJoin</term>
+
+              <listitem>
+                <para>An Outer join will join if either the left or right bag
+                is empty.<programlisting>[0,a,A] [1,b,null] [2,c,C] [3,null,D]</programlisting></para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term>LeftJoin</term>
+
+              <listitem>
+                <para>A Left join can also be stated as a Left Inner and Right
+                Outer join, where it is ok if the right bag is empty.</para>
+
+                <programlisting>[0,a,A] [1,b,null] [2,c,C]</programlisting>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term>RightJoin</term>
+
+              <listitem>
+                <para>A Right join can also be stated as a Left Outer and
+                Right Inner join, where it is ok if the left bag is
+                empty.<programlisting>[0,a,A] [2,c,C] [3,null,D]</programlisting></para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term>MixedJoin</term>
+
+              <listitem>
+                <para>A Mixed join is where 3 or more tuple streams are
+                joined, and each pair must be joined differently. See the
+                <classname>cascading.pipe.cogroup.MixedJoin</classname> class
+                for more details.</para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term><emphasis>Custom</emphasis></term>
+
+              <listitem>
+                <para>A custom join is where the developer subclasses the
+                <classname>cascading.pipe.cogroup.Joiner</classname>
+                class.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist></para>
       </section>
     </section>
 
