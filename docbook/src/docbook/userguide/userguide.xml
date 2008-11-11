@@ -164,7 +164,7 @@
     </info>
 
     <para>Counting words in a document is the most common example presented to
-    new Hadoop (and MapReduce) developers, it is the Hadoop equivalent to
+    new Hadoop (and MapReduce) developers, it is the Hadoop equivalent to the
     "Hello World" application.</para>
 
     <para>Word counting is where a document is parsed into individual words,
@@ -197,7 +197,7 @@
     either expects certain fields, or creates new fields. This allows the
     developer to self document their code, and allows the Cascading planner to
     "fail fast" during planning if a dependency between elements isn't
-    satisfied.</para>
+    satisfied (used a missing or wrong field name).</para>
 
     <para>It is also important to point out that pipe assemblies are
     assemblied through constructor chaining. This may seem odd but is done for
@@ -306,8 +306,8 @@
         </imageobject>
       </mediaobject>
 
-      <para>There are only four Pipe types: Pipe, Each, GroupBy, CoGroup, and
-      Every.</para>
+      <para>There are only five Pipe types: Pipe, Each, GroupBy, CoGroup,
+      Every, and SubAssembly.</para>
 
       <variablelist>
         <varlistentry>
@@ -338,7 +338,8 @@
           <listitem>
             <para>GroupBy manages one input Tuple stream and does exactly as
             it sounds, that is, groups the stream on selected fields in the
-            tuple stream.</para>
+            tuple stream. GroupBy also allows for "merging" of two or more
+            tuple stream that share the same field names.</para>
           </listitem>
         </varlistentry>
 
@@ -362,167 +363,293 @@
             it.</para>
           </listitem>
         </varlistentry>
-      </variablelist>
-
-      <para>Pipe assemblies are created by chaining Pipe classes and Pipe
-      subclasses together. Chaining is accomplished by passing previous Pipe
-      instances to the constructor of the next Pipe instance.</para>
-
-      <example>
-        <title>Chaining Pipes</title>
-
-        <xi:include href="simple-pipe-assembly.xml" />
-      </example>
-
-      <para>The above example, if visualized, would look like the diagram
-      below.</para>
-
-      <mediaobject>
-        <imageobject role="fo">
-          <imagedata align="center" contentwidth="5in"
-                     fileref="images/simple-pipe-assembly.svg"></imagedata>
-        </imageobject>
-
-        <imageobject role="html">
-          <imagedata align="center" contentwidth="5in"
-                     fileref="images/simple-pipe-assembly.png"></imagedata>
-        </imageobject>
-      </mediaobject>
-
-      <para>Besides defining the paths tuple streams take through splits,
-      merges, grouping, and joining, pipe assemblies transform or filter the
-      stored values in each Tuple. This is accomplished by applying an
-      Operation to each Tuple or group of Tuples as the tuple stream passes
-      through the pipe assembly. To do that, the values in the Tuple typically
-      are given field names, in the same fashion columns are named in a
-      database so that they can be referenced or selected.</para>
-
-      <variablelist>
-        <varlistentry>
-          <term>Operation</term>
-
-          <listitem>
-            <para>Operations accept an input argument Tuple, and output zero
-            or more result Tuples. There are a few sub-types of operations
-            defined below. Cascading has a number of generic Operations that
-            can be reused, or developers can create their own custom
-            Operations.</para>
-          </listitem>
-        </varlistentry>
 
         <varlistentry>
-          <term>Tuple</term>
+          <term>SubAssembly</term>
 
           <listitem>
-            <para>In Cascading, we call each record of data a Tuple, and a
-            series of Tuples are a tuple stream. Think of a Tuple as an Array
-            of values whre each value can be any Comparable Java type.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Fields</term>
-
-          <listitem>
-            <para>Fields either declare the field names in a Tuple. Or
-            reference values in a Tuple as a selector. Fields can either be
-            string names ("first_name"), integer positions (-1 for the last
-            value), or a substitution ( <code>Fields.ALL</code> to select all
-            values in the Tuple, kinda like an asterisk (<code>*</code>) in
-            SQL).</para>
+            <para>The SubAssembly pipe allows for nesting reusable pipe
+            assemblies into a Pipe class for inclusion in a larger pipe
+            assembly. See the section on <xref
+            linkend="subassemblies" />.</para>
           </listitem>
         </varlistentry>
       </variablelist>
 
-      <para>The Each and Every pipe types are the only pipes that can be used
-      to apply Operations to the tuple stream. The Each pipe applies an
-      Operation to "each" Tuple as it passes through the pipe assembly. The
-      Every pipe applies an Operation to "every" group of Tuples as they pass
-      through the pipe assembly, on the tail end of a GroupBy or CoGroup
-      pipe.</para>
+      <section>
+        <info>
+          <title>Assembling Pipe Assemblies</title>
+        </info>
 
-      <para><programlisting>new Each( argumentSelector, operation, outputSelector )
+        <para>Pipe assemblies are created by chaining Pipe classes and Pipe
+        subclasses together. Chaining is accomplished by passing previous Pipe
+        instances to the constructor of the next Pipe instance.</para>
 
-new Every( argumentSelector, operation, outputSelector )</programlisting></para>
+        <example>
+          <title>Chaining Pipes</title>
 
-      <para>Both the Each and Every pipe take an argument selector, Operation
-      instance, and a output selector on the constructor. Where each selector
-      is a Fields instance.</para>
+          <xi:include href="simple-pipe-assembly.xml" />
+        </example>
 
-      <para>The Each pipe may only apply Functions and Filters to the tuple
-      stream as these operations may only operate on one Tuple at a
-      time.</para>
+        <para>The above example, if visualized, would look like the diagram
+        below.</para>
 
-      <para>The Every pipe may only apply Aggregators and Buffers to the tuple
-      stream as these operations may only operate on groups of tuples, one
-      grouping at a time.</para>
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="5in"
+                       fileref="images/simple-pipe-assembly.svg"></imagedata>
+          </imageobject>
 
-      <mediaobject>
-        <imageobject role="fo">
-          <imagedata align="center" contentwidth="6in"
-                     fileref="images/pipe-operation-relationship.svg"></imagedata>
-        </imageobject>
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="5in"
+                       fileref="images/simple-pipe-assembly.png"></imagedata>
+          </imageobject>
+        </mediaobject>
 
-        <imageobject role="html">
-          <imagedata align="center" contentwidth="6in"
-                     fileref="images/pipe-operation-relationship.png"></imagedata>
-        </imageobject>
-      </mediaobject>
+        <para>Besides defining the paths tuple streams take through splits,
+        merges, grouping, and joining, pipe assemblies transform or filter the
+        stored values in each Tuple. This is accomplished by applying an
+        Operation to each Tuple or group of Tuples as the tuple stream passes
+        through the pipe assembly. To do that, the values in the Tuple
+        typically are given field names, in the same fashion columns are named
+        in a database so that they can be referenced or selected.</para>
 
-      <para>The argument selector selects values from the input Tuple to be
-      passed to the Operation as argument values. The output selector selects
-      the output Tuple from from the input Tuple and the Operation result
-      Tuple. The output Tuple becomes the input Tuple to the next pipe in the
-      pipe assembly.</para>
+        <variablelist>
+          <varlistentry>
+            <term>Operation</term>
 
-      <mediaobject>
-        <imageobject role="fo">
-          <imagedata align="center" contentwidth="6in"
-                     fileref="images/each-operation-relationship.svg"></imagedata>
-        </imageobject>
+            <listitem>
+              <para>Operations accept an input argument Tuple, and output zero
+              or more result Tuples. There are a few sub-types of operations
+              defined below. Cascading has a number of generic Operations that
+              can be reused, or developers can create their own custom
+              Operations.</para>
+            </listitem>
+          </varlistentry>
 
-        <imageobject role="html">
-          <imagedata align="center" contentwidth="6in"
-                     fileref="images/each-operation-relationship.png"></imagedata>
-        </imageobject>
-      </mediaobject>
+          <varlistentry>
+            <term>Tuple</term>
 
-      <para>If the argument selector is not given, the whole input Tuple
-      (<code>Fields.ALL</code>) is passed to the Operation as argument values.
-      If the result selector is not given on an Each pipe, the Operation
-      results are returned by default (<code>Fields.RESULTS</code>), replacing
-      the input Tuple values in the tuple stream. This really only applies to
-      Functions as Filters either discard the input Tuple, or return the input
-      Tuple intact. There is no opportunity to provide an output
-      selector.</para>
+            <listitem>
+              <para>In Cascading, we call each record of data a Tuple, and a
+              series of Tuples are a tuple stream. Think of a Tuple as an
+              Array of values whre each value can be any
+              <classname>javal.lang.Comparable</classname> Java type.</para>
+            </listitem>
+          </varlistentry>
 
-      <mediaobject>
-        <imageobject role="fo">
-          <imagedata align="center" contentwidth="6in"
-                     fileref="images/every-operation-relationship.svg"></imagedata>
-        </imageobject>
+          <varlistentry>
+            <term>Fields</term>
 
-        <imageobject role="html">
-          <imagedata align="center" contentwidth="6in"
-                     fileref="images/every-operation-relationship.png"></imagedata>
-        </imageobject>
-      </mediaobject>
+            <listitem>
+              <para>Fields either declare the field names in a Tuple. Or
+              reference values in a Tuple as a selector. Fields can either be
+              string names ("first_name"), integer positions (-1 for the last
+              value), or a substitution ( <code>Fields.ALL</code> to select
+              all values in the Tuple, kinda like an asterisk (<code>*</code>)
+              in SQL).</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </section>
 
-      <para>For the Every pipe, the Operation results are appended to the
-      input Tuple (<code>Fields.ALL</code>).</para>
+      <section>
+        <info>
+          <title>Each and Every Pipes</title>
+        </info>
 
-      <para>It is important to note that the Every pipe associates Operation
-      results with the current group Tuple. For example, if you are grouping
-      on the field "department" and counting the number of "names" grouped by
-      that department, the output Fields would be
-      ["department","num_employees"]. This is true for both Aggregator, seen
-      above, and Buffer.</para>
+        <para>The Each and Every pipe types are the only pipes that can be
+        used to apply Operations to the tuple stream. The Each pipe applies an
+        Operation to "each" Tuple as it passes through the pipe assembly. The
+        Every pipe applies an Operation to "every" group of Tuples as they
+        pass through the pipe assembly, on the tail end of a GroupBy or
+        CoGroup pipe.</para>
 
-      <para>If you were also adding up the salaries associated with each
-      "name" in each "department", the output Fields would be
-      ["department","num_employees","total_salaries"]. This is only true for
-      chains of Aggregator Operations, you may not chain Buffer
-      Operations.</para>
+        <para><programlisting>new Each( previousPipe, argumentSelector, operation, outputSelector )
+
+new Every( previousPipe, argumentSelector, operation, outputSelector )</programlisting></para>
+
+        <para>Both the Each and Every pipe take a Pipe instance, an argument
+        selector, Operation instance, and a output selector on the
+        constructor. Where each selector is a Fields instance.</para>
+
+        <para>The Each pipe may only apply Functions and Filters to the tuple
+        stream as these operations may only operate on one Tuple at a
+        time.</para>
+
+        <para>The Every pipe may only apply Aggregators and Buffers to the
+        tuple stream as these operations may only operate on groups of tuples,
+        one grouping at a time.</para>
+
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/pipe-operation-relationship.svg"></imagedata>
+          </imageobject>
+
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/pipe-operation-relationship.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+
+        <para>The argument selector selects values from the input Tuple to be
+        passed to the Operation as argument values. The output selector
+        selects the output Tuple from an "appended" version of the input Tuple
+        and the Operation result Tuple. The output Tuple becomes the input
+        Tuple to the next pipe in the pipe assembly.</para>
+
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/each-operation-relationship.svg"></imagedata>
+          </imageobject>
+
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/each-operation-relationship.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+
+        <para>If the argument selector is not given, the whole input Tuple
+        (<code>Fields.ALL</code>) is passed to the Operation as argument
+        values. If the result selector is not given on an Each pipe, the
+        Operation results are returned by default
+        (<code>Fields.RESULTS</code>), replacing the input Tuple values in the
+        tuple stream. This really only applies to Functions as Filters either
+        discard the input Tuple, or return the input Tuple intact. There is no
+        opportunity to provide an output selector.</para>
+
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/every-operation-relationship.svg"></imagedata>
+          </imageobject>
+
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/every-operation-relationship.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+
+        <para>For the Every pipe, the Operation results are appended to the
+        input Tuple (<code>Fields.ALL</code>) by default.</para>
+
+        <para>It is important to note that the Every pipe associates Operation
+        results with the current group Tuple. For example, if you are grouping
+        on the field "department" and counting the number of "names" grouped
+        by that department, the output Fields would be
+        ["department","num_employees"]. This is true for both Aggregator, seen
+        above, and Buffer.</para>
+
+        <para>If you were also adding up the salaries associated with each
+        "name" in each "department", the output Fields would be
+        ["department","num_employees","total_salaries"]. This is only true for
+        chains of Aggregator Operations, you may not chain Buffer
+        Operations.</para>
+      </section>
+
+      <section>
+        <info>
+          <title>GroupBy and CoGroup Pipes</title>
+        </info>
+
+        <para>The GroupBy and CoGroup pipes serve two roles. First, they emit
+        grouped tuple streams allowing for Operations to be applied to sets of
+        related Tuple instances. Second, they allow for two streams to be
+        either merged or joined. Where merging allows for two or more tuple
+        streams originating from different sources to be treated as a single
+        stream. And joining allows two or more streams to be "joined" (in the
+        SQL sense) on a common key or set of Tuple values in a Tuple.</para>
+
+        <para>It is not required that an Every follow either GroupBy or
+        CoGroup.</para>
+
+        <para>GroupBy accepts one or more tuple streams. If two or more, they
+        must all have the same field names.</para>
+
+        <example>
+          <title>Grouping a Tuple Stream</title>
+
+          <xi:include href="simple-groupby.xml" />
+        </example>
+
+        <para>The example above simply creates a new tuple stream where Tuples
+        with the same values in "group1" and "group2" can be processed as a
+        set by an Aggregator or Buffer Operation.</para>
+
+        <example>
+          <title>Merging a Tuple Stream</title>
+
+          <xi:include href="simple-groupby-merge.xml" />
+        </example>
+
+        <para>This example merges two streams ("lhs" and "rhs") into one tuple
+        stream and groups the resulting stream on the fields "group1" and
+        "group2", in the same fashion as the previous example.</para>
+
+        <para>CoGroup accepts two or more tuple streams and does not require
+        any common field names. The grouping fields must be provided for each
+        tuple stream.</para>
+
+        <example>
+          <title>Joining a Tuple Stream</title>
+
+          <xi:include href="simple-cogroup.xml" />
+        </example>
+
+        <para>This example joins two streams ("lhs" and "rhs") on common
+        values. Note that common field names are not required here. Actually,
+        if there were any common field names, the Cascading planner would
+        throw an error as duplicate field names are not allowed.</para>
+
+        <para>This is significant because of the nature of joining streams.
+        </para>
+
+        <para>The first stage of joining has to do with identifying field
+        names that represent the grouping key for a given stream. The second
+        stage is emitting a new Tuple with the joined values, this includes
+        the grouping values, and the other values.</para>
+
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/cogrouping-fields-fail.svg"></imagedata>
+          </imageobject>
+
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/cogrouping-fields-fail.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+
+        <para>In the above example, we see what "logically" happens during a join. Here we join two streams on the
+        "url" field which happens to be common to both streams. The result is simply two Tuple instances with the same
+        "url" appended together into a new Tuple. In practice this would fail since the result Tuple has duplicate field
+        names. The CoGroup pipe has the declaredFields argument allowing the developer to declare new unique field names
+        for the resulting tuple.</para>
+
+        <example>
+          <title>Joining a Tuple Stream with Duplicate Fields</title>
+
+          <xi:include href="duplicate-cogroup.xml" />
+        </example>
+
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/cogrouping-fields-pass.svg"></imagedata>
+          </imageobject>
+
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/cogrouping-fields-pass.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+
+        <para>Here we see an example of what the developer could have named the fields so the planner would not fail.</para>
+
+      </section>
     </section>
 
     <section>
@@ -559,7 +686,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
 
           <listitem>
             <para>SequenceFile is based on the Hadoop Sequence file, which is
-            a binary format. When written or read from all Tuple values are
+            a binary format. When written or read from, all Tuple values are
             saved in their native binary form. This is the most efficient file
             format, but being binary, the result files can only be read by
             Hadoop applications.</para>
@@ -591,8 +718,8 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
             started. Even if a remote Hadoop cluster is configured, if a Lfs
             Tap is used as either a source or sink in a Flow, Cascading will
             be forced to run in "local mode" and not on the cluster. This is
-            useful when creating applications to read local files onto the
-            Hadoop distributed filesystem.</para>
+            useful when creating applications to read local files and import
+            them into the Hadoop distributed filesystem.</para>
           </listitem>
         </varlistentry>
 
@@ -742,7 +869,7 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
       application Jar class or Jar path.</para>
 
       <example>
-        <title>Creating a new Cascade</title>
+        <title>Configuring the Application Jar</title>
 
         <xi:include href="flow-properties.xml" />
       </example>
@@ -1217,7 +1344,8 @@ new Every( argumentSelector, operation, outputSelector )</programlisting></para>
 
     <section>
       <info>
-        <title>SubAssemblies</title>
+        <title xreflabel="SubAssemblies"
+        xml:id="subassemblies">SubAssemblies</title>
       </info>
 
       <para>Cascading SubAssemblies are reusable pipe assemblies that are

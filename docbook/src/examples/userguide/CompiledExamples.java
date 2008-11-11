@@ -21,29 +21,24 @@
 
 package userguide;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
-import cascading.operation.Aggregator;
-import cascading.operation.Function;
-import cascading.operation.aggregator.Count;
 import cascading.pipe.Each;
 import cascading.pipe.Every;
 import cascading.pipe.GroupBy;
 import cascading.pipe.Pipe;
 import cascading.pipe.CoGroup;
-import cascading.scheme.Scheme;
+import cascading.pipe.cogroup.InnerJoin;
 import cascading.scheme.TextLine;
 import cascading.tap.Hfs;
 import cascading.tap.Tap;
 import cascading.tuple.Fields;
 import cascading.cascade.CascadeConnector;
 import cascading.cascade.Cascade;
-import tools.ExampleTestCase;
 
 /**
  *
@@ -188,5 +183,61 @@ public class CompiledExamples
     FlowConnector flowConnector = new FlowConnector( properties );
     //@extract-end
     }
+
+  public void compileGroupBy()
+    {
+    // the "left hand side" assembly head
+    Pipe assembly = new Pipe( "assembly" );
+
+    //@extract-start simple-groupby
+    Pipe merge = new GroupBy( assembly, new Fields( "group1", "group2" ) );
+    //@extract-end
+    }
+
+
+  public void compileGroupByMerge()
+    {
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    //@extract-start simple-groupby-merge
+    Pipe[] pipes = Pipe.pipes( lhs, rhs );
+    Pipe merge = new GroupBy( pipes, new Fields("group1", "group2") );
+    //@extract-end
+    }
+
+  public void compileCoGroup()
+    {
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    //@extract-start simple-cogroup
+    Fields lhsFields = new Fields( "fieldA", "fieldB" );
+    Fields rhsFields = new Fields( "fieldC", "fieldD" );
+    Pipe merge = new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
+    //@extract-end
+    }
+
+  public void compileCoGroupExample()
+    {
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    //@extract-start duplicate-cogroup
+    Fields common = new Fields( "url");
+    Fields declared = new Fields("url1", "word", "wd_count", "url2", "sentence", "snt_count");
+    Pipe merge = new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
+    //@extract-end
+    }
+
 
   }
