@@ -31,15 +31,15 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
-public class SumFunction extends BaseOperation implements Function
+public class AddValuesFunction extends BaseOperation implements Function
   {
-  public SumFunction()
+  public AddValuesFunction()
     {
     // expects 2 arguments, fail otherwise
     super( 2, new Fields( "sum" ) );
     }
 
-  public SumFunction( Fields fieldDeclaration )
+  public AddValuesFunction( Fields fieldDeclaration )
     {
     // expects 2 arguments, fail otherwise
     super( 2, fieldDeclaration );

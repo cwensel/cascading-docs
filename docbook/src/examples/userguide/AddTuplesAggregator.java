@@ -31,20 +31,20 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
-public class SumAggregator extends BaseOperation<SumAggregator.Context> implements Aggregator<SumAggregator.Context>
+public class AddTuplesAggregator extends BaseOperation<AddTuplesAggregator.Context> implements Aggregator<AddTuplesAggregator.Context>
   {
   public static class Context
     {
     long value = 0;
     }
 
-  public SumAggregator()
+  public AddTuplesAggregator()
     {
     // expects 1 argument, fail otherwise
     super( 1, new Fields( "sum" ) );
     }
 
-  public SumAggregator( Fields fieldDeclaration )
+  public AddTuplesAggregator( Fields fieldDeclaration )
     {
     // expects 1 argument, fail otherwise
     super( 1, fieldDeclaration );

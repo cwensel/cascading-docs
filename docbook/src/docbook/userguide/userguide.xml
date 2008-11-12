@@ -1005,7 +1005,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </info>
 
       <para>Cascading requires Hadoop to be installed and correctly
-      configured.</para>
+      configured. Apache Hadoop is an Open Source Apache project and is freely
+      available. It can be downloaded from here the Hadoop website, <link
+      xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
     </section>
 
     <section>
@@ -1060,7 +1062,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>Cascading will run with Hadoop in its default 'local' or 'stand
       alone' mode, or configured as a distributed cluster.</para>
 
-      <para>When used on a cluster, a Hadoop job jar must be created with
+      <para>When used on a cluster, a Hadoop job Jar must be created with
       Cascading jars and dependent thrid-party jars in the job jar
       <filename>lib</filename> directory, per the Hadoop documentation.</para>
 
@@ -1071,7 +1073,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </example>
 
       <para>The above Ant snippet can be used in your project to create a
-      Hadoop jar for submission on your cluster.</para>
+      Hadoop jar for submission on your cluster. Again, all Hadoop
+      applications that are intended to be run in a cluster must be packaged
+      with all third-party libraries in a directory named
+      <filename>lib</filename> in the final application Jar file, regardless
+      if they are Cascading application or Hadoop MapReduce
+      applications.</para>
 
       <para>Note, the snippet above is only intended to show how to include
       Cascading libraries, you still need to compile your project into the
@@ -1083,24 +1090,29 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Executing</title>
       </info>
 
-      <para>Running a Cascading application is exactly the same as running a
-      Hadoop application. After packaging your application classes and all
-      dependent libraries, including Casdading, into a single jar (see <xref
-      linkend="building-processes" />).</para>
+      <para>Running a Cascading application is exactly the same as running any
+      Hadoop application. After packaging your application into a single jar
+      (see <xref linkend="building-processes" />), you must use
+      <filename>bin/hadoop</filename> to submit the application to the
+      cluster.</para>
 
-      <para>To execute an application stuffed into
+      <para>For example, to execute an application stuffed into
       <filename>your-application.jar</filename>, call the Hadoop shell
       script:</para>
 
       <example>
-        <title>Running Cascading</title>
+        <title>Running a Cascading Application</title>
 
-        <para><programlisting>$HADOOP_HOME/bin/hadoop jar your-application.jar [params]</programlisting></para>
+        <para><programlisting>$HADOOP_HOME/bin/hadoop jar your-application.jar [some params]</programlisting></para>
       </example>
 
       <para>If the configuration scripts in <envar>$HADOOP_CONF_DIR</envar>
-      are configured to use a cluster, the jar will be pushed into the cluster
+      are configured to use a cluster, the Jar will be pushed into the cluster
       for execution.</para>
+
+      <para>Cascading does not rely on any environment variables like
+      <envar>$HADOOP_HOME</envar> or <envar>$HADOOP_CONF_DIR</envar>, only
+      <filename>bin/hadoop</filename> does.</para>
     </section>
   </chapter>
 
@@ -1206,14 +1218,14 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       implementation.</para>
 
       <example>
-        <title>Sum Function</title>
+        <title>Add Values Function</title>
 
         <xi:include href="sum-function.xml" />
       </example>
 
       <para>The example above implements a fully functional Function that
-      accepts two arguments, adds them together, and returns the
-      result.</para>
+      accepts two values in the argument Tuple, adds them together, and
+      returns the result in a new Tuple.</para>
 
       <para>The first constructor assumes a default field name this function
       will return, but it is a best practice to always give the user the
@@ -1315,14 +1327,14 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       implementation.</para>
 
       <example>
-        <title>Sum Aggregator</title>
+        <title>Add Tuples Aggregator</title>
 
         <xi:include href="sum-aggregator.xml" />
       </example>
 
       <para>The example above implements a fully functional Aggregator that
-      accepts one argument, adds all the arguments in the current grouping,
-      and returns the result.</para>
+      accepts one value in the argument Tuple, adds all these argument Tuples
+      in the current grouping, and returns the result as a new Tuple.</para>
 
       <para>The first constructor assumes a default field name this Aggregator
       will return, but it is a best practice to always give the user the
@@ -1386,9 +1398,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </example>
 
       <para>The example above implements a fully functional buffer that
-      accepts one argument, adds all the arguments in the current grouping,
-      and returns the result divided by the number of argument tuples
-      counted.</para>
+      accepts one value in argument Tuple, adds all these argument Tuples in
+      the current grouping, and returns the result divided by the number of
+      argument tuples counted in a new Tuple.</para>
 
       <para>The first constructor assumes a default field name this Buffer
       will return, but it is a best practice to always give the user the
@@ -1397,7 +1409,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>Note this example is somewhat fabricated, in practice a
       <classname>Aggregator</classname> should be implemented to compute
-      averages.</para>
+      averages. A Buffer would be better suited for "running averages" across
+      very large spans, for example.</para>
     </section>
   </chapter>
 
@@ -1516,7 +1529,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>To configure the planner to remove some or all assertions, a
       property must be set via the
       <classname>FlowConnector#setAssertionLevel()</classname> mehod.
-      <classname>AssertionLevel.NONE</classname> removes all assertion.
+      <classname>AssertionLevel.NONE</classname> removes all assertions.
       <classname>AssertionLevel.VALID</classname> keeps <code>VALID</code>
       assertions but removes <code>STRICT</code> ones. And
       <classname>AssertionLevel.STRICT</classname> keeps all assertions, which
@@ -1739,8 +1752,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>The <classname>cascading.operation.Debug</classname> function is a
       utility Function (actually, its a Filter) that will print the current
-      argument Tuple to either stdout or stderr. It is only intended to be
-      used during development to help debug a difficult pipe assembly.</para>
+      argument Tuple to either stdout or stderr.</para>
+
+      <para>It is only intended to be used during development to help debug a
+      difficult pipe assembly.</para>
     </section>
 
     <section>
@@ -1749,10 +1764,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </info>
 
       <para>The <classname>cascading.operation.Insert</classname> function
-      allows for insertion of literal values into the tuple stream. This is
-      most useful when a splitting a tuple stream and one of the branches
-      needs some identifying value. Or when some missing parameter, like a
-      date string, needs to be inserted.</para>
+      allows for insertion of literal values into the tuple stream.</para>
+
+      <para>This is most useful when a splitting a tuple stream and one of the
+      branches needs some identifying value. Or when some missing parameter or
+      value, like a date String for todays date, needs to be inserted.</para>
     </section>
 
     <section>
@@ -2019,7 +2035,71 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>XML Operations</title>
       </info>
 
-      <para></para>
+      <para>All XML Operations are kept in a module other than core, so can be
+      included in a Cascading application by including the
+      <filename>cascading-xml-x.y.z.jar</filename> in the project. This module
+      has one dependency, the TagSoup library, which allows for HTML and XML
+      "tidying". More about TagSoup can be read on its website, <link
+      xlink:href="http://home.ccil.org/~cowan/XML/tagsoup/">http://home.ccil.org/~cowan/XML/tagsoup/</link>.</para>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>XPathParser</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.xml.XPathParser</classname>
+              function will extract a value from the passed Tuple argument
+              into a new Tuple field value. One Tuple value for every given
+              XPath expression will be created. This function effectively
+              converts an XML document into a table. If the returned value of
+              the expression is a <classname>NodeList</classname>, only the
+              first <classname>Node</classname> is used. The
+              <classname>Node</classname> is converted to a new XML document
+              and converted to a String. If only the text values are required,
+              search on the <code>text()</code> nodes, or consider using
+              XPathGenerator to handle multiple
+              <classname>NodeList</classname> values.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>XPathGenerator</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.xml.XPathGenerator</classname>
+              function is a generator function that will emit a new Tuple for
+              every <classname>Node</classname> returned by the given XPath
+              expression.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>XPathFilter</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.xml.XPathFilter</classname>
+              filter will filter out a Tuple if the given XPath expression
+              returns <code>false</code>. Set the removeMatch paramter to
+              <code>true</code> if the filter should be reversed.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>TapSoupParser</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.xml.TagSoupParser</classname>
+              function uses the Tag Soup library to convert incoming HTML to
+              clean XHTML. Use the <code>setFeature( feature, value )</code>
+              method to set TagSoup specific features (as documented on the
+              TagSoup website listed above).</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
     </section>
 
     <section>
@@ -2205,7 +2285,74 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Logical Filter Operators</title>
       </info>
 
-      <para></para>
+      <para>The logical Filter operators allows the user to assemble more
+      complex filtering to be used in a single Pipe, instead of chaining
+      multiple Pipes together to get the same effect.</para>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>And</term>
+
+            <listitem>
+              <para>The <classname>cascading.operation.filter.And</classname>
+              Filter will logically 'and' the results of the constructor
+              provided Filter instances. Logically, if
+              <methodname>Filter#isRemove()</methodname> returns
+              <code>true</code> for all given instances, this filter will
+              return <code>true</code>.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Or</term>
+
+            <listitem>
+              <para>The <classname>cascading.operation.filter.Or</classname>
+              Filter will logically 'or' the results of the constructor
+              provided Filter instances. Logically, if
+              <methodname>Filter#isRemove()</methodname> returns
+              <code>true</code> for any of the given instances, this filter
+              will return <code>true</code>.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Not</term>
+
+            <listitem>
+              <para>The <classname>cascading.operation.filter.Not</classname>
+              Filter will logically 'not' (negation) the results of the
+              constructor provided Filter instances. Logically, if
+              <methodname>Filter#isRemove()</methodname> returns
+              <code>true</code> for the given instance, this filter will
+              return the opposite, <code>false</code>.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Xor</term>
+
+            <listitem>
+              <para>The <classname>cascading.operation.filter.Xor</classname>
+              Filter will logically 'xor' (exclusive or) the results of the
+              constructor provided Filter instances. Logically, if
+              <methodname>Filter#isRemove()</methodname> returns
+              <code>true</code> for all given instances, or returns
+              <code>false</code> for all given instances, this filter will
+              return <code>true</code>. Note that Xor can only be applied to
+              two values.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
+
+      <example>
+        <title>Combining Filters</title>
+
+        <xi:include href="filter-and.xml" />
+      </example>
+
+      <para>Above, we are "and-ing" the two filters. Both must be satified for
+      the data to pass through this one Pipe.</para>
     </section>
   </chapter>
 
