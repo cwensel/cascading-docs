@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
       xmlns:xi="http://www.w3.org/2001/XInclude"
-      xmlns:ns6="http://www.w3.org/1999/xlink"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:ns5="http://www.w3.org/1998/Math/MathML"
       xmlns:ns4="http://www.w3.org/2000/svg"
       xmlns:ns3="http://www.w3.org/1999/xhtml"
@@ -75,7 +75,7 @@
       <para>On one hand, there is too much data for a single computing system
       to manage effecitively. Developers have decided to adopt Apache Hadoop
       as the base computing infrastructure, but realize that developing
-      reasonably useful applications on Hadoop is not trivial. Cascadig eases
+      reasonably useful applications on Hadoop is not trivial. Cascading eases
       the burden on developers by allowing them to rapidly create, refactor,
       test, and execute complex applications that scale linearly across a
       cluster of computers.</para>
@@ -87,7 +87,7 @@
       its "Global Namespace" filesystem which allows for a single reliable
       storage framework. Cascading eases the learning curve for developers to
       convert their existing applications for execution on a Hadoop cluster.
-      It further allows for developers to create re-usable libraries and
+      It further allows for developers to create reusable libraries and
       application for use by analysts who need to extract data from the Hadoop
       filesystem.</para>
 
@@ -98,10 +98,11 @@
       <para>The application Executor is someone, a developer or analyst, or
       some system (like a cron job) which runs a data processing application
       on a given cluster. This is typically done via the command line using a
-      pre-packaged jar compiled against the Hadoop and Cascading libraries.
-      This application may accept parameters to customize it for an given
-      execution and generally results in a set of data the user will export
-      from the Hadoop filesystem for some specific purpose.</para>
+      pre-packaged Java Jar file compiled against the Apache Hadoop and
+      Cascading libraries. This application may accept parameters to customize
+      it for an given execution and generally results in a set of data the
+      user will export from the Hadoop filesystem for some specific
+      purpose.</para>
 
       <para>The process Assembler is someone who assembles data processing
       workflows into unique applications. This is generally a development task
@@ -121,8 +122,8 @@
 
       <para>All three roles can be a developer, but the API allows for a clean
       separation of responsibilities for larger organizations that need
-      non-developers to run ad-hoc applications on a given Hadoop
-      cluster.</para>
+      non-developers to run ad-hoc applications or build production processes
+      on a Hadoop cluster.</para>
     </section>
 
     <section>
@@ -130,8 +131,8 @@
         <title>What is Apache Hadoop</title>
       </info>
 
-      <para>From the Hadoop website, it<quote>is a software platform that lets
-      one easily write and run applications that process vast amounts of
+      <para>From the Hadoop website, it <quote>is a software platform that
+      lets one easily write and run applications that process vast amounts of
       data</quote>.</para>
 
       <para>To be a little more specific, Hadoop provides a storage layer that
@@ -141,20 +142,22 @@
 
       <para>The storage layer, the Hadoop File System (HDFS), looks like a
       single storage volume that has been optimized for many concurrent
-      serialized reads of large data files. Where large ranges from Gigabytes
-      to Petabytes. But it only support a single writer. Thus random access to
-      the data is not really possible in an efficient manner. But this is why
-      it is so performant and reliable. Reliable in part because this
-      restriction allows for the data to be replicated across the cluster
-      reducing the chance of data loss.</para>
+      serialized reads of large data files. Where "large" ranges from
+      Gigabytes to Petabytes. But it only supports a single writer. Thus
+      random access to the data is not really possible in an efficient manner.
+      But this is why it is so performant and reliable. Reliable in part
+      because this restriction allows for the data to be replicated across the
+      cluster reducing the chance of data loss.</para>
 
       <para>The execution layer relies on a "divide and conquer" strategy
       called MapReduce. MapReduce is beyond the scope of this document, but
-      suffice it to say, it can be so difficult to develop applications
-      against that Cascading was created to offset the complexity.</para>
+      suffice it to say, it can be so difficult to develop "real world"
+      applications against that Cascading was created to offset the
+      complexity.</para>
 
       <para>Apache Hadoop is an Open Source Apache project and is freely
-      available.</para>
+      available. It can be downloaded from here the Hadoop website, <link
+      xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
     </section>
   </chapter>
 
@@ -168,7 +171,7 @@
     "Hello World" application.</para>
 
     <para>Word counting is where a document is parsed into individual words,
-    and those words are counted.</para>
+    and the frequency of those words are counted.</para>
 
     <para>For example, if we counted the last paragraph "is" would be counted
     twice, and "document" counted once.</para>
@@ -221,11 +224,11 @@
     pipe assemblies, especially where there are splits, joins, and merges in
     the assembly.</para>
 
-    <para>To paraphrase, our example:</para>
+    <para>To paraphrase, our example will:</para>
 
     <itemizedlist>
       <listitem>
-        <para>will read each line of text and give it the field name
+        <para>read each line of text from a file and give it the field name
         "line",</para>
       </listitem>
 
@@ -1843,9 +1846,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <xi:include href="regex-parser.xml" />
 
-              <para>Above, we parse an Apache log "line" into its parts. Note the int[] groups array starts at 1, not 0. Group 0 is the whole group, so if included
-              the first field would be a copy of "line" and not "ip".</para>
-
+              <para>Above, we parse an Apache log "line" into its parts. Note
+              the int[] groups array starts at 1, not 0. Group 0 is the whole
+              group, so if included the first field would be a copy of "line"
+              and not "ip".</para>
             </listitem>
           </varlistentry>
 
@@ -1864,8 +1868,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <xi:include href="regex-replace.xml" />
 
-              <para>Above we replace all adjoined white space characters with a single space character.</para>
-
+              <para>Above we replace all adjoined white space characters with
+              a single space character.</para>
             </listitem>
           </varlistentry>
 
@@ -1888,10 +1892,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <xi:include href="regex-filter.xml" />
 
-              <para>Above we keep all lines where the "ip" address starts with "68.".</para>
-
+              <para>Above we keep all lines where the "ip" address starts with
+              "68.".</para>
             </listitem>
-
           </varlistentry>
 
           <varlistentry>
@@ -1902,12 +1905,13 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               <classname>cascading.operation.regex.RegexGenerator</classname>
               function will emit a new Tuple for every matched regular
               expression group, instead of a Tuple with every group as a
-              value. </para>
+              value.</para>
 
               <xi:include href="regex-generator.xml" />
 
-              <para>Above each "line" in a document is parsed into unique words and stored in the "word" field of each result Tuple.</para>
-
+              <para>Above each "line" in a document is parsed into unique
+              words and stored in the "word" field of each result
+              Tuple.</para>
             </listitem>
           </varlistentry>
 
