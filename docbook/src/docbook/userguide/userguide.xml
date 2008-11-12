@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
-      xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:ns5="http://www.w3.org/1998/Math/MathML"
       xmlns:ns4="http://www.w3.org/2000/svg"
       xmlns:ns3="http://www.w3.org/1999/xhtml"
@@ -1934,7 +1934,58 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Java Expression Operations</title>
       </info>
 
-      <para></para>
+      <para>Cascading provides some support for dynamically compiled Java
+      expression to be used as either Functions or Filters. This functionality
+      is provided by the Janino embedded compiler. Janino and its documetation
+      can be found on its website, <link
+      xlink:href="http://www.janino.net/">http://www.janino.net/</link>. But
+      in short, an Expression is a single line of Java, for example <code>a +
+      3 * 2</code> or <code>a &lt; 7</code>. The first would resolve to some
+      number, the second to a boolean value. Where <code>a</code> and
+      <code>b</code> are field names passed in as Tuple arguments to the
+      Operation. Janino will compile this expression into bytecode giving
+      compiled code processing speeds. </para>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>ExpressionFunction</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.expressionExpressionFunction</classname>
+              function dynamically resolves a given expression using argument
+              Tuple values as inputs to the fields specified in the
+              expression.</para>
+
+              <xi:include href="expression-function.xml" />
+
+              <para>Above, we create a new String value form our expression. Note we must declare the type of every
+              input Tuple value so the expression compiler knows how to treat the variables in the expression.</para>
+
+            </listitem>
+
+          </varlistentry>
+
+          <varlistentry>
+            <term>ExpressionFilter</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.expressionExpressionFilter</classname>
+              filter dynamically resolves a given expression using argument
+              Tuple values as inputs to the fields specified in the
+              expression. Any Tuple that returns true for the given expression
+              will be removed from the stream.</para>
+
+              <xi:include href="expression-filter.xml" />
+
+              <para>Above, every line in the Apache log that does not have a "200" status will be filtered out. Notice
+              that the "status" would be a String in this example if it was emitted from a RegexParser, if so the ExpressionFilter will coerce the value from a
+              String to an <classname>int</classname> for the comparison.</para>
+
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
     </section>
 
     <section>
