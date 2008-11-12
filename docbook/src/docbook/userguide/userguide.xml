@@ -1885,11 +1885,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               the pattern is applied to each Tuple value individually. See the
               <classname>java.util.regex.Matcher#find()</classname>
               method.</para>
+
+              <xi:include href="regex-filter.xml" />
+
+              <para>Above we keep all lines where the "ip" address starts with "68.".</para>
+
             </listitem>
-
-            <xi:include href="regex-filter.xml" />
-
-            <para>Above we keep all lines where the "ip" address starts with "68.".</para>
 
           </varlistentry>
 
