@@ -1635,7 +1635,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </info>
 
       <para>The <classname>cascading.operation.Identify</classname> function
-      is used to "shape" a tuple stream.</para>
+      is used to "shape" a tuple stream. Here are some common patterns.</para>
 
       <para><variablelist>
           <varlistentry>
@@ -1685,7 +1685,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
             <term>Rename a single field</term>
 
             <listitem>
-              <para></para>
+              <para>Here we rename a single field, but return it along with an
+              input Tuple field as the result.</para>
+
+              <xi:include href="identity-rename-some.xml" />
             </listitem>
           </varlistentry>
 
@@ -1693,7 +1696,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
             <term>Coerce values to specific primitive types</term>
 
             <listitem>
-              <para></para>
+              <para>Here we replace the Tuple String values "status" and
+              "size" with <classname>int</classname> and
+              <classname>long</classname>, respectively.</para>
+
+              <xi:include href="identity-coerce.xml" />
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -1704,7 +1711,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Debug Function</title>
       </info>
 
-      <para></para>
+      <para>The <classname>cascading.operation.Debug</classname> function is a
+      utility Function (actually, its a Filter) that will print the current
+      argument Tuple to either stdout or stderr. It is only intended to be
+      used during development to help debug a difficult pipe assembly.</para>
     </section>
 
     <section>
@@ -1712,7 +1722,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Insert Function</title>
       </info>
 
-      <para></para>
+      <para>The <classname>cascading.operation.Insert</classname> function
+      allows for insertion of literal values into the tuple stream. This is
+      most useful when a splitting a tuple stream and one of the branches
+      needs some identifying value. Or when some missing parameter, like a
+      date string, needs to be inserted.</para>
     </section>
 
     <section>
@@ -1720,7 +1734,74 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Text Functions</title>
       </info>
 
-      <para></para>
+      <para>Cascading includes a number of text functions in the
+      <classname>cascading.operation.text</classname> package.</para>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>FieldJoiner</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.text.FieldJoiner</classname>
+              function joins all the values in a Tuple with a given delimiter
+              and stuffs the result into a new field.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>FieldFormatter</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.text.FieldFormatter</classname>
+              function formats Tuple values with a given String format and
+              stuffs the result into a new field. The
+              <classname>java.util.Formatter</classname> class is used to
+              create a new formatted String.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>DateParser</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.text.DateParser</classname>
+              function is used to convert a text date String to a timestamp
+              using the <classname>java.text.SimpleDateFormat</classname>
+              syntax. The timestamp is a <classname>long</classname> value
+              representing the number of milliseconds since January 1, 1970,
+              00:00:00 GMT. By default it emits a field with the name "ts" for
+              timestamp, but this can be overridden by passing a declared
+              Fields value.</para>
+
+              <xi:include href="text-create-timestamp.xml" />
+
+              <para>Above we convert an Apache log style date-time field into
+              a <classname>long</classname> timestamp.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>DateFormatter</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.text.DateFormatter</classname>
+              function is used to convert a date timestamp to a formatted
+              String. This function expects a <classname>long</classname>
+              value representing the number of milliseconds since January 1,
+              1970, 00:00:00 GMT. And uses the
+              <classname>java.text.SimpleDateFormat</classname> syntax.</para>
+
+              <xi:include href="text-format-date.xml" />
+
+              <para>Above we convert a <classname>long</classname> timestamp
+              ("ts") to a date String.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
     </section>
 
     <section>
@@ -1728,7 +1809,119 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Regular Expression Operations</title>
       </info>
 
-      <para></para>
+      <para><variablelist>
+          <varlistentry>
+            <term>RegexSplitter</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.regex.RegexSplitter</classname>
+              function will split an argument value by a regex pattern String.
+              Internally, this function uses
+              <classname>java.util.regex.Pattern#split()</classname>, thus
+              behaves accordingly. By default this function splits on the TAB
+              character ("\t"). If a known number of values will emerge from
+              this function, it can declare field names. In this case, if the
+              splitter encounters more split values than field names, the
+              remaining values will be discarded, see
+              <classname>java.util.regex.Pattern#split( input, limit
+              )</classname> for more information.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>RegexParser</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.regex.RegexParser</classname>
+              function is used to extract a regular expression matched value
+              from an incoming argument value. If the regular expression is
+              sufficiently complex, and int array may be provided which
+              specifies which regex groups should be returned into which field
+              names.</para>
+
+              <xi:include href="regex-parser.xml" />
+
+              <para>Above, we parse an Apache log "line" into its parts. Note the int[] groups array starts at 1, not 0. Group 0 is the whole group, so if included
+              the first field would be a copy of "line" and not "ip".</para>
+
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>RegexReplace</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.regex.RegexReplace</classname>
+              function is used to replace a regex matched value with a
+              replacement value. It maybe used in a "replace all" or "replace
+              first" mode. See
+              <classname>java.util.regex.Matcher#replaceAll()</classname> and
+              <classname>java.util.regex.Matcher#replaceFirst()</classname>
+              methods.</para>
+
+              <xi:include href="regex-replace.xml" />
+
+              <para>Above we replace all adjoined white space characters with a single space character.</para>
+
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>RegexFilter</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.regex.RegexFilter</classname>
+              function will apply a regular expression pattern String against
+              every input Tuple value and filter the Tuple stream accordingly.
+              By default, Tuples that match the given pattern are kept, and
+              Tuples that do not match are filtered out. This can be changed
+              by setting "removeMatch" to <code>true</code>. Also, by default,
+              the whole Tuple is matched against the given pattern String (TAB
+              delimited). If "matchEachElement" is set to <code>true</code>,
+              the pattern is applied to each Tuple value individually. See the
+              <classname>java.util.regex.Matcher#find()</classname>
+              method.</para>
+            </listitem>
+
+            <xi:include href="regex-filter.xml" />
+
+            <para>Above we keep all lines where the "ip" address starts with "68.".</para>
+
+          </varlistentry>
+
+          <varlistentry>
+            <term>RegexGenerator</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.regex.RegexGenerator</classname>
+              function will emit a new Tuple for every matched regular
+              expression group, instead of a Tuple with every group as a
+              value. </para>
+
+              <xi:include href="regex-generator.xml" />
+
+              <para>Above each "line" in a document is parsed into unique words and stored in the "word" field of each result Tuple.</para>
+
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>RegexSplitGenerator</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.regex.RegexSplitGenerator</classname>
+              function will emit a new Tuple for every split on the incoming
+              argument value delimited by the given pattern String. The
+              behavior is similar to the RegexSplitter function.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
     </section>
 
     <section>

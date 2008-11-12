@@ -42,10 +42,10 @@ import cascading.scheme.TextLine;
  */
 public class IdentityTest extends ExampleTestCase
   {
-  public void testIdentityPatterns() throws IOException
+  public void testIdentityRenameAll() throws IOException
     {
     String inputPath = getDataPath() + "apache.10.txt";
-    String outputPath = getOutputPath() + "identity";
+    String outputPath = getOutputPath() + "identityall";
 
     Tap source = new Hfs( new TextLine(), inputPath );
     Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.Replace );
@@ -109,7 +109,81 @@ public class IdentityTest extends ExampleTestCase
     assertEquals( "75.185.76.245\tPOST", iterator.next().get( 1 ) );
 
     iterator.close();
+    }
 
+  public void testIdentityRenameSome() throws IOException
+    {
+    String inputPath = getDataPath() + "apache.10.txt";
+    String outputPath = getOutputPath() + "identitysome";
+
+    Tap source = new Hfs( new TextLine(), inputPath );
+    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.Replace );
+
+    Pipe pipe = new Pipe( "logs" );
+
+    String regex = "^([^ ]*) +[^ ]* +[^ ]* +\\[([^]]*)\\] +\\\"([^ ]*) ([^ ]*) [^ ]*\\\" ([^ ]*) ([^ ]*).*$";
+    Fields fieldDeclaration = new Fields( "ip", "time", "method", "event", "status", "size" );
+    int[] groups = {1, 2, 3, 4, 5, 6};
+    RegexParser parser = new RegexParser( fieldDeclaration, regex, groups );
+    pipe = new Each( pipe, new Fields( "line" ), parser );
+
+    //@extract-start identity-rename-some
+    // incoming -> "ip", "time", "method", "event", "status", "size"
+
+    Fields fieldSelector = new Fields( "address", "method" );
+    pipe = new Each( pipe, new Fields( "ip" ), new Identity( new Fields( "address" ) ), fieldSelector );
+
+    // outgoing -> "address", "method"
+    //@extract-end
+
+    Flow flow = new FlowConnector().connect( source, sink, pipe );
+
+    flow.complete();
+
+    validateLength( flow, 10 );
+
+    TupleIterator iterator = flow.openSink();
+
+    assertEquals( "75.185.76.245\tPOST", iterator.next().get( 1 ) );
+
+    iterator.close();
+    }
+
+  public void testIdentityCoerce() throws IOException
+    {
+    String inputPath = getDataPath() + "apache.10.txt";
+    String outputPath = getOutputPath() + "identitysome";
+
+    Tap source = new Hfs( new TextLine(), inputPath );
+    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.Replace );
+
+    Pipe pipe = new Pipe( "logs" );
+
+    String regex = "^([^ ]*) +[^ ]* +[^ ]* +\\[([^]]*)\\] +\\\"([^ ]*) ([^ ]*) [^ ]*\\\" ([^ ]*) ([^ ]*).*$";
+    Fields fieldDeclaration = new Fields( "ip", "time", "method", "event", "status", "size" );
+    int[] groups = {1, 2, 3, 4, 5, 6};
+    RegexParser parser = new RegexParser( fieldDeclaration, regex, groups );
+    pipe = new Each( pipe, new Fields( "line" ), parser );
+
+    //@extract-start identity-coerce
+    // incoming -> "ip", "time", "method", "event", "status", "size"
+
+    pipe = new Each( pipe, new Fields( "status", "size" ), new Identity( Integer.TYPE, Long.TYPE ) );
+
+    // outgoing -> "status", "size"
+    //@extract-end
+
+    Flow flow = new FlowConnector().connect( source, sink, pipe );
+
+    flow.complete();
+
+    validateLength( flow, 10 );
+
+    TupleIterator iterator = flow.openSink();
+
+    assertEquals( "403\t174", iterator.next().get( 1 ) );
+
+    iterator.close();
     }
 
   }
