@@ -1445,7 +1445,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
     <section>
       <info>
-        <title>Stream Assertions</title>
+        <title xreflabel="Stream Assertions" xml:id="stream-assertions">Stream
+        Assertions</title>
       </info>
 
       <para><inlinemediaobject>
@@ -1465,32 +1466,29 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </inlinemediaobject></para>
 
       <para>Stream assertions are simply a mechanism to 'assert' that one or
-      more values in a data stream meet certain criteria. This is similar to
-      the Java language 'assert' keyword, or a unit test.</para>
-
-      <para>An example would be 'assertNotNull' or 'assertMatches'. Here are a
-      few more assertions.</para>
+      more values in a tuple stream meet certain criteria. This is similar to
+      the Java language 'assert' keyword, or a unit test. An example would be
+      'assert not null' or 'assert matches'.</para>
 
       <para>Assertions are treated like any other function or aggregator in
-      Cascading. They are embedded directly into the data processing work flow
-      or 'pipe assembly' by the developer. If an assertion fails, the
-      processing stops, by default. Alternately they can trigger a Failure
-      Trap.</para>
+      Cascading. They are embedded directly into the pipe assembly by the
+      developer. If an assertion fails, the processing stops, by default.
+      Alternately they can trigger a Failure Trap.</para>
 
       <para>As with any test, sometimes they are wanted, and sometimes they
       are unnecessary. Thus stream assertions are embedded as either 'strict'
       or 'validating'.</para>
 
       <para>When running a tests against regression data, it makes sense to
-      use strict assertions. This data should be small and represent many of
-      the edge cases the processing assembly must support robustly. When
-      running tests in staging, or with data that may vary in quality since it
-      is from an unmanaged source, using validating assertions make much
-      sense. Then there are obvious cases where assertions just get in the way
-      and slow down processing and it would be nice to just bypass
-      them.</para>
+      use strict assertions. This regression data should be small and
+      represent many of the edge cases the processing assembly must support
+      robustly. When running tests in staging, or with data that may vary in
+      quality since it is from an unmanaged source, using validating
+      assertions make much sense. Then there are obvious cases where
+      assertions just get in the way and slow down processing and it would be
+      nice to just bypass them.</para>
 
-      <para>During runtime, Cascading can be instructed to 'plan out' strict,
+      <para>During runtime, Cascading can be instructed to plan out strict,
       validating, or all assertions before building the final MapReduce jobs
       via the MapReduce Job Planner. And they are truly planned out of the
       resulting job, not just switched off, providing the best
@@ -1498,6 +1496,31 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>This is just one feature of lazily building MapReduce jobs via a
       planner, instead of hard coding them.</para>
+
+      <example>
+        <title>Adding Assertions</title>
+
+        <xi:include href="simple-assertion.xml" />
+      </example>
+
+      <para>Again, assertions are added to a pipe assembly like any other
+      operation, except the <classname>AssertionLevel</classname> must be set,
+      so the planner knows how to treat the assertion during planning.</para>
+
+      <example>
+        <title>Planning Out Assertions</title>
+
+        <xi:include href="simple-assertion-planner.xml" />
+      </example>
+
+      <para>To configure the planner to remove some or all assertions, a
+      property must be set via the
+      <classname>FlowConnector#setAssertionLevel()</classname> mehod.
+      <classname>AssertionLevel.NONE</classname> removes all assertion.
+      <classname>AssertionLevel.VALID</classname> keeps <code>VALID</code>
+      assertions but removes <code>STRICT</code> ones. And
+      <classname>AssertionLevel.STRICT</classname> keeps all assertions, which
+      is the planner default value.</para>
     </section>
 
     <section>
@@ -1521,15 +1544,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           </textobject>
         </inlinemediaobject></para>
 
-      <para>Failure Traps are the same as a data output sink (opposed to a
-      source), except being bound to a particular tail element of the pipe
-      assembly, traps can be bound to intermediate Pipe steps, like a Stream
+      <para>Failure Traps are the same as a Tap sink (opposed to a source),
+      except being bound to a particular tail element of the pipe assembly,
+      traps can be bound to intermediate Pipe steps, like to a Stream
       Assertion.</para>
 
       <para>Whenever an operation fails and throws an exception, and there is
-      an associated trap, the offending data will be saved to the file
-      resource specified by the trap. This allows the job to continue
-      processing without any data loss.</para>
+      an associated trap, the offending Tuple will be saved to the resource
+      specified by the trap Tap. This allows the job to continue processing
+      without any data loss.</para>
 
       <para>By design, clusters are hardware fault tolerant. Lose a node, the
       cluster continues working.</para>
@@ -1546,9 +1569,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Event Handling</title>
       </info>
 
-      <para>Each cluster job, or Flow, has the ability to execute callbacks
-      via an event listener. This is very useful when external application
-      need to be notified that a Flow has completed.</para>
+      <para>Each Flow, has the ability to execute callbacks via an event
+      listener. This is very useful when external application need to be
+      notified that a Flow has completed.</para>
 
       <para>A good example is when running Flows on an Amazon EC2 Hadoop
       cluster. After the Flow is completed, a SQS event can be sent notifying
@@ -1623,7 +1646,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       common idioms.</para>
 
       <para>See the Cascading website for publicly available scripting
-      languate binding.</para>
+      languate bindings.</para>
     </section>
   </chapter>
 
@@ -1931,7 +1954,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
     <section>
       <info>
-        <title>Java Expression Operations</title>
+        <title xreflabel="Expression Operations"
+        xml:id="operation-expression">Java Expression Operations</title>
       </info>
 
       <para>Cascading provides some support for dynamically compiled Java
@@ -1944,7 +1968,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       number, the second to a boolean value. Where <code>a</code> and
       <code>b</code> are field names passed in as Tuple arguments to the
       Operation. Janino will compile this expression into bytecode giving
-      compiled code processing speeds. </para>
+      compiled code processing speeds.</para>
 
       <para><variablelist>
           <varlistentry>
@@ -1959,11 +1983,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <xi:include href="expression-function.xml" />
 
-              <para>Above, we create a new String value form our expression. Note we must declare the type of every
-              input Tuple value so the expression compiler knows how to treat the variables in the expression.</para>
-
+              <para>Above, we create a new String value form our expression.
+              Note we must declare the type of every input Tuple value so the
+              expression compiler knows how to treat the variables in the
+              expression.</para>
             </listitem>
-
           </varlistentry>
 
           <varlistentry>
@@ -1979,10 +2003,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <xi:include href="expression-filter.xml" />
 
-              <para>Above, every line in the Apache log that does not have a "200" status will be filtered out. Notice
-              that the "status" would be a String in this example if it was emitted from a RegexParser, if so the ExpressionFilter will coerce the value from a
-              String to an <classname>int</classname> for the comparison.</para>
-
+              <para>Above, every line in the Apache log that does not have a
+              "200" status will be filtered out. Notice that the "status"
+              would be a String in this example if it was emitted from a
+              RegexParser, if so the ExpressionFilter will coerce the value
+              from a String to an <classname>int</classname> for the
+              comparison.</para>
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -2001,7 +2027,177 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Assertions</title>
       </info>
 
-      <para></para>
+      <para>Cascading Stream Assertions are used to build robust reusable pipe
+      assemblies. They can be planned out of a Flow instance during runtime.
+      For more information see the section on <xref
+      linkend="stream-assertions" />. Below we describe the Assertions
+      available in the core library.</para>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>AssertEquals</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertEquals</classname>
+              Assertion asserts the number of values given on the constructor
+              is equal to the number of argument Tuple values and that each
+              constructor value is <code>.equals()</code> to its corresponding
+              argument value.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertEqualsAll</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertEqualsAll</classname>
+              Assertion asserts that every value in the argument Tuple is
+              <code>.equals()</code> to the single value given on the
+              constructor.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertExpression</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertExpression</classname>
+              Assertion dynamically resolves a given Java expression (see
+              <xref linkend="operation-expression" />) using argument Tuple
+              values. Any Tuple that returns <code>true</code> for the given
+              expression passes the assertion.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertMatches</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertMatches</classname>
+              Assertion matches the given regular expression pattern String
+              against the whole argument Tuple by joining each individual
+              element of the Tuple with a TAB character (\t).</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertMatchesAll</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertMatchesAll</classname>
+              Assertion matches the given regular expression pattern String
+              against each argument Tuple value individually.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertNotNull</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertNotNull</classname>
+              Assertion asserts that every value in the argument Tuple is not
+              a <code>null</code> value.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertNull</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertNull</classname>
+              Assertion asserts that every value in the argument Tuple is a
+              <code>null</code> value.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertSizeEquals</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertSizeEquals</classname>
+              Assertion asserts that the current Tuple in the tuple stream is
+              exactly the given size. On evaluation, <code>Tuple#size()</code>
+              is called (note Tuples may hold <code>null</code>
+              values).</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertSizeLessThan</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertSizeLessThan</classname>
+              Assertion asserts that the current Tuple in the stream has a
+              size less than (<code>&lt;</code>) the given size. On
+              evaluation, <code>Tuple#size()</code> is called (note Tuples may
+              hold <code>null</code> values).</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertSizeMoreThan</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertSizeMoreThan</classname>
+              Assertion asserts that the current Tuple in the stream has a
+              size more than (<code>&gt;</code>) the given size. On
+              evaluation, <code>Tuple#size()</code> is called (note Tuples may
+              hold <code>null</code> values).</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertGroupSizeEquals</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertGroupSizeEquals</classname>
+              Group Assertion asserts that the number of items in the current
+              grouping is equal (<code>==</code>) the given size. If a pattern
+              String is given, only grouping keys that match the regular
+              expression will have this assertion applied where multiple key
+              values are delimited by a TAB character.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertGroupSizeLessThan</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertGroupSizeEquals</classname>
+              Group Assertion asserts that the number of items in the current
+              grouping is less than (<code>&lt;</code>) the given size. If a
+              pattern String is given, only grouping keys that match the
+              regular expression will have this assertion applied where
+              multiple key values are delimited by a TAB character.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertGroupSizeMoreThan</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertGroupSizeEquals</classname>
+              Group Assertion asserts that the number of items in the current
+              grouping is more than (<code>&gt;</code>) the given size. If a
+              pattern String is given, only grouping keys that match the
+              regular expression will have this assertion applied where
+              multiple key values are delimited by a TAB character.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
     </section>
 
     <section>
