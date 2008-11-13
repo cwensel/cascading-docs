@@ -78,7 +78,8 @@ public class WordCountTest extends ExampleTestCase
     assembly = new Every( assembly, count );
 
     // plan a new Flow from the assembly using the source and sink Taps
-    Flow flow = new FlowConnector().connect( "word-count", source, sink, assembly );
+    FlowConnector flowConnector = new FlowConnector();
+    Flow flow = flowConnector.connect( "word-count", source, sink, assembly );
 
     // execute the flow, block until complete
     flow.complete();

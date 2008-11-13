@@ -9,8 +9,10 @@
   <property name="cascading.home" location="${basedir}/../cascading"/>
   <property file="${cascading.home}/version.properties"/>
   <property name="cascading.release.version" value="x.y.z"/>
-  <property name="cascading.filename.core" value="cascading-core-${cascading.release.version}.jar"/>
-  <property name="cascading.filename.xml" value="cascading-xml-${cascading.release.version}.jar"/>
+  <property name="cascading.filename.core"
+            value="cascading-core-${cascading.release.version}.jar"/>
+  <property name="cascading.filename.xml"
+            value="cascading-xml-${cascading.release.version}.jar"/>
   <property name="cascading.libs" value="${cascading.home}/lib"/>
   <property name="cascading.libs.core" value="${cascading.libs}"/>
   <property name="cascading.libs.xml" value="${cascading.libs}/xml"/>
@@ -20,15 +22,17 @@
     <available file="${cascading.home}/${cascading.filename.core}"/>
   </condition>
 
-  <property name="cascading.lib.core" value="${cascading.path}/${cascading.filename.core}"/>
-  <property name="cascading.lib.xml" value="${cascading.path}/${cascading.filename.xml}"/>
+  <property name="cascading.lib.core"
+            value="${cascading.path}/${cascading.filename.core}"/>
+  <property name="cascading.lib.xml"
+            value="${cascading.path}/${cascading.filename.xml}"/>
 
   <!--
-    A sample target to jar project classes and Cascading libraries into a single Hadoop
-    compatible jar file.
+    A sample target to jar project classes and Cascading
+    libraries into a single Hadoop compatible jar file.
    -->
 
-  <target name="jar" description="creates a Hadoop ready jar will all dependencies">
+  <target name="jar" description="creates a Hadoop ready jar w/all dependencies">
 
     <!-- copy Cascading classes and libraries -->
     <copy todir="${build.classes}/lib" file="${cascading.lib.core}"/>

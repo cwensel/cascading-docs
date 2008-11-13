@@ -31,7 +31,8 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
-public class AddTuplesAggregator extends BaseOperation<AddTuplesAggregator.Context> implements Aggregator<AddTuplesAggregator.Context>
+public class AddTuplesAggregator extends BaseOperation<AddTuplesAggregator.Context>
+                                 implements Aggregator<AddTuplesAggregator.Context>
   {
   public static class Context
     {
@@ -50,13 +51,15 @@ public class AddTuplesAggregator extends BaseOperation<AddTuplesAggregator.Conte
     super( 1, fieldDeclaration );
     }
 
-  public void start( FlowProcess flowProcess, AggregatorCall<Context> aggregatorCall )
+  public void start( FlowProcess flowProcess,
+                     AggregatorCall<Context> aggregatorCall )
     {
     // set the context object, starting at zero
     aggregatorCall.setContext( new Context() );
     }
 
-  public void aggregate( FlowProcess flowProcess, AggregatorCall<Context> aggregatorCall )
+  public void aggregate( FlowProcess flowProcess,
+                         AggregatorCall<Context> aggregatorCall )
     {
     TupleEntry arguments = aggregatorCall.getArguments();
     Context context = aggregatorCall.getContext();
@@ -65,7 +68,8 @@ public class AddTuplesAggregator extends BaseOperation<AddTuplesAggregator.Conte
     context.value += arguments.getInteger( 0 );
     }
 
-  public void complete( FlowProcess flowProcess, AggregatorCall<Context> aggregatorCall )
+  public void complete( FlowProcess flowProcess,
+                        AggregatorCall<Context> aggregatorCall )
     {
     Context context = aggregatorCall.getContext();
 

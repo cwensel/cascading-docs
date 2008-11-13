@@ -7,7 +7,7 @@
       xmlns:ns3="http://www.w3.org/1999/xhtml"
       xmlns:ns="http://docbook.org/ns/docbook">
   <info>
-    <title>Cascading - A User Guide</title>
+    <title>Cascading - User Guide</title>
 
     <pubdate>November, 2008</pubdate>
 
@@ -19,7 +19,7 @@
       <holder>Concurrent, Inc</holder>
     </copyright>
 
-    <releaseinfo>V 1.0-beta</releaseinfo>
+    <releaseinfo>V 1.0-preview</releaseinfo>
 
     <productname>Cascading</productname>
 
@@ -31,11 +31,11 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata contentwidth="1.5in" fileref="images/cascading-logo.svg"></imagedata>
+        <imagedata contentwidth="1in" fileref="images/cascading-logo.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata contentwidth="1.5in" fileref="images/cascading-logo.png"></imagedata>
+        <imagedata contentwidth="1in" fileref="images/cascading-logo.png"></imagedata>
       </imageobject>
     </mediaobject>
   </info>
@@ -769,8 +769,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
     <section>
       <info>
-        <title>Data Sources and Sinks</title>
+        <title>Source and Sink Taps</title>
       </info>
+
+      <para>All input data comes from, and all output data feeds to, a
+      <classname>cascading.tap.Tap</classname> instance.</para>
 
       <para>A Tap represents a resource like a data file on the local
       filesystem, on a Hadoop distributed filesystem, or even on Amazon S3.
@@ -990,6 +993,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       will start each flow as its data sources become available. If two or
       more Flow instances have no dependencies, they will be submitted
       together so they can execute in parallel.</para>
+
+      <para>For more information, see the section on <xref
+      linkend="cascade-scheduler" />.</para>
     </section>
   </chapter>
 
@@ -1582,10 +1588,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <xi:include href="simple-traps.xml" />
       </example>
 
-      <para>In the above example, we bind our trap Tap to the pipe assembly segment named "assertions". Note how we
-      can name branches and segments by using a single <classname>Pipe</classname> instance and it applies to all subsequent
-      Pipe instances.</para>
-
+      <para>In the above example, we bind our trap Tap to the pipe assembly
+      segment named "assertions". Note how we can name branches and segments
+      by using a single <classname>Pipe</classname> instance and it applies to
+      all subsequent Pipe instances.</para>
     </section>
 
     <section>
@@ -2377,6 +2383,22 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>MapReduce Job Planner</title>
       </info>
 
+      <para>The MapReduce Job Planner is an internal feature of
+      Cascading.</para>
+
+      <para>When a collection of functions, splits, and joins are all tied up
+      together into a 'pipe assembly', the FlowConnector object is used to
+      create a new Flow instance against input and output data paths. This
+      Flow is a single Cascading job.</para>
+
+      <para>Internally the FlowConnector employs an intelligent planner to
+      convert the pipe assembly to a graph of dependent MapReduce jobs that
+      can be executed on a Hadoop cluster.</para>
+
+      <para>All this happens under the scenes. As is the scheduling of the
+      individual MapReduce jobs, and the clean up of intermediate data sets
+      that bind the jobs together.</para>
+
       <para><inlinemediaobject>
           <imageobject role="fo">
             <imagedata align="center" contentwidth="7in"
@@ -2393,26 +2415,21 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           </textobject>
         </inlinemediaobject></para>
 
-      <para>The MapReduce Job Planner is an internal feature of
-      Cascading.</para>
+      <para>Above we can see how a reasonably normal Flow would be partitioned
+      into MapReduce jobs. Every job is delimited by a temporary file that is
+      the sink from the first job, and then the source to the next job.</para>
 
-      <para>When a collection of functions, splits, and joins are all tied up
-      together into a 'pipe assembly', the FlowConnector object is used to
-      create a new Flow instance against input and output data paths. This
-      Flow is a single Cascading job.</para>
-
-      <para>Internally the FlowConnector employs an intelligent planner to
-      convert the pipe assembly to a graph of dependent MapReduce jobs that
-      can be executed on a Hadoop cluster.</para>
-
-      <para>All this happens under the scenes. As is the scheduling of the
-      individual MapReduce jobs, and the clean up of intermediate data sets
-      that bind the jobs together.</para>
+      <para>To see how your Flows are partitioned, call the
+      <classname>Flow#writeDOT()</classname> method. This will write a <link
+      xlink:href="http://en.wikipedia.org/wiki/DOT_language">DOT</link> file
+      out to the path specified, and can be imported into a graphics package
+      like OmniGraffle or Graphviz.</para>
     </section>
 
     <section>
       <info>
-        <title>Topological Scheduler</title>
+        <title xreflabel="Topological Scheduling" xml:id="cascade-scheduler"
+        xml:lang="">The Cascade Topological Scheduler</title>
       </info>
 
       <para>Cascading has a simple utility that will take a collection of
@@ -2436,12 +2453,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </listitem>
       </itemizedlist>
 
-      <para>A Cascade is constructed through the <code>CascadeConnector</code>
-      class, by building an internal graph that makes each Flow a 'vertex',
-      and each file an 'edge'. A topological walk on this graph will touch
-      each vertex in order of its dependencies. When a vertex has all it's
-      incoming edges (files) available, it will be scheduled on the
-      cluster.</para>
+      <para>A Cascade is constructed through the
+      <classname>CascadeConnector</classname> class, by building an internal
+      graph that makes each Flow a 'vertex', and each file an 'edge'. A
+      topological walk on this graph will touch each vertex in order of its
+      dependencies. When a vertex has all it's incoming edges (files)
+      available, it will be scheduled on the cluster.</para>
 
       <para>In the example above, 'first' goes first, 'second' goes second,
       and 'third' is last.</para>

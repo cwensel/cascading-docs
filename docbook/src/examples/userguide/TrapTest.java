@@ -75,12 +75,15 @@ public class TrapTest extends ExampleTestCase
     // name this pipe assembly segment
     assembly = new Pipe( "assertions", assembly );
 
-    assembly = new Each( assembly, AssertionLevel.STRICT, new AssertNotNull() );
+    AssertNotNull notNull = new AssertNotNull();
+    assembly = new Each( assembly, AssertionLevel.STRICT, notNull );
 
-    assembly = new Each( assembly, AssertionLevel.STRICT, new AssertSizeEquals( 6 ) );
+    AssertSizeEquals equals = new AssertSizeEquals( 6 );
+    assembly = new Each( assembly, AssertionLevel.STRICT, equals );
 
     AssertMatchesAll matchesAll = new AssertMatchesAll( "(GET|HEAD|POST)" );
-    assembly = new Each( assembly, new Fields("method"), AssertionLevel.STRICT, matchesAll );
+    assembly = new Each( assembly, new Fields("method"),
+                         AssertionLevel.STRICT, matchesAll );
 
     // ...some more useful pipes here
 
@@ -88,7 +91,8 @@ public class TrapTest extends ExampleTestCase
 
     traps.put( "assertions", trap );
 
-    Flow flow = new FlowConnector().connect( "log-parser", source, sink, traps, assembly );
+    FlowConnector flowConnector = new FlowConnector();
+    Flow flow = flowConnector.connect( "log-parser", source, sink, traps, assembly );
     //@extract-end
 
     flow.complete();

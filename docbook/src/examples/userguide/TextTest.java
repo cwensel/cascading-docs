@@ -72,8 +72,9 @@ public class TextTest extends ExampleTestCase
     //@extract-start text-format-date
     // "ts" -> 1188604863000
 
-    DateFormatter dateFormatter = new DateFormatter( new Fields("date"), "dd/MMM/yyyy" );
-    pipe = new Each( pipe, new Fields( "ts" ), dateFormatter );
+    DateFormatter formatter =
+      new DateFormatter( new Fields("date"), "dd/MMM/yyyy" );
+    pipe = new Each( pipe, new Fields( "ts" ), formatter );
 
     // outgoing -> "date" -> 31/Aug/2007
     //@extract-end

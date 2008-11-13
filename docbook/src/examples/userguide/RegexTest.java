@@ -68,8 +68,11 @@ public class RegexTest extends ExampleTestCase
     //@extract-start regex-parser
     // incoming -> "line"
 
-    String regex = "^([^ ]*) +[^ ]* +[^ ]* +\\[([^]]*)\\] +\\\"([^ ]*) ([^ ]*) [^ ]*\\\" ([^ ]*) ([^ ]*).*$";
-    Fields fieldDeclaration = new Fields( "ip", "time", "method", "event", "status", "size" );
+    String regex =
+      "^([^ ]*) +[^ ]* +[^ ]* +\\[([^]]*)\\] +" +
+      "\\\"([^ ]*) ([^ ]*) [^ ]*\\\" ([^ ]*) ([^ ]*).*$";
+    Fields fieldDeclaration =
+      new Fields( "ip", "time", "method", "event", "status", "size" );
     int[] groups = {1, 2, 3, 4, 5, 6};
     RegexParser parser = new RegexParser( fieldDeclaration, regex, groups );
     assembly = new Each( assembly, new Fields( "line" ), parser );
@@ -154,7 +157,8 @@ public class RegexTest extends ExampleTestCase
     //@extract-start regex-replace
     // incoming -> "line"
 
-    RegexReplace replace = new RegexReplace( new Fields( "clean-line" ), "\\s+", " ", true );
+    RegexReplace replace =
+      new RegexReplace( new Fields( "clean-line" ), "\\s+", " ", true );
     assembly = new Each( assembly, new Fields( "line" ), replace );
 
     // outgoing -> "clean-line"

@@ -29,14 +29,16 @@ import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
 //@extract-start custom-aggregator
-public class SomeAggregator extends BaseOperation<SomeAggregator.Context> implements Aggregator<SomeAggregator.Context>
+public class SomeAggregator extends BaseOperation<SomeAggregator.Context>
+  implements Aggregator<SomeAggregator.Context>
   {
   public static class Context
     {
     Object value;
     }
 
-  public void start( FlowProcess flowProcess, AggregatorCall<Context> aggregatorCall )
+  public void start( FlowProcess flowProcess,
+                     AggregatorCall<Context> aggregatorCall )
     {
     // get the group values for the current grouping
     TupleEntry group = aggregatorCall.getGroup();
@@ -50,7 +52,8 @@ public class SomeAggregator extends BaseOperation<SomeAggregator.Context> implem
     aggregatorCall.setContext( context );
     }
 
-  public void aggregate( FlowProcess flowProcess, AggregatorCall<Context> aggregatorCall )
+  public void aggregate( FlowProcess flowProcess,
+                         AggregatorCall<Context> aggregatorCall )
     {
     // get the current argument values
     TupleEntry arguments = aggregatorCall.getArguments();
@@ -61,7 +64,8 @@ public class SomeAggregator extends BaseOperation<SomeAggregator.Context> implem
     // update the context object
     }
 
-  public void complete( FlowProcess flowProcess, AggregatorCall<Context> aggregatorCall )
+  public void complete( FlowProcess flowProcess,
+                        AggregatorCall<Context> aggregatorCall )
     {
     Context context = aggregatorCall.getContext();
 

@@ -58,13 +58,16 @@ public class IdentityTest extends ExampleTestCase
     RegexParser parser = new RegexParser( fieldDeclaration, regex, groups );
     pipe = new Each( pipe, new Fields( "line" ), parser );
 
+    {
     //@extract-start identity-discard-fields-long
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
-    pipe = new Each( pipe, new Fields( "ip", "method" ), new Identity( Fields.ARGS ), Fields.RESULTS );
+    Identity identity = new Identity( Fields.ARGS );
+    pipe = new Each( pipe, new Fields( "ip", "method" ), identity, Fields.RESULTS );
 
     // outgoing -> "ip", "method"
     //@extract-end
+    }
 
     //@extract-start identity-discard-fields
     // incoming -> "ip", "time", "method", "event", "status", "size"
@@ -74,29 +77,39 @@ public class IdentityTest extends ExampleTestCase
     // outgoing -> "ip", "method"
     //@extract-end
 
+    {
     //@extract-start identity-rename-fields-explicit
     // incoming -> "ip", "method"
 
-    pipe = new Each( pipe, new Fields( "ip", "method" ), new Identity( new Fields( "address", "request" ) ) );
+    Identity identity = new Identity( new Fields( "address", "request" ) );
+    pipe = new Each( pipe, new Fields( "ip", "method" ), identity );
 
     // outgoing -> "address", "request"
     //@extract-end
+    }
 
+    {
     //@extract-start identity-rename-fields-long
     // incoming -> "ip", "method"
 
-    pipe = new Each( pipe, Fields.ALL, new Identity( new Fields( "address", "request" ) ) );
+    Identity identity = new Identity( new Fields( "address", "request" ) );
+    pipe = new Each( pipe, Fields.ALL, identity );
 
     // outgoing -> "address", "request"
     //@extract-end
+    }
 
+    {
     //@extract-start identity-rename-fields
     // incoming -> "ip", "method"
 
-    pipe = new Each( pipe, new Identity( new Fields( "address", "request" ) ) );
+    Identity identity = new Identity( new Fields( "address", "request" ) );
+    pipe = new Each( pipe, identity );
 
     // outgoing -> "address", "request"
     //@extract-end
+    }
+
 
     Flow flow = new FlowConnector().connect( source, sink, pipe );
 
@@ -131,7 +144,8 @@ public class IdentityTest extends ExampleTestCase
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
     Fields fieldSelector = new Fields( "address", "method" );
-    pipe = new Each( pipe, new Fields( "ip" ), new Identity( new Fields( "address" ) ), fieldSelector );
+    Identity identity = new Identity( new Fields( "address" ) );
+    pipe = new Each( pipe, new Fields( "ip" ), identity, fieldSelector );
 
     // outgoing -> "address", "method"
     //@extract-end
@@ -168,7 +182,8 @@ public class IdentityTest extends ExampleTestCase
     //@extract-start identity-coerce
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
-    pipe = new Each( pipe, new Fields( "status", "size" ), new Identity( Integer.TYPE, Long.TYPE ) );
+    Identity identity = new Identity( Integer.TYPE, Long.TYPE );
+    pipe = new Each( pipe, new Fields( "status", "size" ), identity );
 
     // outgoing -> "status", "size"
     //@extract-end

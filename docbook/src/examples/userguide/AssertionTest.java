@@ -69,12 +69,15 @@ public class AssertionTest extends ExampleTestCase
     //@extract-start simple-assertion
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
-    assembly = new Each( assembly, AssertionLevel.STRICT, new AssertNotNull() );
+    AssertNotNull notNull = new AssertNotNull();
+    assembly = new Each( assembly, AssertionLevel.STRICT, notNull );
 
-    assembly = new Each( assembly, AssertionLevel.STRICT, new AssertSizeEquals( 6 ) );
+    AssertSizeEquals equals = new AssertSizeEquals( 6 );
+    assembly = new Each( assembly, AssertionLevel.STRICT, equals );
 
     AssertMatchesAll matchesAll = new AssertMatchesAll( "(GET|HEAD|POST)" );
-    assembly = new Each( assembly, new Fields("method"), AssertionLevel.STRICT, matchesAll );
+    assembly = new Each( assembly, new Fields("method"),
+                         AssertionLevel.STRICT, matchesAll );
 
     // outgoing -> "ip", "time", "method", "event", "status", "size"
     //@extract-end
@@ -112,7 +115,9 @@ public class AssertionTest extends ExampleTestCase
     // removes all assertions from the Flow
     FlowConnector.setAssertionLevel( properties, AssertionLevel.NONE );
 
-    Flow flow = new FlowConnector( properties ).connect( source, sink, assembly );
+    FlowConnector flowConnector = new FlowConnector( properties );
+    
+    Flow flow = flowConnector.connect( source, sink, assembly );
     //@extract-end
     }
 

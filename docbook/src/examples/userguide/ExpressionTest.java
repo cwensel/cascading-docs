@@ -65,7 +65,9 @@ public class ExpressionTest extends ExampleTestCase
     //@extract-start expression-filter
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
-    ExpressionFilter filter = new ExpressionFilter( "status != 200", Integer.TYPE );
+    ExpressionFilter filter =
+      new ExpressionFilter( "status != 200", Integer.TYPE );
+
     assembly = new Each( assembly, new Fields( "status" ), filter );
 
     // outgoing -> "ip", "time", "method", "event", "status", "size"
@@ -75,8 +77,10 @@ public class ExpressionTest extends ExampleTestCase
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
     String expression = "\"this \" + method + \" request was \" + size + \" bytes\"";
+    Fields fields = new Fields( "pretty" );
     ExpressionFunction function =
-      new ExpressionFunction( new Fields( "pretty" ), expression, String.class, String.class );
+      new ExpressionFunction( fields, expression, String.class, String.class );
+
     assembly = new Each( assembly, new Fields( "method", "size" ), function );
 
     // outgoing -> "pretty" = "this GET request was 1282652 bytes"

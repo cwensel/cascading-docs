@@ -157,7 +157,8 @@ public class CompiledExamples
     Flow flowThird = null;
 
     //@extract-start simple-cascade
-    Cascade cascade = new CascadeConnector().connect( flowFirst, flowSecond, flowThird );
+    CascadeConnector cascadeConnector = new CascadeConnector();
+    Cascade cascade = cascadeConnector.connect( flowFirst, flowSecond, flowThird );
     //@extract-end
     }
 
@@ -234,8 +235,10 @@ public class CompiledExamples
 
     //@extract-start duplicate-cogroup
     Fields common = new Fields( "url");
-    Fields declared = new Fields("url1", "word", "wd_count", "url2", "sentence", "snt_count");
-    Pipe merge = new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
+    Fields declared =
+      new Fields("url1", "word", "wd_count", "url2", "sentence", "snt_count");
+    Pipe merge =
+      new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
     //@extract-end
     }
 
