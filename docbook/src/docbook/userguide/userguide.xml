@@ -1073,12 +1073,18 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <filename>lib</filename> directory, per the Hadoop documentation.</para>
 
       <example>
-        <title>Sample Ant Build</title>
+        <title>Sample Ant Build - Properties</title>
 
-        <xi:include href="sample-build.xml" />
+        <xi:include href="sample-build-properties.xml" />
       </example>
 
-      <para>The above Ant snippet can be used in your project to create a
+      <example>
+        <title>Sample Ant Build - Target</title>
+
+        <xi:include href="sample-build-target.xml" />
+      </example>
+
+      <para>The above Ant snippets can be used in your project to create a
       Hadoop jar for submission on your cluster. Again, all Hadoop
       applications that are intended to be run in a cluster must be packaged
       with all third-party libraries in a directory named
@@ -1086,7 +1092,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       if they are Cascading application or Hadoop MapReduce
       applications.</para>
 
-      <para>Note, the snippet above is only intended to show how to include
+      <para>Note, the snippets above is only intended to show how to include
       Cascading libraries, you still need to compile your project into the
       <property>build.classes</property> path.</para>
     </section>

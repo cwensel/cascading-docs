@@ -92,7 +92,8 @@ public class TrapTest extends ExampleTestCase
     traps.put( "assertions", trap );
 
     FlowConnector flowConnector = new FlowConnector();
-    Flow flow = flowConnector.connect( "log-parser", source, sink, traps, assembly );
+    Flow flow =
+      flowConnector.connect( "log-parser", source, sink, traps, assembly );
     //@extract-end
 
     flow.complete();

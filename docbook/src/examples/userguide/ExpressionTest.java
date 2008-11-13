@@ -29,11 +29,8 @@ import cascading.pipe.Pipe;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleIterator;
 import cascading.operation.regex.RegexParser;
-import cascading.operation.Identity;
 import cascading.operation.expression.ExpressionFilter;
 import cascading.operation.expression.ExpressionFunction;
-import cascading.operation.text.DateParser;
-import cascading.operation.text.DateFormatter;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
 import cascading.tap.Tap;
@@ -76,12 +73,14 @@ public class ExpressionTest extends ExampleTestCase
     //@extract-start expression-function
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
-    String expression = "\"this \" + method + \" request was \" + size + \" bytes\"";
+    String exp =
+      "\"this \" + method + \" request was \" + size + \" bytes\"";
     Fields fields = new Fields( "pretty" );
     ExpressionFunction function =
-      new ExpressionFunction( fields, expression, String.class, String.class );
+      new ExpressionFunction( fields, exp, String.class, String.class );
 
-    assembly = new Each( assembly, new Fields( "method", "size" ), function );
+    assembly =
+      new Each( assembly, new Fields( "method", "size" ), function );
 
     // outgoing -> "pretty" = "this GET request was 1282652 bytes"
     //@extract-end

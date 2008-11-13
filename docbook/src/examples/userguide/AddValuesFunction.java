@@ -21,7 +21,6 @@
 
 package userguide;
 
-//@extract-start sum-function
 
 import cascading.flow.FlowProcess;
 import cascading.operation.BaseOperation;
@@ -31,6 +30,7 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
+//@extract-start sum-function
 public class AddValuesFunction extends BaseOperation implements Function
   {
   public AddValuesFunction()

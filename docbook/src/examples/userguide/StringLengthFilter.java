@@ -21,7 +21,6 @@
 
 package userguide;
 
-//@extract-start stringlength-filter
 
 import cascading.flow.FlowProcess;
 import cascading.operation.BaseOperation;
@@ -29,6 +28,7 @@ import cascading.operation.Filter;
 import cascading.operation.FilterCall;
 import cascading.tuple.TupleEntry;
 
+//@extract-start stringlength-filter
 public class StringLengthFilter extends BaseOperation implements Filter
   {
   public StringLengthFilter()

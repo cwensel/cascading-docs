@@ -146,7 +146,8 @@ public class CompiledExamples
     sources.put( "lhs", lhsSource );
     sources.put( "rhs", rhsSource );
 
-    Flow flow = new FlowConnector().connect( "flow-name", sources, sink, join );
+    Flow flow =
+      new FlowConnector().connect( "flow-name", sources, sink, join );
     //@extract-end
     }
 
@@ -157,8 +158,8 @@ public class CompiledExamples
     Flow flowThird = null;
 
     //@extract-start simple-cascade
-    CascadeConnector cascadeConnector = new CascadeConnector();
-    Cascade cascade = cascadeConnector.connect( flowFirst, flowSecond, flowThird );
+    CascadeConnector connector = new CascadeConnector();
+    Cascade cascade = connector.connect( flowFirst, flowSecond, flowThird );
     //@extract-end
     }
 
@@ -221,7 +222,8 @@ public class CompiledExamples
     //@extract-start simple-cogroup
     Fields lhsFields = new Fields( "fieldA", "fieldB" );
     Fields rhsFields = new Fields( "fieldC", "fieldD" );
-    Pipe merge = new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
+    Pipe merge =
+      new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
     //@extract-end
     }
 

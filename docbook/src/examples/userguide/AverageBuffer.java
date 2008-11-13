@@ -21,7 +21,6 @@
 
 package userguide;
 
-//@extract-start average-buffer
 
 import java.util.Iterator;
 
@@ -33,6 +32,7 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
+//@extract-start average-buffer
 public class AverageBuffer extends BaseOperation implements Buffer
   {
 

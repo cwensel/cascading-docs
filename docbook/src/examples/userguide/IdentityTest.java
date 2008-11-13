@@ -63,7 +63,8 @@ public class IdentityTest extends ExampleTestCase
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
     Identity identity = new Identity( Fields.ARGS );
-    pipe = new Each( pipe, new Fields( "ip", "method" ), identity, Fields.RESULTS );
+    pipe = new Each( pipe, new Fields( "ip", "method" ), identity,
+                     Fields.RESULTS );
 
     // outgoing -> "ip", "method"
     //@extract-end

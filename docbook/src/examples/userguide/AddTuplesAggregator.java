@@ -21,8 +21,6 @@
 
 package userguide;
 
-//@extract-start sum-aggregator
-
 import cascading.flow.FlowProcess;
 import cascading.operation.Aggregator;
 import cascading.operation.AggregatorCall;
@@ -31,8 +29,10 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
-public class AddTuplesAggregator extends BaseOperation<AddTuplesAggregator.Context>
-                                 implements Aggregator<AddTuplesAggregator.Context>
+//@extract-start sum-aggregator
+public class AddTuplesAggregator
+    extends BaseOperation<AddTuplesAggregator.Context>
+    implements Aggregator<AddTuplesAggregator.Context>
   {
   public static class Context
     {
