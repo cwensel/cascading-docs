@@ -57,8 +57,8 @@ public class TrapTest extends ExampleTestCase
     String trapPath = getOutputPath() + "testtrap";
 
     Tap source = new Hfs( new TextLine(), inputPath );
-    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.Replace );
-    Tap trap = new Hfs( new TextLine(), trapPath, SinkMode.Replace );
+    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.REPLACE );
+    Tap trap = new Hfs( new TextLine(), trapPath, SinkMode.REPLACE );
 
     Pipe assembly = new Pipe( "logs" );
 

@@ -50,7 +50,7 @@ public class TextTest extends ExampleTestCase
     String outputPath = getOutputPath() + "createtimestamp";
 
     Tap source = new Hfs( new TextLine(), inputPath );
-    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.Replace );
+    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.REPLACE );
 
     Pipe pipe = new Pipe( "logs" );
 

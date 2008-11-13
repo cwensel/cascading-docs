@@ -48,7 +48,7 @@ public class IdentityTest extends ExampleTestCase
     String outputPath = getOutputPath() + "identityall";
 
     Tap source = new Hfs( new TextLine(), inputPath );
-    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.Replace );
+    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.REPLACE );
 
     Pipe pipe = new Pipe( "logs" );
 
@@ -131,7 +131,7 @@ public class IdentityTest extends ExampleTestCase
     String outputPath = getOutputPath() + "identitysome";
 
     Tap source = new Hfs( new TextLine(), inputPath );
-    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.Replace );
+    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.REPLACE );
 
     Pipe pipe = new Pipe( "logs" );
 
@@ -170,7 +170,7 @@ public class IdentityTest extends ExampleTestCase
     String outputPath = getOutputPath() + "identitysome";
 
     Tap source = new Hfs( new TextLine(), inputPath );
-    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.Replace );
+    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.REPLACE );
 
     Pipe pipe = new Pipe( "logs" );
 
