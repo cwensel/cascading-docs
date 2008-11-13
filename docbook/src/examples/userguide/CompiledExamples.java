@@ -106,7 +106,7 @@ public class CompiledExamples
     Pipe pipe = null;
 
     //@extract-start simple-flow
-    Flow flow = new FlowConnector().connect( source, sink, pipe );
+    Flow flow = new FlowConnector().connect( "flow-name", source, sink, pipe );
     //@extract-end
     }
 
@@ -146,7 +146,7 @@ public class CompiledExamples
     sources.put( "lhs", lhsSource );
     sources.put( "rhs", rhsSource );
 
-    Flow flow = new FlowConnector().connect( sources, sink, join );
+    Flow flow = new FlowConnector().connect( "flow-name", sources, sink, join );
     //@extract-end
     }
 

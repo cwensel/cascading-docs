@@ -1575,6 +1575,17 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       the data that caused the fault. For high fidelity applications, this may
       not be so attractive, but low fidelity applications (like web page
       indexing) this can dramatically improve processing reliability.</para>
+
+      <example>
+        <title>Setting Traps</title>
+
+        <xi:include href="simple-traps.xml" />
+      </example>
+
+      <para>In the above example, we bind our trap Tap to the pipe assembly segment named "assertions". Note how we
+      can name branches and segments by using a single <classname>Pipe</classname> instance and it applies to all subsequent
+      Pipe instances.</para>
+
     </section>
 
     <section>
