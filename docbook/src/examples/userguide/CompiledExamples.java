@@ -36,6 +36,7 @@ import cascading.pipe.cogroup.InnerJoin;
 import cascading.scheme.TextLine;
 import cascading.tap.Hfs;
 import cascading.tap.Tap;
+import cascading.tap.SinkMode;
 import cascading.tuple.Fields;
 import cascading.cascade.CascadeConnector;
 import cascading.cascade.Cascade;
@@ -95,6 +96,15 @@ public class CompiledExamples
 
     //@extract-start simple-tap
     Tap tap = new Hfs( new TextLine( new Fields( "line" ) ), path );
+    //@extract-end
+    }
+
+  public void compileTapReplace()
+    {
+    String path = "some/path";
+
+    //@extract-start simple-replace-tap
+    Tap tap = new Hfs( new TextLine( new Fields( "line" ) ), path, SinkMode.REPLACE );
     //@extract-end
     }
 

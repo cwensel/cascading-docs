@@ -874,6 +874,34 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           </listitem>
         </varlistentry>
       </variablelist>
+
+      <para>Keep in mind Hadoop cannot source data from directories with nested sub-directories, and it cannot write to
+      directories that already exist.</para>
+
+      <para>To get around the last issue, the Hadoop related Taps allow for a <classname>SinkMode</classname> value
+      to be set when constructed.</para>
+
+      <para><example>
+          <title>Overwriting An Existing Resource</title>
+
+          <xi:include href="simple-replace-tap.xml" />
+        </example></para>
+
+      <variablelist>
+        <varlistentry>
+          <term><classname>SinkMode.KEEP</classname></term>
+          <listitem>This is the default behavior. If the resource exists, attempting to write to it will fail.</listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><classname>SinkMode.REPLACE</classname></term>
+          <listitem>This allows Cascading to delete the file immediately after the Flow is started.</listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><classname>SinkMode.APPEND</classname></term>
+          <listitem>Currently unsupported, but future versions of Hadoop will support appends fully.</listitem>
+        </varlistentry>
+      </variablelist>
+      
     </section>
 
     <section>
