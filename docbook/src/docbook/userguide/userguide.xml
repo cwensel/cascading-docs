@@ -875,11 +875,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </varlistentry>
       </variablelist>
 
-      <para>Keep in mind Hadoop cannot source data from directories with nested sub-directories, and it cannot write to
-      directories that already exist.</para>
+      <para>Keep in mind Hadoop cannot source data from directories with
+      nested sub-directories, and it cannot write to directories that already
+      exist.</para>
 
-      <para>To get around the last issue, the Hadoop related Taps allow for a <classname>SinkMode</classname> value
-      to be set when constructed.</para>
+      <para>To get around the last issue, the Hadoop related Taps allow for a
+      <classname>SinkMode</classname> value to be set when constructed.</para>
 
       <para><example>
           <title>Overwriting An Existing Resource</title>
@@ -890,18 +891,31 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <variablelist>
         <varlistentry>
           <term><classname>SinkMode.KEEP</classname></term>
-          <listitem>This is the default behavior. If the resource exists, attempting to write to it will fail.</listitem>
+
+          <listitem>
+            <para>This is the default behavior. If the resource exists,
+            attempting to write to it will fail.</para>
+          </listitem>
         </varlistentry>
+
         <varlistentry>
           <term><classname>SinkMode.REPLACE</classname></term>
-          <listitem>This allows Cascading to delete the file immediately after the Flow is started.</listitem>
+
+          <listitem>
+            <para>This allows Cascading to delete the file immediately after
+            the Flow is started.</para>
+          </listitem>
         </varlistentry>
+
         <varlistentry>
           <term><classname>SinkMode.APPEND</classname></term>
-          <listitem>Currently unsupported, but future versions of Hadoop will support appends fully.</listitem>
+
+          <listitem>
+            <para>Currently unsupported, but future versions of Hadoop will
+            support appends fully.</para>
+          </listitem>
         </varlistentry>
       </variablelist>
-      
     </section>
 
     <section>
@@ -910,83 +924,145 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </info>
 
       <para>When pipe assemblies are bound to source and sink Taps, a Flow is
-      created. Flows are executable, in the sense that once created they can
-      be "started" and will begin execution on a configured Hadoop
+      created. Flows are executable in the sense that once created they can be
+      "started" and will begin execution on a configured Hadoop
       cluster.</para>
 
       <para>Think of a Flow as a data processing workflow that reads data from
       sources, processes the data as defined by the pipe assembly, and writes
       data to the sinks. Input source data does not need to exist when the
       Flow is created, but it must exist when the Flow is executed (unless
-      executed as part of a Cascade).</para>
+      executed as part of a Cascade, see <xref linkend="cascades" />).</para>
 
-      <example>
-        <title>Creating a new Flow</title>
+      <section>
+        <info>
+          <title>Creating Flows</title>
+        </info>
 
-        <xi:include href="simple-flow.xml" />
-      </example>
+        <example>
+          <title>Creating a new Flow</title>
 
-      <para>To create a Flow, it must be planned though the FlowConnector
-      object. The <code>connect()</code> method is used to create new Flow
-      instances based on a set of sink Taps, source Taps, and a pipe assembly.
-      The example above is quite trivial.</para>
+          <xi:include href="simple-flow.xml" />
+        </example>
 
-      <example>
-        <title>Binding Taps in a Flow</title>
+        <para>To create a Flow, it must be planned though the FlowConnector
+        object. The <code>connect()</code> method is used to create new Flow
+        instances based on a set of sink Taps, source Taps, and a pipe
+        assembly. The example above is quite trivial.</para>
 
-        <xi:include href="complex-flow.xml" />
-      </example>
+        <example>
+          <title>Binding Taps in a Flow</title>
 
-      <para>The example above expands on our previous pipe assembly example by
-      creating source and sink Taps and planning a Flow. Note there are two
-      branches in the pipe assembly, one named "lhs" and the other "rhs".
-      Cascading uses those names to bind the source Taps to the pipe assembly.
-      A HashMap of names and taps must be passed to FlowConnector in order to
-      bind Taps to branches.</para>
+          <xi:include href="complex-flow.xml" />
+        </example>
 
-      <para>Since there is only one tail, the "join" pipe, we don't need to
-      bind the sink to a branch name. Nor do we need to pass the heads of the
-      assembly to the FlowConnector, it can determine the heads of the pipe
-      assembly on the fly. When creating more complex Flows with multiple
-      heads and tails, all Taps will need to be explicitly named, and the
-      proper <code>connect()</code> method will need be called.</para>
+        <para>The example above expands on our previous pipe assembly example
+        by creating source and sink Taps and planning a Flow. Note there are
+        two branches in the pipe assembly, one named "lhs" and the other
+        "rhs". Cascading uses those names to bind the source Taps to the pipe
+        assembly. A HashMap of names and taps must be passed to FlowConnector
+        in order to bind Taps to branches.</para>
 
-      <para>The FlowConnector contructor accepts the
-      <classname>java.util.Property</classname> object so that default
-      Cascading and Hadoop properties can be passed down through the planner
-      to the Hadoop runtime. Subsequently any relevant Hadoop
-      <code>hadoop-default.xml</code> properties may be added
-      (<code>mapred.map.tasks.speculative.execution</code>,
-      <code>mapred.reduce.tasks.speculative.execution</code>, or
-      <code>mapred.child.java.opts</code> would be very common).</para>
+        <para>Since there is only one tail, the "join" pipe, we don't need to
+        bind the sink to a branch name. Nor do we need to pass the heads of
+        the assembly to the FlowConnector, it can determine the heads of the
+        pipe assembly on the fly. When creating more complex Flows with
+        multiple heads and tails, all Taps will need to be explicitly named,
+        and the proper <code>connect()</code> method will need be
+        called.</para>
+      </section>
 
-      <para>One property that must be set for production applications is the
-      application Jar class or Jar path.</para>
+      <section>
+        <info>
+          <title>Configuring Flows</title>
+        </info>
 
-      <example>
-        <title>Configuring the Application Jar</title>
+        <para>The FlowConnector contructor accepts the
+        <classname>java.util.Property</classname> object so that default
+        Cascading and Hadoop properties can be passed down through the planner
+        to the Hadoop runtime. Subsequently any relevant Hadoop
+        <code>hadoop-default.xml</code> properties may be added
+        (<code>mapred.map.tasks.speculative.execution</code>,
+        <code>mapred.reduce.tasks.speculative.execution</code>, or
+        <code>mapred.child.java.opts</code> would be very common).</para>
 
-        <xi:include href="flow-properties.xml" />
-      </example>
+        <para>One property that must be set for production applications is the
+        application Jar class or Jar path.</para>
 
-      <para>More information on packaging production applications can be found
-      in <xref linkend="executing-processes" />.</para>
+        <example>
+          <title>Configuring the Application Jar</title>
 
-      <para>Note the pattern of using a static property setter method
-      (<classname>FlowConnector.setApplicationJarPath</classname>), other
-      classes that can be used to set properties are
-      <classname>MultiMapReducePlanner</classname> and
-      <classname>Flow</classname>.</para>
+          <xi:include href="flow-properties.xml" />
+        </example>
 
-      <para>Since the FlowConnector can be reused, any properties passed on
-      the constructor will be handed to all the Flows it is used to create. If
-      Flows need to be created with different default properties, a new
-      FlowConnector will need to be instantiated with those properties.</para>
+        <para>More information on packaging production applications can be
+        found in <xref linkend="executing-processes" />.</para>
+
+        <para>Note the pattern of using a static property setter method
+        (<classname>FlowConnector.setApplicationJarPath</classname>), other
+        classes that can be used to set properties are
+        <classname>MultiMapReducePlanner</classname> and
+        <classname>Flow</classname>.</para>
+
+        <para>Since the FlowConnector can be reused, any properties passed on
+        the constructor will be handed to all the Flows it is used to create.
+        If Flows need to be created with different default properties, a new
+        FlowConnector will need to be instantiated with those
+        properties.</para>
+      </section>
+
+      <section>
+        <info>
+          <title>Skipping Flows</title>
+        </info>
+
+        <para>When a Flow participates in a Cascade, the
+        <classname>Flow#isSkip()</classname> method is consulted before
+        calling <classname>Flow#start()</classname> on the flow. By default
+        <methodname>isSkip()</methodname> returns true if any of the sinks are
+        stale in relation to the Flow sources. Where stale is if they don't
+        exist or the resources are older than the sources.</para>
+
+        <para>This behavior is pluggable through the
+        <classname>cascading.flow.FlowSkipStrategy</classname> interface. A
+        new strategy can be set on a <classname>Flow</classname> instance
+        after its created.</para>
+
+        <variablelist>
+          <varlistentry>
+            <term>FlowSkipIfSinkStale</term>
+
+            <listitem>
+              <para>This is the default strategy. Sinks are stale if they
+              don't exist or the resources are older than the sources. If the
+              SinkMode for the sink Tap is REPLACE, then the Tap will be
+              treated as stale.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>FlowSkipIfSinkExists</term>
+
+            <listitem>
+              <para>This strategy will skip a Flow if the sink Tap exists,
+              regardless of age. If the SinkMode for the sink Tap is REPLACE,
+              then the Tap will be treated as stale.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+
+        <para>Note <classname>Flow#start()</classname> and
+        <classname>Flow#complete()</classname> will not consult the
+        <methodname>isSkip()</methodname> method and subequently will always
+        try to start the Flow if called. It is up to user code to call
+        <classname>isSkip()</classname> to decide if the current strategy
+        suggests the Flow should be skipped.</para>
+      </section>
     </section>
 
     <section>
       <info>
-        <title>Cascades</title>
+        <title xreflabel="Cascades" xml:id="cascades">Cascades</title>
       </info>
 
       <mediaobject>
@@ -1024,6 +1100,13 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>For more information, see the section on <xref
       linkend="cascade-scheduler" />.</para>
+
+      <para>If an instance of
+      <classname>cascading.flow.FlowSkipStrategy</classname> is given to an
+      <classname>Cascade</classname> instance via the
+      <classname>Cascade#setFlowSkipStrategy()</classname> method, it will be
+      consulted for every Flow instance managed by the Cascade, all skip
+      strategies on the Flow instances will be ignored.</para>
     </section>
   </chapter>
 
