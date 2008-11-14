@@ -1013,7 +1013,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <section>
         <info>
-          <title>Skipping Flows</title>
+          <title xreflabel="Skipping Flows" xml:id="skipping-flows">Skipping
+          Flows</title>
         </info>
 
         <para>When a Flow participates in a Cascade, the
@@ -1079,11 +1080,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>A Cascade allows multiple Flow instances to be executed as a
       single logical unit. If there are dependencies between the Flows, they
-      will be executed in the correct order.</para>
-
-      <para>Cascades act like ant build or unix "make" files. When run, a
-      Cascade will only execute Flows that have stale sinks (output data that
-      is older than the input data).</para>
+      will be executed in the correct order. Further, Cascades act like ant
+      build or unix "make" files. When run, a Cascade will only execute Flows
+      that have stale sinks (output data that is older than the input data),
+      by default.</para>
 
       <example>
         <title>Creating a new Cascade</title>
@@ -1106,7 +1106,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <classname>Cascade</classname> instance via the
       <classname>Cascade#setFlowSkipStrategy()</classname> method, it will be
       consulted for every Flow instance managed by the Cascade, all skip
-      strategies on the Flow instances will be ignored.</para>
+      strategies on the Flow instances will be ignored. For more information
+      on skip strategies, see <xref linkend="skipping-flows" />.</para>
     </section>
   </chapter>
 
