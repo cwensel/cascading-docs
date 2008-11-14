@@ -317,10 +317,11 @@
           <term>Pipe</term>
 
           <listitem>
-            <para>The Pipe class is used to name branches of pipe assemblies.
-            These names are used during planning to bind Taps as either
-            sources or sinks (or as traps, an advanced topic). It is also the
-            base class for all other pipes described below.</para>
+            <para>The <classname>cascading.pipe.Pipe</classname> class is used
+            to name branches of pipe assemblies. These names are used during
+            planning to bind Taps as either sources or sinks (or as traps, an
+            advanced topic). It is also the base class for all other pipes
+            described below.</para>
           </listitem>
         </varlistentry>
 
@@ -328,10 +329,11 @@
           <term>Each</term>
 
           <listitem>
-            <para>The Each pipe applies a Function or Filter Operation to each
-            Tuple that passes through it. The results of the Function are
-            appended, by default, to the Each input Tuple and returned to the
-            next Pipe.</para>
+            <para>The <classname>cascading.pipe.Each</classname> pipe applies
+            a Function or Filter Operation to each Tuple that passes through
+            it. The results of the Function are appended, by default, to the
+            <classname>Each</classname> input Tuple and returned to the next
+            <classname>Pipe</classname>.</para>
           </listitem>
         </varlistentry>
 
@@ -339,10 +341,11 @@
           <term>GroupBy</term>
 
           <listitem>
-            <para>GroupBy manages one input Tuple stream and does exactly as
-            it sounds, that is, groups the stream on selected fields in the
-            tuple stream. GroupBy also allows for "merging" of two or more
-            tuple stream that share the same field names.</para>
+            <para><classname>cascading.pipe.GroupBy</classname> manages one
+            input Tuple stream and does exactly as it sounds, that is, groups
+            the stream on selected fields in the tuple stream.
+            <classname>GroupBy</classname> also allows for "merging" of two or
+            more tuple stream that share the same field names.</para>
           </listitem>
         </varlistentry>
 
@@ -350,10 +353,11 @@
           <term>CoGroup</term>
 
           <listitem>
-            <para>CoGroup allows for "joins" on a common set of values, just
-            like a SQL join. The output tuple stream of CoGroup is the joined
-            input tuple streams, where a join can be an Inner, Outer, Left, or
-            Right join.</para>
+            <para><classname>cascading.pipe.CoGroup</classname> allows for
+            "joins" on a common set of values, just like a SQL join. The
+            output tuple stream of <classname>CoGroup</classname> is the
+            joined input tuple streams, where a join can be an Inner, Outer,
+            Left, or Right join.</para>
           </listitem>
         </varlistentry>
 
@@ -361,9 +365,9 @@
           <term>Every</term>
 
           <listitem>
-            <para>The Every pipe applies an Aggregator (like count, or sum) or
-            Buffer Operation to every group of Tuples that pass through
-            it.</para>
+            <para>The <classname>cascading.pipe.Every</classname> pipe applies
+            an Aggregator (like count, or sum) or Buffer (a sliding window)
+            Operation to every group of Tuples that pass through it.</para>
           </listitem>
         </varlistentry>
 
@@ -371,9 +375,9 @@
           <term>SubAssembly</term>
 
           <listitem>
-            <para>The SubAssembly pipe allows for nesting reusable pipe
-            assemblies into a Pipe class for inclusion in a larger pipe
-            assembly. See the section on <xref
+            <para>The <classname>cascading.pipe.SubAssembly</classname> pipe
+            allows for nesting reusable pipe assemblies into a Pipe class for
+            inclusion in a larger pipe assembly. See the section on <xref
             linkend="subassemblies" />.</para>
           </listitem>
         </varlistentry>
@@ -384,9 +388,12 @@
           <title>Assembling Pipe Assemblies</title>
         </info>
 
-        <para>Pipe assemblies are created by chaining Pipe classes and Pipe
-        subclasses together. Chaining is accomplished by passing previous Pipe
-        instances to the constructor of the next Pipe instance.</para>
+        <para>Pipe assemblies are created by chaining
+        <classname>cascading.pipe.Pipe</classname> classes and
+        <classname>Pipe</classname> subclasses together. Chaining is
+        accomplished by passing previous <classname>Pipe</classname> instances
+        to the constructor of the next <classname>Pipe</classname>
+        instance.</para>
 
         <example>
           <title>Chaining Pipes</title>
@@ -422,11 +429,12 @@
             <term>Operation</term>
 
             <listitem>
-              <para>Operations accept an input argument Tuple, and output zero
-              or more result Tuples. There are a few sub-types of operations
-              defined below. Cascading has a number of generic Operations that
-              can be reused, or developers can create their own custom
-              Operations.</para>
+              <para>Operations
+              (<classname>cascading.operation.Operation</classname>) accept an
+              input argument Tuple, and output zero or more result Tuples.
+              There are a few sub-types of operations defined below. Cascading
+              has a number of generic Operations that can be reused, or
+              developers can create their own custom Operations.</para>
             </listitem>
           </varlistentry>
 
@@ -434,10 +442,11 @@
             <term>Tuple</term>
 
             <listitem>
-              <para>In Cascading, we call each record of data a Tuple, and a
-              series of Tuples are a tuple stream. Think of a Tuple as an
-              Array of values whre each value can be any
-              <classname>javal.lang.Comparable</classname> Java type.</para>
+              <para>In Cascading, we call each record of data a Tuple
+              (<classname>cascading.tuple.Tuple</classname>), and a series of
+              Tuples are a tuple stream. Think of a Tuple as an Array of
+              values where each value can be any
+              <classname>java.lang.Comparable</classname> Java type.</para>
             </listitem>
           </varlistentry>
 
@@ -445,12 +454,13 @@
             <term>Fields</term>
 
             <listitem>
-              <para>Fields either declare the field names in a Tuple. Or
-              reference values in a Tuple as a selector. Fields can either be
-              string names ("first_name"), integer positions (-1 for the last
+              <para>Fields (<classname>cascading.tuple.Fields</classname>)
+              either declare the field names in a Tuple. Or reference values
+              in a Tuple as a selector. Fields can either be string names
+              ("first_name"), integer positions (<code>-1</code> for the last
               value), or a substitution ( <code>Fields.ALL</code> to select
-              all values in the Tuple, kinda like an asterisk (<code>*</code>)
-              in SQL).</para>
+              all values in the Tuple, like an asterisk (<code>*</code>) in
+              SQL).</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -462,15 +472,16 @@
         </info>
 
         <para>The Each and Every pipe types are the only pipes that can be
-        used to apply Operations to the tuple stream. The Each pipe applies an
-        Operation to "each" Tuple as it passes through the pipe assembly. The
-        Every pipe applies an Operation to "every" group of Tuples as they
-        pass through the pipe assembly, on the tail end of a GroupBy or
-        CoGroup pipe.</para>
+        used to apply Operations to the tuple stream.</para>
 
-        <para><programlisting>new Each( previousPipe, argumentSelector, operation, outputSelector )
+        <para>The Each pipe applies an Operation to "each" Tuple as it passes
+        through the pipe assembly. The Every pipe applies an Operation to
+        "every" group of Tuples as they pass through the pipe assembly, on the
+        tail end of a GroupBy or CoGroup pipe.</para>
 
-new Every( previousPipe, argumentSelector, operation, outputSelector )</programlisting></para>
+        <para><programlisting>new Each( previousPipe, argumentSelector, operation, outputSelector )</programlisting></para>
+
+        <para><programlisting>new Every( previousPipe, argumentSelector, operation, outputSelector )</programlisting></para>
 
         <para>Both the Each and Every pipe take a Pipe instance, an argument
         selector, Operation instance, and a output selector on the
@@ -831,13 +842,14 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           <term>Lfs</term>
 
           <listitem>
-            <para>The Lfs Tap is used to reference local files. Local files
-            are files on the same machine your Cascading application is
-            started. Even if a remote Hadoop cluster is configured, if a Lfs
-            Tap is used as either a source or sink in a Flow, Cascading will
-            be forced to run in "local mode" and not on the cluster. This is
-            useful when creating applications to read local files and import
-            them into the Hadoop distributed filesystem.</para>
+            <para>The <classname>cascading.tap.Lfs</classname> Tap is used to
+            reference local files. Local files are files on the same machine
+            your Cascading application is started. Even if a remote Hadoop
+            cluster is configured, if a Lfs Tap is used as either a source or
+            sink in a Flow, Cascading will be forced to run in "local mode"
+            and not on the cluster. This is useful when creating applications
+            to read local files and import them into the Hadoop distributed
+            filesystem.</para>
           </listitem>
         </varlistentry>
 
@@ -845,8 +857,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           <term>Dfs</term>
 
           <listitem>
-            <para>The Dfs Tap is used to reference files on the Hadoop
-            distributed filesystem.</para>
+            <para>The <classname>cascading.tap.Dfs</classname> Tap is used to
+            reference files on the Hadoop distributed filesystem.</para>
           </listitem>
         </varlistentry>
 
@@ -854,12 +866,13 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           <term>Hfs</term>
 
           <listitem>
-            <para>The Hfs Tap uses the current Hadoop default filesystem. If
-            Hadoop is configured for "local mode" its default filesystem will
-            be the local filesystem. If configured as a cluster, the default
-            filesystem is likey the Hadoop distributed filesystem. The Hfs is
-            convenient when writing Cascading applications that may or may not
-            be run on a cluster. Lhs and Dfs subclass the Hfs Tap.</para>
+            <para>The <classname>cascading.tap.Hfs</classname> Tap uses the
+            current Hadoop default filesystem. If Hadoop is configured for
+            "local mode" its default filesystem will be the local filesystem.
+            If configured as a cluster, the default filesystem is likey the
+            Hadoop distributed filesystem. The Hfs is convenient when writing
+            Cascading applications that may or may not be run on a cluster.
+            Lhs and Dfs subclass the Hfs Tap.</para>
           </listitem>
         </varlistentry>
 
@@ -867,10 +880,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           <term>MultiTap</term>
 
           <listitem>
-            <para>The MultiTap is used to tie multiple Tap instances into a
-            single Tap. The only restriction is that all the Tap instances
-            passed to a new MultiTap share the same Scheme classes (not
-            necessarily the same Scheme instance).</para>
+            <para>The <classname>cascading.tap.MultiTap</classname> is used to
+            tie multiple Tap instances into a single Tap. The only restriction
+            is that all the Tap instances passed to a new MultiTap share the
+            same Scheme classes (not necessarily the same Scheme
+            instance).</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -887,6 +901,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
           <xi:include href="simple-replace-tap.xml" />
         </example></para>
+
+      <para>Here are all the modes available by the built-in Tap types.</para>
 
       <variablelist>
         <varlistentry>
@@ -999,16 +1015,16 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         found in <xref linkend="executing-processes" />.</para>
 
         <para>Note the pattern of using a static property setter method
-        (<classname>FlowConnector.setApplicationJarPath</classname>), other
-        classes that can be used to set properties are
-        <classname>MultiMapReducePlanner</classname> and
-        <classname>Flow</classname>.</para>
+        (<classname>cascading.flow.FlowConnector.setApplicationJarPath</classname>),
+        other classes that can be used to set properties are
+        <classname>cascading.flow.MultiMapReducePlanner</classname> and
+        <classname>cascading.flow.Flow</classname>.</para>
 
-        <para>Since the FlowConnector can be reused, any properties passed on
-        the constructor will be handed to all the Flows it is used to create.
-        If Flows need to be created with different default properties, a new
-        FlowConnector will need to be instantiated with those
-        properties.</para>
+        <para>Since the <classname>FlowConnector</classname> can be reused,
+        any properties passed on the constructor will be handed to all the
+        Flows it is used to create. If Flows need to be created with different
+        default properties, a new FlowConnector will need to be instantiated
+        with those properties.</para>
       </section>
 
       <section>
@@ -1034,8 +1050,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
             <term>FlowSkipIfSinkStale</term>
 
             <listitem>
-              <para>This is the default strategy. Sinks are stale if they
-              don't exist or the resources are older than the sources. If the
+              <para>The
+              <classname>cascading.flow.FlowSkipIfSinkStale</classname>
+              strategy is the default strategy. Sinks are stale if they don't
+              exist or the resources are older than the sources. If the
               SinkMode for the sink Tap is REPLACE, then the Tap will be
               treated as stale.</para>
             </listitem>
@@ -1045,9 +1063,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
             <term>FlowSkipIfSinkExists</term>
 
             <listitem>
-              <para>This strategy will skip a Flow if the sink Tap exists,
-              regardless of age. If the SinkMode for the sink Tap is REPLACE,
-              then the Tap will be treated as stale.</para>
+              <para>The
+              <classname>cascading.flow.FlowSkipIfSinkExists</classname>
+              strategy will skip a Flow if the sink Tap exists, regardless of
+              age. If the <classname>SinkMode</classname> for the sink Tap is
+              <code>REPLACE</code>, then the Tap will be treated as
+              stale.</para>
             </listitem>
           </varlistentry>
         </variablelist>
