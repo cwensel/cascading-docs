@@ -27,6 +27,8 @@
 
   <property name="dbf.basedir" location="${basedir}/docbook-framework"/>
 
+  <property name="target.doc" value="userguide"/>
+
   <property name="src.docbook.dir" value="${basedir}/src/docbook"/>
   <property name="src.tools.dir" value="${basedir}/src/tools"/>
   <property name="src.examples.dir" value="${basedir}/src/examples"/>
@@ -141,7 +143,7 @@
              <arg value="${build.images.dir}"/>
              <arg value="-m"/>
              <arg value="image/png"/>
-             <arg value="${src.images.dir}"/>
+             <arg value="${src.images.dir}/${target.doc}"/>
 
              <classpath>
                <pathelement location="${dbf.basedir}/lib/batik-all-1.7.jar"/>
@@ -228,12 +230,12 @@
     <copy todir="${edit.dir}">
       <fileset dir="${docbook.src.dir}">
         <include name="**/*.xml"/>
-        <exclude name="**/userguide.xml"/>
+        <exclude name="**/${target.doc}.xml"/>
       </fileset>
     </copy>
 
-    <copy todir="${edit.dir}/userguide/images">
-      <fileset dir="${src.images.dir}">
+    <copy todir="${edit.dir}/${target.doc}/images">
+      <fileset dir="${src.images.dir}/${target.doc}">
         <include name="**/*"/>
       </fileset>
       <fileset dir="${build.images.dir}">
@@ -242,8 +244,8 @@
     </copy>
 
     <!-- copy edit to src tree if newer, then reverse -->
-    <copy preservelastmodified="true" todir="${edit.dir}/userguide" file="${src.docbook.dir}/userguide/userguide.xml"/>
-    <copy preservelastmodified="true" todir="${src.docbook.dir}/userguide" file="${edit.dir}/userguide/userguide.xml"/>
+    <copy preservelastmodified="true" todir="${edit.dir}/${target.doc}" file="${src.docbook.dir}/${target.doc}/${target.doc}.xml"/>
+    <copy preservelastmodified="true" todir="${src.docbook.dir}/${target.doc}" file="${edit.dir}/${target.doc}/${target.doc}.xml"/>
 
   </target>
 
@@ -257,16 +259,16 @@
   </target>
 
   <target name="clean-avail">
-    <available property="edit.available" file="${edit.dir}/userguide/userguide.xml"/>
+    <available property="edit.available" file="${edit.dir}/${target.doc}/${target.doc}.xml"/>
   </target>
 
   <target name="clean-edit" if="edit.available">
 
-    <uptodate property="edits.newer" srcfile="${src.docbook.dir}/userguide/userguide.xml"
-              targetfile="${edit.dir}/userguide/userguide.xml"/>
+    <uptodate property="edits.newer" srcfile="${src.docbook.dir}/${target.doc}/${target.doc}.xml"
+              targetfile="${edit.dir}/${target.doc}/${target.doc}.xml"/>
 
-    <uptodate property="orig.newer" srcfile="${edit.dir}/userguide/userguide.xml"
-              targetfile="${src.docbook.dir}/userguide/userguide.xml"/>
+    <uptodate property="orig.newer" srcfile="${edit.dir}/${target.doc}/${target.doc}.xml"
+              targetfile="${src.docbook.dir}/${target.doc}/${target.doc}.xml"/>
 
     <fail message="userguide edits are newer">
       <condition>
@@ -288,23 +290,23 @@
 
   <target name="pdf" description="---> build pdf" depends="includes">
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="pdf">
-      <property name="docbook.dir" value="userguide"/>
-      <property name="docbook.file" value="userguide"/>
+      <property name="docbook.dir" value="${target.doc}"/>
+      <property name="docbook.file" value="${target.doc}"/>
     </ant>
   </target>
 
   <target name="html" description="---> build chunked html" depends="includes,gen-png">
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="html">
-      <property name="docbook.dir" value="userguide"/>
-      <property name="docbook.file" value="userguide"/>
+      <property name="docbook.dir" value="${target.doc}"/>
+      <property name="docbook.file" value="${target.doc}"/>
       <property name="images.src.dir" value="${build.images.dir}"/>
     </ant>
   </target>
 
   <target name="htmlsingle" description="---> build single html" depends="includes,gen-png">
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="htmlsingle">
-      <property name="docbook.dir" value="userguide"/>
-      <property name="docbook.file" value="userguide"/>
+      <property name="docbook.dir" value="${target.doc}"/>
+      <property name="docbook.file" value="${target.doc}"/>
       <property name="images.src.dir" value="${build.images.dir}"/>
     </ant>
   </target>
