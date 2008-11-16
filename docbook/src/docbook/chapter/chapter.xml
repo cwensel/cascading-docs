@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:ns5="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns4="http://www.w3.org/2000/svg"
+         xmlns:ns3="http://www.w3.org/1999/xhtml"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <info>
+    <title>Cascading - Leveraging Capacity</title>
+  </info>
+
+  <para>Cascading is an application programming interface (API) that allows
+  developers to build increasingly complex, production quality, data
+  processing applications for execution in Hadoop clusters.</para>
+
+  <para>The Cascading project was started during the late Summer of 2007, with
+  its first public release, version 0.1.0, in January 2008. By the time this
+  chapter is published, it will have reached version 1.0, after over a year of
+  continuous refinement and development. Binaries and source code can be
+  downloaded from the project website, <link
+  xlink:href="http://www.cascading.org/">http://www.cascading.org/</link>.</para>
+
+  <para>The Cascading project was started because it was immediately obvious
+  that the MapReduce model does not scale organizationally. MapReduce is
+  difficult for developers to "think" in when faced with real-world complex
+  applications. And it is at the wrong granularity for creating efficient,
+  composable applications that can be shared between users.</para>
+
+  <para>To solve the first criticism, Cascading traded in MapReduce keys and
+  values for a simple field names and data tuple model. For the second,
+  Cascading departs from Map and Reduce by introducing some alternative
+  operations; Functions, Filters, Aggregators, and Buffers.</para>
+
+  <para>Though many alternatives began to emerge before and after the initial
+  public release of Cascading, Cascading was designed to be complimentary to
+  all of them. All these alternative frameworks have some pre and post
+  conditions or expectations. For example, data must be pre-formatted and/or
+  imported into the Hadoop File System (HDFS). It is quite a simple endeavor
+  to have Cascading manage and prepare or import data into these alternative
+  frameworks as necessary.</para>
+
+  <section>
+    <info>
+      <title>Fields and Tuples</title>
+    </info>
+
+    <para>The MapReduce model uses keys and values to link input data to the
+    Map function, the Map function to the Reduce function, and the Reduce
+    function to the output data. </para>
+
+    <para>But as we know, real-world Hadoop applications are usually more than
+    one MapReduce job chained together. Consider the canonical word count
+    example implemented in MapReduce. If you needed to sort the numeric counts
+    in descending order, not an unlikely requirement, it would need to be done
+    in a second MapReduce job.</para>
+
+    <para>So, in the abstract, keys and values not only bind Map to Reduce,
+    but Reduce to the next Map, and then to the next optional Reduce, and so
+    on. When you implement enough of these chained MapReduce applications, you
+    start to see a well defined set of key/value manipulations used over and
+    over again.</para>
+
+    <para>Cascading both leverages these emergent patterns and simultaneously
+    abstracts their complexity away.</para>
+
+    <para>In part this is accomplished by abstracting away keys and values and
+    replacing them with tuples that have corresponding field names, similar in
+    concept to tables and column names in a Relational Database. Additionally,
+    Cascading expands on MapReduce with additional operators that work against
+    field names and tuple values.</para>
+
+    <para>Below is a short summary of the main concepts in Cascading, please
+    see the Cascading User Guide for a more in depth presentation of the
+    Cascading processing model.</para>
+
+    <para>To recap, keys and values are reduced to:</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term>Fields</term>
+
+          <listitem>
+            <para>Fields are a collection of either
+            <classname>String</classname> names (like "first_name"), numeric
+            positions (like 2, or -1, for the third and last position,
+            respectively), or a combination of both.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Tuple</term>
+
+          <listitem>
+            <para>A Tuple is simply an array of
+            <classname>java.lang.Comparable</classname> objects. A Tuple is
+            very much like a database row or record.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>And streams of these fields and tuples are manipulated
+    with the operators:</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term>Each</term>
+
+          <listitem>
+            <para>The Each operator processes a single input Tuple at a time,
+            but may return zero (0) or more result Tuples for every input
+            Tuple. The Each operator may apply either a Function or a Filter
+            to the input Tuple.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>GroupBy</term>
+
+          <listitem>
+            <para>The GroupBy operator groups Tuples based on the values of a
+            given set of field names. It behaves just like the SQL <code>group
+            by</code> statement. The GroupBy can also merge multiple inpust
+            tuple streams, if they all share the same field names.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>CoGroup</term>
+
+          <listitem>
+            <para>The CoGroup operator both joins multiple tuple streams by
+            the values of a given set of field names, it also groups the
+            Tuples by those values. The all join types and custom joins are
+            supported. And more than two streams may be joined
+            simultaneously.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Every</term>
+
+          <listitem>
+            <para>The Every operator processes a single group of Tuples at a
+            time, where the group share a common sub-set of Tuple values. And
+            it may return zero (0) or more result Tuples for that grouping for
+            every input grouping. The Every may apply either an Aggregator or
+            a Buffer to the input Tuple grouping.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>On the surface this might seem more complex than the
+    traditional MapReduce model. And admitedly there are more concepts here
+    than Map, Reduce, Key, and Value. But in practice, as implemented in
+    Hadoop, there are many more concepts that must all work in tandem to
+    affect different behaviors. </para>
+
+    <para>For example, if a developer wanted to provide a "secondary sorting"
+    of reduce values, they would need to implement Map, Reduce, a composite
+    Key (two Keys nested in a parent Key), Value, Partitioner, an "output
+    value grouping" Comparator, and an "output key" Comparator. All of which
+    would be coupled to one another in varying ways, and very likely
+    non-reusable in subsequent jobs.</para>
+
+    <para>In Cascading, this would be one line of code: <code>new GroupBy(
+    &lt;previous&gt;, &lt;grouping fields&gt;, &lt;secondary sorting
+    fields&gt;)</code>. Where <code>previous</code> is the operator that came
+    before.</para>
+  </section>
+
+  <section>
+    <info>
+      <title>Operations</title>
+    </info>
+
+    <para></para>
+  </section>
+
+  <section>
+    <info>
+      <title>Absorbing Complexity</title>
+    </info>
+
+    <para></para>
+  </section>
+
+  <section>
+    <info>
+      <title>Production Quality</title>
+    </info>
+
+    <para></para>
+  </section>
+</chapter>
