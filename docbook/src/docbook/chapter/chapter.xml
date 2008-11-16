@@ -170,8 +170,18 @@
       </variablelist></para>
 
     <para>All these pipes are chained together by the developer into "pipe
-    assemblies". Where each assembly can have many input Tuple streams and
-    many output Tuple streams.</para>
+    assemblies". Where each assembly can have many input Tuple streams
+    (sources) and many output Tuple streams (sinks).</para>
+
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata contentwidth="5in" fileref="images/pipe-assembly.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata contentwidth="5in" fileref="images/pipe-assembly.png"></imagedata>
+      </imageobject>
+    </mediaobject>
 
     <para>On the surface this might seem more complex than the traditional
     MapReduce model. And admitedly there are more concepts here than Map,
@@ -263,7 +273,24 @@
         </varlistentry>
       </variablelist></para>
 
-    <para></para>
+    <para>Operations are bound to pipes when the pipe assembly is created. The
+    Each and Every pipe provides a simple mechanism for selecting some or all
+    values out of a input Tuple before being passed to its child operation.
+    And there is a simple mechanism for merging the operation results with the
+    original input Tuple to create a the output Tuple. Without going into
+    great detail, this allows for each operation to only care about argument
+    Tuple values and fields, not the whole set of fields in the current input
+    Tuple. This allows for operations to be reusable across applicaitions the
+    same way Java methods can be reusable.</para>
+
+    <para>For example, in Java, a method declared as <code>join( String first,
+    String second )</code> is more abstract than <code>join( Person person
+    )</code>. In the second case, the <code>join</code> function must know
+    about the <code>Person</code> object, in the first case, it is agnostic to
+    where the data came from. Cascading operations exhibit this same
+    quality.</para>
+
+    <para>&lt;insert pipe-assembly-operations image&gt;</para>
   </section>
 
   <section>
