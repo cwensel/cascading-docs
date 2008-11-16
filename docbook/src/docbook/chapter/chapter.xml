@@ -7,7 +7,7 @@
          xmlns:ns3="http://www.w3.org/1999/xhtml"
          xmlns:ns="http://docbook.org/ns/docbook">
   <info>
-    <title>Cascading - Leveraging Capacity</title>
+    <title>Cascading - Leveraging Scalability</title>
   </info>
 
   <para>Cascading is an application programming interface (API) that allows
@@ -15,15 +15,15 @@
   processing applications for execution in Hadoop clusters.</para>
 
   <para>The Cascading project was started during the late Summer of 2007, with
-  its first public release, version 0.1.0, in January 2008. By the time this
-  chapter is published, it will have reached version 1.0, after over a year of
-  continuous refinement and development. Binaries and source code can be
-  downloaded from the project website, <link
+  its first public release, Version 0.1.0, in January 2008. By the time this
+  chapter is published, it will have reached Version 1.0, after over a year of
+  continuous development, testing, and refinement. Binaries and source code
+  can be downloaded from the project website, <link
   xlink:href="http://www.cascading.org/">http://www.cascading.org/</link>.</para>
 
   <para>The Cascading project was started because it was immediately obvious
   that the MapReduce model does not scale organizationally. MapReduce is
-  difficult for developers to "think" in when faced with real-world complex
+  difficult for developers to "think" in when faced with real-world
   applications. And it is at the wrong granularity for creating efficient,
   composable applications that can be shared between users.</para>
 
@@ -35,10 +35,10 @@
   <para>Though many alternatives began to emerge before and after the initial
   public release of Cascading, Cascading was designed to be complimentary to
   all of them. All these alternative frameworks have some pre and post
-  conditions or expectations. For example, data must be pre-formatted and/or
-  imported into the Hadoop File System (HDFS). It is quite a simple endeavor
-  to have Cascading manage and prepare or import data into these alternative
-  frameworks as necessary.</para>
+  conditions or expectations. For example, data must be pre-formatted,
+  filtered, and/or imported into the Hadoop File System (HDFS). It is quite a
+  simple endeavor to have Cascading manage and prepare or import data into
+  these alternative frameworks as necessary.</para>
 
   <section>
     <info>
@@ -47,7 +47,7 @@
 
     <para>The MapReduce model uses keys and values to link input data to the
     Map function, the Map function to the Reduce function, and the Reduce
-    function to the output data. </para>
+    function to the output data.</para>
 
     <para>But as we know, real-world Hadoop applications are usually more than
     one MapReduce job chained together. Consider the canonical word count
@@ -76,6 +76,16 @@
 
     <para>To recap, keys and values are reduced to:</para>
 
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata contentwidth="1.5in" fileref="images/fields-tuples.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata contentwidth="1.5in" fileref="images/fields-tuples.png"></imagedata>
+      </imageobject>
+    </mediaobject>
+
     <para><variablelist>
         <varlistentry>
           <term>Fields</term>
@@ -97,18 +107,30 @@
             very much like a database row or record.</para>
           </listitem>
         </varlistentry>
-      </variablelist>And streams of these fields and tuples are manipulated
-    with the operators:</para>
+      </variablelist></para>
+
+    <para>And streams of these fields and tuples are manipulated with the
+    elements or pipes (as in "pipes and filters"):</para>
+
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata contentwidth="2in" fileref="images/pipes.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata contentwidth="2in" fileref="images/pipes.png"></imagedata>
+      </imageobject>
+    </mediaobject>
 
     <para><variablelist>
         <varlistentry>
           <term>Each</term>
 
           <listitem>
-            <para>The Each operator processes a single input Tuple at a time,
-            but may return zero (0) or more result Tuples for every input
-            Tuple. The Each operator may apply either a Function or a Filter
-            to the input Tuple.</para>
+            <para>The Each pipe processes a single input Tuple at a time, but
+            may return zero (0) or more result Tuples for every input Tuple.
+            The Each pipe may apply either a Function or a Filter to the input
+            Tuple.</para>
           </listitem>
         </varlistentry>
 
@@ -116,7 +138,7 @@
           <term>GroupBy</term>
 
           <listitem>
-            <para>The GroupBy operator groups Tuples based on the values of a
+            <para>The GroupBy pipe groups Tuples based on the values of a
             given set of field names. It behaves just like the SQL <code>group
             by</code> statement. The GroupBy can also merge multiple inpust
             tuple streams, if they all share the same field names.</para>
@@ -127,11 +149,10 @@
           <term>CoGroup</term>
 
           <listitem>
-            <para>The CoGroup operator both joins multiple tuple streams by
-            the values of a given set of field names, it also groups the
-            Tuples by those values. The all join types and custom joins are
-            supported. And more than two streams may be joined
-            simultaneously.</para>
+            <para>The CoGroup pipe both joins multiple tuple streams by the
+            values of a given set of field names, it also groups the Tuples by
+            those values. The all join types and custom joins are supported.
+            And more than two streams may be joined simultaneously.</para>
           </listitem>
         </varlistentry>
 
@@ -139,18 +160,24 @@
           <term>Every</term>
 
           <listitem>
-            <para>The Every operator processes a single group of Tuples at a
-            time, where the group share a common sub-set of Tuple values. And
-            it may return zero (0) or more result Tuples for that grouping for
-            every input grouping. The Every may apply either an Aggregator or
-            a Buffer to the input Tuple grouping.</para>
+            <para>The Every pipe processes a single group of Tuples at a time,
+            where the group share a common sub-set of Tuple values. And it may
+            return zero (0) or more result Tuples for that grouping for every
+            input grouping. The Every pipe may apply either an Aggregator or a
+            Buffer to the input Tuple grouping.</para>
           </listitem>
         </varlistentry>
-      </variablelist>On the surface this might seem more complex than the
-    traditional MapReduce model. And admitedly there are more concepts here
-    than Map, Reduce, Key, and Value. But in practice, as implemented in
-    Hadoop, there are many more concepts that must all work in tandem to
-    affect different behaviors. </para>
+      </variablelist></para>
+
+    <para>All these pipes are chained together by the developer into "pipe
+    assemblies". Where each assembly can have many input Tuple streams and
+    many output Tuple streams.</para>
+
+    <para>On the surface this might seem more complex than the traditional
+    MapReduce model. And admitedly there are more concepts here than Map,
+    Reduce, Key, and Value. But in practice, as implemented in Hadoop, there
+    are many more concepts that must all work in tandem to affect different
+    behaviors.</para>
 
     <para>For example, if a developer wanted to provide a "secondary sorting"
     of reduce values, they would need to implement Map, Reduce, a composite
@@ -161,7 +188,7 @@
 
     <para>In Cascading, this would be one line of code: <code>new GroupBy(
     &lt;previous&gt;, &lt;grouping fields&gt;, &lt;secondary sorting
-    fields&gt;)</code>. Where <code>previous</code> is the operator that came
+    fields&gt;)</code>. Where <code>previous</code> is the pipe that came
     before.</para>
   </section>
 
@@ -170,6 +197,72 @@
       <title>Operations</title>
     </info>
 
+    <para>As mentioned above, Cascading departs from MapReduce by introducing
+    alternative operations that either are applied to individual Tuples or
+    groups of Tuples.</para>
+
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata contentwidth="2in" fileref="images/operations.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata contentwidth="2in" fileref="images/operations.png"></imagedata>
+      </imageobject>
+    </mediaobject>
+
+    <para><variablelist>
+        <varlistentry>
+          <term>Function</term>
+
+          <listitem>
+            <para>A Function operates on individual input Tuples and may
+            return zero (0) or more output Tuples for every one input.
+            Functions are applied by the Each pipe.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Filter</term>
+
+          <listitem>
+            <para>A Filter is a special kind of Function that returns a
+            boolean value if the current input Tuple should be removed from
+            the Tuple stream. A Function could serve this purpose, but the
+            Filter is optimized for this case, and many filters can be grouped
+            by "logical" filters like And, Or, Xor, and Not, rapidly creating
+            more complex filtering operations.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Aggregator</term>
+
+          <listitem>
+            <para>An Aggregator performs some function against a group of
+            Tuples, where the grouped Tuples are grouped by a common set of
+            field values. For example, all Tuples have the same "last-name"
+            field value. Common Aggregator functions would be Sum, Count,
+            Average, Max, and Min.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Buffer</term>
+
+          <listitem>
+            <para>A Buffer is similar to the Aggregator, except it is
+            optimized to act as a "sliding window" across a group of Tuples.
+            This is useful when the developer needs to efficiently insert
+            missing values in an ordered set of Tuples (like a missing date or
+            duration). Usually Aggregator is the operation of choice when
+            working with groups of Tuples since many Aggregators can be
+            chained together very efficiently, but sometimes a Buffer is the
+            best tool for the job.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
+
     <para></para>
   </section>
 
@@ -177,6 +270,18 @@
     <info>
       <title>Absorbing Complexity</title>
     </info>
+
+    <para>Now take a step back and see what this new model has given us. Or
+    better yet, what it has taken away.</para>
+
+    <para>You see, we no longer think in terms of MapReduce jobs, or Mapper
+    and Reducer interface implementations. And how to bind or link subsequent
+    MapReduce jobs to the ones that preceede them.</para>
+
+    <para>Because of this, developers can build applications of arbitrary
+    granularity. They can start with a small application that just filters a
+    log file, but then can iteratively build up more features into the
+    application as needed.</para>
 
     <para></para>
   </section>
