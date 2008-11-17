@@ -10,9 +10,9 @@
     <title>Cascading - Leveraging Scalability</title>
   </info>
 
-  <para>Cascading is an application programming interface (API) that allows
-  developers to build increasingly complex, production quality, data
-  processing applications for execution in Hadoop clusters.</para>
+  <para>Cascading is Java library and application programming interface (API)
+  that allows developers to build increasingly complex, production quality,
+  data processing applications for execution in Hadoop clusters.</para>
 
   <para>The Cascading project was started during the late Summer of 2007, with
   its first public release, Version 0.1.0, in January 2008. By the time this
@@ -37,8 +37,12 @@
   all of them. All these alternative frameworks have some pre and post
   conditions or expectations. For example, data must be pre-formatted,
   filtered, and/or imported into the Hadoop File System (HDFS). It is quite a
-  simple endeavor to have Cascading manage and prepare or import data into
+  simple endeavor to have Cascading manage, and prepare or import, data into
   these alternative frameworks as necessary.</para>
+
+  <para>This chapter represents a short introduction and summary of the main
+  concepts behind Cascading, please see the Cascading User Guide for a more in
+  depth presentation of the Cascading processing model.</para>
 
   <section>
     <info>
@@ -56,10 +60,10 @@
     in a second MapReduce job.</para>
 
     <para>So, in the abstract, keys and values not only bind Map to Reduce,
-    but Reduce to the next Map, and then to the next optional Reduce, and so
-    on. When you implement enough of these chained MapReduce applications, you
-    start to see a well defined set of key/value manipulations used over and
-    over again.</para>
+    but Reduce to the next Map, and then to the next Reduce, and so on. When
+    you implement enough of these chained MapReduce applications, you start to
+    see a well defined set of key/value manipulations used over and over
+    again.</para>
 
     <para>Cascading both leverages these emergent patterns and simultaneously
     abstracts their complexity away.</para>
@@ -69,10 +73,6 @@
     concept to tables and column names in a Relational Database. Additionally,
     Cascading expands on MapReduce with additional operators that work against
     field names and tuple values.</para>
-
-    <para>Below is a short summary of the main concepts in Cascading, please
-    see the Cascading User Guide for a more in depth presentation of the
-    Cascading processing model.</para>
 
     <para>To recap, keys and values are reduced to:</para>
 
@@ -179,11 +179,13 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata align="center" contentwidth="5in" fileref="images/pipe-assembly.svg"></imagedata>
+        <imagedata align="center" contentwidth="5in"
+                   fileref="images/pipe-assembly.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata align="center" contentwidth="5in" fileref="images/pipe-assembly.png"></imagedata>
+        <imagedata align="center" contentwidth="5in"
+                   fileref="images/pipe-assembly.png"></imagedata>
       </imageobject>
     </mediaobject>
 
@@ -217,11 +219,13 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata align="center" contentwidth="2in" fileref="images/operations.svg"></imagedata>
+        <imagedata align="center" contentwidth="2in"
+                   fileref="images/operations.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata align="center" contentwidth="2in" fileref="images/operations.png"></imagedata>
+        <imagedata align="center" contentwidth="2in"
+                   fileref="images/operations.png"></imagedata>
       </imageobject>
     </mediaobject>
 
