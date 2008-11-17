@@ -292,6 +292,7 @@
     <ant antfile="${dbf.basedir}/build-docbook.xml" target="pdf">
       <property name="docbook.dir" value="${target.doc}"/>
       <property name="docbook.file" value="${target.doc}"/>
+      <property name="images.src.dir" value="${src.images.dir}/${target.doc}"/>
     </ant>
   </target>
 

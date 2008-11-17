@@ -78,11 +78,13 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata contentwidth="1.5in" fileref="images/fields-tuples.svg"></imagedata>
+        <imagedata align="center" contentwidth="1.5in"
+                   fileref="images/fields-tuples.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata contentwidth="1.5in" fileref="images/fields-tuples.png"></imagedata>
+        <imagedata align="center" contentwidth="1.5in"
+                   fileref="images/fields-tuples.png"></imagedata>
       </imageobject>
     </mediaobject>
 
@@ -114,11 +116,13 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata contentwidth="2in" fileref="images/pipes.svg"></imagedata>
+        <imagedata align="center" contentwidth="2in"
+                   fileref="images/pipes.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata contentwidth="2in" fileref="images/pipes.png"></imagedata>
+        <imagedata align="center" contentwidth="2in"
+                   fileref="images/pipes.png"></imagedata>
       </imageobject>
     </mediaobject>
 
@@ -175,11 +179,11 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata contentwidth="5in" fileref="images/pipe-assembly.svg"></imagedata>
+        <imagedata align="center" contentwidth="5in" fileref="images/pipe-assembly.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata contentwidth="5in" fileref="images/pipe-assembly.png"></imagedata>
+        <imagedata align="center" contentwidth="5in" fileref="images/pipe-assembly.png"></imagedata>
       </imageobject>
     </mediaobject>
 
@@ -213,11 +217,11 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata contentwidth="2in" fileref="images/operations.svg"></imagedata>
+        <imagedata align="center" contentwidth="2in" fileref="images/operations.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata contentwidth="2in" fileref="images/operations.png"></imagedata>
+        <imagedata align="center" contentwidth="2in" fileref="images/operations.png"></imagedata>
       </imageobject>
     </mediaobject>
 
@@ -278,12 +282,12 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata contentwidth="5in"
+        <imagedata align="center" contentwidth="5in"
                    fileref="images/pipe-assembly-operations.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata contentwidth="5in"
+        <imagedata align="center" contentwidth="5in"
                    fileref="images/pipe-assembly-operations.png"></imagedata>
       </imageobject>
     </mediaobject>
@@ -321,12 +325,12 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata contentwidth="5in"
+        <imagedata align="center" contentwidth="5in"
                    fileref="images/pipe-assembly-mapreduce.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata contentwidth="5in"
+        <imagedata align="center" contentwidth="5in"
                    fileref="images/pipe-assembly-mapreduce.png"></imagedata>
       </imageobject>
     </mediaobject>
@@ -340,8 +344,8 @@
     flexible. First off, developers can create Domain Specific Languages
     (DSLs) using their favorite language, like Groovy, JRuby, Jython, Scala,
     and others. Second, developers can extend various parts of Cascading, like
-    allowing Thrift objects to be read and written to, and allowing them to be
-    passed through the Tuple stream.</para>
+    allowing custom Thrift or JSON objects to be read and written to, and
+    allowing them to be passed through the Tuple stream.</para>
   </section>
 
   <section>
@@ -402,6 +406,6 @@
             order.</para>
           </listitem>
         </varlistentry>
-      </variablelist> </para>
+      </variablelist></para>
   </section>
 </chapter>
