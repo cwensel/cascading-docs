@@ -273,15 +273,29 @@
         </varlistentry>
       </variablelist></para>
 
-    <para>Operations are bound to pipes when the pipe assembly is created. The
-    Each and Every pipe provides a simple mechanism for selecting some or all
-    values out of a input Tuple before being passed to its child operation.
-    And there is a simple mechanism for merging the operation results with the
-    original input Tuple to create a the output Tuple. Without going into
-    great detail, this allows for each operation to only care about argument
-    Tuple values and fields, not the whole set of fields in the current input
-    Tuple. This allows for operations to be reusable across applicaitions the
-    same way Java methods can be reusable.</para>
+    <para>Operations are bound to pipes when the pipe assembly is
+    created.</para>
+
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata contentwidth="5in"
+                   fileref="images/pipe-assembly-operations.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata contentwidth="5in"
+                   fileref="images/pipe-assembly-operations.png"></imagedata>
+      </imageobject>
+    </mediaobject>
+
+    <para>The Each and Every pipe provides a simple mechanism for selecting
+    some or all values out of a input Tuple before being passed to its child
+    operation. And there is a simple mechanism for merging the operation
+    results with the original input Tuple to create a the output Tuple.
+    Without going into great detail, this allows for each operation to only
+    care about argument Tuple values and fields, not the whole set of fields
+    in the current input Tuple. Subsequently, operations can be reusable
+    across applicaitions the same way Java methods can be reusable.</para>
 
     <para>For example, in Java, a method declared as <code>join( String first,
     String second )</code> is more abstract than <code>join( Person person
@@ -289,8 +303,6 @@
     about the <code>Person</code> object, in the first case, it is agnostic to
     where the data came from. Cascading operations exhibit this same
     quality.</para>
-
-    <para>&lt;insert pipe-assembly-operations image&gt;</para>
   </section>
 
   <section>
@@ -303,14 +315,33 @@
 
     <para>You see, we no longer think in terms of MapReduce jobs, or Mapper
     and Reducer interface implementations. And how to bind or link subsequent
-    MapReduce jobs to the ones that preceede them.</para>
+    MapReduce jobs to the ones that preceede them. Cascading, during runtime
+    figures out the optimal way to partition the pipe assembly into MapReduce
+    jobs, and manages the linkages between them.</para>
+
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata contentwidth="5in"
+                   fileref="images/pipe-assembly-mapreduce.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata contentwidth="5in"
+                   fileref="images/pipe-assembly-mapreduce.png"></imagedata>
+      </imageobject>
+    </mediaobject>
 
     <para>Because of this, developers can build applications of arbitrary
     granularity. They can start with a small application that just filters a
     log file, but then can iteratively build up more features into the
     application as needed.</para>
 
-    <para></para>
+    <para>Since Cascading is an API and not a syntax like SQL, it is more
+    flexible. First off, developers can create Domain Specific Languages
+    (DSLs) using their favorite language, like Groovy, JRuby, Jython, Scala,
+    and others. Second, developers can extend various parts of Cascading, like
+    allowing Thrift objects to be read and written to, and allowing them to be
+    passed through the Tuple stream.</para>
   </section>
 
   <section>
@@ -318,6 +349,59 @@
       <title>Production Quality</title>
     </info>
 
-    <para></para>
+    <para>No doubt Cascading can be used for ad-hoc, single use, applications.
+    But it really shines when large complex processes need to be created that
+    need a higher level of robustness.</para>
+
+    <para>Here are just a few of these features:</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term>Stream Assertions</term>
+
+          <listitem>
+            <para>Stream assertions are just like Java assertions and unit
+            tests all rolled up. A pipe assembly can be assebled with
+            assertions built into them. These assertions can test for null
+            values in an argument Tuple, or if the values match some regular
+            expression pattern. If the assertion fails, the process can
+            optionally fail, or it can save the bad input Tuple to a new file
+            on HDFS. If assertions aren't wanted, Cascading can remove them at
+            runtime so they don't slow things down.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Failure Traps</term>
+
+          <listitem>
+            <para>Failure traps are like Java Exception handlers. If an
+            operation fails unexpectedly, the input Tuple that caused the
+            failure can be saved off to a file for later debugging. This
+            features works great with stream assertions.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Events</term>
+
+          <listitem>
+            <para>Events allow for external code and/or systems to be notified
+            when a new process starts, completes, or fails.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Topological Scheduling</term>
+
+          <listitem>
+            <para>In Cascading, many pipe assemblies can be made into an
+            executable data process simultaneously. If one process depends on
+            a previous one, Cascading offers up an utility called a Cascade
+            that allows for all these processes to be scheduled in dependency
+            order.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist> </para>
   </section>
 </chapter>
