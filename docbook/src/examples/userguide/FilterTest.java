@@ -32,8 +32,12 @@ import cascading.operation.regex.RegexParser;
 import cascading.operation.regex.RegexFilter;
 import cascading.operation.Identity;
 import cascading.operation.Filter;
+import cascading.operation.Debug;
 import cascading.operation.filter.FilterNull;
 import cascading.operation.filter.And;
+import cascading.operation.filter.Limit;
+import cascading.operation.filter.Xor;
+import cascading.operation.filter.Or;
 import cascading.operation.text.DateParser;
 import cascading.operation.text.DateFormatter;
 import cascading.flow.Flow;
@@ -89,5 +93,4 @@ public class FilterTest extends ExampleTestCase
 
     iterator.close();
     }
-
   }

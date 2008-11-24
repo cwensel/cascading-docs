@@ -19,7 +19,7 @@
   <property name="website.port" value="22"/>
 
   <property name="site" location="${basedir}/site/"/>
-  <property name="site.javadoc" location="${basedir}/site/javadoc"/>
+  <property name="site.javadoc" location="${basedir}/site/javadoc/${cascading.release.version}"/>
   <property name="site.userguide" location="${basedir}/site/userguide"/>
 
   <path id="all.javadoc.src.path">
@@ -36,9 +36,9 @@
              destdir="${site.javadoc}"
              packagenames="cascading.*"
              windowtitle="Cascading">
-      <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+      <link href="http://java.sun.com/javase/6/docs/api/"/>
       <link href="http://www.janino.net/javadoc/"/>
-      <link href="http://hadoop.apache.org/core/docs/r0.16.3/api/"/>
+      <link href="http://hadoop.apache.org/core/docs/r0.19.0/api/"/>
       <bottom>
         <![CDATA[<i>Copyright &#169; 2007-2008 Concurrent, Inc. All Rights Reserved.</i>]]>
         <![CDATA[<script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-188528-5"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]>
