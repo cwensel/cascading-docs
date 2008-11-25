@@ -19,11 +19,12 @@
   <property name="website.port" value="22"/>
 
   <property name="site" location="${basedir}/site/"/>
-  <property name="site.javadoc" location="${basedir}/site/javadoc/${cascading.release.version}"/>
+  <property name="site.javadoc" location="${basedir}/site/javadoc"/>
   <property name="site.userguide" location="${basedir}/site/userguide"/>
 
   <path id="all.javadoc.src.path">
-    <pathelement location="${cascading.home}/src/java"/>
+    <pathelement location="${cascading.home}/src/core"/>
+    <pathelement location="${cascading.home}/src/xml"/>
     <pathelement location="${cascading.groovy.home}/src/java"/>
   </path>
 
