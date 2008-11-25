@@ -29,24 +29,25 @@
 
   <para>To solve the first criticism, Cascading traded in MapReduce keys and
   values for a simple field names and data tuple model. For the second,
-  Cascading departs from Map and Reduce by introducing some alternative
-  operations; Functions, Filters, Aggregators, and Buffers.</para>
+  Cascading departs from the Map and Reduce operations by introducing some
+  alternatives; Functions, Filters, Aggregators, and Buffers.</para>
 
-  <para>Though many alternatives began to emerge before and after the initial
-  public release of Cascading, Cascading was designed to be complimentary to
-  all of them. All these alternative frameworks have some pre and post
-  conditions or expectations. For example, data must be pre-formatted,
-  filtered, and/or imported into the Hadoop File System (HDFS). It is quite a
-  simple endeavor to have Cascading manage, and prepare or import, data into
-  these alternative frameworks as necessary.</para>
+  <para>Though many alternatives to Cascading began to emerge before and after
+  the initial public release of Cascading, Cascading was designed to be
+  complimentary to all of them. All these alternative frameworks have some pre
+  and post conditions or expectations. For example, data must be
+  pre-formatted, filtered, and/or imported into the Hadoop File System (HDFS).
+  It is quite a simple endeavor to have Cascading manage, and prepare or
+  import, data into these alternative frameworks as necessary.</para>
 
   <para>This chapter represents a short introduction and summary of the main
-  concepts behind Cascading, please see the Cascading User Guide for a more in
-  depth presentation of the Cascading processing model.</para>
+  concepts behind Cascading, please see the Cascading User Guide, on the
+  project website, for a more in depth presentation of the Cascading
+  processing model.</para>
 
   <section>
     <info>
-      <title>Fields and Tuples</title>
+      <title>Fields, Tuples, and Pipes</title>
     </info>
 
     <para>The MapReduce model uses keys and values to link input data to the
@@ -59,22 +60,48 @@
     in descending order, not an unlikely requirement, it would need to be done
     in a second MapReduce job.</para>
 
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata align="center" contentwidth="5in"
+                   fileref="images/mr-count-sort.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata align="center" contentwidth="5in"
+                   fileref="images/mr-count-sort.png"></imagedata>
+      </imageobject>
+    </mediaobject>
+
     <para>So, in the abstract, keys and values not only bind Map to Reduce,
-    but Reduce to the next Map, and then to the next Reduce, and so on. When
-    you implement enough of these chained MapReduce applications, you start to
-    see a well defined set of key/value manipulations used over and over
-    again.</para>
+    but Reduce to the next Map, and then to the next Reduce, and so on. That
+    is, key/value pairs are sourced from input files and stream through chains
+    of Map and Reduce operations and finally rest in an output file. When you
+    implement enough of these chained MapReduce applications, you start to see
+    a well defined set of key/value manipulations used over and over again to
+    manipulate the key/value data stream.</para>
 
     <para>Cascading both leverages these emergent patterns and simultaneously
     abstracts their complexity away.</para>
 
     <para>In part this is accomplished by abstracting away keys and values and
     replacing them with tuples that have corresponding field names, similar in
-    concept to tables and column names in a Relational Database. Additionally,
-    Cascading expands on MapReduce with additional operators that work against
-    field names and tuple values.</para>
+    concept to tables and column names in a Relational Database. And during
+    processing, streams of these Fields and Tuples are then manipulated by
+    Pipes.</para>
 
-    <para>To recap, keys and values are reduced to:</para>
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata align="center" contentwidth="5in"
+                   fileref="images/chained-pipes.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata align="center" contentwidth="5in"
+                   fileref="images/chained-pipes.png"></imagedata>
+      </imageobject>
+    </mediaobject>
+
+    <para>So, MapReduce keys and values are reduced to:</para>
 
     <mediaobject>
       <imageobject role="fo">
@@ -96,7 +123,10 @@
             <para>Fields are a collection of either
             <classname>String</classname> names (like "first_name"), numeric
             positions (like 2, or -1, for the third and last position,
-            respectively), or a combination of both.</para>
+            respectively), or a combination of both. Very much like column
+            names. So Fields are used to declare the names of values in a
+            Tuple, and to select values by name from a Tuple. The later is
+            like a SQL <code>select</code> call.</para>
           </listitem>
         </varlistentry>
 
@@ -111,17 +141,17 @@
         </varlistentry>
       </variablelist></para>
 
-    <para>And streams of these fields and tuples are manipulated with the
-    elements or pipes (as in "pipes and filters"):</para>
+    <para>And the Map and Reduce operations are abstracted behind one or more
+    Pipe instances.</para>
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata align="center" contentwidth="2in"
+        <imagedata align="center" contentwidth="3in"
                    fileref="images/pipes.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata align="center" contentwidth="2in"
+        <imagedata align="center" contentwidth="3in"
                    fileref="images/pipes.png"></imagedata>
       </imageobject>
     </mediaobject>
@@ -171,6 +201,15 @@
             Buffer to the input Tuple grouping.</para>
           </listitem>
         </varlistentry>
+
+        <varlistentry>
+          <term>SubAssembly</term>
+
+          <listitem>
+            <para>The SubAssembly pipe allows for nesting of sub assemblies inside a single pipe, which
+            are in turn nested in more complex assemblies.</para>
+          </listitem>
+        </varlistentry>
       </variablelist></para>
 
     <para>All these pipes are chained together by the developer into "pipe
@@ -179,12 +218,12 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata align="center" contentwidth="5in"
+        <imagedata align="center" contentwidth="6in"
                    fileref="images/pipe-assembly.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata align="center" contentwidth="5in"
+        <imagedata align="center" contentwidth="6in"
                    fileref="images/pipe-assembly.png"></imagedata>
       </imageobject>
     </mediaobject>
@@ -219,12 +258,12 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata align="center" contentwidth="2in"
+        <imagedata align="center" contentwidth="3in"
                    fileref="images/operations.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata align="center" contentwidth="2in"
+        <imagedata align="center" contentwidth="3in"
                    fileref="images/operations.png"></imagedata>
       </imageobject>
     </mediaobject>
@@ -286,12 +325,12 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata align="center" contentwidth="5in"
+        <imagedata align="center" contentwidth="6in"
                    fileref="images/pipe-assembly-operations.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata align="center" contentwidth="5in"
+        <imagedata align="center" contentwidth="6in"
                    fileref="images/pipe-assembly-operations.png"></imagedata>
       </imageobject>
     </mediaobject>
@@ -299,11 +338,11 @@
     <para>The Each and Every pipe provides a simple mechanism for selecting
     some or all values out of a input Tuple before being passed to its child
     operation. And there is a simple mechanism for merging the operation
-    results with the original input Tuple to create a the output Tuple.
-    Without going into great detail, this allows for each operation to only
-    care about argument Tuple values and fields, not the whole set of fields
-    in the current input Tuple. Subsequently, operations can be reusable
-    across applicaitions the same way Java methods can be reusable.</para>
+    results with the original input Tuple to create the output Tuple. Without
+    going into great detail, this allows for each operation to only care about
+    argument Tuple values and fields, not the whole set of fields in the
+    current input Tuple. Subsequently, operations can be reusable across
+    applicaitions the same way Java methods can be reusable.</para>
 
     <para>For example, in Java, a method declared as <code>join( String first,
     String second )</code> is more abstract than <code>join( Person person
@@ -329,12 +368,12 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata align="center" contentwidth="5in"
+        <imagedata align="center" contentwidth="6in"
                    fileref="images/pipe-assembly-mapreduce.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata align="center" contentwidth="5in"
+        <imagedata align="center" contentwidth="6in"
                    fileref="images/pipe-assembly-mapreduce.png"></imagedata>
       </imageobject>
     </mediaobject>
@@ -375,7 +414,8 @@
             expression pattern. If the assertion fails, the process can
             optionally fail, or it can save the bad input Tuple to a new file
             on HDFS. If assertions aren't wanted, Cascading can remove them at
-            runtime so they don't slow things down.</para>
+            runtime so they don't slow things down on your production system,
+            for example.</para>
           </listitem>
         </varlistentry>
 
@@ -411,5 +451,107 @@
           </listitem>
         </varlistentry>
       </variablelist></para>
+  </section>
+
+  <section>
+    <info>
+      <title>Cascading in Practice</title>
+    </info>
+
+    <para>Now that we know what Cascading is and have a good idea how it
+    works, what does an application written in Cascading look like, and is
+    really any simpler.</para>
+
+    <example>
+      <title>Word Count and Sort</title>
+
+      <xi:include href="word-count-sort.xml" />
+
+      <calloutlist>
+        <callout arearefs="ex.wcs.source ex.wcs.sink">
+          <para>We create source and sink Taps that reference the input file
+          and output directory, respectively.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.each">
+          <para>We construct an Each pipe with a Function that will parse the
+          "line" field into a new Tuple for each word encountered.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.group.word">
+          <para>We construct a GroupBy pipe that will create a new Tuple
+          grouping for each unique value in the field "word".</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.every">
+          <para>We construct an Every pipe that will count the number of
+          Tuples in every unique word group. The result is stored in a field
+          named "count".</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.group.count">
+          <para>We construct a GroupBy pipe that will create a new Tuple
+          grouping for each unique value in the field "count", and secondary
+          sort each value in the field "word". The result will be a list of
+          "count" and "word" values with "count" sorted in increasing
+          order.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.connect ex.wcs.run">
+          <para>We connect the pipe assembly to its sources and sinks, and
+          then execute it on the cluster.</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <para>In the example above, we count the words encounterd in the input
+    document, and we sort the counts in their natural order (ascending). And
+    if some words have the same "count" value, these words are sorted in their
+    natural order (alphabetical).</para>
+
+    <para>One obvious problem with this example is that some words might have
+    upper-case letters, for example, "the" and "The" when the word becomes at
+    the beginning of a sentence. So we might decide to insert a new operation
+    to force all the words to lower case, but we also decide that all future
+    applications that need to parse words from documents should have the same
+    behavior, so we decide to create a reusable pipe sub-assembly, just like
+    we would by creating a sub-routine in a traditional application.</para>
+
+    <example>
+      <title>Creating a SubAssembly</title>
+
+      <xi:include href="word-count-sort-subassembly.xml" />
+
+      <calloutlist>
+        <callout arearefs="ex.wcs.subclass">
+          <para>We subclass the SubAssembly class, which is itself a kind of Pipe.</para>
+        </callout>
+        <callout arearefs="ex.wcs.expression">
+          <para>We create a Java expression function that will call toLowerCase() on the "word" value.</para>
+        </callout>
+        <callout arearefs="ex.wcs.tails">
+          <para>We must tell the SubAssembly superclass who the tail ends of our pipe sub-assembly are.</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <para>First, we create a SubAssembly pipe to hold our "parse words" pipe assembly. Since this is a
+    Java class, it can be reused in any other application, as long as there is an incoming field named "word". Note
+    there are ways to make this function even more generic, but they are out of scope here.</para>
+
+    <example>
+      <title>Extending Word Count and Sort</title>
+      <xi:include href="word-count-sort-sub.xml" />
+
+      <calloutlist>
+        <callout arearefs="ex.wcs.subassembly">
+          <para>We replace the Each from the previous example with our ParseWordsAssembly pipe.</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <para>Finall, we just substitute in our new SubAssembly right where the previous Every and word parser function
+    was used in the previous example. This nesting can continue as deep as necessary, in the same way Objects and be
+    subclassed and methods can call other methods in an application.</para>
   </section>
 </chapter>

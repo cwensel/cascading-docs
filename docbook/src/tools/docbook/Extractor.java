@@ -44,6 +44,8 @@ public class Extractor
 
   protected File targetDir;
   protected String root;
+  private static final String BEGIN_CDATA = "<![CDATA[";
+  private static final String END_CDATA = "]]>";
 
   public Extractor( String root, File targetDir )
     {
@@ -127,6 +129,9 @@ public class Extractor
           else
             writer.newLine();
 
+          // enable callouts
+          line = line.replaceAll( "//(<co.*/>)", END_CDATA +"$1"+ BEGIN_CDATA );
+
           writer.append( line );
           }
         }
@@ -167,18 +172,14 @@ public class Extractor
     // write
     writer.write( "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>" );
     writer.newLine();
-    writer.write( "<para xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\" xml:lang=\"en\">" );
-    writer.newLine();
-    writer.write( "<programlisting><![CDATA[" );
+    writer.write( "<programlisting xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\" xml:lang=\"en\">" + BEGIN_CDATA );
     return writer;
     }
 
   public void closeFile( BufferedWriter writer ) throws Exception
     {
-    writer.write( "]]>" );
+    writer.write( END_CDATA );
     writer.write( "</programlisting>" );
-    writer.newLine();
-    writer.write( "</para>" );
     writer.flush();
     writer.close();
     }

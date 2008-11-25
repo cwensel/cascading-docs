@@ -195,7 +195,7 @@
       <test name="${testcase}" todir="${test.results}" if="testcase"/>
       <batchtest todir="${test.results}" haltonfailure="${test.haltonerror}" unless="testcase">
         <fileset dir="${src.examples.dir}">
-          <include name="**/*Test.java"/>
+          <include name="${target.doc}/**/*Test.java"/>
         </fileset>
       </batchtest>
     </junit>
@@ -207,14 +207,14 @@
 
     <javac srcdir="${src.tools.dir}" destdir="${build.tools.dir}" verbose="off" debug="${javac.debug}"/>
 
-    <mkdir dir="${docbook.src.dir}/userguide"/>
+    <mkdir dir="${docbook.src.dir}/${target.doc}"/>
 
     <java classname="docbook.Extractor">
       <classpath>
         <pathelement location="${build.tools.dir}"/>
       </classpath>
 
-      <arg value="${src.examples.dir}"/>
+      <arg value="${src.examples.dir}/${target.doc}"/>
       <arg value="${docbook.src.dir}"/>
     </java>
 
