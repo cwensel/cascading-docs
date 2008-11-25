@@ -569,15 +569,20 @@
         </info>
 
         <para>The GroupBy and CoGroup pipes serve two roles. First, they emit
-        grouped tuple streams allowing for Operations to be applied to sets of
-        related Tuple instances. Second, they allow for two streams to be
-        either merged or joined. Where merging allows for two or more tuple
-        streams originating from different sources to be treated as a single
-        stream. And joining allows two or more streams to be "joined" (in the
-        SQL sense) on a common key or set of Tuple values in a Tuple.</para>
+        sorted grouped tuple streams allowing for Operations to be applied to
+        sets of related Tuple instances. Where "sorted" means the tuple groups
+        are emitted from the GroupBy and CoGroup pipes in sort order of the
+        field values the groups were grouped on.</para>
+
+        <para>Second, they allow for two streams to be either merged or
+        joined. Where merging allows for two or more tuple streams originating
+        from different sources to be treated as a single stream. And joining
+        allows two or more streams to be "joined" (in the SQL sense) on a
+        common key or set of Tuple values in a Tuple.</para>
 
         <para>It is not required that an Every follow either GroupBy or
-        CoGroup.</para>
+        CoGroup, an Each may follow immediately after. But an Every many not
+        follow an Each..</para>
 
         <para>GroupBy accepts one or more tuple streams. If two or more, they
         must all have the same field names.</para>
@@ -590,7 +595,8 @@
 
         <para>The example above simply creates a new tuple stream where Tuples
         with the same values in "group1" and "group2" can be processed as a
-        set by an Aggregator or Buffer Operation.</para>
+        set by an Aggregator or Buffer Operation. The resulting stream of
+        tuples will be sorted by the values in "group1" and "group2".</para>
 
         <example>
           <title>Merging a Tuple Stream</title>
@@ -950,9 +956,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       Flow is created, but it must exist when the Flow is executed (unless
       executed as part of a Cascade, see <xref linkend="cascades" />).</para>
 
+      <para>The most common pattern is to create a Flow from an existing pipe
+      assembly. But there are cases where a MapReduce job has already been
+      created and it makes sense to encapsulate it in a Flow class so that it
+      may participate in a Cascade and be scheduled with other Flow instances.
+      Both patterns are covered here.</para>
+
       <section>
         <info>
-          <title>Creating Flows</title>
+          <title>Creating Flows from Pipe Assemblies</title>
         </info>
 
         <example>
@@ -1080,6 +1092,20 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <classname>isSkip()</classname> to decide if the current strategy
         suggests the Flow should be skipped.</para>
       </section>
+    </section>
+
+    <section>
+      <info>
+        <title>Creating Flows from a JobConf</title>
+      </info>
+
+      <para>If a MapReduce job already exists and needs to be managed by a
+      Cascade, then the <classname>cascading.flow.MapReduceFlow</classname>
+      class should be used. After creating a Hadoop
+      <classname>JobConf</classname> instance, just pass it into the
+      <classname>MapReduceFlow</classname> constructor. The resulting
+      <classname>Flow</classname> instance can be used like any other
+      Flow.</para>
     </section>
 
     <section>
@@ -1271,6 +1297,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Introduction</title>
       </info>
 
+      <para>To use Cascading, it is not strictly necessary to create custom
+      Operations. There are a number of Operations in the Cascading library
+      that can be combined into very rubust applications. In the same way you
+      can chaing <command>sed</command>, <command>grep</command>,
+      <command>sort</command>, <command>uniq</command>,
+      <command>awk</command>, etc in Unix, you can chain existing Cascading
+      operations. But developing customs Opeations is very simple in
+      Cascading.</para>
+
       <para>There are four kinds of Operations: Function, Filter, Aggregator,
       and Buffer.</para>
 
@@ -1311,7 +1346,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       intends to return a Tuple with one field named "word". If the Function
       mistakenly returns more values in the Tuple other than a 'word', the
       process will fail. Operations that do return arbitrary numbers of values
-      in a result Tuple may declare<code>Fields.UNKNOWN</code>.</para>
+      in a result Tuple may declare <code>Fields.UNKNOWN</code>.</para>
 
       <para>The Cascading planner always attempts to "fail fast" where
       possible by checking the field name dependencies between Pipes and
@@ -1327,15 +1362,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title>Functions</title>
       </info>
 
-      <para>A Function expects a single argument<classname>Tuple</classname>,
+      <para>A Function expects a single argument <classname>Tuple</classname>,
       and may return zero or more result Tuples.</para>
 
       <para>A Function may only be used with a <classname>Each</classname>
-      pipe, and it may follow any other pipe type.</para>
+      pipe which may follow any other pipe type.</para>
 
       <para>To create a custom Function, subclass the class
       <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Function</code>. Because
+      interface<code> cascading.operation.Function</code>. Because
       <code>BaseOperation</code> has been subclassed, the <code>operate</code>
       method, as defined on the <code>Function</code> interface, is the only
       method that must be implemented.</para>
@@ -1351,8 +1386,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>Functions must accept 1 or more values in a Tuple as arguments, by
       default they will accept any number (<code>Operation.ANY</code>) of
-      values. Cascading will verify the number of arguments selected match the
-      number of arguments expected.</para>
+      values. Cascading will verify that the number of arguments selected
+      match the number of arguments expected during the planning phase.</para>
 
       <para>Functions may optionally declare the field names they return, by
       default Functions declare<code> Fields.UNKNOWN</code>.</para>
@@ -1444,7 +1479,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>To create a custom Aggregator, subclass the class
       <code>cascading.operation.BaseOperation</code> and implement the
       interface<code>cascading.operation.Aggregator</code>. Because
-      <code>BaseOperation</code> has been subclassed, the<code>start</code>,
+      <code>BaseOperation</code> has been subclassed, the <code>start</code>,
       <code>aggregate</code>, and <code>complete</code> methods, as defined on
       the <code>Aggregator</code> interface, are the only methods that must be
       implemented.</para>
@@ -1510,7 +1545,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>To create a custom Buffer, subclass the class
       <code>cascading.operation.BaseOperation</code> and implement the
       interface<code>cascading.operation.Buffer</code>. Because
-      <code>BaseOperation</code> has been subclassed, the<code>buffer</code>
+      <code>BaseOperation</code> has been subclassed, the <code>operate</code>
       method, as defined on the <code>Buffer</code> interface, is the only
       method that must be implemented.</para>
 
@@ -1557,6 +1592,44 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       averages. A Buffer would be better suited for "running averages" across
       very large spans, for example.</para>
     </section>
+
+    <section>
+      <info>
+        <title>Operation and BaseOperation</title>
+      </info>
+
+      <para>In all the above sections, the
+      <classname>cascading.operation.BaseOperation</classname> class was
+      subclassed. This class is an implementation of
+      <classname>cascading.operation.Operation</classname> and provides a few
+      default implmentations. It is not strictly required to extend
+      <classname>BaseOperation</classname>, but it is very convenient to do
+      so.</para>
+
+      <para>When developing custom operations, the developer may need to
+      intialize and destroy a resource. For example, when doing pattern
+      matching, a java.util.regex.Matcher may need to be initialized and used
+      in a thread-safe way. Or a remote connection may need to be opened and
+      eventually closed. But for performance reasons, the operation should not
+      create/destroy the connection for each Tuple or every Tuple group that
+      passes through.</para>
+
+      <para>The interface Operation declares two methods,
+      <methodname>prepare()</methodname> and
+      <methodname>cleanup()</methodname>. In the case of Hadoop and MapReduce,
+      the <methodname>prepare()</methodname> and
+      <methodname>cleanup()</methodname> methods are called once per Mapper or
+      Reducer task. <methodname>prepare()</methodname> is called before any
+      argument Tuple is passed in, and <methodname>cleanup()</methodname> is
+      called after all Tuple arguments have been operated on. Within each of
+      these methods, the developer can initialize a "context" object that can
+      hold an open socket connection, or <classname>Matcher</classname>
+      instance. The "context" is user defined and is the same mechanism used
+      by the Aggregator operation, except the Aggregator is also given the
+      opportunity to initialize and destroy its context via the
+      <classname>start()</classname> and <classname>complete()</classname>
+      methods.</para>
+    </section>
   </chapter>
 
   <chapter>
@@ -1599,6 +1672,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>Above we see how natural it is to include a SubAssembly into a new
       pipe assembly.</para>
+
+      <para>If we had a SubAssembly that represented a split, that is, had two
+      or more tails, we could use the <methodname>getTails()</methodname>
+      method to get at the array of "tails" set internally by the
+      <methodname>setTails()</methodname> method.</para>
     </section>
 
     <section>
@@ -1912,6 +1990,37 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>It is only intended to be used during development to help debug a
       difficult pipe assembly.</para>
+    </section>
+
+    <section>
+      <info>
+        <title>Sample and Limit Functions</title>
+      </info>
+
+      <para>The Sample and Limit functions are useed to limit the number of
+      Tuples that pass through a pipe assembly.</para>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>Sample</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.filter.Sample</classname> filter
+              allows a percentage of tuples to pass.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Limit</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.filter.Limit</classname> filter
+              allows a set number of Tuples to pass.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
     </section>
 
     <section>
