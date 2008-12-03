@@ -206,8 +206,9 @@
           <term>SubAssembly</term>
 
           <listitem>
-            <para>The SubAssembly pipe allows for nesting of sub assemblies inside a single pipe, which
-            are in turn nested in more complex assemblies.</para>
+            <para>The SubAssembly pipe allows for nesting of sub assemblies
+            inside a single pipe, which are in turn nested in more complex
+            assemblies.</para>
           </listitem>
         </varlistentry>
       </variablelist></para>
@@ -524,34 +525,45 @@
 
       <calloutlist>
         <callout arearefs="ex.wcs.subclass">
-          <para>We subclass the SubAssembly class, which is itself a kind of Pipe.</para>
+          <para>We subclass the SubAssembly class, which is itself a kind of
+          Pipe.</para>
         </callout>
+
         <callout arearefs="ex.wcs.expression">
-          <para>We create a Java expression function that will call toLowerCase() on the "word" value.</para>
+          <para>We create a Java expression function that will call
+          toLowerCase() on the "word" value.</para>
         </callout>
+
         <callout arearefs="ex.wcs.tails">
-          <para>We must tell the SubAssembly superclass who the tail ends of our pipe sub-assembly are.</para>
+          <para>We must tell the SubAssembly superclass who the tail ends of
+          our pipe sub-assembly are.</para>
         </callout>
       </calloutlist>
     </example>
 
-    <para>First, we create a SubAssembly pipe to hold our "parse words" pipe assembly. Since this is a
-    Java class, it can be reused in any other application, as long as there is an incoming field named "word". Note
-    there are ways to make this function even more generic, but they are out of scope here.</para>
+    <para>First, we create a SubAssembly pipe to hold our "parse words" pipe
+    assembly. Since this is a Java class, it can be reused in any other
+    application, as long as there is an incoming field named "word". Note
+    there are ways to make this function even more generic, but they are out
+    of scope here.</para>
 
     <example>
       <title>Extending Word Count and Sort</title>
+
       <xi:include href="word-count-sort-sub.xml" />
 
       <calloutlist>
         <callout arearefs="ex.wcs.subassembly">
-          <para>We replace the Each from the previous example with our ParseWordsAssembly pipe.</para>
+          <para>We replace the Each from the previous example with our
+          ParseWordsAssembly pipe.</para>
         </callout>
       </calloutlist>
     </example>
 
-    <para>Finall, we just substitute in our new SubAssembly right where the previous Every and word parser function
-    was used in the previous example. This nesting can continue as deep as necessary, in the same way Objects and be
-    subclassed and methods can call other methods in an application.</para>
+    <para>Finall, we just substitute in our new SubAssembly right where the
+    previous Every and word parser function was used in the previous example.
+    This nesting can continue as deep as necessary, in the same way Objects
+    and be subclassed and methods can call other methods in an
+    application.</para>
   </section>
 </chapter>
