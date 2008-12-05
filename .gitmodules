@@ -1,0 +1,3 @@
+[submodule "docbook/docbook-framework"]
+	path = docbook/docbook-framework
+	url = git@github.com:cwensel/docbook-framework.git
