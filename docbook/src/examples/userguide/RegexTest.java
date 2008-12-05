@@ -30,6 +30,7 @@ import cascading.pipe.GroupBy;
 import cascading.pipe.Every;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleIterator;
+import cascading.tuple.TupleEntryIterator;
 import cascading.operation.regex.RegexParser;
 import cascading.operation.regex.RegexGenerator;
 import cascading.operation.regex.RegexReplace;
@@ -96,7 +97,7 @@ public class RegexTest extends ExampleTestCase
 
     validateLength( flow, 3 );
 
-    TupleIterator iterator = flow.openSink();
+    TupleEntryIterator iterator = flow.openSink();
 
     assertEquals( "68.46.103.112\t01/Sep/2007:00:01:17 +0000\tPOST\t/mt-tb.cgi/92\t403\t174", iterator.next().get( 1 ) );
 
@@ -172,7 +173,7 @@ public class RegexTest extends ExampleTestCase
 
     validateLength( flow, 4 );
 
-    TupleIterator iterator = flow.openSink();
+    TupleEntryIterator iterator = flow.openSink();
 
     assertTrue( iterator.next().getString( 1 ).startsWith( "Lorem ipsum dolor sit amet, consectetuer adip" ) );
 

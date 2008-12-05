@@ -92,9 +92,9 @@ public class WordCountTest extends ExampleTestCase implements Serializable
       Function regex = new RegexGenerator( new Fields( "word" ), regexString );
       previous = new Each( previous, new Fields( "line" ), regex );
 
-      String string = "word.toLowerCase()";
+      String javaExpression = "word.toLowerCase()";
       Function expression =
-        new ExpressionFunction( new Fields( "word" ), string, String.class ); //<co xml:id="ex.wcs.expression"/>
+        new ExpressionFunction( new Fields( "word" ), javaExpression, String.class ); //<co xml:id="ex.wcs.expression"/>
       previous = new Each( previous, new Fields( "word" ), expression );
 
       setTails( previous ); //<co xml:id="ex.wcs.tails"/>

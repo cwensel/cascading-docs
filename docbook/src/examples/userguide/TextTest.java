@@ -28,6 +28,7 @@ import cascading.pipe.Each;
 import cascading.pipe.Pipe;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleIterator;
+import cascading.tuple.TupleEntryIterator;
 import cascading.operation.regex.RegexParser;
 import cascading.operation.Identity;
 import cascading.operation.text.DateParser;
@@ -85,7 +86,7 @@ public class TextTest extends ExampleTestCase
 
     validateLength( flow, 10 );
 
-    TupleIterator iterator = flow.openSink();
+    TupleEntryIterator iterator = flow.openSink();
 
     assertEquals( "31/Aug/2007", iterator.next().get( 1 ) );
 

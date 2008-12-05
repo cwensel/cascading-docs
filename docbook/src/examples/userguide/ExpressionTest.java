@@ -28,6 +28,7 @@ import cascading.pipe.Each;
 import cascading.pipe.Pipe;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleIterator;
+import cascading.tuple.TupleEntryIterator;
 import cascading.operation.regex.RegexParser;
 import cascading.operation.expression.ExpressionFilter;
 import cascading.operation.expression.ExpressionFunction;
@@ -91,7 +92,7 @@ public class ExpressionTest extends ExampleTestCase
 
     validateLength( flow, 3 );
 
-    TupleIterator iterator = flow.openSink();
+    TupleEntryIterator iterator = flow.openSink();
 
     assertEquals( "this GET request was 0 bytes", iterator.next().get( 1 ) );
 

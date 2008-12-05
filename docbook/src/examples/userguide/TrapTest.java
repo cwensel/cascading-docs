@@ -30,6 +30,7 @@ import cascading.pipe.Each;
 import cascading.pipe.Pipe;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleIterator;
+import cascading.tuple.TupleEntryIterator;
 import cascading.operation.regex.RegexParser;
 import cascading.operation.Identity;
 import cascading.operation.AssertionLevel;
@@ -100,7 +101,7 @@ public class TrapTest extends ExampleTestCase
 
     validateLength( flow, 10 );
 
-    TupleIterator iterator = flow.openSink();
+    TupleEntryIterator iterator = flow.openSink();
 
     assertEquals( "75.185.76.245\t01/Sep/2007:00:01:03 +0000\tPOST\t/mt-tb.cgi/235\t403\t174", iterator.next().get( 1 ) );
 

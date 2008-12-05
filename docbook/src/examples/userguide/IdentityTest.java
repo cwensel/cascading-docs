@@ -28,6 +28,7 @@ import cascading.pipe.Each;
 import cascading.pipe.Pipe;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleIterator;
+import cascading.tuple.TupleEntryIterator;
 import cascading.operation.regex.RegexParser;
 import cascading.operation.Identity;
 import cascading.flow.Flow;
@@ -118,7 +119,7 @@ public class IdentityTest extends ExampleTestCase
 
     validateLength( flow, 10 );
 
-    TupleIterator iterator = flow.openSink();
+    TupleEntryIterator iterator = flow.openSink();
 
     assertEquals( "75.185.76.245\tPOST", iterator.next().get( 1 ) );
 
@@ -157,7 +158,7 @@ public class IdentityTest extends ExampleTestCase
 
     validateLength( flow, 10 );
 
-    TupleIterator iterator = flow.openSink();
+    TupleEntryIterator iterator = flow.openSink();
 
     assertEquals( "75.185.76.245\tPOST", iterator.next().get( 1 ) );
 
@@ -195,7 +196,7 @@ public class IdentityTest extends ExampleTestCase
 
     validateLength( flow, 10 );
 
-    TupleIterator iterator = flow.openSink();
+    TupleEntryIterator iterator = flow.openSink();
 
     assertEquals( "403\t174", iterator.next().get( 1 ) );
 

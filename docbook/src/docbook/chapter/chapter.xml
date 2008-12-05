@@ -10,9 +10,10 @@
     <title>Cascading - Leveraging Scalability</title>
   </info>
 
-  <para>Cascading is Java library and application programming interface (API)
-  that allows developers to build increasingly complex, production quality,
-  data processing applications for execution in Hadoop clusters.</para>
+  <para>Cascading is an Open Source Java library and application programming
+  interface (API) that allows developers to build increasingly complex,
+  production quality, data processing applications for execution in Hadoop
+  clusters.</para>
 
   <para>The Cascading project was started during the late Summer of 2007, with
   its first public release, Version 0.1.0, in January 2008. By the time this
@@ -27,8 +28,8 @@
   applications. And it is at the wrong granularity for creating efficient,
   composable applications that can be shared between users.</para>
 
-  <para>To solve the first criticism, Cascading traded in MapReduce keys and
-  values for a simple field names and data tuple model. For the second,
+  <para>To solve the first criticism, Cascading traded in MapReduce "keys" and
+  "values" for a simple field names and data tuple model. For the second,
   Cascading departs from the Map and Reduce operations by introducing some
   alternatives; Functions, Filters, Aggregators, and Buffers.</para>
 
@@ -78,7 +79,7 @@
     of Map and Reduce operations and finally rest in an output file. When you
     implement enough of these chained MapReduce applications, you start to see
     a well defined set of key/value manipulations used over and over again to
-    manipulate the key/value data stream.</para>
+    modify the key/value data stream.</para>
 
     <para>Cascading both leverages these emergent patterns and simultaneously
     abstracts their complexity away.</para>
@@ -174,8 +175,9 @@
           <listitem>
             <para>The GroupBy pipe groups Tuples based on the values of a
             given set of field names. It behaves just like the SQL <code>group
-            by</code> statement. The GroupBy can also merge multiple inpust
-            tuple streams, if they all share the same field names.</para>
+            by</code> statement. The GroupBy can also merge multiple input
+            tuple streams into a single stream, if they all share the same
+            field names.</para>
           </listitem>
         </varlistentry>
 
@@ -185,8 +187,9 @@
           <listitem>
             <para>The CoGroup pipe both joins multiple tuple streams by the
             values of a given set of field names, it also groups the Tuples by
-            those values. The all join types and custom joins are supported.
-            And more than two streams may be joined simultaneously.</para>
+            those values. All join types (inner, outer, etc) and even custom
+            joins are supported. And more than two streams may be joined
+            simultaneously.</para>
           </listitem>
         </varlistentry>
 
@@ -195,10 +198,10 @@
 
           <listitem>
             <para>The Every pipe processes a single group of Tuples at a time,
-            where the group share a common sub-set of Tuple values. And it may
-            return zero (0) or more result Tuples for that grouping for every
-            input grouping. The Every pipe may apply either an Aggregator or a
-            Buffer to the input Tuple grouping.</para>
+            where the group shares a common sub-set of Tuple values. And it
+            may return zero (0) or more result Tuples for that grouping for
+            every input grouping. The Every pipe may apply either an
+            Aggregator or a Buffer to the input Tuple grouping.</para>
           </listitem>
         </varlistentry>
 
@@ -343,14 +346,14 @@
     going into great detail, this allows for each operation to only care about
     argument Tuple values and fields, not the whole set of fields in the
     current input Tuple. Subsequently, operations can be reusable across
-    applicaitions the same way Java methods can be reusable.</para>
+    applications the same way Java methods can be reusable.</para>
 
-    <para>For example, in Java, a method declared as <code>join( String first,
-    String second )</code> is more abstract than <code>join( Person person
-    )</code>. In the second case, the <code>join</code> function must know
-    about the <code>Person</code> object, in the first case, it is agnostic to
-    where the data came from. Cascading operations exhibit this same
-    quality.</para>
+    <para>For example, in Java, a method declared as <code>concatenate( String
+    first, String second )</code> is more abstract than <code>concatenate(
+    Person person )</code>. In the second case, the <code>concatenate()</code>
+    function must "know" about the <code>Person</code> object, in the first
+    case, it is agnostic to where the data came from. Cascading operations
+    exhibit this same quality.</para>
   </section>
 
   <section>
@@ -409,14 +412,14 @@
 
           <listitem>
             <para>Stream assertions are just like Java assertions and unit
-            tests all rolled up. A pipe assembly can be assebled with
+            tests all rolled up. A pipe assembly can be assembled with
             assertions built into them. These assertions can test for null
             values in an argument Tuple, or if the values match some regular
             expression pattern. If the assertion fails, the process can
             optionally fail, or it can save the bad input Tuple to a new file
             on HDFS. If assertions aren't wanted, Cascading can remove them at
-            runtime so they don't slow things down on your production system,
-            for example.</para>
+            runtime so they don't slow things down on your production
+            system.</para>
           </listitem>
         </varlistentry>
 
@@ -531,7 +534,9 @@
 
         <callout arearefs="ex.wcs.expression">
           <para>We create a Java expression function that will call
-          toLowerCase() on the "word" value.</para>
+          toLowerCase() on the "word" value. (<link
+          xlink:href="???">http://www.janino.net/</link> is used under the
+          covers)</para>
         </callout>
 
         <callout arearefs="ex.wcs.tails">
@@ -560,7 +565,7 @@
       </calloutlist>
     </example>
 
-    <para>Finall, we just substitute in our new SubAssembly right where the
+    <para>Finally, we just substitute in our new SubAssembly right where the
     previous Every and word parser function was used in the previous example.
     This nesting can continue as deep as necessary, in the same way Objects
     and be subclassed and methods can call other methods in an
