@@ -55,13 +55,13 @@ public class WordCountTest extends ExampleTestCase implements Serializable
     String outputPath = getOutputPath() + "wordcount";
 
     //@extract-start word-count-sort
-    Scheme sourceScheme = new TextLine( new Fields( "line" ) );
+    Scheme sourceScheme = new TextLine( new Fields( "line" ) ); //<co xml:id="ex.wcs.source.scheme"/>
     Tap source = new Hfs( sourceScheme, inputPath ); //<co xml:id="ex.wcs.source"/>
 
-    Scheme sinkScheme = new TextLine( new Fields( "word", "count" ) );
+    Scheme sinkScheme = new TextLine(); //<co xml:id="ex.wcs.sink.scheme"/>
     Tap sink = new Hfs( sinkScheme, outputPath, SinkMode.REPLACE ); //<co xml:id="ex.wcs.sink"/>
 
-    Pipe assembly = new Pipe( "wordcount" );
+    Pipe assembly = new Pipe( "wordcount" ); //<co xml:id="ex.wcs.pipe"/>
 
     String regexString = "(?<!\\pL)(?=\\pL)[^ ]*(?<=\\pL)(?!\\pL)";
     Function regex = new RegexGenerator( new Fields( "word" ), regexString );
@@ -92,9 +92,9 @@ public class WordCountTest extends ExampleTestCase implements Serializable
       Function regex = new RegexGenerator( new Fields( "word" ), regexString );
       previous = new Each( previous, new Fields( "line" ), regex );
 
-      String javaExpression = "word.toLowerCase()";
+      String expressionString = "word.toLowerCase()";
       Function expression =
-        new ExpressionFunction( new Fields( "word" ), javaExpression, String.class ); //<co xml:id="ex.wcs.expression"/>
+        new ExpressionFunction( new Fields( "word" ), expressionString, String.class ); //<co xml:id="ex.wcs.expression"/>
       previous = new Each( previous, new Fields( "word" ), expression );
 
       setTails( previous ); //<co xml:id="ex.wcs.tails"/>

@@ -87,8 +87,8 @@
     <para>In part this is accomplished by abstracting away keys and values and
     replacing them with tuples that have corresponding field names, similar in
     concept to tables and column names in a Relational Database. And during
-    processing, streams of these Fields and Tuples are then manipulated by
-    Pipes.</para>
+    processing, streams of these Fields and Tuples are then manipulated as
+    they pass through Pipes.</para>
 
     <mediaobject>
       <imageobject role="fo">
@@ -118,7 +118,7 @@
 
     <para><variablelist>
         <varlistentry>
-          <term>Fields</term>
+          <term xreflabel="Fields" xml:id="fields">Fields</term>
 
           <listitem>
             <para>Fields are a collection of either
@@ -132,7 +132,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Tuple</term>
+          <term xreflabel="Tuple" xml:id="tuple">Tuple</term>
 
           <listitem>
             <para>A Tuple is simply an array of
@@ -159,7 +159,7 @@
 
     <para><variablelist>
         <varlistentry>
-          <term>Each</term>
+          <term xreflabel="Each" xml:id="each">Each</term>
 
           <listitem>
             <para>The Each pipe processes a single input Tuple at a time, but
@@ -170,7 +170,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>GroupBy</term>
+          <term xreflabel="GroupBy" xml:id="groupby">GroupBy</term>
 
           <listitem>
             <para>The GroupBy pipe groups Tuples based on the values of a
@@ -182,7 +182,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>CoGroup</term>
+          <term xreflabel="CoGroup" xml:id="cogroup">CoGroup</term>
 
           <listitem>
             <para>The CoGroup pipe both joins multiple tuple streams by the
@@ -194,7 +194,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Every</term>
+          <term xreflabel="Every" xml:id="every">Every</term>
 
           <listitem>
             <para>The Every pipe processes a single group of Tuples at a time,
@@ -206,7 +206,8 @@
         </varlistentry>
 
         <varlistentry>
-          <term>SubAssembly</term>
+          <term xreflabel="SubAssembly"
+          xml:id="subassembly">SubAssembly</term>
 
           <listitem>
             <para>The SubAssembly pipe allows for nesting of sub assemblies
@@ -262,19 +263,19 @@
 
     <mediaobject>
       <imageobject role="fo">
-        <imagedata align="center" contentwidth="3in"
+        <imagedata align="center" contentwidth="2.5in"
                    fileref="images/operations.svg"></imagedata>
       </imageobject>
 
       <imageobject role="html">
-        <imagedata align="center" contentwidth="3in"
+        <imagedata align="center" contentwidth="2.5in"
                    fileref="images/operations.png"></imagedata>
       </imageobject>
     </mediaobject>
 
     <para><variablelist>
         <varlistentry>
-          <term>Function</term>
+          <term xreflabel="Function" xml:id="function">Function</term>
 
           <listitem>
             <para>A Function operates on individual input Tuples and may
@@ -284,7 +285,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Filter</term>
+          <term xreflabel="Filter" xml:id="filter">Filter</term>
 
           <listitem>
             <para>A Filter is a special kind of Function that returns a
@@ -297,7 +298,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Aggregator</term>
+          <term xreflabel="Aggregator" xml:id="aggregator">Aggregator</term>
 
           <listitem>
             <para>An Aggregator performs some function against a group of
@@ -309,7 +310,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Buffer</term>
+          <term xreflabel="Buffer" xml:id="buffer">Buffer</term>
 
           <listitem>
             <para>A Buffer is similar to the Aggregator, except it is
@@ -358,6 +359,82 @@
 
   <section>
     <info>
+      <title>Taps, Schemes, and Flows</title>
+    </info>
+
+    <para>In many of the above diagrams, there are references to "sources" and
+    "sinks". In Cascading all data is read from or written to
+    <classname>Tap</classname> instances, but is converted to and from Tuple
+    instances via <classname>Scheme</classname> instances.</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term xreflabel="Tap" xml:id="tap">Tap</term>
+
+          <listitem>
+            <para>A Tap is responsible for the "how" and "where" parts of
+            accessing data. For example, is the data on HDFS or the "local"
+            file system. In Amazon S3 or over HTTP.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="Scheme" xml:id="scheme">Scheme</term>
+
+          <listitem>
+            <para>A Scheme is responsible for reading raw data and converting
+            it to a Tuple and/or writing a Tuple out into raw data. Where this
+            "raw" data can be lines of text, Hadoop binary "sequence" files,
+            or some proprietary format.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>Note that Taps are not part of a pipe assembly, and so
+    they are not a type of <classname>Pipe</classname>.</para>
+
+    <para>But they are connected with pipe assemblies when they are made
+    cluster executable. When a pipe assembly is connected with the necessary
+    number of source and sink Tap instances, we get a Flow.</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term xreflabel="Flow" xml:id="flow">Flow</term>
+
+          <listitem>
+            <para>A Flow is created when a pipe assembly is connected with its
+            required number of source and sink taps, and the Taps either emit
+            or capture the field names the pipe assembly expects. That is, if
+            a Tap emits a Tuple with the field name "line" (by reading data
+            from a file on HDFS), the head of the pipe assembly must be
+            expecting a "line" value as well. Otherwise the process that
+            connects the pipe assembly with the Taps will immeidately fail
+            with an error.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>So pipe assemblies are really data process definitions,
+    and are not "executable" on their own. They must be connected to source
+    and sink Tap instances before they can run on a cluster. This separation
+    between Taps and pipe assemblies is what makes Cascading so
+    powerful.</para>
+
+    <mediaobject>
+      <imageobject role="fo">
+        <imagedata align="center" contentwidth="6in" fileref="images/flow.svg"></imagedata>
+      </imageobject>
+
+      <imageobject role="html">
+        <imagedata align="center" contentwidth="6in" fileref="images/flow.png"></imagedata>
+      </imageobject>
+    </mediaobject>
+
+    <para>If you think of pipe assemblies to be like a Java class, then a Flow
+    is like a Java instance. That is, the same pipe assembly can be
+    "instantiated" many times into new Flows, in the same application, without
+    fear of any interference between them. This allows pipe assemblies to be
+    created and shared like standard Java libraries.</para>
+  </section>
+
+  <section>
+    <info>
       <title>Absorbing Complexity</title>
     </info>
 
@@ -391,20 +468,21 @@
     flexible. First off, developers can create Domain Specific Languages
     (DSLs) using their favorite language, like Groovy, JRuby, Jython, Scala,
     and others. Second, developers can extend various parts of Cascading, like
-    allowing custom Thrift or JSON objects to be read and written to, and
+    allowing custom Thrift or JSON objects to be read and written to and
     allowing them to be passed through the Tuple stream.</para>
   </section>
 
   <section>
     <info>
-      <title>Production Quality</title>
+      <title>Production Quality Features</title>
     </info>
 
     <para>No doubt Cascading can be used for ad-hoc, single use, applications.
     But it really shines when large complex processes need to be created that
-    need a higher level of robustness.</para>
+    need a higher level of robustness. A robustness expected from production
+    quality applications.</para>
 
-    <para>Here are just a few of these features:</para>
+    <para>Here are a few of these features:</para>
 
     <para><variablelist>
         <varlistentry>
@@ -463,7 +541,7 @@
     </info>
 
     <para>Now that we know what Cascading is and have a good idea how it
-    works, what does an application written in Cascading look like, and is
+    works, what does an application written in Cascading look like, and is it
     really any simpler.</para>
 
     <example>
@@ -472,38 +550,65 @@
       <xi:include href="word-count-sort.xml" />
 
       <calloutlist>
+        <callout arearefs="ex.wcs.source.scheme">
+          <para>We create a new <xref linkend="scheme" /> that can read simple
+          text files, and emits a new <xref linkend="tuple" /> for each line
+          in a field named "line", as declared by the <xref
+          linkend="fields" /> instance.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.sink.scheme">
+          <para>We create a new <classname>Scheme</classname> that can write
+          simple text files, and expects a <classname>Tuple</classname> with
+          any number of fields/values. If more than one value, they will be
+          TAB delimited in the output file.</para>
+        </callout>
+
         <callout arearefs="ex.wcs.source ex.wcs.sink">
-          <para>We create source and sink Taps that reference the input file
-          and output directory, respectively.</para>
+          <para>We create source and sink <xref linkend="tap" /> instances
+          that reference the input file and output directory, respectively.
+          The sink <classname>Tap</classname> will overwrite any file that may
+          already exist.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.pipe">
+          <para>We construct the head of our pipe assembly, and name it
+          "wordcount". This name is used to bind the source and sink taps to
+          the assembly. Multiple heads or tails would require unique
+          names.</para>
         </callout>
 
         <callout arearefs="ex.wcs.each">
-          <para>We construct an Each pipe with a Function that will parse the
-          "line" field into a new Tuple for each word encountered.</para>
+          <para>We construct an <xref linkend="each" /> pipe with a <xref
+          linkend="function" /> that will parse the "line" field into a new
+          <classname>Tuple</classname> for each word encountered.</para>
         </callout>
 
         <callout arearefs="ex.wcs.group.word">
-          <para>We construct a GroupBy pipe that will create a new Tuple
-          grouping for each unique value in the field "word".</para>
+          <para>We construct a <xref linkend="groupby" /> pipe that will
+          create a new <classname>Tuple</classname> grouping for each unique
+          value in the field "word".</para>
         </callout>
 
         <callout arearefs="ex.wcs.every">
-          <para>We construct an Every pipe that will count the number of
-          Tuples in every unique word group. The result is stored in a field
-          named "count".</para>
+          <para>We construct an <xref linkend="every" /> pipe with an <xref
+          linkend="Aggregator" /> that will count the number of Tuples in
+          every unique word group. The result is stored in a field named
+          "count".</para>
         </callout>
 
         <callout arearefs="ex.wcs.group.count">
-          <para>We construct a GroupBy pipe that will create a new Tuple
-          grouping for each unique value in the field "count", and secondary
-          sort each value in the field "word". The result will be a list of
-          "count" and "word" values with "count" sorted in increasing
-          order.</para>
+          <para>We construct a <classname>GroupBy</classname> pipe that will
+          create a new <classname>Tuple</classname> grouping for each unique
+          value in the field "count", and secondary sort each value in the
+          field "word". The result will be a list of "count" and "word" values
+          with "count" sorted in increasing order.</para>
         </callout>
 
         <callout arearefs="ex.wcs.connect ex.wcs.run">
-          <para>We connect the pipe assembly to its sources and sinks, and
-          then execute it on the cluster.</para>
+          <para>We connect the pipe assembly to its sources and sinks into a
+          <xref linkend="flow" />, and then execute the Flow on the
+          cluster.</para>
         </callout>
       </calloutlist>
     </example>
@@ -516,7 +621,7 @@
     <para>One obvious problem with this example is that some words might have
     upper-case letters, for example, "the" and "The" when the word becomes at
     the beginning of a sentence. So we might decide to insert a new operation
-    to force all the words to lower case, but we also decide that all future
+    to force all the words to lower case, but we realize that all future
     applications that need to parse words from documents should have the same
     behavior, so we decide to create a reusable pipe sub-assembly, just like
     we would by creating a sub-routine in a traditional application.</para>
@@ -528,20 +633,23 @@
 
       <calloutlist>
         <callout arearefs="ex.wcs.subclass">
-          <para>We subclass the SubAssembly class, which is itself a kind of
-          Pipe.</para>
+          <para>We subclass the <xref linkend="subassembly" /> class, which is
+          itself a kind of Pipe.</para>
         </callout>
 
         <callout arearefs="ex.wcs.expression">
           <para>We create a Java expression function that will call
-          toLowerCase() on the "word" value. (<link
-          xlink:href="???">http://www.janino.net/</link> is used under the
-          covers)</para>
+          <methodname>toLowerCase()</methodname> on the
+          <classname>String</classname> value in the field named "word". We
+          must also pass in the Java type the expression expects "word" to be,
+          in this case, <classname>String</classname>. (<link
+          xlink:href="http://www.janino.net/">http://www.janino.net/</link> is
+          used under the covers)</para>
         </callout>
 
         <callout arearefs="ex.wcs.tails">
-          <para>We must tell the SubAssembly superclass who the tail ends of
-          our pipe sub-assembly are.</para>
+          <para>We must tell the <classname>SubAssembly</classname> superclass
+          who the tail ends of our pipe sub-assembly are.</para>
         </callout>
       </calloutlist>
     </example>
@@ -549,8 +657,8 @@
     <para>First, we create a SubAssembly pipe to hold our "parse words" pipe
     assembly. Since this is a Java class, it can be reused in any other
     application, as long as there is an incoming field named "word". Note
-    there are ways to make this function even more generic, but they are out
-    of scope here.</para>
+    there are ways to make this function even more generic, but they are
+    covered in the Cascading User Guide.</para>
 
     <example>
       <title>Extending Word Count and Sort</title>
@@ -559,8 +667,9 @@
 
       <calloutlist>
         <callout arearefs="ex.wcs.subassembly">
-          <para>We replace the Each from the previous example with our
-          ParseWordsAssembly pipe.</para>
+          <para>We replace the <classname>Each</classname> from the previous
+          example with our <classname>ParseWordsAssembly</classname>
+          pipe.</para>
         </callout>
       </calloutlist>
     </example>
@@ -570,5 +679,13 @@
     This nesting can continue as deep as necessary, in the same way Objects
     and be subclassed and methods can call other methods in an
     application.</para>
+  </section>
+
+  <section>
+    <info>
+      <title>Closing Remarks</title>
+    </info>
+
+    <para></para>
   </section>
 </chapter>
