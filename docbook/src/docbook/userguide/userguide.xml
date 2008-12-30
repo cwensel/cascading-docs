@@ -979,7 +979,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </section>
 
       <section>
-        <title>Configuring Flows</title>
+        <title xreflabel="Configuring Flows"
+        xml:id="configuring-flows">Configuring Flows</title>
 
         <para>The FlowConnector contructor accepts the
         <classname>java.util.Property</classname> object so that default
@@ -1139,7 +1140,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>Cascading requires Hadoop to be installed and correctly
       configured. Apache Hadoop is an Open Source Apache project and is freely
-      available. It can be downloaded from here the Hadoop website, <link
+      available. It can be downloaded from the Hadoop website, <link
       xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
     </section>
 
@@ -1173,7 +1174,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           <term>cascading-xml-1.0.x.jar</term>
 
           <listitem>
-            <para>all Cascading XML module class files, should be packeaged
+            <para>all Cascading XML module class files, should be packaged
             with <filename>lib/xml/*.jar</filename></para>
           </listitem>
         </varlistentry>
@@ -1214,12 +1215,37 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       applications that are intended to be run in a cluster must be packaged
       with all third-party libraries in a directory named
       <filename>lib</filename> in the final application Jar file, regardless
-      if they are Cascading application or Hadoop MapReduce
+      if they are Cascading applications or raw Hadoop MapReduce
       applications.</para>
 
       <para>Note, the snippets above is only intended to show how to include
       Cascading libraries, you still need to compile your project into the
       <property>build.classes</property> path.</para>
+    </section>
+
+    <section>
+      <title>Configuring</title>
+
+      <para>During runtime, Hadoop must be "told" which application jar file
+      should be pushed to the cluster. Typically this is done via the Hadoop
+      API JobConf object.</para>
+
+      <para>Cascading offers a shorthand for configuring this
+      parameter.</para>
+
+      <xi:include href="flow-properties.xml" />
+
+      <para>Above we see how to set the same property two ways. First via the
+      setApplicationJarClass() method, and via the setApplicationJarPath
+      method. The first method takes a Class object that owns the 'main'
+      function for this application. The assumption here is that
+      <code>Main.class</code> is not located in a Java Jar that is stored in
+      the <filename>lib</filename> folder of the application Jar. If it is,
+      that Jar will be pushed to the cluster, not the parent application
+      jar.</para>
+
+      <para>In your application, only one of these methods needs to be called,
+      but one of them must be called to properly configure Hadoop.</para>
     </section>
 
     <section>
@@ -1248,6 +1274,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>Cascading does not rely on any environment variables like
       <envar>$HADOOP_HOME</envar> or <envar>$HADOOP_CONF_DIR</envar>, only
       <filename>bin/hadoop</filename> does.</para>
+
+      <para>It should be noted that even though
+      <filename>your-application.jar</filename> is passed on the command line
+      to <filename>bin/hadoop</filename> this in no way configures Hadoop to
+      push this jar into the cluster. You must still call one of the property
+      setters mentioned above to set the proper path to the application jar.
+      If misconfigured, likely one of the internal libraries (found in the lib
+      folder) will be pushed to the cluster instead and
+      ClassNotFoundExceptions will be thrown.</para>
     </section>
   </chapter>
 
@@ -2643,10 +2678,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <title xreflabel="Topological Scheduling" xml:id="cascade-scheduler"
       xml:lang="">The Cascade Topological Scheduler</title>
 
-      <para>Cascading has a simple class, <classname>Cascade</classname>
-, that will take a collection of
-      Cascading Flows and execute them on the target cluster in dependency
-      order.</para>
+      <para>Cascading has a simple class, <classname>Cascade</classname> ,
+      that will take a collection of Cascading Flows and execute them on the
+      target cluster in dependency order.</para>
 
       <para>Consider the following example.</para>
 
