@@ -12,9 +12,9 @@
     <pubdate>November, 2008</pubdate>
 
     <copyright>
-      <year>2007</year>
+      <year>2007-</year>
 
-      <year>2008</year>
+      <year>2009</year>
 
       <holder>Concurrent, Inc</holder>
     </copyright>
@@ -48,9 +48,7 @@
     </info>
 
     <section>
-      <info>
-        <title>What is Cascading?</title>
-      </info>
+      <title>What is Cascading?</title>
 
       <para>Cascading is an API for defining, sharing, and executing data
       processing workflows on a distributed data grid or cluster.</para>
@@ -64,9 +62,7 @@
     </section>
 
     <section>
-      <info>
-        <title>Who should use Cascading?</title>
-      </info>
+      <title>Who should use Cascading?</title>
 
       <para>Cascading was developed to allow organizations to rapidly develop
       complex data processing applications. These applications come in two
@@ -127,9 +123,7 @@
     </section>
 
     <section>
-      <info>
-        <title>What is Apache Hadoop</title>
-      </info>
+      <title>What is Apache Hadoop</title>
 
       <para>From the Hadoop website, it <quote>is a software platform that
       lets one easily write and run applications that process vast amounts of
@@ -261,9 +255,7 @@
     </info>
 
     <section>
-      <info>
-        <title>Introduction</title>
-      </info>
+      <title>Introduction</title>
 
       <para>The Cascading processing model is based on a "pipes and filters"
       metaphor. The developer uses the Cascading API to assemble pipelines
@@ -287,9 +279,7 @@
     </section>
 
     <section>
-      <info>
-        <title>Pipe Assemblies</title>
-      </info>
+      <title>Pipe Assemblies</title>
 
       <para>Pipe assemblies define what work should be done against a tuple
       stream, where during runtime tuple streams are read from Tap sources and
@@ -384,9 +374,7 @@
       </variablelist>
 
       <section>
-        <info>
-          <title>Assembling Pipe Assemblies</title>
-        </info>
+        <title>Assembling Pipe Assemblies</title>
 
         <para>Pipe assemblies are created by chaining
         <classname>cascading.pipe.Pipe</classname> classes and
@@ -467,9 +455,7 @@
       </section>
 
       <section>
-        <info>
-          <title>Each and Every Pipes</title>
-        </info>
+        <title>Each and Every Pipes</title>
 
         <para>The Each and Every pipe types are the only pipes that can be
         used to apply Operations to the tuple stream.</para>
@@ -564,9 +550,7 @@
       </section>
 
       <section>
-        <info>
-          <title>GroupBy and CoGroup Pipes</title>
-        </info>
+        <title>GroupBy and CoGroup Pipes</title>
 
         <para>The GroupBy and CoGroup pipes serve two roles. First, they emit
         sorted grouped tuple streams allowing for Operations to be applied to
@@ -785,9 +769,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Source and Sink Taps</title>
-      </info>
+      <title>Source and Sink Taps</title>
 
       <para>All input data comes from, and all output data feeds to, a
       <classname>cascading.tap.Tap</classname> instance.</para>
@@ -941,9 +923,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Flows</title>
-      </info>
+      <title>Flows</title>
 
       <para>When pipe assemblies are bound to source and sink Taps, a Flow is
       created. Flows are executable in the sense that once created they can be
@@ -963,9 +943,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       Both patterns are covered here.</para>
 
       <section>
-        <info>
-          <title>Creating Flows from Pipe Assemblies</title>
-        </info>
+        <title>Creating Flows from Pipe Assemblies</title>
 
         <example>
           <title>Creating a new Flow</title>
@@ -1001,9 +979,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </section>
 
       <section>
-        <info>
-          <title>Configuring Flows</title>
-        </info>
+        <title>Configuring Flows</title>
 
         <para>The FlowConnector contructor accepts the
         <classname>java.util.Property</classname> object so that default
@@ -1040,10 +1016,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </section>
 
       <section>
-        <info>
-          <title xreflabel="Skipping Flows" xml:id="skipping-flows">Skipping
-          Flows</title>
-        </info>
+        <title xreflabel="Skipping Flows" xml:id="skipping-flows">Skipping
+        Flows</title>
 
         <para>When a Flow participates in a Cascade, the
         <classname>Flow#isSkip()</classname> method is consulted before
@@ -1095,9 +1069,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Creating Flows from a JobConf</title>
-      </info>
+      <title>Creating Flows from a JobConf</title>
 
       <para>If a MapReduce job already exists and needs to be managed by a
       Cascade, then the <classname>cascading.flow.MapReduceFlow</classname>
@@ -1109,9 +1081,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title xreflabel="Cascades" xml:id="cascades">Cascades</title>
-      </info>
+      <title xreflabel="Cascades" xml:id="cascades">Cascades</title>
 
       <mediaobject>
         <imageobject role="fo">
@@ -1165,9 +1135,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </info>
 
     <section>
-      <info>
-        <title>Introduction</title>
-      </info>
+      <title>Introduction</title>
 
       <para>Cascading requires Hadoop to be installed and correctly
       configured. Apache Hadoop is an Open Source Apache project and is freely
@@ -1176,10 +1144,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info xreflabel="Building Cascading Applications"
-            xml:id="building-processes">
-        <title>Building</title>
-      </info>
+      <title xreflabel="Building Cascading Applications"
+      xml:id="building-processes">Building</title>
 
       <para>Cascading ships with a handful of jars.</para>
 
@@ -1257,9 +1223,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Executing</title>
-      </info>
+      <title>Executing</title>
 
       <para>Running a Cascading application is exactly the same as running any
       Hadoop application. After packaging your application into a single jar
@@ -1293,9 +1257,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </info>
 
     <section>
-      <info>
-        <title>Introduction</title>
-      </info>
+      <title>Introduction</title>
 
       <para>To use Cascading, it is not strictly necessary to create custom
       Operations. There are a number of Operations in the Cascading library
@@ -1358,9 +1320,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Functions</title>
-      </info>
+      <title>Functions</title>
 
       <para>A Function expects a single argument <classname>Tuple</classname>,
       and may return zero or more result Tuples.</para>
@@ -1414,9 +1374,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Filter</title>
-      </info>
+      <title>Filter</title>
 
       <para>A Filter expects a single argument Tuple and returns a boolean
       value stating whether or not the current Tuple in the tuple stream
@@ -1464,9 +1422,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Aggregator</title>
-      </info>
+      <title>Aggregator</title>
 
       <para>An Aggregator expects set of argument Tuples in the same grouping,
       and may return zero or more result Tuples.</para>
@@ -1523,9 +1479,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Buffer</title>
-      </info>
+      <title>Buffer</title>
 
       <para>A Buffer expects set of argument Tuples in the same grouping, and
       may return zero or more result Tuples.</para>
@@ -1594,9 +1548,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Operation and BaseOperation</title>
-      </info>
+      <title>Operation and BaseOperation</title>
 
       <para>In all the above sections, the
       <classname>cascading.operation.BaseOperation</classname> class was
@@ -1638,10 +1590,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </info>
 
     <section>
-      <info>
-        <title xreflabel="SubAssemblies"
-        xml:id="subassemblies">SubAssemblies</title>
-      </info>
+      <title xreflabel="SubAssemblies"
+      xml:id="subassemblies">SubAssemblies</title>
 
       <para>Cascading SubAssemblies are reusable pipe assemblies that are
       linked into larger pipe assemblies. Think of them as subroutines in a
@@ -1680,10 +1630,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title xreflabel="Stream Assertions" xml:id="stream-assertions">Stream
-        Assertions</title>
-      </info>
+      <title xreflabel="Stream Assertions" xml:id="stream-assertions">Stream
+      Assertions</title>
 
       <para><inlinemediaobject>
           <imageobject role="fo">
@@ -1760,9 +1708,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Failure Traps</title>
-      </info>
+      <title>Failure Traps</title>
 
       <para><inlinemediaobject>
           <imageobject role="fo">
@@ -1827,9 +1773,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Event Handling</title>
-      </info>
+      <title>Event Handling</title>
 
       <para>Each Flow, has the ability to execute callbacks via an event
       listener. This is very useful when external application need to be
@@ -1894,9 +1838,37 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Scripting</title>
-      </info>
+      <title>Template Taps</title>
+
+      <para>The <classname>TemplateTap</classname> <classname>Tap</classname>
+      class provides a simple means to break large datasets into smaller sets
+      based on values in the dataset. Typically this is called 'binning' the
+      data, where each 'bin' of data is named after values shared by the data
+      in that bin. For example, organizing log files by month and year.</para>
+
+      <xi:include href="template-tap.xml" />
+
+      <para>In the above example, we construct a parent
+      <classname>Hfs</classname> <classname>Tap</classname> and pass it to the
+      constructor of a <classname>TemplateTap</classname> instance along with
+      a String format 'template'. This format template is populated in the
+      order values are declared via the <classname>Scheme</classname> class.
+      If more complex path formatting is necessary then you may subclass the
+      <classname>TemplateTap</classname>.</para>
+
+      <para>Note that you can only create sub-directories to bin data into.
+      Hadoop must still write 'part' files into each bin directory.</para>
+
+      <para>One last thing to keep in mind is whether or not 'binning' happens
+      during the Map or Reduce phase. By doing a
+      <classname>GroupBy</classname> on the values that will be used to
+      populate the template, binning will happen during the Reduce phase and
+      likely scale much better if there are a very large number of unique
+      grouping keys.</para>
+    </section>
+
+    <section>
+      <title>Scripting</title>
 
       <para>Cascading was designed with scripting in mind. Since it is just an
       API, any Java compatible scripting language can import and instantiate
@@ -1918,9 +1890,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </info>
 
     <section>
-      <info>
-        <title>Identity Function</title>
-      </info>
+      <title>Identity Function</title>
 
       <para>The <classname>cascading.operation.Identify</classname> function
       is used to "shape" a tuple stream. Here are some common patterns.</para>
@@ -1995,9 +1965,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Debug Function</title>
-      </info>
+      <title>Debug Function</title>
 
       <para>The <classname>cascading.operation.Debug</classname> function is a
       utility Function (actually, its a Filter) that will print the current
@@ -2008,9 +1976,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Sample and Limit Functions</title>
-      </info>
+      <title>Sample and Limit Functions</title>
 
       <para>The Sample and Limit functions are useed to limit the number of
       Tuples that pass through a pipe assembly.</para>
@@ -2039,9 +2005,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Insert Function</title>
-      </info>
+      <title>Insert Function</title>
 
       <para>The <classname>cascading.operation.Insert</classname> function
       allows for insertion of literal values into the tuple stream.</para>
@@ -2052,9 +2016,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Text Functions</title>
-      </info>
+      <title>Text Functions</title>
 
       <para>Cascading includes a number of text functions in the
       <classname>cascading.operation.text</classname> package.</para>
@@ -2127,9 +2089,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Regular Expression Operations</title>
-      </info>
+      <title>Regular Expression Operations</title>
 
       <para><variablelist>
           <varlistentry>
@@ -2249,10 +2209,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title xreflabel="Expression Operations"
-        xml:id="operation-expression">Java Expression Operations</title>
-      </info>
+      <title xreflabel="Expression Operations"
+      xml:id="operation-expression">Java Expression Operations</title>
 
       <para>Cascading provides some support for dynamically compiled Java
       expression to be used as either Functions or Filters. This functionality
@@ -2311,9 +2269,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>XML Operations</title>
-      </info>
+      <title>XML Operations</title>
 
       <para>All XML Operations are kept in a module other than core, so can be
       included in a Cascading application by including the
@@ -2383,9 +2339,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Assertions</title>
-      </info>
+      <title>Assertions</title>
 
       <para>Cascading Stream Assertions are used to build robust reusable pipe
       assemblies. They can be planned out of a Flow instance during runtime.
@@ -2561,9 +2515,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title>Logical Filter Operators</title>
-      </info>
+      <title>Logical Filter Operators</title>
 
       <para>The logical Filter operators allows the user to assemble more
       complex filtering to be used in a single Pipe, instead of chaining
@@ -2642,9 +2594,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </info>
 
     <section>
-      <info>
-        <title>MapReduce Job Planner</title>
-      </info>
+      <title>MapReduce Job Planner</title>
 
       <para>The MapReduce Job Planner is an internal feature of
       Cascading.</para>
@@ -2690,10 +2640,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <info>
-        <title xreflabel="Topological Scheduling" xml:id="cascade-scheduler"
-        xml:lang="">The Cascade Topological Scheduler</title>
-      </info>
+      <title xreflabel="Topological Scheduling" xml:id="cascade-scheduler"
+      xml:lang="">The Cascade Topological Scheduler</title>
 
       <para>Cascading has a simple utility that will take a collection of
       Cascading jobs, or Flows as they are called, groups them into a Cascade

@@ -37,6 +37,7 @@ import cascading.scheme.TextLine;
 import cascading.tap.Hfs;
 import cascading.tap.Tap;
 import cascading.tap.SinkMode;
+import cascading.tap.TemplateTap;
 import cascading.tuple.Fields;
 import cascading.cascade.CascadeConnector;
 import cascading.cascade.Cascade;
@@ -108,6 +109,17 @@ public class CompiledExamples
     //@extract-end
     }
 
+  public void compileTemplateTap()
+    {
+    String path = "some/path";
+
+    //@extract-start template-tap
+    Hfs tap = new Hfs( new TextLine( new Fields( "year", "month", "entry" ) ), path );
+
+    String template = "%s-%s"; // dirs named "year-month"
+    Tap months = new TemplateTap( tap, template, SinkMode.REPLACE );
+    //@extract-end
+    }
 
   public void compileFlow()
     {
@@ -156,8 +168,7 @@ public class CompiledExamples
     sources.put( "lhs", lhsSource );
     sources.put( "rhs", rhsSource );
 
-    Flow flow =
-      new FlowConnector().connect( "flow-name", sources, sink, join );
+    Flow flow = new FlowConnector().connect( "flow-name", sources, sink, join );
     //@extract-end
     }
 
@@ -217,7 +228,7 @@ public class CompiledExamples
 
     //@extract-start simple-groupby-merge
     Pipe[] pipes = Pipe.pipes( lhs, rhs );
-    Pipe merge = new GroupBy( pipes, new Fields("group1", "group2") );
+    Pipe merge = new GroupBy( pipes, new Fields( "group1", "group2" ) );
     //@extract-end
     }
 
@@ -232,8 +243,7 @@ public class CompiledExamples
     //@extract-start simple-cogroup
     Fields lhsFields = new Fields( "fieldA", "fieldB" );
     Fields rhsFields = new Fields( "fieldC", "fieldD" );
-    Pipe merge =
-      new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
+    Pipe merge = new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
     //@extract-end
     }
 
@@ -246,11 +256,9 @@ public class CompiledExamples
     Pipe rhs = new Pipe( "rhs" );
 
     //@extract-start duplicate-cogroup
-    Fields common = new Fields( "url");
-    Fields declared =
-      new Fields("url1", "word", "wd_count", "url2", "sentence", "snt_count");
-    Pipe merge =
-      new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
+    Fields common = new Fields( "url" );
+    Fields declared = new Fields( "url1", "word", "wd_count", "url2", "sentence", "snt_count" );
+    Pipe merge = new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
     //@extract-end
     }
 
