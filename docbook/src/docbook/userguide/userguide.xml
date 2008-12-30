@@ -1282,7 +1282,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       setters mentioned above to set the proper path to the application jar.
       If misconfigured, likely one of the internal libraries (found in the lib
       folder) will be pushed to the cluster instead and
-      ClassNotFoundExceptions will be thrown.</para>
+      <classname>ClassNotFoundException</classname>s will be thrown.</para>
     </section>
   </chapter>
 
