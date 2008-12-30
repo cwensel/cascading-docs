@@ -78,7 +78,7 @@ public class ExpressionTest extends ExampleTestCase
       "\"this \" + method + \" request was \" + size + \" bytes\"";
     Fields fields = new Fields( "pretty" );
     ExpressionFunction function =
-      new ExpressionFunction( fields, exp, String.class, String.class );
+      new ExpressionFunction( fields, exp, String.class );
 
     assembly =
       new Each( assembly, new Fields( "method", "size" ), function );

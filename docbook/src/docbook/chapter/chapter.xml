@@ -43,7 +43,7 @@
 
   <para>This chapter represents a short introduction and summary of the main
   concepts behind Cascading, please see the Cascading User Guide, on the
-  project website, for a more in depth presentation of the Cascading
+  project website, for a more in-depth presentation of the Cascading
   processing model.</para>
 
   <section>
@@ -426,8 +426,8 @@
       </imageobject>
     </mediaobject>
 
-    <para>If you think of pipe assemblies to be like a Java class, then a Flow
-    is like a Java instance. That is, the same pipe assembly can be
+    <para>If you think of pipe assemblies to be like a Java Class, then a Flow
+    is like a Java Object instance. That is, the same pipe assembly can be
     "instantiated" many times into new Flows, in the same application, without
     fear of any interference between them. This allows pipe assemblies to be
     created and shared like standard Java libraries.</para>
@@ -542,7 +542,7 @@
 
     <para>Now that we know what Cascading is and have a good idea how it
     works, what does an application written in Cascading look like, and is it
-    really any simpler.</para>
+    really any simpler?</para>
 
     <example>
       <title>Word Count and Sort</title>
@@ -676,9 +676,7 @@
 
     <para>Finally, we just substitute in our new SubAssembly right where the
     previous Every and word parser function was used in the previous example.
-    This nesting can continue as deep as necessary, in the same way Objects
-    and be subclassed and methods can call other methods in an
-    application.</para>
+    This nesting can continue as deep as necessary.</para>
   </section>
 
   <section>
