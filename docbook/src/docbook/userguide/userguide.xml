@@ -9,17 +9,15 @@
   <info>
     <title>Cascading - User Guide</title>
 
-    <pubdate>December, 2008</pubdate>
+    <pubdate>January, 2009</pubdate>
 
     <copyright>
-      <year>2007</year>
-
-      <year>2008</year>
+      <year>2007-2009</year>
 
       <holder>Concurrent, Inc</holder>
     </copyright>
 
-    <releaseinfo>V 1.0-preview</releaseinfo>
+    <releaseinfo>V 1.0</releaseinfo>
 
     <productname>Cascading</productname>
 
@@ -811,7 +809,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </varlistentry>
       </variablelist>
 
-      <para><example>
+      <para>The fundamental difference behind <classname>TextLine</classname>
+      and <classname>SequenceFile</classname> schemes is that tuples stored in
+      the <classname>SequenceFile</classname> remain tuples, so when read,
+      they do not need to be parsed. So a typical Cascading application will
+      read text files, and parse each line into a <classname>Tuple</classname>
+      for processing. The final Tuples are saved via the
+      <classname>SequenceFile</classname> scheme so future applications can
+      just read the file directly into <classname>Tuple</classname> instances
+      without the parsing step.<example>
           <title>Creating a new Tap</title>
 
           <xi:include href="simple-tap.xml" />
