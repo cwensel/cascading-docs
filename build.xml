@@ -10,7 +10,7 @@
   <property name="cascading.home" location="../cascading"/>
   <import file="${cascading.home}/build.xml"/>
 
-  <property name="cascading.groovy.home" location="../cascading.groovy"/>
+  <!--<property name="cascading.groovy.home" location="../cascading.groovy"/>-->
 
   <property file="${basedir}/build.properties"/>
 
@@ -25,7 +25,7 @@
   <path id="all.javadoc.src.path">
     <pathelement location="${cascading.home}/src/core"/>
     <pathelement location="${cascading.home}/src/xml"/>
-    <pathelement location="${cascading.groovy.home}/src/java"/>
+    <!--<pathelement location="${cascading.groovy.home}/src/java"/>-->
   </path>
 
   <target name="site-javadoc" depends="init">
