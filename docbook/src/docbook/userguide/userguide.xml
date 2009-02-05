@@ -9,7 +9,7 @@
   <info>
     <title>Cascading - User Guide</title>
 
-    <pubdate>January, 2009</pubdate>
+    <pubdate>February, 2009</pubdate>
 
     <copyright>
       <year>2007-2009</year>
@@ -829,7 +829,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       only "line" values.</para>
 
       <para>The three most common Tap classes used are, Hfs, Dfs, and Lfs. The
-      MultiTap is a utility Tap.</para>
+      MultiTap and TemplateTap are utility Taps.</para>
 
       <variablelist>
         <varlistentry>
@@ -879,6 +879,17 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
             is that all the Tap instances passed to a new MultiTap share the
             same Scheme classes (not necessarily the same Scheme
             instance).</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>TemplateTap</term>
+
+          <listitem>
+            <para>The <classname>cascading.tap.TemplateTap</classname> is used
+            to sink tuples into directory paths based on the values in the
+            Tuple. More can be read below in <xref
+            linkend="template-tap" />.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -1879,7 +1890,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <title>Template Taps</title>
+      <title xreflabel="Template Taps" xml:id="template-tap">Template
+      Taps</title>
 
       <para>The <classname>TemplateTap</classname> <classname>Tap</classname>
       class provides a simple means to break large datasets into smaller sets
@@ -1922,6 +1934,49 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>See the Cascading website for publicly available scripting
       languate bindings.</para>
+    </section>
+
+    <section>
+      <title>Custom Taps and Schemes</title>
+
+      <para>Cascading was designed to be easily configured and enhanced by
+      developers. Besides allowing for custom Operations, developers can
+      provide custom <classname>Tap</classname> and
+      <classname>Scheme</classname> types so applications can connect to
+      system external to Hadoop.</para>
+
+      <para>A Tap represents something "physical", like a file or a database
+      table. Subsequently Tap implementations are responsible for lifecycle
+      issues around the resource they represent, like tests for existence, or
+      deleting.</para>
+
+      <para>A Scheme represents a format or represenation, like a text format
+      for a file, or columns in a table. Schemes are responsible for
+      converting the Tap managed resources proprietary format to and from a
+      <classname>cascading.tuple.Tuple</classname> instance.</para>
+
+      <para>Unfortunately creating custom Taps and Schemes can be an involved
+      process and requires some knowledge of Hadoop and the Hadoop FileSystem
+      API. Most commonly, the <classname>cascading.tap.Hfs</classname> class
+      can be subclassed if a new filesystem is to be supported, assuming
+      passing a fully qualified URL to the <classname>Hfs</classname>
+      constructor isn't sufficient (the <classname>Hfs</classname> tap will
+      look up a filesystem based on the URL scheme via the Hadoop FileSystem
+      API).</para>
+
+      <para>Delegating to the Hadoop FileSystem API is not a strict
+      requirement, but the developer will need to implement a Hadoop
+      <classname>org.apache.hadoop.mapred.InputFormat</classname> and/or
+      .<classname>org.apache.hadoop.mapred.OutputFormat</classname> so that
+      Hadoop knows how to split and handle the incoming/outgoing data. The
+      custom <classname>Scheme</classname> is responsible for setting
+      <classname>InputFormat</classname> and
+      <classname>OutputFormat</classname> on the
+      <classname>JobConf</classname> via the <methodname>sinkInit</methodname>
+      and <methodname>sourceInit</methodname> methods.</para>
+
+      <para>For examples on how to implement a custom Tap and Scheme, see the
+      <link xlink:href="???">Cascading Modules</link> page for samples.</para>
     </section>
   </chapter>
 
