@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:ns5="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns4="http://www.w3.org/2000/svg"
+         xmlns:ns3="http://www.w3.org/1999/xhtml"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <info>
+    <title>Cascading</title>
+  </info>
+
+  <para>Cascading is an Open Source Java library and application programming
+  interface (API) that allows developers to build increasingly complex,
+  mission critical, data processing applications for execution in Hadoop
+  clusters.</para>
+
+  <para>The Cascading project was started during the late Summer of 2007, with
+  its first public release, Version 0.1, in January 2008. Cascading reached
+  Version 1.0 in January of 2009, after over a year of continuous development,
+  testing, and refinement. Binaries, source code, and add-on modules can be
+  downloaded from the project website, <link
+  xlink:href="http://www.cascading.org/">http://www.cascading.org/</link>.</para>
+
+  <para>The Cascading project was started because it became apparent that the
+  MapReduce model does not scale organizationally. MapReduce is difficult for
+  developers to "think" in when faced with real-world applications. And it is
+  at the wrong granularity for creating efficient, composable applications
+  that can be shared between users.</para>
+
+  <para>To solve the first criticism, Cascading traded in MapReduce "keys" and
+  "values" for a simple field names and data tuple model (where a tuple is
+  just a list of values). For the second, Cascading departs from the Map and
+  Reduce operations by introducing some alternatives; Functions, Filters,
+  Aggregators, and Buffers.</para>
+
+  <para>Though many alternatives to Cascading began to emerge before and after
+  the initial public release of Cascading, Cascading was designed to be
+  complimentary to all of them. All these alternative frameworks have some pre
+  and post conditions or expectations. For example, data must be
+  pre-formatted, filtered, and/or imported into the Hadoop File System (HDFS).
+  It is quite a simple endeavor to have Cascading manage, and prepare or
+  import, data into these alternative frameworks as necessary.</para>
+
+  <para>This case study represents a short introduction and summary of the
+  main concepts behind Cascading, please see the Cascading User Guide, on the
+  project website, for a more in-depth presentation of the Cascading
+  processing model.</para>
+
+  <section>
+    <info>
+      <title>Fields, Tuples, and Pipes</title>
+    </info>
+
+    <para>The MapReduce model uses keys and values to link input data to the
+    Map function, the Map function to the Reduce function, and the Reduce
+    function to the output data.</para>
+
+    <para>But as we know, real-world Hadoop applications are usually more than
+    one MapReduce job chained together. Consider the canonical word count
+    example implemented in MapReduce. If you needed to sort the numeric counts
+    in descending order, not an unlikely requirement, it would need to be done
+    in a second MapReduce job.</para>
+
+    <figure xml:id="fig.mr-count-sort">
+      <title>Counting and Sorting in MapReduce</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="5in"
+                     fileref="images/mr-count-sort.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="5in"
+                     fileref="images/mr-count-sort.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>So, in the abstract, keys and values not only bind Map to Reduce,
+    but Reduce to the next Map, and then to the next Reduce, and so on. That
+    is, key/value pairs are sourced from input files and stream through chains
+    of Map and Reduce operations and finally rest in an output file. When you
+    implement enough of these chained MapReduce applications, you start to see
+    a well defined set of key/value manipulations used over and over again to
+    modify the key/value data stream.</para>
+
+    <para>Cascading both leverages these emergent patterns and simultaneously
+    abstracts their complexity away.</para>
+
+    <para>In part this is accomplished by abstracting away keys and values and
+    replacing them with tuples that have corresponding field names, similar in
+    concept to tables and column names in a Relational Database. And during
+    processing, streams of these Fields and Tuples are then manipulated as
+    they pass through Pipes.</para>
+
+    <figure xml:id="fig.chained-pipes">
+      <title>Pipes linked by Fields and Tuples</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="5in"
+                     fileref="images/chained-pipes.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="5in"
+                     fileref="images/chained-pipes.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>So, MapReduce keys and values are reduced to:</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term xreflabel="Fields" xml:id="fields">Fields</term>
+
+          <listitem>
+            <para>Fields are a collection of either
+            <classname>String</classname> names (like "first_name"), numeric
+            positions (like 2, or -1, for the third and last position,
+            respectively), or a combination of both. Very much like column
+            names. So Fields are used to declare the names of values in a
+            Tuple, and to select values by name from a Tuple. The later is
+            like a SQL <code>select</code> call.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="Tuple" xml:id="tuple">Tuple</term>
+
+          <listitem>
+            <para>A Tuple is simply an array of
+            <classname>java.lang.Comparable</classname> objects. A Tuple is
+            very much like a database row or record.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
+
+    <para>And the Map and Reduce operations are abstracted behind one or more
+    Pipe instances.</para>
+
+    <figure xml:id="fig.pipes">
+      <title>Pipe Types</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="3in"
+                     fileref="images/pipes.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="3in"
+                     fileref="images/pipes.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>The Each pipe processes a single input Tuple at a time, but may
+    return zero (0) or more result Tuples for every input Tuple and may apply
+    either a Function or a Filter to the input Tuple. The GroupBy pipe groups
+    Tuples based on the values of a given set of field names. It behaves just
+    like the SQL <code>group by</code> statement. It can also merge multiple
+    input tuple streams into a single stream, if they all share the same field
+    names. The CoGroup pipe both joins multiple tuple streams by the values of
+    a given set of field names, it also groups the Tuples by those values. All
+    join types (inner, outer, etc) and even custom joins are supported and
+    more than two streams may be joined simultaneously. The Every pipe
+    processes a single grouping of Tuples at a time, where the group shares a
+    common sub-set of Tuple values. It may return zero (0) or more result
+    Tuples for that grouping for every input grouping and may apply either an
+    Aggregator or a Buffer to the grouping. The SubAssembly pipe allows for
+    nesting of assemblies inside a single pipe, which are in turn nested in
+    more complex assemblies.</para>
+
+    <para>All these pipes are chained together by the developer into "pipe
+    assemblies". Where each assembly can have many input Tuple streams
+    (sources) and many output Tuple streams (sinks).</para>
+
+    <figure xml:id="fig.pipe-assembly">
+      <title>A Simple Pipe Assembly</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-assembly.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-assembly.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>On the surface this might seem more complex than the traditional
+    MapReduce model. And admitedly there are more concepts here than Map,
+    Reduce, Key, and Value. But in practice, as implemented in Hadoop, there
+    are many more concepts that must all work in tandem to provide different
+    behaviors.</para>
+
+    <para>For example, if a developer wanted to provide a "secondary sorting"
+    of reduce values, they would need to implement Map, Reduce, a composite
+    Key (two Keys nested in a parent Key), Value, Partitioner, an "output
+    value grouping" Comparator, and an "output key" Comparator. All of which
+    would be coupled to one another in varying ways, and very likely
+    non-reusable in subsequent jobs.</para>
+
+    <para>In Cascading, this would be one line of code: <code>new GroupBy(
+    &lt;previous&gt;, &lt;grouping fields&gt;, &lt;secondary sorting
+    fields&gt;)</code>. Where <code>previous</code> is the pipe that came
+    before.</para>
+  </section>
+
+  <section>
+    <info>
+      <title>Operations</title>
+    </info>
+
+    <para>As mentioned above, Cascading departs from MapReduce by introducing
+    alternative operations that either are applied to individual Tuples or
+    groups of Tuples.</para>
+
+    <figure xml:id="fig.operations">
+      <title>Operation Types</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="2.5in"
+                     fileref="images/operations.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="2.5in"
+                     fileref="images/operations.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para><variablelist>
+        <varlistentry>
+          <term xreflabel="Function" xml:id="function">Function</term>
+
+          <listitem>
+            <para>A Function operates on individual input Tuples and may
+            return zero (0) or more output Tuples for every one input.
+            Functions are applied by the Each pipe.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="Filter" xml:id="filter">Filter</term>
+
+          <listitem>
+            <para>A Filter is a special kind of Function that returns a
+            boolean value if the current input Tuple should be removed from
+            the Tuple stream. A Function could serve this purpose, but the
+            Filter is optimized for this case, and many filters can be grouped
+            by "logical" filters like And, Or, Xor, and Not, rapidly creating
+            more complex filtering operations.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="Aggregator" xml:id="aggregator">Aggregator</term>
+
+          <listitem>
+            <para>An Aggregator performs some operation against a group of
+            Tuples, where the grouped Tuples are grouped by a common set of
+            field values. For example, all Tuples have the same "last-name"
+            field value. Common Aggregator implementations would be Sum,
+            Count, Average, Max, and Min.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="Buffer" xml:id="buffer">Buffer</term>
+
+          <listitem>
+            <para>A Buffer is similar to the Aggregator, except it is
+            optimized to act as a "sliding window" across all the Tuples in a
+            unique grouping. This is useful when the developer needs to
+            efficiently insert missing values in an ordered set of Tuples
+            (like a missing date or duration), or create a running average.
+            Usually Aggregator is the operation of choice when working with
+            groups of Tuples since many Aggregators can be chained together
+            very efficiently, but sometimes a Buffer is the best tool for the
+            job.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
+
+    <para>Operations are bound to pipes when the pipe assembly is
+    created.</para>
+
+    <figure xml:id="fig.pipe-assembly-operations">
+      <title>An Assembly of Operations</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-assembly-operations.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-assembly-operations.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>The Each and Every pipe provides a simple mechanism for selecting
+    some or all values out of a input Tuple before being passed to its child
+    operation. And there is a simple mechanism for merging the operation
+    results with the original input Tuple to create the output Tuple. Without
+    going into great detail, this allows for each operation to only care about
+    argument Tuple values and fields, not the whole set of fields in the
+    current input Tuple. Subsequently, operations can be reusable across
+    applications the same way Java methods can be reusable.</para>
+
+    <para>For example, in Java, a method declared as <code>concatenate( String
+    first, String second )</code> is more abstract than <code>concatenate(
+    Person person )</code>. In the second case, the <code>concatenate()</code>
+    function must "know" about the <code>Person</code> object, in the first
+    case, it is agnostic to where the data came from. Cascading operations
+    exhibit this same quality.</para>
+  </section>
+
+  <section>
+    <info>
+      <title>Taps, Schemes, and Flows</title>
+    </info>
+
+    <para>In many of the above diagrams, there are references to "sources" and
+    "sinks". In Cascading all data is read from or written to
+    <classname>Tap</classname> instances, but is converted to and from Tuple
+    instances via <classname>Scheme</classname> instances.</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term xreflabel="Tap" xml:id="tap">Tap</term>
+
+          <listitem>
+            <para>A Tap is responsible for the "how" and "where" parts of
+            accessing data. For example, is the data on HDFS or the "local"
+            file system. In Amazon S3 or over HTTP.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="Scheme" xml:id="scheme">Scheme</term>
+
+          <listitem>
+            <para>A Scheme is responsible for reading raw data and converting
+            it to a Tuple and/or writing a Tuple out into raw data. Where this
+            "raw" data can be lines of text, Hadoop binary "sequence" files,
+            or some proprietary format.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>Note that Taps are not part of a pipe assembly, and so
+    they are not a type of <classname>Pipe</classname>.</para>
+
+    <para>But they are connected with pipe assemblies when they are made
+    cluster executable. When a pipe assembly is connected with the necessary
+    number of source and sink Tap instances, we get a Flow.</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term xreflabel="Flow" xml:id="flow">Flow</term>
+
+          <listitem>
+            <para>A Flow is created when a pipe assembly is connected with its
+            required number of source and sink taps, and the Taps either emit
+            or capture the field names the pipe assembly expects. That is, if
+            a Tap emits a Tuple with the field name "line" (by reading data
+            from a file on HDFS), the head of the pipe assembly must be
+            expecting a "line" value as well. Otherwise the process that
+            connects the pipe assembly with the Taps will immeidately fail
+            with an error.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>So pipe assemblies are really data process definitions,
+    and are not "executable" on their own. They must be connected to source
+    and sink Tap instances before they can run on a cluster. This separation
+    between Taps and pipe assemblies is what makes Cascading so
+    powerful.</para>
+
+    <figure xml:id="fig.flow">
+      <title>A Flow</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/flow.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/flow.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>If you think of pipe assemblies to be like a Java Class, then a Flow
+    is like a Java Object instance. That is, the same pipe assembly can be
+    "instantiated" many times into new Flows, in the same application, without
+    fear of any interference between them. This allows pipe assemblies to be
+    created and shared like standard Java libraries.</para>
+  </section>
+
+  <section>
+    <info>
+      <title>Absorbing Complexity</title>
+    </info>
+
+    <para>Now take a step back and see what this new model has given us. Or
+    better yet, what it has taken away.</para>
+
+    <para>You see, we no longer think in terms of MapReduce jobs, or Mapper
+    and Reducer interface implementations. And how to bind or link subsequent
+    MapReduce jobs to the ones that preceede them. During runtime the
+    Cascading "planner" figures out the optimal way to partition the pipe
+    assembly into MapReduce jobs, and manages the linkages between
+    them.</para>
+
+    <figure xml:id="fig.pipe-assembly-mapreduce">
+      <title>How a Flow Translates to Chained MapReduce Jobs</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-assembly-mapreduce.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-assembly-mapreduce.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Because of this, developers can build applications of arbitrary
+    granularity. They can start with a small application that just filters a
+    log file, but then can iteratively build up more features into the
+    application as needed.</para>
+
+    <para>Since Cascading is an API and not a syntax like SQL, it is more
+    flexible. First off, developers can create Domain Specific Languages
+    (DSLs) using their favorite language, like Groovy, JRuby, Jython, Scala,
+    and others (see the project site for examples). Second, developers can
+    extend various parts of Cascading, like allowing custom Thrift or JSON
+    objects to be read and written to and allowing them to be passed through
+    the Tuple stream.</para>
+  </section>
+
+  <section>
+    <info>
+      <title>Mission Critical Features</title>
+    </info>
+
+    <para>No doubt Cascading can be used for ad-hoc, single use, applications.
+    But it really shines when large complex processes need to be created that
+    need a higher level of robustness. A robustness expected from production
+    quality applications.</para>
+
+    <para>Here are a few of these features:</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term>Stream Assertions</term>
+
+          <listitem>
+            <para>Stream assertions are just like Java assertions and unit
+            tests all rolled up. A pipe assembly can be assembled with
+            assertions built into them. These assertions can test for null
+            values in an argument Tuple, or if the values match some regular
+            expression pattern. If the assertion fails, the process can
+            optionally fail, or it can save the bad input Tuple to a new file
+            on HDFS. If assertions aren't wanted, Cascading can remove them at
+            runtime so they don't slow things down on your production
+            system.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Failure Traps</term>
+
+          <listitem>
+            <para>Failure traps are like Java Exception handlers. If an
+            operation fails unexpectedly, the input Tuple that caused the
+            failure can be saved off to a file for later debugging. This
+            features works great with stream assertions.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Events</term>
+
+          <listitem>
+            <para>Events allow for external code and/or systems to be notified
+            when a new process starts, completes, or fails.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Topological Scheduling</term>
+
+          <listitem>
+            <para>In Cascading an application can create any number of Flows
+            and execute them simultaneously. If one Flow depends on the output
+            of a previous Flow, Cascading offers up an utility called a
+            Cascade that allows for all these processes to be scheduled in
+            dependency order.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
+  </section>
+
+  <section>
+    <info>
+      <title>Cascading in Practice</title>
+    </info>
+
+    <para>Now that we know what Cascading is and have a good idea how it
+    works, what does an application written in Cascading look like?</para>
+
+    <example>
+      <title>Word Count and Sort</title>
+
+      <xi:include href="word-count-sort.xml" />
+
+      <calloutlist>
+        <callout arearefs="ex.wcs.source.scheme">
+          <para>We create a new <xref linkend="scheme" /> that can read simple
+          text files, and emits a new <xref linkend="tuple" /> for each line
+          in a field named "line", as declared by the <xref
+          linkend="fields" /> instance.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.sink.scheme">
+          <para>We create a new <classname>Scheme</classname> that can write
+          simple text files, and expects a <classname>Tuple</classname> with
+          any number of fields/values. If more than one value, they will be
+          TAB delimited in the output file.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.source ex.wcs.sink">
+          <para>We create source and sink <xref linkend="tap" /> instances
+          that reference the input file and output directory, respectively.
+          The sink <classname>Tap</classname> will overwrite any file that may
+          already exist.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.pipe">
+          <para>We construct the head of our pipe assembly, and name it
+          "wordcount". This name is used to bind the source and sink taps to
+          the assembly. Multiple heads or tails would require unique
+          names.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.each">
+          <para>We construct an Each pipe with a <xref linkend="function" />
+          that will parse the "line" field into a new
+          <classname>Tuple</classname> for each word encountered.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.group.word">
+          <para>We construct a GroupBy pipe that will create a new
+          <classname>Tuple</classname> grouping for each unique value in the
+          field "word".</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.every">
+          <para>We construct an Every pipe with an <xref
+          linkend="aggregator" /> that will count the number of Tuples in
+          every unique word group. The result is stored in a field named
+          "count".</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.group.count">
+          <para>We construct a <classname>GroupBy</classname> pipe that will
+          create a new <classname>Tuple</classname> grouping for each unique
+          value in the field "count", and secondary sort each value in the
+          field "word". The result will be a list of "count" and "word" values
+          with "count" sorted in increasing order.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.connect ex.wcs.run">
+          <para>We connect the pipe assembly to its sources and sinks into a
+          <xref linkend="flow" />, and then execute the Flow on the
+          cluster.</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <para>In the example above, we count the words encounterd in the input
+    document, and we sort the counts in their natural order (ascending). And
+    if some words have the same "count" value, these words are sorted in their
+    natural order (alphabetical).</para>
+
+    <para>One obvious problem with this example is that some words might have
+    upper-case letters, for example, "the" and "The" when the word becomes at
+    the beginning of a sentence. So we might decide to insert a new operation
+    to force all the words to lower case, but we realize that all future
+    applications that need to parse words from documents should have the same
+    behavior, so we decide to create a reusable pipe sub-assembly, just like
+    we would by creating a sub-routine in a traditional application.</para>
+
+    <example>
+      <title>Creating a SubAssembly</title>
+
+      <xi:include href="word-count-sort-subassembly.xml" />
+
+      <calloutlist>
+        <callout arearefs="ex.wcs.subclass">
+          <para>We subclass the SubAssembly class, which is itself a kind of
+          Pipe.</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.expression">
+          <para>We create a Java expression function that will call
+          <methodname>toLowerCase()</methodname> on the
+          <classname>String</classname> value in the field named "word". We
+          must also pass in the Java type the expression expects "word" to be,
+          in this case, <classname>String</classname>. (<link
+          xlink:href="http://www.janino.net/">http://www.janino.net/</link> is
+          used under the covers)</para>
+        </callout>
+
+        <callout arearefs="ex.wcs.tails">
+          <para>We must tell the <classname>SubAssembly</classname> superclass
+          who the tail ends of our pipe sub-assembly are.</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <para>First, we create a SubAssembly pipe to hold our "parse words" pipe
+    assembly. Since this is a Java class, it can be reused in any other
+    application, as long as there is an incoming field named "word". Note
+    there are ways to make this function even more generic, but they are
+    covered in the Cascading User Guide.</para>
+
+    <example>
+      <title>Extending Word Count and Sort with a SubAssembly</title>
+
+      <xi:include href="word-count-sort-sub.xml" />
+
+      <calloutlist>
+        <callout arearefs="ex.wcs.subassembly">
+          <para>We replace the <classname>Each</classname> from the previous
+          example with our <classname>ParseWordsAssembly</classname>
+          pipe.</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <para>Finally, we just substitute in our new SubAssembly right where the
+    previous Every and word parser function was used in the previous example.
+    This nesting can continue as deep as necessary.</para>
+  </section>
+
+  <section>
+    <info>
+      <title>Cascading In The Real World</title>
+    </info>
+
+    <para></para>
+  </section>
+</chapter>
