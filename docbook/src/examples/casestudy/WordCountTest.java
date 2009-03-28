@@ -51,27 +51,34 @@ public class WordCountTest extends ExampleTestCase implements Serializable
     String outputPath = getOutputPath() + "wordcount";
 
     //@extract-start word-count-sort
-    Scheme sourceScheme = new TextLine(new Fields("line")); //<co xml:id="ex.wcs.source.scheme"/>
-    Tap source = new Hfs(sourceScheme, inputPath); //<co xml:id="ex.wcs.source"/>
+    Scheme sourceScheme =
+      new TextLine(new Fields("line")); //<co xml:id="ex.wcs.source.scheme"/>
+    Tap source =
+      new Hfs(sourceScheme, inputPath); //<co xml:id="ex.wcs.source"/>
 
     Scheme sinkScheme = new TextLine(); //<co xml:id="ex.wcs.sink.scheme"/>
-    Tap sink = new Hfs(sinkScheme, outputPath, SinkMode.REPLACE); //<co xml:id="ex.wcs.sink"/>
+    Tap sink =
+      new Hfs(sinkScheme, outputPath, SinkMode.REPLACE); //<co xml:id="ex.wcs.sink"/>
 
     Pipe assembly = new Pipe("wordcount"); //<co xml:id="ex.wcs.pipe"/>
 
     String regexString = "(?<!\\pL)(?=\\pL)[^ ]*(?<=\\pL)(?!\\pL)";
     Function regex = new RegexGenerator(new Fields("word"), regexString);
-    assembly = new Each(assembly, new Fields("line"), regex); //<co xml:id="ex.wcs.each"/>
+    assembly =
+      new Each(assembly, new Fields("line"), regex); //<co xml:id="ex.wcs.each"/>
 
-    assembly = new GroupBy(assembly, new Fields("word")); //<co xml:id="ex.wcs.group.word"/>
+    assembly =
+      new GroupBy(assembly, new Fields("word")); //<co xml:id="ex.wcs.group.word"/>
 
     Aggregator count = new Count(new Fields("count"));
     assembly = new Every(assembly, count); //<co xml:id="ex.wcs.every"/>
 
-    assembly = new GroupBy(assembly, new Fields("count"), new Fields("word")); //<co xml:id="ex.wcs.group.count"/>
+    assembly =
+      new GroupBy(assembly, new Fields("count"), new Fields("word")); //<co xml:id="ex.wcs.group.count"/>
 
     FlowConnector flowConnector = new FlowConnector();
-    Flow flow = flowConnector.connect("word-count", source, sink, assembly); //<co xml:id="ex.wcs.connect"/>
+    Flow flow =
+      flowConnector.connect("word-count", source, sink, assembly); //<co xml:id="ex.wcs.connect"/>
 
     flow.complete(); //<co xml:id="ex.wcs.run"/>
     //@extract-end
@@ -88,8 +95,9 @@ public class WordCountTest extends ExampleTestCase implements Serializable
       Function regex = new RegexGenerator(new Fields("word"), regexString);
       previous = new Each(previous, new Fields("line"), regex);
 
-      String expressionString = "word.toLowerCase()";
-      Function expression = new ExpressionFunction(new Fields("word"), expressionString, String.class); //<co xml:id="ex.wcs.expression"/>
+      String exprString = "word.toLowerCase()";
+      Function expression =
+        new ExpressionFunction(new Fields("word"), exprString, String.class); //<co xml:id="ex.wcs.expression"/>
       previous = new Each(previous, new Fields("word"), expression);
 
       setTails(previous); //<co xml:id="ex.wcs.tails"/>
@@ -111,7 +119,8 @@ public class WordCountTest extends ExampleTestCase implements Serializable
 
     Pipe assembly = new Pipe("wordcount");
 
-    assembly = new ParseWordsAssembly(assembly); //<co xml:id="ex.wcs.subassembly"/>
+    assembly =
+      new ParseWordsAssembly(assembly); //<co xml:id="ex.wcs.subassembly"/>
 
     assembly = new GroupBy(assembly, new Fields("word"));
 
