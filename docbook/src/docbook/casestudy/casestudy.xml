@@ -17,34 +17,36 @@
 
   <para>The Cascading project was started during the late Summer of 2007, with
   its first public release, Version 0.1, in January 2008. Cascading reached
-  Version 1.0 in January of 2009, after over a year of continuous development,
-  testing, and refinement. Binaries, source code, and add-on modules can be
-  downloaded from the project website, <link
+  Version 1.0 in January of 2009. Binaries, source code, and add-on modules
+  can be downloaded from the project website,<link
   xlink:href="http://www.cascading.org/">http://www.cascading.org/</link>.</para>
 
   <para>The Cascading project was started because it became apparent that the
-  MapReduce model does not scale organizationally. MapReduce is difficult for
-  developers to "think" in when faced with real-world applications. And it is
-  at the wrong granularity for creating efficient, composable applications
+  MapReduce model is difficult for developers to "think" in when faced with
+  real-world applications. And that the "Map" and "Reduce" operations are at
+  the wrong granularity for creating sophisticated, composable applications
   that can be shared between users.</para>
 
   <para>To solve the first criticism, Cascading traded in MapReduce "keys" and
   "values" for a simple field names and data tuple model (where a tuple is
-  just a list of values). For the second, Cascading departs from the Map and
-  Reduce operations by introducing some alternatives; Functions, Filters,
+  just a list of values). For the second, Cascading departs from the "Map" and
+  "Reduce" operations by introducing some alternatives; Functions, Filters,
   Aggregators, and Buffers.</para>
 
   <para>Though many alternatives to Cascading began to emerge before and after
   the initial public release of Cascading, Cascading was designed to be
   complimentary to all of them. All these alternative frameworks have some pre
-  and post conditions or expectations. For example, data must be
-  pre-formatted, filtered, and/or imported into the Hadoop File System (HDFS).
-  It is quite a simple endeavor to have Cascading manage, and prepare or
-  import, data into these alternative frameworks as necessary.</para>
+  and post conditions or expectations. For example, to use many of the tools,
+  it is easier to pre-formatted, filter, and/or import your data into the
+  Hadoop File System (HDFS) first. It is quite a simple endeavor to have
+  Cascading manage, prepare, and/or import your data into these alternative
+  frameworks as necessary.</para>
 
   <para>This case study represents a short introduction and summary of the
-  main concepts behind Cascading, please see the Cascading User Guide, on the
-  project website, for a more in-depth presentation of the Cascading
+  main concepts behind Cascading and an overview of how ShareThis (<link
+  xlink:href="http://www.sharethis.com/">http://www.sharethis.com</link>) use
+  Cascading in their infrastructure. Please see the Cascading User Guide on
+  the project website for a more in-depth presentation of the Cascading
   processing model.</para>
 
   <section>
@@ -86,10 +88,7 @@
     a well defined set of key/value manipulations used over and over again to
     modify the key/value data stream.</para>
 
-    <para>Cascading both leverages these emergent patterns and simultaneously
-    abstracts their complexity away.</para>
-
-    <para>In part this is accomplished by abstracting away keys and values and
+    <para>Cascading simplifies this by abstracting away keys and values and
     replacing them with tuples that have corresponding field names, similar in
     concept to tables and column names in a Relational Database. And during
     processing, streams of these Fields and Tuples are then manipulated as
@@ -158,22 +157,23 @@
       </mediaobject>
     </figure>
 
-    <para>The Each pipe processes a single input Tuple at a time, but may
-    return zero (0) or more result Tuples for every input Tuple and may apply
-    either a Function or a Filter to the input Tuple. The GroupBy pipe groups
-    Tuples based on the values of a given set of field names. It behaves just
-    like the SQL <code>group by</code> statement. It can also merge multiple
-    input tuple streams into a single stream, if they all share the same field
-    names. The CoGroup pipe both joins multiple tuple streams by the values of
-    a given set of field names, it also groups the Tuples by those values. All
-    join types (inner, outer, etc) and even custom joins are supported and
-    more than two streams may be joined simultaneously. The Every pipe
+    <para>The <code>Each</code> pipe processes a single input Tuple at a time,
+    but may return zero (0) or more result Tuples for every input Tuple and
+    may apply either a Function or a Filter to the input Tuple. The
+    <code>GroupBy</code> pipe groups Tuples based on the values of a given set
+    of field names. It behaves just like the SQL <code>group by</code>
+    statement. It can also merge multiple input tuple streams into a single
+    stream, if they all share the same field names. The <code>CoGroup</code>
+    pipe both joins multiple tuple streams by the values of a given set of
+    field names, it also groups the Tuples by those values. All join types
+    (inner, outer, etc) and even custom joins are supported and more than two
+    streams may be joined simultaneously. The <code>Every</code> pipe
     processes a single grouping of Tuples at a time, where the group shares a
     common sub-set of Tuple values. It may return zero (0) or more result
     Tuples for that grouping for every input grouping and may apply either an
-    Aggregator or a Buffer to the grouping. The SubAssembly pipe allows for
-    nesting of assemblies inside a single pipe, which are in turn nested in
-    more complex assemblies.</para>
+    Aggregator or a Buffer to the grouping. The <code>SubAssembly</code> pipe
+    allows for nesting of assemblies inside a single pipe, which are in turn
+    nested in more complex assemblies.</para>
 
     <para>All these pipes are chained together by the developer into "pipe
     assemblies". Where each assembly can have many input Tuple streams
@@ -202,13 +202,13 @@
     behaviors.</para>
 
     <para>For example, if a developer wanted to provide a "secondary sorting"
-    of reduce values, they would need to implement Map, Reduce, a composite
+    of reducer values, they would need to implement Map, Reduce, a "composite"
     Key (two Keys nested in a parent Key), Value, Partitioner, an "output
     value grouping" Comparator, and an "output key" Comparator. All of which
     would be coupled to one another in varying ways, and very likely
     non-reusable in subsequent jobs.</para>
 
-    <para>In Cascading, this would be one line of code: <code>new GroupBy(
+    <para>In Cascading, this would be one line of code:<code>new GroupBy(
     &lt;previous&gt;, &lt;grouping fields&gt;, &lt;secondary sorting
     fields&gt;)</code>. Where <code>previous</code> is the pipe that came
     before.</para>
@@ -321,7 +321,7 @@
     applications the same way Java methods can be reusable.</para>
 
     <para>For example, in Java, a method declared as <code>concatenate( String
-    first, String second )</code> is more abstract than <code>concatenate(
+    first, String second ) </code> is more abstract than<code>concatenate(
     Person person )</code>. In the second case, the <code>concatenate()</code>
     function must "know" about the <code>Person</code> object, in the first
     case, it is agnostic to where the data came from. Cascading operations
@@ -359,8 +359,8 @@
             or some proprietary format.</para>
           </listitem>
         </varlistentry>
-      </variablelist>Note that Taps are not part of a pipe assembly, and so
-    they are not a type of <classname>Pipe</classname>.</para>
+      </variablelist> Note that Taps are not part of a pipe assembly, and so
+    they are not a type of<classname>Pipe</classname>.</para>
 
     <para>But they are connected with pipe assemblies when they are made
     cluster executable. When a pipe assembly is connected with the necessary
@@ -381,7 +381,7 @@
             with an error.</para>
           </listitem>
         </varlistentry>
-      </variablelist>So pipe assemblies are really data process definitions,
+      </variablelist> So pipe assemblies are really data process definitions,
     and are not "executable" on their own. They must be connected to source
     and sink Tap instances before they can run on a cluster. This separation
     between Taps and pipe assemblies is what makes Cascading so
@@ -412,7 +412,7 @@
 
   <section>
     <info>
-      <title>Absorbing Complexity</title>
+      <title>MapReduce Planner</title>
     </info>
 
     <para>Now take a step back and see what this new model has given us. Or
@@ -505,7 +505,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Topological Scheduling</term>
+          <term>Dependency Scheduling</term>
 
           <listitem>
             <para>In Cascading an application can create any number of Flows
@@ -624,9 +624,9 @@
           <methodname>toLowerCase()</methodname> on the
           <classname>String</classname> value in the field named "word". We
           must also pass in the Java type the expression expects "word" to be,
-          in this case, <classname>String</classname>. (<link
-          xlink:href="http://www.janino.net/">http://www.janino.net/</link> is
-          used under the covers)</para>
+          in this case,<classname>String</classname>. ( <link
+          xlink:href="http://www.janino.net/">http://www.janino.net/ </link>
+          is used under the covers)</para>
         </callout>
 
         <callout arearefs="ex.wcs.tails">
@@ -663,9 +663,136 @@
 
   <section>
     <info>
-      <title>Cascading In The Real World</title>
+      <title>Cascading at ShareThis</title>
     </info>
 
-    <para></para>
+    <para>ShareThis is a sharing network that makes it simple to share any
+    online content. With the click of a button on a webpage or browser
+    plug-in, ShareThis allows users to seamlessly access their contacts and
+    networks from anywhere online and share the content through email, IM,
+    Facebook, Digg, mobile SMS, etc. without ever leaving the current page.
+    Publishers can deploy the ShareThis button to tap the service’s universal
+    sharing capabilities to drive traffic, stimulate viral activity and track
+    the sharing of online content. ShareThis also simplifies social media
+    services by reducing clutter on web pages and providing instant
+    distribution of content across social networks, affiliate groups, and
+    communities.</para>
+
+    <para>As can be imagined, the amount of "sharing data" can be huge, too
+    large to process with tradtiional systems. This is why ShareThis chose to
+    deploy Hadoop as the pre-processing front-end to their back-end AsterData
+    data-warehouse.</para>
+
+    <figure xml:id="fig.sharethis-logprocessing">
+      <title>The ShareThis Log Processing Pipeline</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/sharethis-logprocess.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/sharethis-logprocess.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>In this way, all the logs can be parsed, filtered, cleaned, and
+    organized by a set of rules before ever being loaded into the AsterData
+    system. AsterData is a clustered data-warehouse that also can handle very
+    large data-sets and allows for complex ad-hoc queries using standard SQL
+    syntax. So it makes perfect sense for ShareThis to clean and prepare the
+    incoming data-sets at whatever frequency makes business sense on the
+    Hadoop cluster, and to load that data directly into the AsterData cluster
+    without any further processing, for ad-hoc analysis and reporting.</para>
+
+    <para>Cascading was chosen for a few reasons.</para>
+
+    <para>From the development perspective, it was easy to start with a simple
+    unit-test (by sub-classing cascading.ClusterTestCase) that did simple text
+    parsing and then to layer in more and more processing rules while keeping
+    the application logically organized for maintenance. Cascading aided this
+    organization in a couple ways. First, stand-alone operations (Functions,
+    Filter, etc) could be written and tested independently. Second, the
+    application was segemented into stages, one for parsing, one for rules,
+    and a final stage for binning/collating the data via SubAssemblies.</para>
+
+    <para>The data coming from the ShareThis loggers looks a lot like Apache
+    logs with date/timestamps, share URL's, referrer URL's, and a bit of
+    met-data. To use the data for analysis downstream the URLs needed to be
+    un-packed (parsing query-string data, domain names, etc). So a top level
+    SubAssembly was created to encapsulate the parsing, and child
+    SubAssemblies were nested inside to handle specific fields if they were
+    sufficiently complex to parse.</para>
+
+    <para>The same was done for applying rules. As every Tuple passed through
+    the rules SubAssembly, it was marked as "bad" if any of the rules were
+    triggered. Along with the "bad" meta-data, a description of the rule that
+    marked the record bad was added to the Tuple.</para>
+
+    <para>Finally a splitter SubAssembly was created to do two things. First,
+    to allow for the tuple stream to split into two, one stream for "good"
+    data and one for "bad" data. Second, the splitter binned the data into
+    intervals, for example, every hour. To do this, only two operations were
+    necessary. The first to create the interval from the 'timestamp' value
+    already present in the stream, and the second to use the 'interval' and
+    'good/bad' meta-data to create a directly path. For example, "05/good/"
+    where "05" is 5am and "good" means the tuple passed all the rules. This
+    path would then be used by the Cascading TemplateTap, a special Tap that
+    can output tuple streams to different locations based on values in the
+    Tuple. In this case, the TemplateTap used the "path" value to create the
+    final output path.</para>
+
+    <para>The developers also created a fourth SubAssembly, this one to apply
+    Cascading Assertions during unit-testing. These assertions double checked
+    that rules and parsing SubAssemblies did their job.</para>
+
+    <para>In the unit test below we see the the splitter isn't being tested,
+    it is added in another integration test not shown.</para>
+
+    <example>
+      <title>Unit Testing a Flow</title>
+
+      <xi:include href="sharethis-unittest.xml" />
+    </example>
+
+    <para>From the production perspective, many of the features built into
+    Cascading allowed for easier integration with external systems and process
+    tolerance.</para>
+
+    <para>In production, all the SubAssemblies are joined and planned into a
+    Flow, but instead of just source and sink Taps, trap Taps were planned in.
+    Normally when a operation throws an exception, the Flow will fail and kill
+    all its managed MapReduce jobs. When a Flow has traps, any exceptions are
+    caught and the data causing the exception is saved to the Tap associated
+    with the current trap. Then the next Tuple is processed without stopping
+    the Flow. Sometimes you want your Flows to fail on errors, but in this
+    case the ShareThis developers knew they could go back and look at the
+    "failed" data and update thier unit tests while the production system kept
+    running. Losing a few hours of processing time was worse than losing a
+    couple bad records.</para>
+
+    <para>And using Cascading's event listeners, Amazon AWS Simple Queueing
+    Service could be integrated. When a Flow finsihed, a message is sent to
+    notify other systems there is data ready to be picked up from Amazon
+    S3.</para>
+
+    <figure xml:id="fig.sharethis-logprocessing-flow">
+      <title>The ShareThis Log Processing Flow</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/sharethis-logprocess-flow.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/sharethis-logprocess-flow.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
   </section>
 </chapter>
