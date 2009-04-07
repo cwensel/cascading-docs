@@ -45,6 +45,10 @@ public class ShareThisTest extends ExampleTestCase implements Serializable
   private String sampleData;
   private String outputPath;
 
+  public void testNull()
+    {
+    // does nothing, allows nested classed to be compiled
+    }
 
   private class NoTester
     {
