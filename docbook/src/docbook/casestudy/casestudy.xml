@@ -18,7 +18,7 @@
   <para>The Cascading project began in the summer of 2007 with its first
   public release, Version 0.1, launched in January 2008. Version 1.0 was
   released in January 2009. Binaries, source code, and add-on modules can be
-  downloaded from the project website, http://www.cascading.org/</para>
+  downloaded from the project website, http://www.cascading.org/.</para>
 
   <para>"Map" and "Reduce" operations offer powerful primitives. However, they
   tend to be at the wrong level of granularity for creating sophisticated,
@@ -50,8 +50,9 @@
   xlink:href="http://www.sharethis.com/">http://www.sharethis.com</link>) uses
   Cascading in their infrastructure.</para>
 
-  <para>Please see the Cascading User Guide on the project website for a more
-  in-depth presentation of the Cascading processing model.</para>
+  <para>Please see the <emphasis>Cascading User Guide</emphasis> on the
+  project website for a more in-depth presentation of the Cascading processing
+  model.</para>
 
   <section>
     <info>
@@ -809,7 +810,7 @@
     pipeline leaves off on different independent clusters. The log processing
     pipeline today runs once a day, so there is no need to keep a 100 node
     cluster sitting around for the 23 hours it has nothing to do. So it is
-    decommissioned and recommissioned 24 hours later. </para>
+    decommissioned and recommissioned 24 hours later.</para>
 
     <para>In the future, it would be trivial to increase this interval on
     smaller clusters to every 6 hours, or 1 hour, as the business demands.
@@ -836,5 +837,9 @@
     in MapReduce. While leaving the heavy lifting of data distribution and
     replication, and distributed process management and liveness to
     Hadoop.</para>
+
+    <para>Read more about Cascading, join the online community, and download
+    sample applications by visiting project website,
+    http://www.cascading.org/.</para>
   </section>
 </chapter>
