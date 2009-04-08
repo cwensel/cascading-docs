@@ -161,23 +161,63 @@
       </mediaobject>
     </figure>
 
-    <para>The <code>Each</code> pipe processes a single input Tuple at a time,
-    but may return zero (0) or more result Tuples for every input Tuple and
-    may apply either a Function or a Filter to the input Tuple. The
-    <code>GroupBy</code> pipe groups Tuples based on the values of a given set
-    of field names. It behaves just like the SQL <code>group by</code>
-    statement. It can also merge multiple input tuple streams into a single
-    stream, if they all share the same field names. The <code>CoGroup</code>
-    pipe both joins multiple tuple streams by the values of a given set of
-    field names, it also groups the Tuples by those values. All join types
-    (inner, outer, etc) and even custom joins are supported and more than two
-    streams may be joined simultaneously. The <code>Every</code> pipe
-    processes a single grouping of Tuples at a time, where the group shares a
-    common sub-set of Tuple values. It may return zero (0) or more result
-    Tuples for that grouping for every input grouping and may apply either an
-    Aggregator or a Buffer to the grouping. The <code>SubAssembly</code> pipe
-    allows for nesting of assemblies inside a single pipe, which are in turn
-    nested in more complex assemblies.</para>
+    <para><variablelist>
+        <varlistentry>
+          <term xreflabel="Each" xml:id="each">Each</term>
+
+          <listitem>
+            <para>The <code>Each</code> pipe processes a single input Tuple at
+            a time. It may apply either a Function or a Filter operation
+            (described below) to the input Tuple.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="GroupBy" xml:id="groupby">GroupBy</term>
+
+          <listitem>
+            <para>The <code>GroupBy</code> pipe groups Tuples on grouping
+            fields. It behaves just like the SQL <code>group by</code>
+            statement. It can also merge multiple input tuple streams into a
+            single stream, if they all share the same field names.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="CoGroup" xml:id="cogroup">CoGroup</term>
+
+          <listitem>
+            <para>The <code>CoGroup</code> pipe both joins multiple tuple
+            streams together by common field names, and it also groups the
+            Tuples by the common grouping fields. All standard join types
+            (inner, outer, etc) and custom joins can be used across two or
+            more tuple streams.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="Every" xml:id="every">Every</term>
+
+          <listitem>
+            <para>The <code>Every</code> pipe processes a single grouping of
+            Tuples at a time, where the group was grouped by a
+            <code>GroupBy</code> or <code>CoGroup</code> pipe. The
+            <code>Every</code> pipe may apply either an Aggregator or a Buffer
+            operation to the grouping.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term xreflabel="SubAssembly"
+          xml:id="subassembly">SubAssembly</term>
+
+          <listitem>
+            <para>The <code>SubAssembly</code> pipe allows for nesting of
+            assemblies inside a single pipe, which can in turn be nested in
+            more complex assemblies.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
 
     <para>All these pipes are chained together by the developer into "pipe
     assemblies". Where each assembly can have many input Tuple streams
@@ -200,19 +240,18 @@
     </figure>
 
     <para>On the surface this might seem more complex than the traditional
-    MapReduce model. And admitedly there are more concepts here than Map,
-    Reduce, Key, and Value. But in practice, as implemented in Hadoop, there
-    are many more concepts that must all work in tandem to provide different
-    behaviors.</para>
+    MapReduce model. And admittedly there are more concepts here than Map,
+    Reduce, Key, and Value. But in practice there are many more concepts that
+    must all work in tandem to provide different behaviors.</para>
 
     <para>For example, if a developer wanted to provide a "secondary sorting"
     of reducer values, they would need to implement Map, Reduce, a "composite"
     Key (two Keys nested in a parent Key), Value, Partitioner, an "output
     value grouping" Comparator, and an "output key" Comparator. All of which
     would be coupled to one another in varying ways, and very likely
-    non-reusable in subsequent jobs.</para>
+    non-reusable in subsequent applications.</para>
 
-    <para>In Cascading, this would be one line of code:<code>new GroupBy(
+    <para>In Cascading, this would be one line of code:<code> new GroupBy(
     &lt;previous&gt;, &lt;grouping fields&gt;, &lt;secondary sorting
     fields&gt;)</code>. Where <code>previous</code> is the pipe that came
     before.</para>
@@ -248,9 +287,9 @@
           <term xreflabel="Function" xml:id="function">Function</term>
 
           <listitem>
-            <para>A Function operates on individual input Tuples and may
-            return zero (0) or more output Tuples for every one input.
-            Functions are applied by the Each pipe.</para>
+            <para>A <code>Function</code> operates on individual input Tuples
+            and may return zero (0) or more output Tuples for every one input.
+            Functions are applied by the <code>Each</code> pipe.</para>
           </listitem>
         </varlistentry>
 
@@ -258,12 +297,14 @@
           <term xreflabel="Filter" xml:id="filter">Filter</term>
 
           <listitem>
-            <para>A Filter is a special kind of Function that returns a
-            boolean value if the current input Tuple should be removed from
-            the Tuple stream. A Function could serve this purpose, but the
-            Filter is optimized for this case, and many filters can be grouped
-            by "logical" filters like And, Or, Xor, and Not, rapidly creating
-            more complex filtering operations.</para>
+            <para>A <code>Filter</code> is a special kind of Function that
+            returns a boolean value if the current input Tuple should be
+            removed from the Tuple stream. A <code>Function</code> could serve
+            this purpose, but the <code>Filter</code> is optimized for this
+            case, and many filters can be grouped by "logical" filters like
+            <code>And</code>, <code>Or</code>, <code>Xor</code>, and
+            <code>Not</code>, rapidly creating more complex filtering
+            operations.</para>
           </listitem>
         </varlistentry>
 
@@ -271,11 +312,13 @@
           <term xreflabel="Aggregator" xml:id="aggregator">Aggregator</term>
 
           <listitem>
-            <para>An Aggregator performs some operation against a group of
-            Tuples, where the grouped Tuples are grouped by a common set of
-            field values. For example, all Tuples have the same "last-name"
-            field value. Common Aggregator implementations would be Sum,
-            Count, Average, Max, and Min.</para>
+            <para>An <code>Aggregator</code> performs some operation against a
+            group of Tuples, where the grouped Tuples are grouped by a common
+            set of field values. For example, all Tuples having the same
+            "last-name" value. Common <code>Aggregator</code> implementations
+            would be <code>Sum</code>, <code>Count</code>,
+            <code>Average</code>, <code>Max</code>, and
+            <code>Min</code>.</para>
           </listitem>
         </varlistentry>
 
@@ -283,15 +326,16 @@
           <term xreflabel="Buffer" xml:id="buffer">Buffer</term>
 
           <listitem>
-            <para>A Buffer is similar to the Aggregator, except it is
-            optimized to act as a "sliding window" across all the Tuples in a
-            unique grouping. This is useful when the developer needs to
-            efficiently insert missing values in an ordered set of Tuples
-            (like a missing date or duration), or create a running average.
-            Usually Aggregator is the operation of choice when working with
-            groups of Tuples since many Aggregators can be chained together
-            very efficiently, but sometimes a Buffer is the best tool for the
-            job.</para>
+            <para>A <code>Buffer</code> is similar to the
+            <code>Aggregator</code>, except it is optimized to act as a
+            "sliding window" across all the Tuples in a unique grouping. This
+            is useful when the developer needs to efficiently insert missing
+            values in an ordered set of Tuples (like a missing date or
+            duration), or create a running average. Usually
+            <code>Aggregator</code> is the operation of choice when working
+            with groups of Tuples since many <code>Aggregators</code> can be
+            chained together very efficiently, but sometimes a
+            <code>Buffer</code> is the best tool for the job.</para>
           </listitem>
         </varlistentry>
       </variablelist></para>
@@ -315,17 +359,18 @@
       </mediaobject>
     </figure>
 
-    <para>The Each and Every pipe provides a simple mechanism for selecting
-    some or all values out of a input Tuple before being passed to its child
-    operation. And there is a simple mechanism for merging the operation
-    results with the original input Tuple to create the output Tuple. Without
-    going into great detail, this allows for each operation to only care about
-    argument Tuple values and fields, not the whole set of fields in the
-    current input Tuple. Subsequently, operations can be reusable across
-    applications the same way Java methods can be reusable.</para>
+    <para>The <code>Each</code> and <code>Every</code> pipe provides a simple
+    mechanism for selecting some or all values out of a input Tuple before
+    being passed to its child operation. And there is a simple mechanism for
+    merging the operation results with the original input Tuple to create the
+    output Tuple. Without going into great detail, this allows for each
+    operation to only care about argument Tuple values and fields, not the
+    whole set of fields in the current input Tuple. Subsequently, operations
+    can be reusable across applications the same way Java methods can be
+    reusable.</para>
 
     <para>For example, in Java, a method declared as <code>concatenate( String
-    first, String second ) </code> is more abstract than<code>concatenate(
+    first, String second )</code> is more abstract than<code> concatenate(
     Person person )</code>. In the second case, the <code>concatenate()</code>
     function must "know" about the <code>Person</code> object, in the first
     case, it is agnostic to where the data came from. Cascading operations
@@ -340,16 +385,16 @@
     <para>In many of the above diagrams, there are references to "sources" and
     "sinks". In Cascading all data is read from or written to
     <classname>Tap</classname> instances, but is converted to and from Tuple
-    instances via <classname>Scheme</classname> instances.</para>
+    instances via <classname>Scheme</classname> objects.</para>
 
     <para><variablelist>
         <varlistentry>
           <term xreflabel="Tap" xml:id="tap">Tap</term>
 
           <listitem>
-            <para>A Tap is responsible for the "how" and "where" parts of
-            accessing data. For example, is the data on HDFS or the "local"
-            file system. In Amazon S3 or over HTTP.</para>
+            <para>A <code>Tap</code> is responsible for the "how" and "where"
+            parts of accessing data. For example, is the data on HDFS or the
+            "local" file system. In Amazon S3 or over HTTP.</para>
           </listitem>
         </varlistentry>
 
@@ -357,38 +402,39 @@
           <term xreflabel="Scheme" xml:id="scheme">Scheme</term>
 
           <listitem>
-            <para>A Scheme is responsible for reading raw data and converting
-            it to a Tuple and/or writing a Tuple out into raw data. Where this
-            "raw" data can be lines of text, Hadoop binary "sequence" files,
-            or some proprietary format.</para>
+            <para>A <code>Scheme</code> is responsible for reading raw data
+            and converting it to a Tuple and/or writing a Tuple out into raw
+            data. Where this "raw" data can be lines of text, Hadoop binary
+            "sequence" files, or some proprietary format.</para>
           </listitem>
         </varlistentry>
-      </variablelist> Note that Taps are not part of a pipe assembly, and so
-    they are not a type of<classname>Pipe</classname>.</para>
+      </variablelist>Note that Taps are not part of a pipe assembly, and so
+    they are not a type of<classname> Pipe</classname>.</para>
 
     <para>But they are connected with pipe assemblies when they are made
     cluster executable. When a pipe assembly is connected with the necessary
-    number of source and sink Tap instances, we get a Flow.</para>
+    number of source and sink Tap instances, we get a
+    <code>Flow</code>.</para>
 
     <para><variablelist>
         <varlistentry>
           <term xreflabel="Flow" xml:id="flow">Flow</term>
 
           <listitem>
-            <para>A Flow is created when a pipe assembly is connected with its
-            required number of source and sink taps, and the Taps either emit
-            or capture the field names the pipe assembly expects. That is, if
-            a Tap emits a Tuple with the field name "line" (by reading data
-            from a file on HDFS), the head of the pipe assembly must be
-            expecting a "line" value as well. Otherwise the process that
-            connects the pipe assembly with the Taps will immeidately fail
-            with an error.</para>
+            <para>A <code>Flow</code> is created when a pipe assembly is
+            connected with its required number of source and sink taps, and
+            the Taps either emit or capture the field names the pipe assembly
+            expects. That is, if a <code>Tap</code> emits a Tuple with the
+            field name "line" (by reading data from a file on HDFS), the head
+            of the pipe assembly must be expecting a "line" value as well.
+            Otherwise the process that connects the pipe assembly with the
+            Taps will immediately fail with an error.</para>
           </listitem>
         </varlistentry>
-      </variablelist> So pipe assemblies are really data process definitions,
+      </variablelist>So pipe assemblies are really data process definitions,
     and are not "executable" on their own. They must be connected to source
     and sink Tap instances before they can run on a cluster. This separation
-    between Taps and pipe assemblies is what makes Cascading so
+    between Taps and pipe assemblies is part of what makes Cascading so
     powerful.</para>
 
     <figure xml:id="fig.flow">
@@ -491,7 +537,7 @@
       </calloutlist>
     </example>
 
-    <para>In the example above, we count the words encounterd in the input
+    <para>In the example above, we count the words encountered in the input
     document, and we sort the counts in their natural order (ascending). And
     if some words have the same "count" value, these words are sorted in their
     natural order (alphabetical).</para>
@@ -567,10 +613,9 @@
 
     <para>You see, we no longer think in terms of MapReduce jobs, or Mapper
     and Reducer interface implementations. And how to bind or link subsequent
-    MapReduce jobs to the ones that preceede them. During runtime the
-    Cascading "planner" figures out the optimal way to partition the pipe
-    assembly into MapReduce jobs, and manages the linkages between
-    them.</para>
+    MapReduce jobs to the ones that precede them. During runtime the Cascading
+    "planner" figures out the optimal way to partition the pipe assembly into
+    MapReduce jobs, and manages the linkages between them.</para>
 
     <figure xml:id="fig.pipe-assembly-mapreduce">
       <title>How a Flow Translates to Chained MapReduce Jobs</title>
@@ -593,13 +638,13 @@
     log file, but then can iteratively build up more features into the
     application as needed.</para>
 
-    <para>Since Cascading is an API and not a syntax like SQL, it is more
-    flexible. First off, developers can create Domain Specific Languages
-    (DSLs) using their favorite language, like Groovy, JRuby, Jython, Scala,
-    and others (see the project site for examples). Second, developers can
-    extend various parts of Cascading, like allowing custom Thrift or JSON
-    objects to be read and written to and allowing them to be passed through
-    the Tuple stream.</para>
+    <para>Since Cascading is an API and not a syntax like strings of SQL, it
+    is more flexible. First off, developers can create Domain Specific
+    Languages (DSLs) using their favorite language, like Groovy, JRuby,
+    Jython, Scala, and others (see the project site for examples). Second,
+    developers can extend various parts of Cascading, like allowing custom
+    Thrift or JSON objects to be read and written to and allowing them to be
+    passed through the Tuple stream.</para>
   </section>
 
   <section>
@@ -608,7 +653,7 @@
     </info>
 
     <para>ShareThis is a sharing network that makes it simple to share any
-    online content. With the click of a button on a webpage or browser
+    online content. With the click of a button on a web page or browser
     plug-in, ShareThis allows users to seamlessly access their contacts and
     networks from anywhere online and share the content through email, IM,
     Facebook, Digg, mobile SMS, etc. without ever leaving the current page.
@@ -622,10 +667,10 @@
     <para>As ShareThis users share pages and information through the online
     widgets, a continuous stream of events enter the ShareThis network. These
     events are first filtered and processed, and then handed to various
-    back-end systems including AsterData, HyperTable, and Katta.</para>
+    back-end systems including AsterData, Hypertable, and Katta.</para>
 
     <para>The volume of these event can be huge, too large to process with
-    tradtiional systems. This data can also be very "dirty" thanks to
+    traditional systems. This data can also be very "dirty" thanks to
     "injection attacks" from rogue systems, browser bugs, or faulty widgets.
     ShareThis chose to deploy Hadoop as the pre-processing front-end to their
     back-end systems. And to use Amazon Web Services to host their servers, on
@@ -668,8 +713,8 @@
     ShareThis chose to clean and prepare the incoming data-sets on the Hadoop
     cluster and then to load that data into the AsterData cluster for ad-hoc
     analysis and reporting. Though possible with AsterData, it made much sense
-    to use Hadoop as the first stage in the processing pipleline to offset
-    load on the main data-warehouse. Cascading was chosen as the primary data
+    to use Hadoop as the first stage in the processing pipeline to offset load
+    on the main data-warehouse. Cascading was chosen as the primary data
     processing API to simplify the development process, codify the
     coordination of data between components, and as the developer facing
     interface to those components.</para>
@@ -680,9 +725,9 @@
     application logically organized for maintenance. Cascading aided this
     organization in a couple ways. First, stand-alone operations (Functions,
     Filter, etc) could be written and tested independently. Second, the
-    application was segemented into stages, one for parsing, one for rules,
-    and a final stage for binning/collating the data, all via the SubAssembly
-    base class described above.</para>
+    application was segmented into stages, one for parsing, one for rules, and
+    a final stage for binning/collating the data, all via the SubAssembly base
+    class described above.</para>
 
     <para>The data coming from the ShareThis loggers looks a lot like Apache
     logs with date/timestamps, share URL's, referrer URL's, and a bit of
@@ -714,8 +759,8 @@
     Cascading Assertions during unit-testing. These assertions double checked
     that rules and parsing SubAssemblies did their job.</para>
 
-    <para>In the unit test below we see the the splitter isn't being tested,
-    it is added in another integration test not shown.</para>
+    <para>In the unit test below we see the splitter isn't being tested, it is
+    added in another integration test not shown.</para>
 
     <example>
       <title>Unit Testing a Flow</title>
@@ -735,14 +780,14 @@
     exception is saved to the Tap associated with the current trap. Then the
     next Tuple is processed without stopping the Flow. Sometimes you want your
     Flows to fail on errors, but in this case, the ShareThis developers knew
-    they could go back and look at the "failed" data and update thier unit
+    they could go back and look at the "failed" data and update their unit
     tests while the production system kept running. Losing a few hours of
     processing time was worse than losing a couple bad records.</para>
 
     <para>Using Cascading's event listeners, Amazon SQS could be integrated.
-    When a Flow finsihed, a message is sent to notify other systems there is
+    When a Flow finished, a message is sent to notify other systems there is
     data ready to be picked up from Amazon S3. On failure, a different message
-    is sent alterting other processes.</para>
+    is sent alerting other processes.</para>
 
     <figure xml:id="fig.sharethis-logprocessing-flow">
       <title>The ShareThis Log Processing Flow</title>
@@ -764,15 +809,17 @@
     pipeline leaves off on different independent clusters. The log processing
     pipeline today runs once a day, so there is no need to keep a 100 node
     cluster sitting around for the 23 hours it has nothing to do. So it is
-    decommissioned and recommissioned 24 hours later. In the future, it would
-    be trivial to increase this interval on smaller clusters to every 6 hours,
-    or 1 hour, as the business demands. Independently other clusters are
-    booting and shutting down at different intervals based on the needs of the
-    business unit responsible for that component. For example, the crawler
-    mentioned above may run continuously on a small cluster with a companion
-    Hypertable cluster. This on-demand model works very well with Hadoop where
-    each cluster can be tuned for the kind of workload it is expected to
-    handle.</para>
+    decommissioned and recommissioned 24 hours later. </para>
+
+    <para>In the future, it would be trivial to increase this interval on
+    smaller clusters to every 6 hours, or 1 hour, as the business demands.
+    Independently other clusters are booting and shutting down at different
+    intervals based on the needs of the business unit responsible for that
+    component. For example, the web crawler component (using Bixo, a Cascading
+    based web-crawler toolkit developed by EMI and ShareThis) may run
+    continuously on a small cluster with a companion Hypertable cluster. This
+    on-demand model works very well with Hadoop where each cluster can be
+    tuned for the kind of workload it is expected to handle.</para>
   </section>
 
   <section>
@@ -787,7 +834,7 @@
     <para>Cascading aims to help developers build powerful applications
     quickly and simply, through a well reasoned API, without needing to think
     in MapReduce. While leaving the heavy lifting of data distribution and
-    replication, and distributed process mangement and liveness to
+    replication, and distributed process management and liveness to
     Hadoop.</para>
   </section>
 </chapter>
