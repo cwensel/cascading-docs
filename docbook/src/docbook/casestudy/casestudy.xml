@@ -10,42 +10,44 @@
     <title>Cascading</title>
   </info>
 
-  <para>Cascading is an Open Source Java library and application programming
-  interface (API) that allows developers to build increasingly complex,
-  mission critical, data processing applications for execution in Hadoop
-  clusters.</para>
+  <para>Cascading is an open source Java library and application programming
+  interface (API) which provides an abstraction layer for MapReduce. It allows
+  developers to build complex, mission-critical, data processing applications
+  that run on Hadoop clusters.</para>
 
-  <para>The Cascading project was started during the late Summer of 2007, with
-  its first public release, Version 0.1, in January 2008. Cascading reached
-  Version 1.0 in January of 2009. Binaries, source code, and add-on modules
-  can be downloaded from the project website,<link
-  xlink:href="http://www.cascading.org/">http://www.cascading.org/</link>.</para>
+  <para>The Cascading project began in the summer of 2007 with its first
+  public release, Version 0.1, launched in January 2008. Version 1.0 was
+  released in January 2009. Binaries, source code, and add-on modules can be
+  downloaded from the project website, http://www.cascading.org/</para>
 
-  <para>The Cascading project was started because it became apparent that the
-  MapReduce model is difficult for developers to "think" in when faced with
-  real-world applications. And that the "Map" and "Reduce" operations are at
-  the wrong granularity for creating sophisticated, composable applications
-  that can be shared between users.</para>
+  <para>"Map" and "Reduce" operations offer powerful primitives. However, they
+  tend to be at the wrong level of granularity for creating sophisticated,
+  highly composable code which can be shared among different developers.
+  Moreover, many developers find it difficult to "think" in terms of MapReduce
+  when faced with real-world applications.</para>
 
-  <para>To solve the first criticism, Cascading traded in MapReduce "keys" and
-  "values" for a simple field names and data tuple model (where a tuple is
-  just a list of values). For the second, Cascading departs from the "Map" and
-  "Reduce" operations by introducing some alternatives; Functions, Filters,
-  Aggregators, and Buffers.</para>
+  <para>To address the first issue, Cascading substitutes the "keys" and
+  "values" used in MapReduce with simple field names and a data tuple model --
+  where a tuple is simply a list of values. For the second issue, Cascading
+  departs from "Map" and "Reduce" operations directly by introducing higher
+  level abstractions as alternatives; Functions, Filters, Aggregators, and
+  Buffers.</para>
 
-  <para>Though many alternatives to Cascading began to emerge before and after
-  the initial public release of Cascading, Cascading was designed to be
-  complimentary to all of them. All these alternative frameworks have some pre
-  and post conditions or expectations. For example, to use many of the tools,
-  it is easier to pre-formatted, filter, and/or import your data into the
-  Hadoop File System (HDFS) first. It is quite a simple endeavor to have
-  Cascading manage, prepare, and/or import your data into these alternative
-  frameworks as necessary.</para>
+  <para>Other alternatives began to emerge at about the same time as the
+  project's initial public release, but Cascading was designed to complement
+  them. Consider that most of these alternative frameworks impose pre- and
+  post-conditions, or other expectations.</para>
 
-  <para>This case study begins with an introduction and summary of the main
-  concepts behind Cascading and finishes with an overview of how ShareThis
-  (<link
-  xlink:href="http://www.sharethis.com/">http://www.sharethis.com</link>) use
+  <para>For example, in several other MapReduce tools you must pre-format,
+  filter, or import your data into the Hadoop File System (HDFS) prior to
+  running the application. That step of preparing the data must be performed
+  outside of the programming abstraction. In contrast, Cascading provides
+  means to prepare and manage your data using Sources, Sinks, Taps, etc., all
+  as integral parts of the programming abstraction.</para>
+
+  <para>This case study begins with an introduction to the main concepts of
+  Cascading, then finishes with an overview of how ShareThis (<link
+  xlink:href="http://www.sharethis.com/">http://www.sharethis.com</link>) uses
   Cascading in their infrastructure.</para>
 
   <para>Please see the Cascading User Guide on the project website for a more
@@ -94,7 +96,7 @@
     replacing them with tuples that have corresponding field names, similar in
     concept to tables and column names in a Relational Database. And during
     processing, streams of these Fields and Tuples are then manipulated as
-    they pass through Pipes.</para>
+    they pass through user defined operations linked together by Pipes.</para>
 
     <figure xml:id="fig.chained-pipes">
       <title>Pipes linked by Fields and Tuples</title>
@@ -414,114 +416,6 @@
 
   <section>
     <info>
-      <title>MapReduce Planner</title>
-    </info>
-
-    <para>Now take a step back and see what this new model has given us. Or
-    better yet, what it has taken away.</para>
-
-    <para>You see, we no longer think in terms of MapReduce jobs, or Mapper
-    and Reducer interface implementations. And how to bind or link subsequent
-    MapReduce jobs to the ones that preceede them. During runtime the
-    Cascading "planner" figures out the optimal way to partition the pipe
-    assembly into MapReduce jobs, and manages the linkages between
-    them.</para>
-
-    <figure xml:id="fig.pipe-assembly-mapreduce">
-      <title>How a Flow Translates to Chained MapReduce Jobs</title>
-
-      <mediaobject>
-        <imageobject role="fo">
-          <imagedata align="center" contentwidth="6in"
-                     fileref="images/pipe-assembly-mapreduce.svg"></imagedata>
-        </imageobject>
-
-        <imageobject role="html">
-          <imagedata align="center" contentwidth="6in"
-                     fileref="images/pipe-assembly-mapreduce.png"></imagedata>
-        </imageobject>
-      </mediaobject>
-    </figure>
-
-    <para>Because of this, developers can build applications of arbitrary
-    granularity. They can start with a small application that just filters a
-    log file, but then can iteratively build up more features into the
-    application as needed.</para>
-
-    <para>Since Cascading is an API and not a syntax like SQL, it is more
-    flexible. First off, developers can create Domain Specific Languages
-    (DSLs) using their favorite language, like Groovy, JRuby, Jython, Scala,
-    and others (see the project site for examples). Second, developers can
-    extend various parts of Cascading, like allowing custom Thrift or JSON
-    objects to be read and written to and allowing them to be passed through
-    the Tuple stream.</para>
-  </section>
-
-  <section>
-    <info>
-      <title>Mission Critical Features</title>
-    </info>
-
-    <para>No doubt Cascading can be used for ad-hoc, single use, applications.
-    But it really shines when large complex processes need to be created that
-    need a higher level of robustness. A robustness expected from production
-    quality applications.</para>
-
-    <para>Here are a few of these features:</para>
-
-    <para><variablelist>
-        <varlistentry>
-          <term>Stream Assertions</term>
-
-          <listitem>
-            <para>Stream assertions are just like Java assertions and unit
-            tests all rolled up. A pipe assembly can be assembled with
-            assertions built into them. These assertions can test for null
-            values in an argument Tuple, or if the values match some regular
-            expression pattern. If the assertion fails, the process can
-            optionally fail, or it can save the bad input Tuple to a new file
-            on HDFS. If assertions aren't wanted, Cascading can remove them at
-            runtime so they don't slow things down on your production
-            system.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Failure Traps</term>
-
-          <listitem>
-            <para>Failure traps are like Java Exception handlers. If an
-            operation fails unexpectedly, the input Tuple that caused the
-            failure can be saved off to a file for later debugging. This
-            features works great with stream assertions.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Events</term>
-
-          <listitem>
-            <para>Events allow for external code and/or systems to be notified
-            when a new process starts, completes, or fails.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Dependency Scheduling</term>
-
-          <listitem>
-            <para>In Cascading an application can create any number of Flows
-            and execute them simultaneously. If one Flow depends on the output
-            of a previous Flow, Cascading offers up an utility called a
-            Cascade that allows for all these processes to be scheduled in
-            dependency order.</para>
-          </listitem>
-        </varlistentry>
-      </variablelist></para>
-  </section>
-
-  <section>
-    <info>
       <title>Cascading in Practice</title>
     </info>
 
@@ -665,6 +559,114 @@
 
   <section>
     <info>
+      <title>MapReduce Planner</title>
+    </info>
+
+    <para>Now take a step back and see what this new model has given us. Or
+    better yet, what it has taken away.</para>
+
+    <para>You see, we no longer think in terms of MapReduce jobs, or Mapper
+    and Reducer interface implementations. And how to bind or link subsequent
+    MapReduce jobs to the ones that preceede them. During runtime the
+    Cascading "planner" figures out the optimal way to partition the pipe
+    assembly into MapReduce jobs, and manages the linkages between
+    them.</para>
+
+    <figure xml:id="fig.pipe-assembly-mapreduce">
+      <title>How a Flow Translates to Chained MapReduce Jobs</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-assembly-mapreduce.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="6in"
+                     fileref="images/pipe-assembly-mapreduce.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>Because of this, developers can build applications of arbitrary
+    granularity. They can start with a small application that just filters a
+    log file, but then can iteratively build up more features into the
+    application as needed.</para>
+
+    <para>Since Cascading is an API and not a syntax like SQL, it is more
+    flexible. First off, developers can create Domain Specific Languages
+    (DSLs) using their favorite language, like Groovy, JRuby, Jython, Scala,
+    and others (see the project site for examples). Second, developers can
+    extend various parts of Cascading, like allowing custom Thrift or JSON
+    objects to be read and written to and allowing them to be passed through
+    the Tuple stream.</para>
+  </section>
+
+  <section>
+    <info>
+      <title>Mission Critical Features</title>
+    </info>
+
+    <para>No doubt Cascading can be used for ad-hoc, single use, applications.
+    But it really shines when large complex processes need to be created that
+    need a higher level of robustness. A robustness expected from production
+    quality applications.</para>
+
+    <para>Here are a few of these features:</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term>Stream Assertions</term>
+
+          <listitem>
+            <para>Stream assertions are just like Java assertions and unit
+            tests all rolled up. A pipe assembly can be assembled with
+            assertions built into them. These assertions can test for null
+            values in an argument Tuple, or if the values match some regular
+            expression pattern. If the assertion fails, the process can
+            optionally fail, or it can save the bad input Tuple to a new file
+            on HDFS. If assertions aren't wanted, Cascading can remove them at
+            runtime so they don't slow things down on your production
+            system.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Failure Traps</term>
+
+          <listitem>
+            <para>Failure traps are like Java Exception handlers. If an
+            operation fails unexpectedly, the input Tuple that caused the
+            failure can be saved off to a file for later debugging. This
+            features works great with stream assertions.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Events</term>
+
+          <listitem>
+            <para>Events allow for external code and/or systems to be notified
+            when a new process starts, completes, or fails.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Dependency Scheduling</term>
+
+          <listitem>
+            <para>In Cascading an application can create any number of Flows
+            and execute them simultaneously. If one Flow depends on the output
+            of a previous Flow, Cascading offers up an utility called a
+            Cascade that allows for all these processes to be scheduled in
+            dependency order.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
+  </section>
+
+  <section>
+    <info>
       <title>Hadoop and Cascading at ShareThis</title>
     </info>
 
@@ -747,7 +749,7 @@
 
     <para>The data coming from the ShareThis loggers looks a lot like Apache
     logs with date/timestamps, share URL's, referrer URL's, and a bit of
-    met-data. To use the data for analysis downstream the URLs needed to be
+    meta-data. To use the data for analysis downstream the URLs needed to be
     un-packed (parsing query-string data, domain names, etc). So a top level
     SubAssembly was created to encapsulate the parsing, and child
     SubAssemblies were nested inside to handle specific fields if they were
@@ -756,7 +758,7 @@
     <para>The same was done for applying rules. As every Tuple passed through
     the rules SubAssembly, it was marked as "bad" if any of the rules were
     triggered. Along with the "bad" tag, a description of why the record was
-    bad was added to the Tuple.</para>
+    bad was added to the Tuple for later review.</para>
 
     <para>Finally a splitter SubAssembly was created to do two things. First,
     to allow for the tuple stream to split into two, one stream for "good"
@@ -843,7 +845,7 @@
 
     <para>Hadoop is a very powerful platform for processing and coordinating
     the movement of data across various architectural components. Its only
-    drawback is that the primary computing model is MapReduce. </para>
+    drawback is that the primary computing model is MapReduce.</para>
 
     <para>Cascading aims to help developers build powerful applications
     quickly and simply, through a well reasoned API, without needing to think
