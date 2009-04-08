@@ -559,7 +559,7 @@
 
   <section>
     <info>
-      <title>MapReduce Planner</title>
+      <title>Flexibility</title>
     </info>
 
     <para>Now take a step back and see what this new model has given us. Or
@@ -600,69 +600,6 @@
     extend various parts of Cascading, like allowing custom Thrift or JSON
     objects to be read and written to and allowing them to be passed through
     the Tuple stream.</para>
-  </section>
-
-  <section>
-    <info>
-      <title>Mission Critical Features</title>
-    </info>
-
-    <para>No doubt Cascading can be used for ad-hoc, single use, applications.
-    But it really shines when large complex processes need to be created that
-    need a higher level of robustness. A robustness expected from production
-    quality applications.</para>
-
-    <para>Here are a few of these features:</para>
-
-    <para><variablelist>
-        <varlistentry>
-          <term>Stream Assertions</term>
-
-          <listitem>
-            <para>Stream assertions are just like Java assertions and unit
-            tests all rolled up. A pipe assembly can be assembled with
-            assertions built into them. These assertions can test for null
-            values in an argument Tuple, or if the values match some regular
-            expression pattern. If the assertion fails, the process can
-            optionally fail, or it can save the bad input Tuple to a new file
-            on HDFS. If assertions aren't wanted, Cascading can remove them at
-            runtime so they don't slow things down on your production
-            system.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Failure Traps</term>
-
-          <listitem>
-            <para>Failure traps are like Java Exception handlers. If an
-            operation fails unexpectedly, the input Tuple that caused the
-            failure can be saved off to a file for later debugging. This
-            features works great with stream assertions.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Events</term>
-
-          <listitem>
-            <para>Events allow for external code and/or systems to be notified
-            when a new process starts, completes, or fails.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Dependency Scheduling</term>
-
-          <listitem>
-            <para>In Cascading an application can create any number of Flows
-            and execute them simultaneously. If one Flow depends on the output
-            of a previous Flow, Cascading offers up an utility called a
-            Cascade that allows for all these processes to be scheduled in
-            dependency order.</para>
-          </listitem>
-        </varlistentry>
-      </variablelist></para>
   </section>
 
   <section>
