@@ -673,11 +673,11 @@
     <para>The volume of these event can be huge, too large to process with
     traditional systems. This data can also be very "dirty" thanks to
     "injection attacks" from rogue systems, browser bugs, or faulty widgets.
-    ShareThis chose to deploy Hadoop as the pre-processing front-end to their
-    back-end systems. And to use Amazon Web Services to host their servers, on
-    the Elastic Computing Cloud (EC2), and provide long term storage, on the
-    Simple Storage Service (S3). With an eye towards leveraging Elastic
-    MapReduce (EMR).</para>
+    For this reason ShareThis chose to deploy Hadoop as the pre-processing and
+    orchestration front-end to their back-end systems. They also chose to use
+    Amazon Web Services to host their servers, on the Elastic Computing Cloud
+    (EC2), and provide long term storage, on the Simple Storage Service (S3).
+    With an eye towards leveraging Elastic MapReduce (EMR).</para>
 
     <figure xml:id="fig.sharethis-logprocessing">
       <title>The ShareThis Log Processing Pipeline</title>
@@ -715,10 +715,14 @@
     cluster and then to load that data into the AsterData cluster for ad-hoc
     analysis and reporting. Though possible with AsterData, it made much sense
     to use Hadoop as the first stage in the processing pipeline to offset load
-    on the main data-warehouse. Cascading was chosen as the primary data
-    processing API to simplify the development process, codify the
-    coordination of data between components, and as the developer facing
-    interface to those components.</para>
+    on the main data-warehouse.</para>
+
+    <para>Cascading was chosen as the primary data processing API to simplify
+    the development process, codify the coordination of data between
+    architectural components, and as the developer facing interface to those
+    components. This is a departure from the traditional Hadoop use-case of
+    simply querying stored data and is one where Hadoop and Cascading bring
+    the most value to users.</para>
 
     <para>For developers, Cascading made it easy to start with a simple
     unit-test (by sub-classing cascading.ClusterTestCase) that did simple text
