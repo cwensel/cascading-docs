@@ -717,12 +717,13 @@
     to use Hadoop as the first stage in the processing pipeline to offset load
     on the main data-warehouse.</para>
 
-    <para>Cascading was chosen as the primary data processing API to simplify
-    the development process, codify the coordination of data between
-    architectural components, and as the developer facing interface to those
-    components. This is a departure from the traditional Hadoop use-case of
-    simply querying stored data and is one where Hadoop and Cascading bring
-    the most value to users.</para>
+    <para>Cascading was chosen as the primary data processing API, to simplify
+    the development process, codify how data is coordinated between
+    architectural components, and provide the developer-facing interface to
+    those components. This represents a departure from more "traditional"
+    Hadoop use cases, which essentially just query stored data. Instead,
+    Cascading and Hadoop together provide better and simpler structure to the
+    complete solution, end-to-end, and thus more value to the users.</para>
 
     <para>For developers, Cascading made it easy to start with a simple
     unit-test (by sub-classing cascading.ClusterTestCase) that did simple text
