@@ -21,8 +21,6 @@
 
 package userguide;
 
-import java.io.IOException;
-
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
 import cascading.operation.Aggregator;
@@ -40,11 +38,18 @@ import cascading.tap.Tap;
 import cascading.tuple.Fields;
 import tools.ExampleTestCase;
 
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  *
  */
 public class WordCountTest extends ExampleTestCase
   {
+  public static class Main
+    {
+    }
+
   public void testBasicWordCount() throws IOException
     {
     String inputPath = getDataPath() + "lipsum.txt";
@@ -76,6 +81,10 @@ public class WordCountTest extends ExampleTestCase
     // a field named "count"
     Aggregator count = new Count( new Fields( "count" ) );
     assembly = new Every( assembly, count );
+
+    // initialize app properties, tell Hadoop which jar file to use
+    Properties properties = new Properties();
+    FlowConnector.setApplicationJarClass( properties, Main.class );
 
     // plan a new Flow from the assembly using the source and sink Taps
     FlowConnector flowConnector = new FlowConnector();

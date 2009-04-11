@@ -55,7 +55,7 @@
       be installed locally for development and testing, and a Hadoop cluster
       must be deployed for production applications.</para>
 
-      <para>Cascading greating simplifies the complexities with Hadoop
+      <para>Cascading greatly simplifies the complexities with Hadoop
       application development, job creation, and job scheduling.</para>
     </section>
 
@@ -67,23 +67,23 @@
       extremes.</para>
 
       <para>On one hand, there is too much data for a single computing system
-      to manage effecitively. Developers have decided to adopt Apache Hadoop
-      as the base computing infrastructure, but realize that developing
+      to manage effectively. Developers have decided to adopt Apache Hadoop as
+      the base computing infrastructure, but realize that developing
       reasonably useful applications on Hadoop is not trivial. Cascading eases
       the burden on developers by allowing them to rapidly create, refactor,
       test, and execute complex applications that scale linearly across a
       cluster of computers.</para>
 
       <para>On the other hand, managers and developers realize the complexity
-      of the processes in their datacenter is getting out of hand with one-off
-      data-processing applications living wherever there is enough disk space.
-      Subsequently they have decided to adopt Apache Hadoop to gain access to
-      its "Global Namespace" filesystem which allows for a single reliable
-      storage framework. Cascading eases the learning curve for developers to
-      convert their existing applications for execution on a Hadoop cluster.
-      It further allows for developers to create reusable libraries and
-      application for use by analysts who need to extract data from the Hadoop
-      filesystem.</para>
+      of the processes in their data canter is getting out of hand with
+      one-off data-processing applications living wherever there is enough
+      disk space. Subsequently they have decided to adopt Apache Hadoop to
+      gain access to its "Global Namespace" file system which allows for a
+      single reliable storage framework. Cascading eases the learning curve
+      for developers to convert their existing applications for execution on a
+      Hadoop cluster. It further allows for developers to create reusable
+      libraries and application for use by analysts who need to extract data
+      from the Hadoop file system.</para>
 
       <para>Cascading was designed to support three user roles. The
       application Executor, process Assembler, and the operation
@@ -95,7 +95,7 @@
       pre-packaged Java Jar file compiled against the Apache Hadoop and
       Cascading libraries. This application may accept parameters to customize
       it for an given execution and generally results in a set of data the
-      user will export from the Hadoop filesystem for some specific
+      user will export from the Hadoop file system for some specific
       purpose.</para>
 
       <para>The process Assembler is someone who assembles data processing
@@ -181,8 +181,8 @@
     <para>There are a couple things to take away from this example.</para>
 
     <para>First, the pipe assembly is not coupled to the data (the Tap
-    instances) until the last momement before execution. That is, file paths
-    or references are not embedded in the pipe assembly. The pipe assembly
+    instances) until the last moment before execution. That is, file paths or
+    references are not embedded in the pipe assembly. The pipe assembly
     remains independent of <emphasis>which</emphasis> data it processes until
     execution. The only dependency is <emphasis>what</emphasis> the data looks
     like, its "scheme", or the field names that make it up.</para>
@@ -194,10 +194,10 @@
     "fail fast" during planning if a dependency between elements isn't
     satisfied (used a missing or wrong field name).</para>
 
-    <para>It is also important to point out that pipe assemblies are
-    assemblied through constructor chaining. This may seem odd but is done for
-    two reasons. It keeps the code more concise. And it prevents developers
-    from creating "cycles" in the resulting pipe assembly. Pipe assemblies are
+    <para>It is also important to point out that pipe assemblies are assembled
+    through constructor chaining. This may seem odd but is done for two
+    reasons. It keeps the code more concise. And it prevents developers from
+    creating "cycles" in the resulting pipe assembly. Pipe assemblies are
     Directed Acyclic Graphs (or DAGs). The Cascading planner cannot handle
     processes that feed themselves, that have cycles (not to say there are
     ways around this that are much safer).</para>
@@ -205,7 +205,7 @@
     <para>Notice the very first <code>Pipe</code> instance has a name. That
     instance is the "head" of this particular pipe assembly. Pipe assemblies
     can have any number of heads, and any number of tails. This example does
-    not name the tail assembly, but for complex asssemblies tails must be
+    not name the tail assembly, but for complex assemblies, tails must be
     named for reasons described below.</para>
 
     <para>Heads and tails of pipe assemblies generally need names, this is how
@@ -262,9 +262,9 @@
 
       <para>In Cascading, we call a data record a Tuple, a pipeline a pipe
       assembly, and a series of Tuples passing through a pipe assembly is
-      called a a tuple stream.</para>
+      called a tuple stream.</para>
 
-      <para>Pipe assemblies are assemblied independently from what data they
+      <para>Pipe assemblies are assembled independently from what data they
       will process. Before a pipe assembly can be executed, it must be bound
       to data sources and data sinks, called Taps. The process of binding pipe
       assemblies to sources and sinks is called planning, and the result of a
@@ -319,9 +319,7 @@
           <listitem>
             <para>The <classname>cascading.pipe.Each</classname> pipe applies
             a Function or Filter Operation to each Tuple that passes through
-            it. The results of the Function are appended, by default, to the
-            <classname>Each</classname> input Tuple and returned to the next
-            <classname>Pipe</classname>.</para>
+            it.</para>
           </listitem>
         </varlistentry>
 
@@ -630,8 +628,9 @@
         common to both streams. The result is simply two Tuple instances with
         the same "url" appended together into a new Tuple. In practice this
         would fail since the result Tuple has duplicate field names. The
-        CoGroup pipe has the declaredFields argument allowing the developer to
-        declare new unique field names for the resulting tuple.</para>
+        CoGroup pipe has the <parameter>declaredFields</parameter> argument
+        allowing the developer to declare new unique field names for the
+        resulting tuple.</para>
 
         <example>
           <title>Joining a Tuple Stream with Duplicate Fields</title>
@@ -654,8 +653,21 @@
         <para>Here we see an example of what the developer could have named
         the fields so the planner would not fail.</para>
 
+        <para>It is important to note that Cascading could just magically
+        create a new Tuple by removing the duplicate grouping fields names so
+        the user isn't left renaming them. In the above example, the duplicate
+        "url"columns could be collapsed into one, as they are the same value.
+        This is not done because field names are a user convenience, the
+        primary mechanism to manipulate Tuples is through positions, not field
+        names. So the result of every Pipe (Each, Every, CoGroup, GroupBy)
+        needs to be deterministic. This gives Cascading a big performance
+        boost, provides a means for sub-assemblies to be built without
+        coupling to any "domain level" concepts (like "first_name", or "url),
+        and allows for higher level abstractions to be built on-top of
+        Cascading simply.</para>
+
         <para>In the example above, we explicitly set a Joiner class to join
-        our data. The reason CoGroup is named CoGroup and not Join is becuase
+        our data. The reason CoGroup is named CoGroup and not Join is because
         joining data is done after all the parallel streams are co-grouped by
         their common keys. The details are not terribly important, but note
         that a "bag" of data for every input tuple stream must be created
@@ -676,7 +688,7 @@
 
         <para>Above we see two bags, one for each tuple stream ("lhs" and
         "rhs"). Each Tuple in bag is independent but all Tuples in both bags
-        have the same "url" value since we are grouping on url, from the
+        have the same "url" value since we are grouping on "url", from the
         previous example. A Joiner will match up every Tuple on the "lhs" with
         a Tuple on the "rhs". An InnerJoin is the most common. This is where
         each Tuple on the "lhs" is matched with every Tuple on the "rhs". This
@@ -726,7 +738,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <listitem>
                 <para>A Left join can also be stated as a Left Inner and Right
-                Outer join, where it is ok if the right bag is empty.</para>
+                Outer join, where it is fine if the right bag is empty.</para>
 
                 <programlisting>[0,a,A] [1,b,null] [2,c,C]</programlisting>
               </listitem>
@@ -737,7 +749,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <listitem>
                 <para>A Right join can also be stated as a Left Outer and
-                Right Inner join, where it is ok if the left bag is
+                Right Inner join, where it is fine if the left bag is
                 empty.<programlisting>[0,a,A] [2,c,C] [3,null,D]</programlisting></para>
               </listitem>
             </varlistentry>
@@ -772,11 +784,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>All input data comes from, and all output data feeds to, a
       <classname>cascading.tap.Tap</classname> instance.</para>
 
-      <para>A Tap represents a resource like a data file on the local
-      filesystem, on a Hadoop distributed filesystem, or even on Amazon S3.
-      Taps can be read from, which makes it a "source", or written to, which
-      makes it a "sink". Or, more commonly, Taps can act as both sinks and
-      sources when shared between Flows.</para>
+      <para>A Tap represents a resource like a data file on the local file
+      system, on a Hadoop distributed file system, or even on Amazon S3. Taps
+      can be read from, which makes it a "source", or written to, which makes
+      it a "sink". Or, more commonly, Taps can act as both sinks and sources
+      when shared between Flows.</para>
 
       <para>All Taps must have a Scheme associated with them. If the Tap is
       about where the data is, and how to get it, the Scheme is about what the
@@ -823,7 +835,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
           <xi:include href="simple-tap.xml" />
         </example></para>
 
-      <para>The above example creates a new Hadoop Filesytem Tap that can
+      <para>The above example creates a new Hadoop FileSystem Tap that can
       read/write text files. Since only one field name was provided, the
       "offset" field is discarded, resulting in an input tuple stream with
       only "line" values.</para>
@@ -843,7 +855,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
             sink in a Flow, Cascading will be forced to run in "local mode"
             and not on the cluster. This is useful when creating applications
             to read local files and import them into the Hadoop distributed
-            filesystem.</para>
+            file system.</para>
           </listitem>
         </varlistentry>
 
@@ -852,7 +864,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
           <listitem>
             <para>The <classname>cascading.tap.Dfs</classname> Tap is used to
-            reference files on the Hadoop distributed filesystem.</para>
+            reference files on the Hadoop distributed file system.</para>
           </listitem>
         </varlistentry>
 
@@ -861,12 +873,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
           <listitem>
             <para>The <classname>cascading.tap.Hfs</classname> Tap uses the
-            current Hadoop default filesystem. If Hadoop is configured for
-            "local mode" its default filesystem will be the local filesystem.
-            If configured as a cluster, the default filesystem is likey the
-            Hadoop distributed filesystem. The Hfs is convenient when writing
-            Cascading applications that may or may not be run on a cluster.
-            Lhs and Dfs subclass the Hfs Tap.</para>
+            current Hadoop default file system. If Hadoop is configured for
+            "local mode" its default file system will be the local file
+            system. If configured as a cluster, the default file system is
+            likely the Hadoop distributed file system. The Hfs is convenient
+            when writing Cascading applications that may or may not be run on
+            a cluster. Lhs and Dfs subclass the Hfs Tap.</para>
           </listitem>
         </varlistentry>
 
@@ -999,7 +1011,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <title xreflabel="Configuring Flows"
         xml:id="configuring-flows">Configuring Flows</title>
 
-        <para>The FlowConnector contructor accepts the
+        <para>The FlowConnector constructor accepts the
         <classname>java.util.Property</classname> object so that default
         Cascading and Hadoop properties can be passed down through the planner
         to the Hadoop runtime. Subsequently any relevant Hadoop
@@ -1079,7 +1091,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
         <para>Note <classname>Flow#start()</classname> and
         <classname>Flow#complete()</classname> will not consult the
-        <methodname>isSkip()</methodname> method and subequently will always
+        <methodname>isSkip()</methodname> method and subsequently will always
         try to start the Flow if called. It is up to user code to call
         <classname>isSkip()</classname> to decide if the current strategy
         suggests the Flow should be skipped.</para>
@@ -1116,7 +1128,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>A Cascade allows multiple Flow instances to be executed as a
       single logical unit. If there are dependencies between the Flows, they
       will be executed in the correct order. Further, Cascades act like ant
-      build or unix "make" files. When run, a Cascade will only execute Flows
+      build or Unix "make" files. When run, a Cascade will only execute Flows
       that have stale sinks (output data that is older than the input data),
       by default.</para>
 
@@ -1201,7 +1213,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
           <listitem>
             <para>all Cascading unit tests. If writing custom modules for
-            cascading, subclassing
+            cascading, sub-classing
             <classname>cascading.CascadingTestCase</classname> might be
             helpful</para>
           </listitem>
@@ -1253,13 +1265,13 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <xi:include href="flow-properties.xml" />
 
       <para>Above we see how to set the same property two ways. First via the
-      setApplicationJarClass() method, and via the setApplicationJarPath
-      method. The first method takes a Class object that owns the 'main'
-      function for this application. The assumption here is that
-      <code>Main.class</code> is not located in a Java Jar that is stored in
-      the <filename>lib</filename> folder of the application Jar. If it is,
-      that Jar will be pushed to the cluster, not the parent application
-      jar.</para>
+      <methodname>setApplicationJarClass()</methodname> method, and via the
+      <methodname>setApplicationJarPath()</methodname> method. The first
+      method takes a Class object that owns the 'main' function for this
+      application. The assumption here is that <code>Main.class</code> is not
+      located in a Java Jar that is stored in the <filename>lib</filename>
+      folder of the application Jar. If it is, that Jar will be pushed to the
+      cluster, not the parent application jar.</para>
 
       <para>In your application, only one of these methods needs to be called,
       but one of them must be called to properly configure Hadoop.</para>
@@ -1313,11 +1325,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>To use Cascading, it is not strictly necessary to create custom
       Operations. There are a number of Operations in the Cascading library
-      that can be combined into very rubust applications. In the same way you
-      can chaing <command>sed</command>, <command>grep</command>,
+      that can be combined into very robust applications. In the same way you
+      can chain <command>sed</command>, <command>grep</command>,
       <command>sort</command>, <command>uniq</command>,
       <command>awk</command>, etc in Unix, you can chain existing Cascading
-      operations. But developing customs Opeations is very simple in
+      operations. But developing customs Operations is very simple in
       Cascading.</para>
 
       <para>There are four kinds of Operations: Function, Filter, Aggregator,
@@ -1536,12 +1548,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>A Buffer expects set of argument Tuples in the same grouping, and
       may return zero or more result Tuples.</para>
 
-      <para>The Buffer is very similiar to an Aggregator except it receives
-      the current Grouping Tuple and an iterator of all the arguments it
-      expects for every value Tuple in the current grouping, all on the same
-      method call. This is very similar to the typical Reducer interface, and
-      is best used for operations that need greater visibility to the previous
-      and next elements in the stream. For example, smoothing a series of
+      <para>The Buffer is very similar to an Aggregator except it receives the
+      current Grouping Tuple and an iterator of all the arguments it expects
+      for every value Tuple in the current grouping, all on the same method
+      call. This is very similar to the typical Reducer interface, and is best
+      used for operations that need greater visibility to the previous and
+      next elements in the stream. For example, smoothing a series of
       time-stamps where there are missing values.</para>
 
       <para>An Buffer may only be used with an <classname>Every</classname>
@@ -1611,7 +1623,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       convenient to do so.</para>
 
       <para>When developing custom operations, the developer may need to
-      intialize and destroy a resource. For example, when doing pattern
+      initialize and destroy a resource. For example, when doing pattern
       matching, a <classname>java.util.regex.Matcher</classname> may need to
       be initialized and used in a thread-safe way. Or a remote connection may
       need to be opened and eventually closed. But for performance reasons,
@@ -1751,7 +1763,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>To configure the planner to remove some or all assertions, a
       property must be set via the
-      <classname>FlowConnector#setAssertionLevel()</classname> mehod.
+      <classname>FlowConnector#setAssertionLevel()</classname> method.
       <classname>AssertionLevel.NONE</classname> removes all assertions.
       <classname>AssertionLevel.VALID</classname> keeps <code>VALID</code>
       assertions but removes <code>STRICT</code> ones. And
@@ -1839,8 +1851,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>Flows support event listeners through the
       <classname>cascading.flow.FlowListener</classname> interface. The
-      FlowListener interface supports four events, onStarting, onStopping,
-      onCompleted, and onThrowable.</para>
+      FlowListener interface supports four events, <code>onStarting</code>,
+      <code>onStopping</code>, <code>onCompleted</code>, and
+      <code>onThrowable</code>.</para>
 
       <variablelist>
         <varlistentry>
@@ -1933,7 +1946,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       common idioms.</para>
 
       <para>See the Cascading website for publicly available scripting
-      languate bindings.</para>
+      language bindings.</para>
     </section>
 
     <section>
@@ -1946,11 +1959,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       system external to Hadoop.</para>
 
       <para>A Tap represents something "physical", like a file or a database
-      table. Subsequently Tap implementations are responsible for lifecycle
+      table. Subsequently Tap implementations are responsible for life cycle
       issues around the resource they represent, like tests for existence, or
       deleting.</para>
 
-      <para>A Scheme represents a format or represenation, like a text format
+      <para>A Scheme represents a format or representation, like a text format
       for a file, or columns in a table. Schemes are responsible for
       converting the Tap managed resources proprietary format to and from a
       <classname>cascading.tuple.Tuple</classname> instance.</para>
@@ -1958,10 +1971,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>Unfortunately creating custom Taps and Schemes can be an involved
       process and requires some knowledge of Hadoop and the Hadoop FileSystem
       API. Most commonly, the <classname>cascading.tap.Hfs</classname> class
-      can be subclassed if a new filesystem is to be supported, assuming
+      can be subclassed if a new file system is to be supported, assuming
       passing a fully qualified URL to the <classname>Hfs</classname>
       constructor isn't sufficient (the <classname>Hfs</classname> tap will
-      look up a filesystem based on the URL scheme via the Hadoop FileSystem
+      look up a file system based on the URL scheme via the Hadoop FileSystem
       API).</para>
 
       <para>Delegating to the Hadoop FileSystem API is not a strict
@@ -2023,8 +2036,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <para>In the above example, if there were more fields than "ip"
               and "method", it would work fine, all the extra fields would be
-              discared. If the same was true for the next example, the planner
-              would fail.</para>
+              discarded. If the same was true for the next example, the
+              planner would fail.</para>
 
               <xi:include href="identity-rename-fields-long.xml" />
 
@@ -2065,7 +2078,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>The <classname>cascading.operation.Debug</classname> function is a
       utility Function (actually, its a Filter) that will print the current
-      argument Tuple to either stdout or stderr.</para>
+      argument Tuple to either <code>stdout</code> or
+      <code>stderr</code>.</para>
 
       <para>It is only intended to be used during development to help debug a
       difficult pipe assembly.</para>
@@ -2074,7 +2088,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     <section>
       <title>Sample and Limit Functions</title>
 
-      <para>The Sample and Limit functions are useed to limit the number of
+      <para>The Sample and Limit functions are used to limit the number of
       Tuples that pass through a pipe assembly.</para>
 
       <para><variablelist>
@@ -2310,14 +2324,14 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>Cascading provides some support for dynamically compiled Java
       expression to be used as either Functions or Filters. This functionality
-      is provided by the Janino embedded compiler. Janino and its documetation
-      can be found on its website, <link
+      is provided by the Janino embedded compiler. Janino and its
+      documentation can be found on its website, <link
       xlink:href="http://www.janino.net/">http://www.janino.net/</link>. But
       in short, an Expression is a single line of Java, for example <code>a +
       3 * 2</code> or <code>a &lt; 7</code>. The first would resolve to some
       number, the second to a boolean value. Where <code>a</code> and
       <code>b</code> are field names passed in as Tuple arguments to the
-      Operation. Janino will compile this expression into bytecode giving
+      Operation. Janino will compile this expression into byte code giving
       compiled code processing speeds.</para>
 
       <para><variablelist>
@@ -2414,7 +2428,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               <para>The
               <classname>cascading.operation.xml.XPathFilter</classname>
               filter will filter out a Tuple if the given XPath expression
-              returns <code>false</code>. Set the removeMatch paramter to
+              returns <code>false</code>. Set the removeMatch parameter to
               <code>true</code> if the filter should be reversed.</para>
             </listitem>
           </varlistentry>
@@ -2679,8 +2693,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <xi:include href="filter-and.xml" />
       </example>
 
-      <para>Above, we are "and-ing" the two filters. Both must be satified for
-      the data to pass through this one Pipe.</para>
+      <para>Above, we are "and-ing" the two filters. Both must be satisfied
+      for the data to pass through this one Pipe.</para>
     </section>
   </chapter>
 
@@ -2776,7 +2790,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       inputs, the Flow is skipped. The assumption is that the Flow was
       executed recently, since the output isn't stale. So there is no reason
       to re-execute it and use up resources or add time to the job. This is
-      similiar behaviour a compiler would exhibit if a source file wasn't
+      similar behaviour a compiler would exhibit if a source file wasn't
       updated before a recompile.</para>
 
       <para>This is very handy if you have a large number of jobs that should
