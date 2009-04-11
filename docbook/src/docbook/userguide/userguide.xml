@@ -9,7 +9,7 @@
   <info>
     <title>Cascading - User Guide</title>
 
-    <pubdate>February, 2009</pubdate>
+    <pubdate>April, 2009</pubdate>
 
     <copyright>
       <year>2007-2009</year>
@@ -493,7 +493,11 @@
         passed to the Operation as argument values. The output selector
         selects the output Tuple from an "appended" version of the input Tuple
         and the Operation result Tuple. The output Tuple becomes the input
-        Tuple to the next pipe in the pipe assembly.</para>
+        Tuple to the next pipe in the pipe assembly. If a Function emits more
+        than one Tuple, this process will be repeated for each result Tuple
+        against the original input Tuple, depending on the output selector,
+        input Tuple values could be duplicated across each output
+        Tuple.</para>
 
         <mediaobject>
           <imageobject role="fo">
