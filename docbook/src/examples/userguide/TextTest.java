@@ -88,7 +88,7 @@ public class TextTest extends ExampleTestCase
 
     TupleEntryIterator iterator = flow.openSink();
 
-    assertEquals( "31/Aug/2007", iterator.next().get( 1 ) );
+    assertEquals( "01/Sep/2007", iterator.next().get( 1 ) );
 
     iterator.close();
     }
