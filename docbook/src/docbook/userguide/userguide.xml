@@ -318,8 +318,8 @@
 
           <listitem>
             <para>The <classname>cascading.pipe.Each</classname> pipe applies
-            a Function or Filter Operation to each Tuple that passes through
-            it.</para>
+            a <classname>Function</classname> or <classname>Filter</classname>
+            Operation to each Tuple that passes through it.</para>
           </listitem>
         </varlistentry>
 
@@ -352,8 +352,9 @@
 
           <listitem>
             <para>The <classname>cascading.pipe.Every</classname> pipe applies
-            an Aggregator (like count, or sum) or Buffer (a sliding window)
-            Operation to every group of Tuples that pass through it.</para>
+            an <classname>Aggregator</classname> (like count, or sum) or
+            <classname>Buffer</classname> (a sliding window) Operation to
+            every group of Tuples that pass through it.</para>
           </listitem>
         </varlistentry>
 
@@ -453,29 +454,35 @@
       <section>
         <title>Each and Every Pipes</title>
 
-        <para>The Each and Every pipe types are the only pipes that can be
-        used to apply Operations to the tuple stream.</para>
+        <para>The <classname>Each</classname> and <classname>Every</classname>
+        pipe types are the only pipes that can be used to apply Operations to
+        the tuple stream.</para>
 
-        <para>The Each pipe applies an Operation to "each" Tuple as it passes
-        through the pipe assembly. The Every pipe applies an Operation to
-        "every" group of Tuples as they pass through the pipe assembly, on the
-        tail end of a GroupBy or CoGroup pipe.</para>
+        <para>The <classname>Each</classname> pipe applies an Operation to
+        "each" Tuple as it passes through the pipe assembly. The
+        <classname>Every</classname> pipe applies an Operation to "every"
+        group of Tuples as they pass through the pipe assembly, on the tail
+        end of a <classname>GroupBy</classname> or
+        <classname>CoGroup</classname> pipe.</para>
 
         <para><programlisting>new Each( previousPipe, argumentSelector, operation, outputSelector )</programlisting></para>
 
         <para><programlisting>new Every( previousPipe, argumentSelector, operation, outputSelector )</programlisting></para>
 
-        <para>Both the Each and Every pipe take a Pipe instance, an argument
+        <para>Both the <classname>Each</classname> and
+        <classname>Every</classname> pipe take a Pipe instance, an argument
         selector, Operation instance, and a output selector on the
         constructor. Where each selector is a Fields instance.</para>
 
-        <para>The Each pipe may only apply Functions and Filters to the tuple
-        stream as these operations may only operate on one Tuple at a
-        time.</para>
+        <para>The <classname>Each</classname> pipe may only apply
+        <classname>Functions</classname> and <classname>Filters</classname> to
+        the tuple stream as these operations may only operate on one Tuple at
+        a time.</para>
 
-        <para>The Every pipe may only apply Aggregators and Buffers to the
-        tuple stream as these operations may only operate on groups of tuples,
-        one grouping at a time.</para>
+        <para>The <classname>Every</classname> pipe may only apply
+        <classname>Aggregators</classname> and <classname>Buffers</classname>
+        to the tuple stream as these operations may only operate on groups of
+        tuples, one grouping at a time.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -493,11 +500,11 @@
         passed to the Operation as argument values. The output selector
         selects the output Tuple from an "appended" version of the input Tuple
         and the Operation result Tuple. The output Tuple becomes the input
-        Tuple to the next pipe in the pipe assembly. If a Function emits more
-        than one Tuple, this process will be repeated for each result Tuple
-        against the original input Tuple, depending on the output selector,
-        input Tuple values could be duplicated across each output
-        Tuple.</para>
+        Tuple to the next pipe in the pipe assembly. If a
+        <classname>Function</classname> emits more than one Tuple, this
+        process will be repeated for each result Tuple against the original
+        input Tuple, depending on the output selector, input Tuple values
+        could be duplicated across each output Tuple.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -513,12 +520,13 @@
 
         <para>If the argument selector is not given, the whole input Tuple
         (<code>Fields.ALL</code>) is passed to the Operation as argument
-        values. If the result selector is not given on an Each pipe, the
-        Operation results are returned by default
-        (<code>Fields.RESULTS</code>), replacing the input Tuple values in the
-        tuple stream. This really only applies to Functions as Filters either
-        discard the input Tuple, or return the input Tuple intact. There is no
-        opportunity to provide an output selector.</para>
+        values. If the result selector is not given on an
+        <classname>Each</classname> pipe, the Operation results are returned
+        by default (<code>Fields.RESULTS</code>), replacing the input Tuple
+        values in the tuple stream. This really only applies to
+        <classname>Functions</classname> as <classname>Filters</classname>
+        either discard the input Tuple, or return the input Tuple intact.
+        There is no opportunity to provide an output selector.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -532,31 +540,35 @@
           </imageobject>
         </mediaobject>
 
-        <para>For the Every pipe, the Operation results are appended to the
-        input Tuple (<code>Fields.ALL</code>) by default.</para>
+        <para>For the <classname>Every</classname> pipe, the Operation results
+        are appended to the input Tuple (<code>Fields.ALL</code>) by
+        default.</para>
 
-        <para>It is important to note that the Every pipe associates Operation
-        results with the current group Tuple. For example, if you are grouping
-        on the field "department" and counting the number of "names" grouped
-        by that department, the output Fields would be
-        ["department","num_employees"]. This is true for both Aggregator, seen
-        above, and Buffer.</para>
+        <para>It is important to note that the <classname>Every</classname>
+        pipe associates Operation results with the current group Tuple. For
+        example, if you are grouping on the field "department" and counting
+        the number of "names" grouped by that department, the output Fields
+        would be ["department","num_employees"]. This is true for both
+        <classname>Aggregator</classname>, seen above, and
+        <classname>Buffer</classname>.</para>
 
         <para>If you were also adding up the salaries associated with each
         "name" in each "department", the output Fields would be
         ["department","num_employees","total_salaries"]. This is only true for
-        chains of Aggregator Operations, you may not chain Buffer
-        Operations.</para>
+        chains of <classname>Aggregator</classname> Operations, you may not
+        chain <classname>Buffer</classname> Operations.</para>
       </section>
 
       <section>
         <title>GroupBy and CoGroup Pipes</title>
 
-        <para>The GroupBy and CoGroup pipes serve two roles. First, they emit
+        <para>The <classname>GroupBy</classname> and
+        <classname>CoGroup</classname> pipes serve two roles. First, they emit
         sorted grouped tuple streams allowing for Operations to be applied to
         sets of related Tuple instances. Where "sorted" means the tuple groups
-        are emitted from the GroupBy and CoGroup pipes in sort order of the
-        field values the groups were grouped on.</para>
+        are emitted from the <classname>GroupBy</classname> and
+        <classname>CoGroup</classname> pipes in sort order of the field values
+        the groups were grouped on.</para>
 
         <para>Second, they allow for two streams to be either merged or
         joined. Where merging allows for two or more tuple streams originating
@@ -564,12 +576,15 @@
         allows two or more streams to be "joined" (in the SQL sense) on a
         common key or set of Tuple values in a Tuple.</para>
 
-        <para>It is not required that an Every follow either GroupBy or
-        CoGroup, an Each may follow immediately after. But an Every many not
-        follow an Each..</para>
+        <para>It is not required that an <classname>Every</classname> follow
+        either <classname>GroupBy</classname> or CoGroup, an
+        <classname>Each</classname> may follow immediately after. But an
+        <classname>Every</classname> many not follow an
+        <classname>Each</classname> .</para>
 
-        <para>GroupBy accepts one or more tuple streams. If two or more, they
-        must all have the same field names.</para>
+        <para><classname>GroupBy</classname> accepts one or more tuple
+        streams. If two or more, they must all have the same field
+        names.</para>
 
         <example>
           <title>Grouping a Tuple Stream</title>
@@ -579,7 +594,8 @@
 
         <para>The example above simply creates a new tuple stream where Tuples
         with the same values in "group1" and "group2" can be processed as a
-        set by an Aggregator or Buffer Operation. The resulting stream of
+        set by an <classname>Aggregator</classname> or
+        <classname>Buffer</classname> Operation. The resulting stream of
         tuples will be sorted by the values in "group1" and "group2".</para>
 
         <example>
@@ -632,9 +648,9 @@
         common to both streams. The result is simply two Tuple instances with
         the same "url" appended together into a new Tuple. In practice this
         would fail since the result Tuple has duplicate field names. The
-        CoGroup pipe has the <parameter>declaredFields</parameter> argument
-        allowing the developer to declare new unique field names for the
-        resulting tuple.</para>
+        <classname>CoGroup</classname> pipe has the
+        <parameter>declaredFields</parameter> argument allowing the developer
+        to declare new unique field names for the resulting tuple.</para>
 
         <example>
           <title>Joining a Tuple Stream with Duplicate Fields</title>
@@ -671,12 +687,13 @@
         Cascading simply.</para>
 
         <para>In the example above, we explicitly set a Joiner class to join
-        our data. The reason CoGroup is named CoGroup and not Join is because
-        joining data is done after all the parallel streams are co-grouped by
-        their common keys. The details are not terribly important, but note
-        that a "bag" of data for every input tuple stream must be created
-        before an join operation can be performed. Each bag consists of all
-        the Tuple instances associated with a given grouping Tuple.</para>
+        our data. The reason <classname>CoGroup</classname> is named "CoGroup"
+        and not "Join" is because joining data is done after all the parallel
+        streams are co-grouped by their common keys. The details are not
+        terribly important, but note that a "bag" of data for every input
+        tuple stream must be created before an join operation can be
+        performed. Each bag consists of all the Tuple instances associated
+        with a given grouping Tuple.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -1336,8 +1353,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       operations. But developing customs Operations is very simple in
       Cascading.</para>
 
-      <para>There are four kinds of Operations: Function, Filter, Aggregator,
-      and Buffer.</para>
+      <para>There are four kinds of Operations:
+      <classname>Function</classname>, <classname>Filter</classname>,
+      <classname>Aggregator</classname>, and
+      <classname>Buffer</classname>.</para>
 
       <mediaobject>
         <imageobject role="fo">
@@ -1352,15 +1371,17 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       </mediaobject>
 
       <para>All Operations operate on an input argument Tuple and all
-      Operations other than Filter may return zero or more Tuple object
-      results. That is, a Function can parse a string and return a new Tuple
-      for every value parsed out (one Tuple for each 'word'), or it may create
-      a single Tuple with every parsed value as an element in the Tuple object
-      (one Tuple with "first-name" and "last-name" fields).</para>
+      Operations other than <classname>Filter</classname> may return zero or
+      more Tuple object results. That is, a <classname>Function</classname>
+      can parse a string and return a new Tuple for every value parsed out
+      (one Tuple for each 'word'), or it may create a single Tuple with every
+      parsed value as an element in the Tuple object (one Tuple with
+      "first-name" and "last-name" fields).</para>
 
-      <para>In practice, a Function that returns no results is a Filter, but
-      the Filter type has been optimized and can be combined with "logical"
-      filter Operations like Not, And, Or, etc.</para>
+      <para>In practice, a <classname>Function</classname> that returns no
+      results is a <classname>Filter</classname>, but the
+      <classname>Filter</classname> type has been optimized and can be
+      combined with "logical" filter Operations like Not, And, Or, etc.</para>
 
       <para>During runtime, Operations actually receive arguments as an
       instance of the TupleEntry object. The TupleEntry object holds both an
@@ -1370,19 +1391,22 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       that allows for tuple operations by using simple field names and is
       typically only exposed to developers writing custom Operations.</para>
 
-      <para>All Operations, other than Filter, must declare result Fields. For
-      example, if a Function was written to parse words out of a String and
-      return a new Tuple for each word, this Function must declare that it
-      intends to return a Tuple with one field named "word". If the Function
-      mistakenly returns more values in the Tuple other than a 'word', the
-      process will fail. Operations that do return arbitrary numbers of values
-      in a result Tuple may declare <code>Fields.UNKNOWN</code>.</para>
+      <para>All Operations, other than <classname>Filter</classname>, must
+      declare result Fields. For example, if a <classname>Function</classname>
+      was written to parse words out of a String and return a new Tuple for
+      each word, this <classname>Function</classname> must declare that it
+      intends to return a Tuple with one field named "word". If the
+      <classname>Function</classname> mistakenly returns more values in the
+      Tuple other than a 'word', the process will fail. Operations that do
+      return arbitrary numbers of values in a result Tuple may declare
+      <code>Fields.UNKNOWN</code>.</para>
 
       <para>The Cascading planner always attempts to "fail fast" where
       possible by checking the field name dependencies between Pipes and
       Operations, but some cases the planner can't account for.</para>
 
-      <para>All Operations must be wrapped by either an Each or an Every pipe
+      <para>All Operations must be wrapped by either an
+      <classname>Each</classname> or an <classname>Every</classname> pipe
       instance. The pipe is responsible for passing in an argument Tuple and
       accepting the result Tuple.</para>
     </section>
@@ -1390,14 +1414,16 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     <section>
       <title>Functions</title>
 
-      <para>A Function expects a single argument <classname>Tuple</classname>,
-      and may return zero or more result Tuples.</para>
+      <para>A <classname>Function</classname> expects a single argument
+      <classname>Tuple</classname>, and may return zero or more result
+      Tuples.</para>
 
-      <para>A Function may only be used with a <classname>Each</classname>
-      pipe which may follow any other pipe type.</para>
+      <para>A <classname>Function</classname> may only be used with a
+      <classname>Each</classname> pipe which may follow any other pipe
+      type.</para>
 
-      <para>To create a custom Function, subclass the class
-      <code>cascading.operation.BaseOperation</code> and implement the
+      <para>To create a custom <classname>Function</classname>, subclass the
+      class <code>cascading.operation.BaseOperation</code> and implement the
       interface<code> cascading.operation.Function</code>. Because
       <code>BaseOperation</code> has been subclassed, the <code>operate</code>
       method, as defined on the <code>Function</code> interface, is the only
@@ -1418,7 +1444,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       match the number of arguments expected during the planning phase.</para>
 
       <para>Functions may optionally declare the field names they return, by
-      default Functions declare<code> Fields.UNKNOWN</code>.</para>
+      default <classname>Functions</classname> declare<code>
+      Fields.UNKNOWN</code>.</para>
 
       <para>Both declarations must be done on the constructor, either by
       passing default values to the <code>super</code> constructor, or by
@@ -1431,9 +1458,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <xi:include href="sum-function.xml" />
       </example>
 
-      <para>The example above implements a fully functional Function that
-      accepts two values in the argument Tuple, adds them together, and
-      returns the result in a new Tuple.</para>
+      <para>The example above implements a fully functional
+      <classname>Function</classname> that accepts two values in the argument
+      Tuple, adds them together, and returns the result in a new Tuple.</para>
 
       <para>The first constructor assumes a default field name this function
       will return, but it is a best practice to always give the user the
@@ -1444,15 +1471,16 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     <section>
       <title>Filter</title>
 
-      <para>A Filter expects a single argument Tuple and returns a boolean
-      value stating whether or not the current Tuple in the tuple stream
-      should be discarded.</para>
+      <para>A <classname>Filter</classname> expects a single argument Tuple
+      and returns a boolean value stating whether or not the current Tuple in
+      the tuple stream should be discarded.</para>
 
-      <para>A Filter may only be used with a <classname>Each</classname> pipe,
-      and it may follow any other pipe type.</para>
+      <para>A <classname>Filter</classname> may only be used with a
+      <classname>Each</classname> pipe, and it may follow any other pipe
+      type.</para>
 
-      <para>To create a custom Filter, subclass the class
-      <code>cascading.operation.BaseOperation</code> and implement the
+      <para>To create a custom <classname>Filter</classname>, subclass the
+      class <code>cascading.operation.BaseOperation</code> and implement the
       interface<code>cascading.operation.Filter</code>. Because
       <code>BaseOperation</code> has been subclassed, the
       <code>isRemove</code> method, as defined on the <code>Filter</code>
@@ -1483,25 +1511,26 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <xi:include href="stringlength-filter.xml" />
       </example>
 
-      <para>The example above implements a fully functional Filter that
-      accepts two arguments and filters out the current Tuple if the first
-      argument String length is greater than the integer value of the second
-      argument.</para>
+      <para>The example above implements a fully functional
+      <classname>Filter</classname> that accepts two arguments and filters out
+      the current Tuple if the first argument String length is greater than
+      the integer value of the second argument.</para>
     </section>
 
     <section>
       <title>Aggregator</title>
 
-      <para>An Aggregator expects set of argument Tuples in the same grouping,
-      and may return zero or more result Tuples.</para>
+      <para>An <classname>Aggregator</classname> expects set of argument
+      Tuples in the same grouping, and may return zero or more result
+      Tuples.</para>
 
-      <para>An Aggregator may only be used with an
+      <para>An <classname>Aggregator</classname> may only be used with an
       <classname>Every</classname> pipe, and it may only follow a
       <classname>GroupBy</classname>,<classname>CoGroup</classname>, or
       another <classname>Every</classname> pipe type.</para>
 
-      <para>To create a custom Aggregator, subclass the class
-      <code>cascading.operation.BaseOperation</code> and implement the
+      <para>To create a custom <classname>Aggregator</classname>, subclass the
+      class <code>cascading.operation.BaseOperation</code> and implement the
       interface<code>cascading.operation.Aggregator</code>. Because
       <code>BaseOperation</code> has been subclassed, the <code>start</code>,
       <code>aggregate</code>, and <code>complete</code> methods, as defined on
@@ -1523,7 +1552,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       number of arguments expected.</para>
 
       <para>Aggregators may optionally declare the field names they return, by
-      default Aggregators declare<code> Fields.UNKNOWN</code>.</para>
+      default <classname>Aggregators</classname> declare<code>
+      Fields.UNKNOWN</code>.</para>
 
       <para>Both declarations must be done on the constructor, either by
       passing default values to the <code>super</code> constructor, or by
@@ -1536,36 +1566,40 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         <xi:include href="sum-aggregator.xml" />
       </example>
 
-      <para>The example above implements a fully functional Aggregator that
-      accepts one value in the argument Tuple, adds all these argument Tuples
-      in the current grouping, and returns the result as a new Tuple.</para>
+      <para>The example above implements a fully functional
+      <classname>Aggregator</classname> that accepts one value in the argument
+      Tuple, adds all these argument Tuples in the current grouping, and
+      returns the result as a new Tuple.</para>
 
-      <para>The first constructor assumes a default field name this Aggregator
-      will return, but it is a best practice to always give the user the
-      option to override the declared field names to prevent any field name
-      collisions that would cause the planner to fail.</para>
+      <para>The first constructor assumes a default field name this
+      <classname>Aggregator</classname> will return, but it is a best practice
+      to always give the user the option to override the declared field names
+      to prevent any field name collisions that would cause the planner to
+      fail.</para>
     </section>
 
     <section>
       <title>Buffer</title>
 
-      <para>A Buffer expects set of argument Tuples in the same grouping, and
-      may return zero or more result Tuples.</para>
+      <para>A <classname>Buffer</classname> expects set of argument Tuples in
+      the same grouping, and may return zero or more result Tuples.</para>
 
-      <para>The Buffer is very similar to an Aggregator except it receives the
-      current Grouping Tuple and an iterator of all the arguments it expects
-      for every value Tuple in the current grouping, all on the same method
-      call. This is very similar to the typical Reducer interface, and is best
-      used for operations that need greater visibility to the previous and
-      next elements in the stream. For example, smoothing a series of
-      time-stamps where there are missing values.</para>
+      <para>The <classname>Buffer</classname> is very similar to an
+      <classname>Aggregator</classname> except it receives the current
+      Grouping Tuple and an iterator of all the arguments it expects for every
+      value Tuple in the current grouping, all on the same method call. This
+      is very similar to the typical Reducer interface, and is best used for
+      operations that need greater visibility to the previous and next
+      elements in the stream. For example, smoothing a series of time-stamps
+      where there are missing values.</para>
 
-      <para>An Buffer may only be used with an <classname>Every</classname>
-      pipe, and it may only follow a <classname>GroupBy</classname> or
-      <classname>CoGroup</classname> pipe type.</para>
+      <para>An <classname>Buffer</classname> may only be used with an
+      <classname>Every</classname> pipe, and it may only follow a
+      <classname>GroupBy</classname> or <classname>CoGroup</classname> pipe
+      type.</para>
 
-      <para>To create a custom Buffer, subclass the class
-      <code>cascading.operation.BaseOperation</code> and implement the
+      <para>To create a custom <classname>Buffer</classname>, subclass the
+      class <code>cascading.operation.BaseOperation</code> and implement the
       interface<code>cascading.operation.Buffer</code>. Because
       <code>BaseOperation</code> has been subclassed, the <code>operate</code>
       method, as defined on the <code>Buffer</code> interface, is the only
@@ -1586,7 +1620,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       number of arguments expected.</para>
 
       <para>Buffers may optionally declare the field names they return, by
-      default Buffers declare <code>Fields.UNKNOWN</code>.</para>
+      default <classname>Buffers</classname> declare
+      <code>Fields.UNKNOWN</code>.</para>
 
       <para>Both declarations must be done on the constructor, either by
       passing default values to the <code>super</code> constructor, or by
@@ -1604,15 +1639,16 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       the current grouping, and returns the result divided by the number of
       argument tuples counted in a new Tuple.</para>
 
-      <para>The first constructor assumes a default field name this Buffer
-      will return, but it is a best practice to always give the user the
-      option to override the declared field names to prevent any field name
-      collisions that would cause the planner to fail.</para>
+      <para>The first constructor assumes a default field name this
+      <classname>Buffer</classname> will return, but it is a best practice to
+      always give the user the option to override the declared field names to
+      prevent any field name collisions that would cause the planner to
+      fail.</para>
 
       <para>Note this example is somewhat fabricated, in practice a
       <classname>Aggregator</classname> should be implemented to compute
-      averages. A Buffer would be better suited for "running averages" across
-      very large spans, for example.</para>
+      averages. A <classname>Buffer</classname> would be better suited for
+      "running averages" across very large spans, for example.</para>
     </section>
 
     <section>
@@ -1645,8 +1681,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       these methods, the developer can initialize a "context" object that can
       hold an open socket connection, or <classname>Matcher</classname>
       instance. The "context" is user defined and is the same mechanism used
-      by the Aggregator operation, except the Aggregator is also given the
-      opportunity to initialize and destroy its context via the
+      by the <classname>Aggregator</classname> operation, except the
+      <classname>Aggregator</classname> is also given the opportunity to
+      initialize and destroy its context via the
       <classname>start()</classname> and <classname>complete()</classname>
       methods.</para>
     </section>
@@ -2021,7 +2058,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               <para>In practice the field declaration can be left out as
               <code>Field.ARGS</code> is the default declaration for the
               Identity function. Additionally <code>Fields.RESULTs</code> can
-              be left off as it is the default for the Every pipe.</para>
+              be left off as it is the default for the
+              <classname>Every</classname> pipe.</para>
 
               <xi:include href="identity-discard-fields.xml" />
             </listitem>
@@ -2046,7 +2084,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               <xi:include href="identity-rename-fields-long.xml" />
 
               <para>Since <code>Fields.ALL</code> is the default argument
-              selector for the Each pipe, it can be left out.</para>
+              selector for the <classname>Each</classname> pipe, it can be
+              left out.</para>
 
               <xi:include href="identity-rename-fields.xml" />
             </listitem>
@@ -2081,9 +2120,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <title>Debug Function</title>
 
       <para>The <classname>cascading.operation.Debug</classname> function is a
-      utility Function (actually, its a Filter) that will print the current
-      argument Tuple to either <code>stdout</code> or
-      <code>stderr</code>.</para>
+      utility <classname>Function</classname> (actually, its a
+      <classname>Filter</classname>) that will print the current argument
+      Tuple to either <code>stdout</code> or <code>stderr</code>.</para>
 
       <para>It is only intended to be used during development to help debug a
       difficult pipe assembly.</para>
@@ -2327,9 +2366,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       xml:id="operation-expression">Java Expression Operations</title>
 
       <para>Cascading provides some support for dynamically compiled Java
-      expression to be used as either Functions or Filters. This functionality
-      is provided by the Janino embedded compiler. Janino and its
-      documentation can be found on its website, <link
+      expression to be used as either <classname>Functions</classname> or
+      <classname>Filters</classname>. This functionality is provided by the
+      Janino embedded compiler. Janino and its documentation can be found on
+      its website, <link
       xlink:href="http://www.janino.net/">http://www.janino.net/</link>. But
       in short, an Expression is a single line of Java, for example <code>a +
       3 * 2</code> or <code>a &lt; 7</code>. The first would resolve to some
@@ -2631,9 +2671,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     <section>
       <title>Logical Filter Operators</title>
 
-      <para>The logical Filter operators allows the user to assemble more
-      complex filtering to be used in a single Pipe, instead of chaining
-      multiple Pipes together to get the same effect.</para>
+      <para>The logical <classname>Filter</classname> operators allows the
+      user to assemble more complex filtering to be used in a single Pipe,
+      instead of chaining multiple Pipes together to get the same
+      effect.</para>
 
       <para><variablelist>
           <varlistentry>
@@ -2641,8 +2682,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
             <listitem>
               <para>The <classname>cascading.operation.filter.And</classname>
-              Filter will logically 'and' the results of the constructor
-              provided Filter instances. Logically, if
+              <classname>Filter</classname> will logically 'and' the results
+              of the constructor provided <classname>Filter</classname>
+              instances. Logically, if
               <methodname>Filter#isRemove()</methodname> returns
               <code>true</code> for all given instances, this filter will
               return <code>true</code>.</para>
@@ -2654,8 +2696,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
             <listitem>
               <para>The <classname>cascading.operation.filter.Or</classname>
-              Filter will logically 'or' the results of the constructor
-              provided Filter instances. Logically, if
+              <classname>Filter</classname> will logically 'or' the results of
+              the constructor provided <classname>Filter</classname>
+              instances. Logically, if
               <methodname>Filter#isRemove()</methodname> returns
               <code>true</code> for any of the given instances, this filter
               will return <code>true</code>.</para>
@@ -2667,8 +2710,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
             <listitem>
               <para>The <classname>cascading.operation.filter.Not</classname>
-              Filter will logically 'not' (negation) the results of the
-              constructor provided Filter instances. Logically, if
+              <classname>Filter</classname> will logically 'not' (negation)
+              the results of the constructor provided
+              <classname>Filter</classname> instances. Logically, if
               <methodname>Filter#isRemove()</methodname> returns
               <code>true</code> for the given instance, this filter will
               return the opposite, <code>false</code>.</para>
@@ -2680,8 +2724,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
             <listitem>
               <para>The <classname>cascading.operation.filter.Xor</classname>
-              Filter will logically 'xor' (exclusive or) the results of the
-              constructor provided Filter instances. Logically, if
+              <classname>Filter</classname> will logically 'xor' (exclusive
+              or) the results of the constructor provided
+              <classname>Filter</classname> instances. Logically, if
               <methodname>Filter#isRemove()</methodname> returns
               <code>true</code> for all given instances, or returns
               <code>false</code> for all given instances, this filter will
