@@ -267,12 +267,12 @@
       <para>Pipe assemblies are assembled independently from what data they
       will process. Before a pipe assembly can be executed, it must be bound
       to data sources and data sinks, called Taps. The process of binding pipe
-      assemblies to sources and sinks is called planning, and the result of a
-      planner is a Flow. Flows can be executed on a data cluster.</para>
+      assemblies to sources and sinks results in a Flow. Flows can be executed
+      on a data cluster like Hadoop.</para>
 
       <para>Finally, many Flows can be grouped together and executed as a
-      single job. If one Flow depends on the output of another Flow, it will
-      not be executed until all its data dependencies are satisfied. This
+      single process. If one Flow depends on the output of another Flow, it
+      will not be executed until all its data dependencies are satisfied. This
       collection of Flows is called a Cascade.</para>
     </section>
 
