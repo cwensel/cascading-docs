@@ -524,7 +524,7 @@
         <classname>Each</classname> pipe, the Operation results are returned
         by default (<code>Fields.RESULTS</code>), replacing the input Tuple
         values in the tuple stream. This really only applies to
-        <classname>Functions</classname> as <classname>Filters</classname>
+        <classname>Functions</classname>, as <classname>Filters</classname>
         either discard the input Tuple, or return the input Tuple intact.
         There is no opportunity to provide an output selector.</para>
 
@@ -540,12 +540,12 @@
           </imageobject>
         </mediaobject>
 
-        <para>For the <classname>Every</classname> pipe, the Operation results
-        are appended to the input Tuple (<code>Fields.ALL</code>) by
+        <para>For the <classname>Every</classname> pipe, the Aggregator
+        results are appended to the input Tuple (<code>Fields.ALL</code>) by
         default.</para>
 
         <para>It is important to note that the <classname>Every</classname>
-        pipe associates Operation results with the current group Tuple. For
+        pipe associates Aggregator results with the current group Tuple. For
         example, if you are grouping on the field "department" and counting
         the number of "names" grouped by that department, the output Fields
         would be ["department","num_employees"]. This is true for both
@@ -557,6 +557,26 @@
         ["department","num_employees","total_salaries"]. This is only true for
         chains of <classname>Aggregator</classname> Operations, you may not
         chain <classname>Buffer</classname> Operations.</para>
+
+        <mediaobject>
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/buffer-operation-relationship.svg"></imagedata>
+          </imageobject>
+
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="6in"
+                       fileref="images/buffer-operation-relationship.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+
+        <para>For the <classname>Every</classname> pipe when used with a
+        <classname>Buffer</classname> the behavior is slightly different.
+        Instead of associating the Buffer results with the current grouing
+        Tuple, they are associated with the current values Tuple, just like an
+        <classname>Each</classname> pipe does with a
+        <classname>Function</classname>. This might be slightly more
+        confusing, but provides much more flexibility.</para>
       </section>
 
       <section>
@@ -1686,6 +1706,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       initialize and destroy its context via the
       <classname>start()</classname> and <classname>complete()</classname>
       methods.</para>
+
+      <para>If a "context" object is used, its type should be declared in the
+      sub-class class declaration using the Java Generics notation.</para>
     </section>
   </chapter>
 
@@ -2744,6 +2767,73 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>Above, we are "and-ing" the two filters. Both must be satisfied
       for the data to pass through this one Pipe.</para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <info>
+      <title>Best Practices</title>
+    </info>
+
+    <section>
+      <title>Unit Testing</title>
+
+      <para>Testing Operations, pipe-assemblies, and applications is a must.
+      The <classname>cascading.CascadingTestCast</classname> provides a number
+      of helper methods.</para>
+
+      <para>When testing custom Operations, use the
+      <methodname>invokeFunction</methodname>,
+      <methodname>invokeFilter</methodname>,
+      <methodname>invokeAggregator</methodname>, and
+      <methodname>invokeBuffer</methodname> methods.</para>
+
+      <para>When testing Flows, use the
+      <methodname>validateLength</methodname> methods. There are quite a few,
+      each offering extra flexibility. All of them will read the sink Tap and
+      validate it is the correct length, have the correct Tuple size, and if
+      the values match a given regular expression pattern.</para>
+
+      <para>The <classname>cascading.ClusterTestCase</classname> can be used
+      if you want to launch an embedded Hadoop cluster inside your TestCase.
+      </para>
+
+      <para>Make sure <filename>cascading-test-x.y.z.jar</filename> is in your
+      testing class-path in order to use these helper classes.</para>
+    </section>
+
+    <section>
+      <title>SubAssemblies, not Factories</title>
+
+      <para>When developing your applications, use
+      <classname>SubAssembly</classname> sub-classes, not "factory" methods.
+      This way the code is much easier to read and to test.</para>
+
+      <para>The funny thing is that <classname>Object</classname> constructors
+      are "factories", so there isn't much reason to build frameworks to
+      duplicate what a constructor already does. Of course there are
+      exceptions, but in practice they are rare when you can use a
+      <classname>SubAssembly</classname>.</para>
+    </section>
+
+    <section>
+      <title>Give SubAssemblies Logical Responsibilities</title>
+
+      <para>SubAssembies provide a very convenient means to co-locate like
+      responsibilities inta a single place. For example, have a
+      <classname>ParsingSubAssembly</classname> and a
+      <classname>RulesSubAssembly</classname>, where the first is responsible
+      solely for parsing incoming <classname>Tuple</classname> streams (log
+      files for example), and the second applied rules to decide if a given
+      <classname>Tuple</classname> should be discarded or marked as
+      bad.</para>
+
+      <para>Further, in your unit tests, you can create an
+      <classname>TestAssertionsSubAssembly</classname>, that just inlines
+      various <classname>ValueAssertions</classname> and
+      <classname>GroupAssertions</classname>. Inlining Assertions directly in
+      your SubAssemblies is also very important, but sometimes it makes sense
+      to have more tests outside of the business logic.</para>
     </section>
   </chapter>
 
