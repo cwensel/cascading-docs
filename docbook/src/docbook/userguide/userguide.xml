@@ -2801,20 +2801,20 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <title>Unit Testing</title>
 
       <para>Testing Operations, pipe-assemblies, and applications is a must.
-      The <classname>cascading.CascadingTestCast</classname> provides a number
+      The <classname>cascading.CascadingTestCase</classname> provides a number
       of helper methods.</para>
 
       <para>When testing custom Operations, use the
-      <methodname>invokeFunction</methodname>,
-      <methodname>invokeFilter</methodname>,
-      <methodname>invokeAggregator</methodname>, and
-      <methodname>invokeBuffer</methodname> methods.</para>
+      <methodname>invokeFunction()</methodname>,
+      <methodname>invokeFilter()</methodname>,
+      <methodname>invokeAggregator()</methodname>, and
+      <methodname>invokeBuffer()</methodname> methods.</para>
 
       <para>When testing Flows, use the
-      <methodname>validateLength</methodname> methods. There are quite a few,
-      each offering extra flexibility. All of them will read the sink Tap and
-      validate it is the correct length, have the correct Tuple size, and if
-      the values match a given regular expression pattern.</para>
+      <methodname>validateLength()</methodname> methods. There are quite a
+      few, each offering extra flexibility. All of them will read the sink Tap
+      and validate it is the correct length, have the correct Tuple size, and
+      if the values match a given regular expression pattern.</para>
 
       <para>The <classname>cascading.ClusterTestCase</classname> can be used
       if you want to launch an embedded Hadoop cluster inside your
@@ -2842,7 +2842,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <title>Give SubAssemblies Logical Responsibilities</title>
 
       <para>SubAssembies provide a very convenient means to co-locate like
-      responsibilities inta a single place. For example, have a
+      responsibilities into a single place. For example, have a
       <classname>ParsingSubAssembly</classname> and a
       <classname>RulesSubAssembly</classname>, where the first is responsible
       solely for parsing incoming <classname>Tuple</classname> streams (log
