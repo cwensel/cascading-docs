@@ -9,7 +9,7 @@
   <info>
     <title>Cascading - User Guide</title>
 
-    <pubdate>April, 2009</pubdate>
+    <pubdate>June, 2009</pubdate>
 
     <copyright>
       <year>2007-2009</year>
@@ -1729,7 +1729,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>To create a SubAssembly, the
       <classname>cascading.pipe.SubAssembly</classname> class must be
-      subclasses.</para>
+      subclassed.</para>
 
       <example>
         <title>Creating a SubAssembly</title>
@@ -1755,6 +1755,28 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       or more tails, we could use the <methodname>getTails()</methodname>
       method to get at the array of "tails" set internally by the
       <methodname>setTails()</methodname> method.</para>
+
+      <example>
+        <title>Creating a Split SubAssembly</title>
+
+        <xi:include href="split-subassembly.xml" />
+      </example>
+
+      <example>
+        <title>Using a Split SubAssembly</title>
+
+        <xi:include href="simple-split-subassembly.xml" />
+      </example>
+
+      <para>To rephrase, if a <classname>SubAssembly</classname> does not
+      split the incoming Tuple stream, the SubAssembly instance can be passed
+      directly to the next Pipe instance. But, if the
+      <classname>SubAssembly</classname> splits the stream into multiple
+      branches, each branch tail must be passed to the
+      <methodname>setTails()</methodname> method, and the
+      <methodname>getTails()</methodname> method should be called to get a
+      handle to the correct branch to pass to the next
+      <classname>Pipe</classname> instances.</para>
     </section>
 
     <section>
@@ -2795,8 +2817,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       the values match a given regular expression pattern.</para>
 
       <para>The <classname>cascading.ClusterTestCase</classname> can be used
-      if you want to launch an embedded Hadoop cluster inside your TestCase.
-      </para>
+      if you want to launch an embedded Hadoop cluster inside your
+      TestCase.</para>
 
       <para>Make sure <filename>cascading-test-x.y.z.jar</filename> is in your
       testing class-path in order to use these helper classes.</para>

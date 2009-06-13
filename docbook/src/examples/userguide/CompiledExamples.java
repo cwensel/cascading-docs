@@ -27,11 +27,7 @@ import java.util.Properties;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
-import cascading.pipe.Each;
-import cascading.pipe.Every;
-import cascading.pipe.GroupBy;
-import cascading.pipe.Pipe;
-import cascading.pipe.CoGroup;
+import cascading.pipe.*;
 import cascading.pipe.cogroup.InnerJoin;
 import cascading.scheme.TextLine;
 import cascading.tap.Hfs;
@@ -88,6 +84,21 @@ public class CompiledExamples
     Pipe pipe = new SomeSubAssembly( lhs, rhs );
 
     pipe = new Each( pipe, new SomeFunction() );
+    //@extract-end
+    }
+
+  public void compileSplitSubAssembly()
+    {
+    //@extract-start simple-split-subassembly
+    // the "left hand side" assembly head
+    Pipe head = new Pipe( "head" );
+
+    // our custom SubAssembly
+    SubAssembly pipe = new SplitSubAssembly( head );
+
+    // grab the split branches
+    Pipe lhs = new Each( pipe.getTails()[0], new SomeFunction() );
+    Pipe rhs = new Each( pipe.getTails()[1], new SomeFunction() );
     //@extract-end
     }
 
