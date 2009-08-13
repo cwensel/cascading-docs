@@ -9,7 +9,7 @@
   <info>
     <title>Cascading - User Guide</title>
 
-    <pubdate>June, 2009</pubdate>
+    <pubdate>August, 2009</pubdate>
 
     <copyright>
       <year>2007-2009</year>
@@ -600,7 +600,17 @@
         either <classname>GroupBy</classname> or CoGroup, an
         <classname>Each</classname> may follow immediately after. But an
         <classname>Every</classname> many not follow an
-        <classname>Each</classname> .</para>
+        <classname>Each</classname>.</para>
+
+        <para>It is important to note, for both <classname>GroupBy</classname>
+        and <classname>CoGroup</classname>, the values being grouped on must
+        be the same type. If your application attempts to
+        <classname>GroupBy</classname> on the field "size", but the value
+        alternates between a <classname>String</classname> and a
+        <classname>Long</classname>, Hadoop will fail internally attempting to
+        apply a Java <classname>Comparator</classname> to them. This also
+        holds true for the sort-by fields in
+        <classname>GroupBy</classname>.</para>
 
         <para><classname>GroupBy</classname> accepts one or more tuple
         streams. If two or more, they must all have the same field
@@ -755,13 +765,17 @@
         <para><programlisting>LHS = [0,a] [1,b] [2,c]
 RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         will define each join type where the values are joined on the first
-        position, a numeric value.<variablelist>
+        position, a numeric value. Note when Cascading joins Tuples, the
+        resulting Tuple will contain all the incoming values. The duplicate
+        common key(s) is not discarded if given. And on outer joins, where
+        there is no equivalent key in the alternate stream, <code>null</code>
+        values are used as placeholders.<variablelist>
             <varlistentry>
               <term>InnerJoin</term>
 
               <listitem>
                 <para>An Inner join will only return a joined Tuple if neither
-                bag has is empty.<programlisting>[0,a,A] [2,c,C]</programlisting></para>
+                bag has is empty.<programlisting>[0,a,0,A] [2,c,2,C]</programlisting></para>
               </listitem>
             </varlistentry>
 
@@ -770,7 +784,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
               <listitem>
                 <para>An Outer join will join if either the left or right bag
-                is empty.<programlisting>[0,a,A] [1,b,null] [2,c,C] [3,null,D]</programlisting></para>
+                is empty.<programlisting>[0,a,0,A] [1,b,null,null] [2,c,2,C] [null,null,3,D]</programlisting></para>
               </listitem>
             </varlistentry>
 
@@ -781,7 +795,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
                 <para>A Left join can also be stated as a Left Inner and Right
                 Outer join, where it is fine if the right bag is empty.</para>
 
-                <programlisting>[0,a,A] [1,b,null] [2,c,C]</programlisting>
+                <programlisting>[0,a,0,A] [1,b,null,null] [2,c,2,C]</programlisting>
               </listitem>
             </varlistentry>
 
@@ -791,7 +805,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               <listitem>
                 <para>A Right join can also be stated as a Left Outer and
                 Right Inner join, where it is fine if the left bag is
-                empty.<programlisting>[0,a,A] [2,c,C] [3,null,D]</programlisting></para>
+                empty.<programlisting>[0,a,0,A] [2,c,2,C] [null,null,3,D]</programlisting></para>
               </listitem>
             </varlistentry>
 
@@ -949,7 +963,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>Keep in mind Hadoop cannot source data from directories with
       nested sub-directories, and it cannot write to directories that already
-      exist.</para>
+      exist. But you can simply point the <classname>Hfs</classname>
+      <classname>Tap</classname> to a directory of data files and they all
+      will be used as input, no need to enumate each individual file into a
+      <classname>MultiTap</classname>.</para>
 
       <para>To get around the last issue, the Hadoop related Taps allow for a
       <classname>SinkMode</classname> value to be set when constructed.</para>
@@ -2856,6 +2873,35 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <classname>GroupAssertions</classname>. Inlining Assertions directly in
       your SubAssemblies is also very important, but sometimes it makes sense
       to have more tests outside of the business logic.</para>
+    </section>
+
+    <section>
+      <title>Java Operators in Field Names</title>
+
+      <para>There are a number of Operations in Cascading that will compile
+      and apply Java expressions on the fly, see ExpressionFunction and
+      ExpressionFilter for examples. In these expressions, Operation argument
+      field names are used as variable in the expression. When creating field
+      names, be conscious of the fact that if they are used in an expression,
+      some characters will cause compilation errors. For example, "first-name"
+      is a valid field name for use with Cascading, but this expression,
+      <code>first-name.trim()</code>, will fail.</para>
+    </section>
+
+    <section>
+      <title>Debugging Planner Failures</title>
+
+      <para>Oftentimes the <classname>FlowConnector</classname> will fail when
+      attempting to plan a <classname>Flow</classname>. If the exception
+      message given by <classname>PlannerException</classname> is vague, use
+      the method <code>PlannerException.writeDOT()</code> to export a text
+      representation of the internal pipe assembly. DOT files can be opened by
+      GraphViz and OmnitGraffle. These plans are only partial, but you will be
+      able to see where the Cascading planner failed.</para>
+
+      <para>Also note you can create a DOT file from a
+      <classname>Flow</classname> as well via
+      <code>Flow.writeDOT()</code>.</para>
     </section>
   </chapter>
 
