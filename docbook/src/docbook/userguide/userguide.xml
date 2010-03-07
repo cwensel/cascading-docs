@@ -1047,6 +1047,22 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
+      <title>Fields</title>
+
+      <mediaobject>
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="5.75in"
+                     fileref="images/field-algebra.svg"></imagedata>
+        </imageobject>
+
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="5.75in"
+                     fileref="images/field-algebra.png"></imagedata>
+        </imageobject>
+      </mediaobject>
+    </section>
+
+    <section>
       <title>Flows</title>
 
       <para>When pipe assemblies are bound to source and sink Taps, a Flow is
