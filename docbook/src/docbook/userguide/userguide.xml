@@ -706,7 +706,7 @@
         <para>It is important to note that Cascading could just magically
         create a new Tuple by removing the duplicate grouping fields names so
         the user isn't left renaming them. In the above example, the duplicate
-        "url"columns could be collapsed into one, as they are the same value.
+        "url" columns could be collapsed into one, as they are the same value.
         This is not done because field names are a user convenience, the
         primary mechanism to manipulate Tuples is through positions, not field
         names. So the result of every Pipe (Each, Every, CoGroup, GroupBy)
@@ -1455,15 +1455,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>In practice, a <classname>Function</classname> that returns no
       results is a <classname>Filter</classname>, but the
       <classname>Filter</classname> type has been optimized and can be
-      combined with "logical" filter Operations like Not, And, Or, etc.</para>
+      combined with "logical" filter Operations like
+      <classname>Not</classname>, <classname>And</classname>,
+      <classname>Or</classname>, etc.</para>
 
       <para>During runtime, Operations actually receive arguments as an
       instance of the TupleEntry object. The TupleEntry object holds both an
       instance of <classname>Fields</classname> and the current
       <classname>Tuple</classname> the <classname>Fields</classname> object
-      defines fields for. <classname>TupleEntry</classname> is a helper class
-      that allows for tuple operations by using simple field names and is
-      typically only exposed to developers writing custom Operations.</para>
+      defines fields for.</para>
 
       <para>All Operations, other than <classname>Filter</classname>, must
       declare result Fields. For example, if a <classname>Function</classname>
@@ -1483,6 +1483,13 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <classname>Each</classname> or an <classname>Every</classname> pipe
       instance. The pipe is responsible for passing in an argument Tuple and
       accepting the result Tuple.</para>
+
+      <para>Operations, by default, are "safe". Safe Operations can execute
+      safely multiple times on the same Tuple multiple times, that is, it has
+      no side-effects, it is idempotent. If an Operation is not idempotent,
+      the method <code>isSafe()</code> must return <code>false</code>. This
+      value influences how the Cascading planner renders the Flow under
+      certain circumstances.</para>
     </section>
 
     <section>
