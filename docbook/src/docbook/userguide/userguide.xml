@@ -847,19 +847,32 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <para>All Taps must have a Scheme associated with them. If the Tap is
       about where the data is, and how to get it, the Scheme is about what the
-      data is. Cascading provides two Scheme classes, TextLine and
-      SequenceFile.</para>
+      data is. Cascading provides three Scheme classes, TextLine,
+      TextDelimited, and SequenceFile.</para>
 
       <variablelist>
         <varlistentry>
           <term>TextLine</term>
 
           <listitem>
-            <para>TextLine reads and writes text files and returns Tuples with
-            two field names by default, "offset" and "line". These values are
-            inherited from Hadoop. When written to, all Tuple values are
+            <para>TextLine reads and writes raw text files and returns Tuples
+            with two field names by default, "offset" and "line". These values
+            are inherited from Hadoop. When written to, all Tuple values are
             converted to Strings and joined with the TAB character
             (\t).</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>TextDelimited</term>
+
+          <listitem>
+            <para>TextDelimited reads and writes character delimited files
+            (csv, tsv, etc). When written to, all Tuple values are converted
+            to Strings and joined with the given character delimiter. This
+            Scheme can optionally handle quoted values with custom quote
+            characters. Further, TextDelimited can coerce each value to a
+            primitive type.</para>
           </listitem>
         </varlistentry>
 
@@ -880,23 +893,23 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       and <classname>SequenceFile</classname> schemes is that tuples stored in
       the <classname>SequenceFile</classname> remain tuples, so when read,
       they do not need to be parsed. So a typical Cascading application will
-      read text files, and parse each line into a <classname>Tuple</classname>
-      for processing. The final Tuples are saved via the
-      <classname>SequenceFile</classname> scheme so future applications can
-      just read the file directly into <classname>Tuple</classname> instances
-      without the parsing step.<example>
+      read raw text files, and parse each line into a
+      <classname>Tuple</classname> for processing. The final Tuples are saved
+      via the <classname>SequenceFile</classname> scheme so future
+      applications can just read the file directly into
+      <classname>Tuple</classname> instances without the parsing step.<example>
           <title>Creating a new Tap</title>
 
           <xi:include href="simple-tap.xml" />
         </example></para>
 
       <para>The above example creates a new Hadoop FileSystem Tap that can
-      read/write text files. Since only one field name was provided, the
+      read/write raw text files. Since only one field name was provided, the
       "offset" field is discarded, resulting in an input tuple stream with
       only "line" values.</para>
 
       <para>The three most common Tap classes used are, Hfs, Dfs, and Lfs. The
-      MultiTap and TemplateTap are utility Taps.</para>
+      MultiSourceTap, MultiSinkTap, and TemplateTap are utility Taps.</para>
 
       <variablelist>
         <varlistentry>
@@ -938,14 +951,26 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </varlistentry>
 
         <varlistentry>
-          <term>MultiTap</term>
+          <term>MultiSourceTap</term>
 
           <listitem>
-            <para>The <classname>cascading.tap.MultiTap</classname> is used to
-            tie multiple Tap instances into a single Tap. The only restriction
-            is that all the Tap instances passed to a new MultiTap share the
-            same Scheme classes (not necessarily the same Scheme
-            instance).</para>
+            <para>The <classname>cascading.tap.MultiSourceTap</classname> is
+            used to tie multiple Tap instances into a single Tap for use as an
+            input source. The only restriction is that all the Tap instances
+            passed to a new MultiSourceTap share the same Scheme classes (not
+            necessarily the same Scheme instance).</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>MultiSinkTap</term>
+
+          <listitem>
+            <para>The <classname>cascading.tap.MultiSinkTap</classname> is
+            used to tie multiple Tap instances into a single Tap for use as an
+            output sink. During runtime, for every Tuple output by the pipe
+            assembly each child tap to the MultiSinkTap will sink the
+            Tuple.</para>
           </listitem>
         </varlistentry>
 
@@ -966,10 +991,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       exist. But you can simply point the <classname>Hfs</classname>
       <classname>Tap</classname> to a directory of data files and they all
       will be used as input, no need to enumate each individual file into a
-      <classname>MultiTap</classname>.</para>
+      <classname>MultiSourceTap</classname>.</para>
 
-      <para>To get around the last issue, the Hadoop related Taps allow for a
-      <classname>SinkMode</classname> value to be set when constructed.</para>
+      <para>To get around existing directories, the Hadoop related Taps allow
+      for a <classname>SinkMode</classname> value to be set when
+      constructed.</para>
 
       <para><example>
           <title>Overwriting An Existing Resource</title>
@@ -999,11 +1025,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </varlistentry>
 
         <varlistentry>
-          <term><classname>SinkMode.APPEND</classname></term>
+          <term><classname>SinkMode.UPDATE</classname></term>
 
           <listitem>
-            <para>Currently unsupported, but future versions of Hadoop will
-            support appends fully.</para>
+            <para>Allows for new Tap types that have the concept of update or
+            append. For example, updating records in a database.</para>
           </listitem>
         </varlistentry>
       </variablelist>
