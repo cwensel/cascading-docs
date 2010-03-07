@@ -984,6 +984,17 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
             linkend="template-tap" />.</para>
           </listitem>
         </varlistentry>
+
+        <varlistentry>
+          <term>GlobHfs</term>
+
+          <listitem>
+            <para>The <classname>cascading.tap.GlobHfs</classname> Tap accepts
+            Hadoop style 'file globbing' expression patterns. This allows for
+            multiple paths to be used as a single source, where all paths
+            match the given pattern.</para>
+          </listitem>
+        </varlistentry>
       </variablelist>
 
       <para>Keep in mind Hadoop cannot source data from directories with
