@@ -1966,21 +1966,6 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       segment named "assertions". Note how we can name branches and segments
       by using a single <classname>Pipe</classname> instance and it applies to
       all subsequent <classname>Pipe</classname> instances.</para>
-
-      <para><note>
-          <para>Even though Hadoop 0.19.x supports file appends on HDFS, this
-          functionality has not leaked up to the interfaces that allow Mapper
-          and Reducers to output data. Subsequently, the Cascading planner
-          will throw <classname>PlannerExceptions</classname> if a trap is
-          bound to a pipe assembly segment that crosses a Map or Reduce
-          boundary. To get around these errors, either insert new
-          <classname>Pipe</classname> instances that rename the current
-          branch, or give <classname>GroupBy</classname> or
-          <classname>CoGroup</classname> explicit names. This is done to
-          prevent subsequent Map or Reduce tasks from writing to the same path
-          after the Tap has been written to and closed in a previous Map or
-          Reduce task.</para>
-        </note></para>
     </section>
 
     <section>
