@@ -9,15 +9,15 @@
   <info>
     <title>Cascading - User Guide</title>
 
-    <pubdate>August, 2009</pubdate>
+    <pubdate>March, 2010</pubdate>
 
     <copyright>
-      <year>2007-2009</year>
+      <year>2007-2010</year>
 
       <holder>Concurrent, Inc</holder>
     </copyright>
 
-    <releaseinfo>V 1.0</releaseinfo>
+    <releaseinfo>V 1.1</releaseinfo>
 
     <productname>Cascading</productname>
 
@@ -2574,6 +2574,19 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               is equal to the number of argument Tuple values and that each
               constructor value is <code>.equals()</code> to its corresponding
               argument value.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>AssertNotEquals</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.assertion.AssertNotEquals</classname>
+              Assertion asserts the number of values given on the constructor
+              is equal to the number of argument Tuple values and that each
+              constructor value is not <code>.equals()</code> to its
+              corresponding argument value.</para>
             </listitem>
           </varlistentry>
 
