@@ -431,7 +431,7 @@
               (<classname>cascading.tuple.Tuple</classname>), and a series of
               Tuples are a tuple stream. Think of a Tuple as an Array of
               values where each value can be any
-              <classname>java.lang.Comparable</classname> Java type.</para>
+              <classname>java.lang.Object</classname> Java type.</para>
             </listitem>
           </varlistentry>
 
