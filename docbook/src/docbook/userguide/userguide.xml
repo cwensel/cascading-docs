@@ -1049,6 +1049,123 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     <section>
       <title>Fields</title>
 
+      <para>As can be seen above, the <classname>Each</classname> and
+      <classname>Every</classname> <classname>Pipe</classname> classes provide
+      a means to merge input Tuple values with Operation result Tuple values
+      to create a final output Tuple, which are used as the input to the next
+      <classname>Pipe</classname> instance. This merging is created through a
+      type of "field algebra", and can get rather complicated when factoring
+      in Fields sets, a kind of wildcard for specifying certain field
+      values.</para>
+
+      <section>
+        <title>Field Sets</title>
+      <para>Fields sets are constant values on the
+      <classname>Fields</classname> class and can be used in many places the
+      <classname>Fields</classname> class is expected. They are:<variablelist>
+          <varlistentry>
+            <term>Fields.ALL</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.ALL</classname>
+              constant is a "wildcard" that represents all the current
+              available fields.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Fields.RESULTS</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.RESULTS</classname>
+              constant set is used to represent the field names of the current
+              Operations return values. This Fields set may only be used as an
+              output selector on a Pipe. It effectively replaces in the input
+              Tuple with the Operation result Tuple.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Fields.REPLACE</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.REPLACE</classname>
+              constant is used as an output selector to inline replace values
+              in the incoming Tuple with the results of an Operation. This is
+              a convenience Fields set that allows subsequent Operations to
+              'step' on the value with a given field name. The current
+              Operation must always use the exact same field names, or the
+              <classname>ARGS</classname> Fields set.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Fields.SWAP</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.SWAP</classname>
+              constant is used as an output selector to swap out Operation
+              arguments with its results. Neither the argument and result
+              field names or size need to be the same. This is useful for when
+              the Operation arguments are no longer necessary and the result
+              Fields and values should be appended to the remainder of the
+              input field names and Tuple.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Fields.ARGS</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.ARGS</classname>
+              constant is used to let a given Operation inherit the field
+              names of its argument Tuple. This Fields set is a convenience
+              and is typically used when the Pipe output selector is
+              <classname>RESULTS</classname> or
+              <classname>REPLACE</classname>. It is specifically used by the
+              Identity Function when coercing values from Strings to primitive
+              types.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Fields.GROUP</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.GROUP</classname>
+              constant represents all the fields used as grouping values in a
+              previous Group. If there is no previous Group in the pipe
+              assembly, the <classname>GROUP</classname> represents all the
+              current field names.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Fields.VALUES</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.VALUES</classname>
+              constant represent all the fields not used as grouping fields in
+              a previous Group.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Fields.UNKNOWN</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.UNKNOWN</classname>
+              constant is used when Fields must be declared, but how many and
+              their names is unknown. This allows for arbitrarily length
+              Tuples from an input source or some Operation. Use this Fields
+              set with caution.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
+
+      <para>Below is a reference chart showing common ways to merge input and
+      result fields for the desired output fields.</para>
+
       <mediaobject>
         <imageobject role="fo">
           <imagedata align="center" contentwidth="5.75in"
@@ -1060,6 +1177,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
                      fileref="images/field-algebra.png"></imagedata>
         </imageobject>
       </mediaobject>
+      </section>
+        
     </section>
 
     <section>
