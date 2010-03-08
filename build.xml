@@ -7,20 +7,21 @@
 -->
 <project name="cascading.org" default="build" basedir=".">
 
+  <property file="${basedir}/build.properties"/>
+  <!--<property file="${cascading.home}/version.properties"/>-->
+
   <property name="cascading.home" location="../cascading"/>
   <import file="${cascading.home}/build.xml"/>
 
   <!--<property name="cascading.groovy.home" location="../cascading.groovy"/>-->
-
-  <property file="${basedir}/build.properties"/>
 
   <property name="website.host" value=""/>
   <property name="website.path" value="site"/>
   <property name="website.port" value="22"/>
 
   <property name="site" location="${basedir}/site/"/>
-  <property name="site.javadoc" location="${basedir}/site/javadoc"/>
-  <property name="site.userguide" location="${basedir}/site/userguide"/>
+  <property name="site.javadoc" location="${basedir}/site/${cascading.release.major}/javadoc"/>
+  <property name="site.userguide" location="${basedir}/site/${cascading.release.major}/userguide"/>
 
   <path id="all.javadoc.src.path">
     <pathelement location="${cascading.home}/src/core"/>
