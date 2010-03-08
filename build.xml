@@ -20,8 +20,8 @@
   <property name="website.port" value="22"/>
 
   <property name="site" location="${basedir}/site/"/>
-  <property name="site.javadoc" location="${basedir}/site/${cascading.release.major}/javadoc"/>
-  <property name="site.userguide" location="${basedir}/site/${cascading.release.major}/userguide"/>
+  <property name="site.javadoc" location="${basedir}/site/javadoc"/>
+  <property name="site.userguide" location="${basedir}/site/userguide"/>
 
   <path id="all.javadoc.src.path">
     <pathelement location="${cascading.home}/src/core"/>
@@ -86,7 +86,7 @@
       <arg value="--rsh=ssh"/>
       <arg value="${site.javadoc}"/>
       <arg
-        value="${website.host}:${website.path}"/>
+        value="${website.host}:${website.path}/${cascading.release.major}"/>
     </exec>
   </target>
 
@@ -100,7 +100,7 @@
       <arg value="--rsh=ssh"/>
       <arg value="${site.userguide}"/>
       <arg
-        value="${website.host}:${website.path}"/>
+        value="${website.host}:${website.path}/${cascading.release.major}"/>
     </exec>
   </target>
 
