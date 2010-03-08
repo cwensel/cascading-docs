@@ -443,9 +443,9 @@
               either declare the field names in a Tuple. Or reference values
               in a Tuple as a selector. Fields can either be string names
               ("first_name"), integer positions (<code>-1</code> for the last
-              value), or a substitution ( <code>Fields.ALL</code> to select
-              all values in the Tuple, like an asterisk (<code>*</code>) in
-              SQL).</para>
+              value), or a substitution (<code>Fields.ALL</code> to select all
+              values in the Tuple, like an asterisk (<code>*</code>) in SQL,
+              see <xref linkend="field-algebra" xreflabel="" />).</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -609,7 +609,7 @@
         alternates between a <classname>String</classname> and a
         <classname>Long</classname>, Hadoop will fail internally attempting to
         apply a Java <classname>Comparator</classname> to them. This also
-        holds true for the sort-by fields in
+        holds true for the secondary sorting sort-by fields in
         <classname>GroupBy</classname>.</para>
 
         <para><classname>GroupBy</classname> accepts one or more tuple
@@ -1047,7 +1047,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <title>Fields</title>
+      <title xreflabel="Field Algebra" xml:id="field-algebra">Field
+      Algebra</title>
 
       <para>As can be seen above, the <classname>Each</classname> and
       <classname>Every</classname> <classname>Pipe</classname> classes provide
@@ -1058,8 +1059,6 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       in Fields sets, a kind of wildcard for specifying certain field
       values.</para>
 
-      <section>
-        <title>Field Sets</title>
       <para>Fields sets are constant values on the
       <classname>Fields</classname> class and can be used in many places the
       <classname>Fields</classname> class is expected. They are:<variablelist>
@@ -1168,7 +1167,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <mediaobject>
         <imageobject role="fo">
-          <imagedata align="center" contentwidth="5.75in"
+          <imagedata align="center" contentwidth="7in"
                      fileref="images/field-algebra.svg"></imagedata>
         </imageobject>
 
@@ -1177,17 +1176,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
                      fileref="images/field-algebra.png"></imagedata>
         </imageobject>
       </mediaobject>
-      </section>
-        
     </section>
 
     <section>
       <title>Flows</title>
 
-      <para>When pipe assemblies are bound to source and sink Taps, a Flow is
-      created. Flows are executable in the sense that once created they can be
-      "started" and will begin execution on a configured Hadoop
-      cluster.</para>
+      <para>When pipe assemblies are bound to source and sink Taps, a
+      <classname>Flow</classname> is created. Flows are executable in the
+      sense that once created they can be "started" and will begin execution
+      on a configured Hadoop cluster.</para>
 
       <para>Think of a Flow as a data processing workflow that reads data from
       sources, processes the data as defined by the pipe assembly, and writes
@@ -1411,7 +1408,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
       <variablelist>
         <varlistentry>
-          <term>cascading-1.0.x.jar</term>
+          <term>cascading-1.1.x.jar</term>
 
           <listitem>
             <para>all relevant Cascading class files and libraries, with a
@@ -1421,7 +1418,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-core-1.0.x.jar</term>
+          <term>cascading-core-1.1.x.jar</term>
 
           <listitem>
             <para>all Cascading Core class files, should be packaged with
@@ -1430,7 +1427,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-xml-1.0.x.jar</term>
+          <term>cascading-xml-1.1.x.jar</term>
 
           <listitem>
             <para>all Cascading XML module class files, should be packaged
@@ -1439,7 +1436,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-test-1.0.x.jar</term>
+          <term>cascading-test-1.1.x.jar</term>
 
           <listitem>
             <para>all Cascading unit tests. If writing custom modules for
@@ -2101,6 +2098,13 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       segment named "assertions". Note how we can name branches and segments
       by using a single <classname>Pipe</classname> instance and it applies to
       all subsequent <classname>Pipe</classname> instances.</para>
+
+      <note>
+        <para>Traps are for exceptional cases, in the same way Java Exception
+        handling is not for application flow control, thus traps are not a
+        means to filter some data into other locations. Applications that need
+        to filter good and bad data should do so explicitly.</para>
+      </note>
     </section>
 
     <section>
@@ -2337,6 +2341,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               <classname>long</classname>, respectively.</para>
 
               <xi:include href="identity-coerce.xml" />
+
+              <para>Or we can replace just the Tuple String value "status"
+              with <classname>int</classname> while keeping all the other
+              values in the output Tuple.</para>
+
+              <xi:include href="identity-coerce-single.xml" />
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -2387,11 +2397,13 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <title>Insert Function</title>
 
       <para>The <classname>cascading.operation.Insert</classname> function
-      allows for insertion of literal values into the tuple stream.</para>
+      allows for insertion of constant literal values into the tuple
+      stream.</para>
 
       <para>This is most useful when a splitting a tuple stream and one of the
       branches needs some identifying value. Or when some missing parameter or
-      value, like a date String for todays date, needs to be inserted.</para>
+      value, like a date String for the current date, needs to be
+      inserted.</para>
     </section>
 
     <section>
@@ -3040,7 +3052,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <classname>ParsingSubAssembly</classname> and a
       <classname>RulesSubAssembly</classname>, where the first is responsible
       solely for parsing incoming <classname>Tuple</classname> streams (log
-      files for example), and the second applied rules to decide if a given
+      files for example), and the second applies rules to decide if a given
       <classname>Tuple</classname> should be discarded or marked as
       bad.</para>
 
@@ -3056,13 +3068,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <title>Java Operators in Field Names</title>
 
       <para>There are a number of Operations in Cascading that will compile
-      and apply Java expressions on the fly, see ExpressionFunction and
-      ExpressionFilter for examples. In these expressions, Operation argument
-      field names are used as variable in the expression. When creating field
-      names, be conscious of the fact that if they are used in an expression,
-      some characters will cause compilation errors. For example, "first-name"
-      is a valid field name for use with Cascading, but this expression,
-      <code>first-name.trim()</code>, will fail.</para>
+      and apply Java expressions on the fly, see
+      <classname>ExpressionFunction</classname> and
+      <classname>ExpressionFilter</classname> for examples. In these
+      expressions, Operation argument field names are used as variable in the
+      expression. When creating field names, be conscious of the fact that if
+      they are used in an expression, some characters will cause compilation
+      errors. For example, "first-name" is a valid field name for use with
+      Cascading, but this expression, <code>first-name.trim()</code>, will
+      fail.</para>
     </section>
 
     <section>
@@ -3079,6 +3093,16 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <para>Also note you can create a DOT file from a
       <classname>Flow</classname> as well via
       <code>Flow.writeDOT()</code>.</para>
+    </section>
+
+    <section>
+      <title>Joins</title>
+
+      <para>When joining two streams via a CoGroup Pipe, attempt to place the
+      largest of the streams in the left most argument to the CoGroup. Joining
+      multiple streams requires some accumulation of values before the join
+      operator can begin, but the left most stream will not be accumulated.
+      This should improve the performance of most joins. </para>
     </section>
   </chapter>
 

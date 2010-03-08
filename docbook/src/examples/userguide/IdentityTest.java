@@ -181,6 +181,7 @@ public class IdentityTest extends ExampleTestCase
     RegexParser parser = new RegexParser( fieldDeclaration, regex, groups );
     pipe = new Each( pipe, new Fields( "line" ), parser );
 
+    {
     //@extract-start identity-coerce
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
@@ -189,6 +190,19 @@ public class IdentityTest extends ExampleTestCase
 
     // outgoing -> "status", "size"
     //@extract-end
+    }
+
+    {
+    //@extract-start identity-coerce-single
+    // incoming -> "ip", "time", "method", "event", "status", "size"
+
+    Identity identity = new Identity( Integer.TYPE );
+    pipe = new Each( pipe, new Fields( "status" ), identity,
+                     Fields.REPLACE );
+
+    // outgoing -> "ip", "time", "method", "event", "status", "size"
+    //@extract-end
+    }
 
     Flow flow = new FlowConnector().connect( source, sink, pipe );
 

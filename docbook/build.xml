@@ -48,13 +48,14 @@
 
   <!-- assumes Cascading shares the same parent directory, change if necessary -->
   <property name="cascading.home" location="${basedir}/../cascading"/>
+  <property name="build.number" value="dev"/>
   <property file="${cascading.home}/version.properties"/>
   <property file="${cascading.home}/build.properties"/>
   <!-- this grabs the current hadoop.home -->
   <property name="cascading.release.version" value="x.y.z"/>
-  <property name="cascading.filename.core" value="cascading-core-${cascading.release.version}.jar"/>
-  <property name="cascading.filename.xml" value="cascading-xml-${cascading.release.version}.jar"/>
-  <property name="cascading.filename.test" value="cascading-test-${cascading.release.version}.jar"/>
+  <property name="cascading.filename.core" value="cascading-core-${cascading.release.version}-${build.number}.jar"/>
+  <property name="cascading.filename.xml" value="cascading-xml-${cascading.release.version}-${build.number}.jar"/>
+  <property name="cascading.filename.test" value="cascading-test-${cascading.release.version}-${build.number}.jar"/>
   <property name="cascading.libs" value="${cascading.home}/lib"/>
   <property name="cascading.libs.core" value="${cascading.libs}"/>
   <property name="cascading.libs.xml" value="${cascading.libs}/xml"/>
