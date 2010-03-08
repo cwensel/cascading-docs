@@ -1172,7 +1172,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
         </imageobject>
 
         <imageobject role="html">
-          <imagedata align="center" contentwidth="5.75in"
+          <imagedata align="center" contentwidth="7in"
                      fileref="images/field-algebra.png"></imagedata>
         </imageobject>
       </mediaobject>
