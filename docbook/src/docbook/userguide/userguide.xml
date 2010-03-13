@@ -502,7 +502,7 @@
         result fields, "declared fields" in the diagram. The "output selector"
         selects the output Tuple from an "appended" version of the input Tuple
         and the Operation result Tuple. This new output Tuple becomes the
-        input Tuple to the next pipe in the pipe assembly. </para>
+        input Tuple to the next pipe in the pipe assembly.</para>
 
         <para>Note that if a <classname>Function</classname> or
         <classname>Aggregator</classname> emits more than one Tuple, this
@@ -1161,7 +1161,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               constant is used when Fields must be declared, but how many and
               their names is unknown. This allows for arbitrarily length
               Tuples from an input source or some Operation. Use this Fields
-              set with caution. </para>
+              set with caution.</para>
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -3167,7 +3167,155 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       rules to the stream by setting a binary field that marks the tuple as
       good or bad. After all the rules are applied, split the stream based on
       the value of the good/bad boolean value. Optionally, set a reason field
-      as to why the Tuple was marked bad. </para>
+      as to why the Tuple was marked bad.</para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <info><title>CookBook</title></info>
+
+    <para>Some common idioms used in Cascading applications.</para>
+
+    <section>
+      <title>Tuples and Fields</title>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>Copy a Tuple instance</term>
+
+            <listitem>
+              <xi:include href="cookbook-copy.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Nest a Tuple instance within a Tuple</term>
+
+            <listitem>
+              <xi:include href="cookbook-nest.xml" />
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
+    </section>
+
+    <section>
+      <title>Stream Shaping</title>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>Split (branch) a Tuple Stream</term>
+
+            <listitem>
+              <xi:include href="cookbook-split.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Copy a field value</term>
+
+            <listitem>
+              <xi:include href="cookbook-copyfield.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Discard (drop) a field</term>
+
+            <listitem>
+              <xi:include href="cookbook-discardfield.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Rename a field</term>
+
+            <listitem>
+              <xi:include href="cookbook-renamefield.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Coerce field values from Strings to primitives</term>
+
+            <listitem>
+              <xi:include href="cookbook-coercefields.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Insert constant values into a stream</term>
+
+            <listitem>
+              <xi:include href="cookbook-insertvalue.xml" />
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
+    </section>
+
+    <section>
+      <title>Common Operations</title>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>Parse a String date/time value</term>
+
+            <listitem>
+              <xi:include href="cookbook-parsedate.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Format a time-stamp to a date/time value</term>
+
+            <listitem>
+              <xi:include href="cookbook-formatdate.xml" />
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
+    </section>
+
+    <section>
+      <title>Stream Ordering</title>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>Remove duplicate Tuples in a stream</term>
+
+            <listitem>
+              <xi:include href="cookbook-distinctgroup.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Create a list of unique values</term>
+
+            <listitem>
+              <xi:include href="cookbook-distinctvalue.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Find first occurrence in time of a unique value</term>
+
+            <listitem>
+              <xi:include href="cookbook-distinctorder.xml" />
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
+    </section>
+
+    <section>
+      <title>API Usage</title>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>Pass properties to a custom Operation</term>
+
+            <listitem>
+              <xi:include href="cookbook-passproperties.xml" />
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
     </section>
   </chapter>
 
