@@ -27,6 +27,8 @@ import java.util.Properties;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
+import cascading.operation.Debug;
+import cascading.operation.DebugLevel;
 import cascading.pipe.*;
 import cascading.pipe.cogroup.InnerJoin;
 import cascading.scheme.TextLine;
@@ -97,8 +99,8 @@ public class CompiledExamples
     SubAssembly pipe = new SplitSubAssembly( head );
 
     // grab the split branches
-    Pipe lhs = new Each( pipe.getTails()[0], new SomeFunction() );
-    Pipe rhs = new Each( pipe.getTails()[1], new SomeFunction() );
+    Pipe lhs = new Each( pipe.getTails()[ 0 ], new SomeFunction() );
+    Pipe rhs = new Each( pipe.getTails()[ 1 ], new SomeFunction() );
     //@extract-end
     }
 
@@ -272,5 +274,29 @@ public class CompiledExamples
     Pipe merge = new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
     //@extract-end
     }
+
+  public void compileDebug()
+    {
+    Tap source = null;
+    Tap sink = null;
+
+    //@extract-start flow-debug
+    Pipe assembly = new Pipe( "assembly" );
+
+    // ...
+    assembly = new Each( assembly, DebugLevel.VERBOSE, new Debug() );
+    // ...
+
+    Properties properties = new Properties();
+
+    // tell the planner remove all Debug operations
+    FlowConnector.setDebugLevel( properties, DebugLevel.NONE );
+    // ...
+    FlowConnector flowConnector = new FlowConnector( properties );
+
+    Flow flow = flowConnector.connect( "debug",  source, sink, assembly );
+    //@extract-end
+    }
+
 
   }

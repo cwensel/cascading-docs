@@ -452,7 +452,8 @@
       </section>
 
       <section>
-        <title>Each and Every Pipes</title>
+        <title xreflabel="Each and Every Pipes" xml:id="each-every">Each and
+        Every Pipes</title>
 
         <para>The <classname>Each</classname> and <classname>Every</classname>
         pipe types are the only pipes that can be used to apply Operations to
@@ -496,12 +497,15 @@
           </imageobject>
         </mediaobject>
 
-        <para>The argument selector selects values from the input Tuple to be
-        passed to the Operation as argument values. The output selector
+        <para>The "argument selector" selects values from the input Tuple to
+        be passed to the Operation as argument values. Most Operations declare
+        result fields, "declared fields" in the diagram. The "output selector"
         selects the output Tuple from an "appended" version of the input Tuple
-        and the Operation result Tuple. The output Tuple becomes the input
-        Tuple to the next pipe in the pipe assembly. If a
-        <classname>Function</classname> emits more than one Tuple, this
+        and the Operation result Tuple. This new output Tuple becomes the
+        input Tuple to the next pipe in the pipe assembly. </para>
+
+        <para>Note that if a <classname>Function</classname> or
+        <classname>Aggregator</classname> emits more than one Tuple, this
         process will be repeated for each result Tuple against the original
         input Tuple, depending on the output selector, input Tuple values
         could be duplicated across each output Tuple.</para>
@@ -1079,8 +1083,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               <para>The <classname>cascading.tuple.Fields.RESULTS</classname>
               constant set is used to represent the field names of the current
               Operations return values. This Fields set may only be used as an
-              output selector on a Pipe. It effectively replaces in the input
-              Tuple with the Operation result Tuple.</para>
+              output selector on a Pipe where it replaces in the input Tuple
+              with the Operation result Tuple in the stream.</para>
             </listitem>
           </varlistentry>
 
@@ -1089,7 +1093,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
             <listitem>
               <para>The <classname>cascading.tuple.Fields.REPLACE</classname>
-              constant is used as an output selector to inline replace values
+              constant is used as an output selector to inline-replace values
               in the incoming Tuple with the results of an Operation. This is
               a convenience Fields set that allows subsequent Operations to
               'step' on the value with a given field name. The current
@@ -1157,13 +1161,17 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               constant is used when Fields must be declared, but how many and
               their names is unknown. This allows for arbitrarily length
               Tuples from an input source or some Operation. Use this Fields
-              set with caution.</para>
+              set with caution. </para>
             </listitem>
           </varlistentry>
         </variablelist></para>
 
       <para>Below is a reference chart showing common ways to merge input and
-      result fields for the desired output fields.</para>
+      result fields for the desired output fields. See the section on <xref
+      linkend="each-every" /> for details on the different columns and their
+      relationships to the <classname>Each</classname> and
+      <classname>Every</classname> Pipes and Functions, Aggregators, and
+      Buffers.</para>
 
       <mediaobject>
         <imageobject role="fo">
@@ -2353,15 +2361,24 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
-      <title>Debug Function</title>
+      <title xreflabel="Debug Function" xml:id="debug-function">Debug
+      Function</title>
 
       <para>The <classname>cascading.operation.Debug</classname> function is a
       utility <classname>Function</classname> (actually, its a
       <classname>Filter</classname>) that will print the current argument
-      Tuple to either <code>stdout</code> or <code>stderr</code>.</para>
+      Tuple to either <code>stdout</code> or <code>stderr</code>. Used with
+      the <classname>DebugLevel</classname> enum values
+      <classname>NONE</classname>, <classname>DEFAULT</classname>, or
+      <classname>VERBOSE</classname>, different debug levels can be embedded
+      in a pipe assembly.</para>
 
-      <para>It is only intended to be used during development to help debug a
-      difficult pipe assembly.</para>
+      <para>Below we insert a <classname>Debug</classname> operation at the
+      <classname>VERBOSE</classname> level, but configure the planner to
+      remove all <classname>Debug</classname> operations from the resulting
+      <classname>Flow</classname>.</para>
+
+      <xi:include href="flow-debug.xml" />
     </section>
 
     <section>
@@ -3031,6 +3048,20 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
     </section>
 
     <section>
+      <title>Flow Granularity</title>
+
+      <para>Even though having one large <classname>Flow</classname> may
+      result in a slightly more efficient execution plan, it is much more
+      modular and flexible to give smaller Flows well defined responsibilities
+      and to hand all the dependent Flow instances to a
+      <classname>Cascade</classname> for execution as a single unit. Using the
+      <classname>TextDelimited</classname> <classname>Scheme</classname>
+      between <classname>Flow</classname> instances also provides a means to
+      hand intermediate data off to other systems for reporting or QA with
+      minimal penalty while remaining compatible with other tools.</para>
+    </section>
+
+    <section>
       <title>SubAssemblies, not Factories</title>
 
       <para>When developing your applications, use
@@ -3087,7 +3118,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       message given by <classname>PlannerException</classname> is vague, use
       the method <code>PlannerException.writeDOT()</code> to export a text
       representation of the internal pipe assembly. DOT files can be opened by
-      GraphViz and OmnitGraffle. These plans are only partial, but you will be
+      GraphViz and OmniGraffle. These plans are only partial, but you will be
       able to see where the Cascading planner failed.</para>
 
       <para>Also note you can create a DOT file from a
@@ -3102,7 +3133,41 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       largest of the streams in the left most argument to the CoGroup. Joining
       multiple streams requires some accumulation of values before the join
       operator can begin, but the left most stream will not be accumulated.
-      This should improve the performance of most joins. </para>
+      This should improve the performance of most joins.</para>
+    </section>
+
+    <section>
+      <title>Debuging Streams</title>
+
+      <para>When creating complex assemblies it is safe to embed
+      <classname>Debug</classname> operations (see <xref
+      linkend="debug-function" />) at appropriate debug levels where
+      appropriate. Use the planner to remove them at runtime for production
+      and staging runs to prevent them from using unnecessary
+      resources.</para>
+    </section>
+
+    <section>
+      <title>Handling Good and Bad Data</title>
+
+      <para>It is very common when processing raw data streams to encounter
+      data that is corrupt or malformed in some way. This may be because bad
+      content was fetched off the web via a crawler/fetcher upstream. Or a bug
+      leaked into a browser widget that sends user behavior information back
+      for analysis. Whatever the use-case, there is likely a set of rules that
+      govern when to identify and choose to keep or discard a questionable
+      record.</para>
+
+      <para>It is tempting to simiply throw an exception and have a Trap
+      capture the offending <classname>Tuple</classname>, but Traps were not
+      designed as a filtering mechanism, and subsequently much valuable
+      information would be lost.</para>
+
+      <para>Instead create a <classname>SubAssembly</classname> that applies
+      rules to the stream by setting a binary field that marks the tuple as
+      good or bad. After all the rules are applied, split the stream based on
+      the value of the good/bad boolean value. Optionally, set a reason field
+      as to why the Tuple was marked bad. </para>
     </section>
   </chapter>
 
