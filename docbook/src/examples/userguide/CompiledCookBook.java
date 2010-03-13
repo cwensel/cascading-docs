@@ -51,6 +51,8 @@ public class CompiledCookBook
 
     // call copy constructor
     Tuple copy = new Tuple( original );
+
+    assert copy.get( 0 ).equals( "john" );
     //@extract-end
     }
 
@@ -59,6 +61,8 @@ public class CompiledCookBook
     //@extract-start cookbook-nest
     Tuple parent = new Tuple();
     parent.add( new Tuple( "john", "doe" ) );
+
+    assert ( (Tuple) parent.get( 0 ) ).get( 0 ).equals( "john" );
     //@extract-end
     }
 
@@ -100,7 +104,8 @@ public class CompiledCookBook
 
     //@extract-start cookbook-discardfield
     // incoming -> "keepField", "dropField"
-    pipe = new Each( pipe, new Fields( "keepField" ), new Identity(), Fields.RESULTS );
+    pipe = new Each( pipe, new Fields( "keepField" ), new Identity(),
+      Fields.RESULTS );
     // outgoing -> "keepField"
     //@extract-end
     }
@@ -135,7 +140,8 @@ public class CompiledCookBook
 
     //@extract-start cookbook-insertvalue
     Fields fields = new Fields( "constant1", "constant2" );
-    pipe = new Each( pipe, new Insert( fields, "value1", "value2" ), Fields.ALL );
+    pipe = new Each( pipe, new Insert( fields, "value1", "value2" ),
+      Fields.ALL );
     //@extract-end
     }
 
@@ -144,8 +150,10 @@ public class CompiledCookBook
     Pipe pipe = new Pipe( "head" );
 
     //@extract-start cookbook-parsedate
-    // convert string date/time field to a long milliseconds "timestamp" value
-    DateParser parser = new DateParser( new Fields( "ts" ), "yyyy:MM:dd:HH:mm:ss.SSS" );
+    // convert string date/time field to a long
+    // milliseconds "timestamp" value
+    String format = "yyyy:MM:dd:HH:mm:ss.SSS";
+    DateParser parser = new DateParser( new Fields( "ts" ), format );
     pipe = new Each( pipe, new Fields( "datetime" ), parser, Fields.ALL );
     //@extract-end
     }
@@ -156,8 +164,10 @@ public class CompiledCookBook
 
     //@extract-start cookbook-formatdate
     // convert a long milliseconds "timestamp" value to a string
-    DateFormatter timeFormatter = new DateFormatter( new Fields( "datetime" ), "HH:mm:ss.SSS" );
-    pipe = new Each( pipe, new Fields( "ts" ), timeFormatter, Fields.ALL );
+    String format = "HH:mm:ss.SSS";
+    DateFormatter formatter = new DateFormatter( new Fields( "datetime" ),
+      format );
+    pipe = new Each( pipe, new Fields( "ts" ), formatter, Fields.ALL );
     //@extract-end
     }
 
@@ -185,7 +195,8 @@ public class CompiledCookBook
     // group on all unique 'ip' values
     pipe = new GroupBy( pipe, new Fields( "ip" ) );
     // only take one 'ip' tuple in the group
-    pipe = new Every( pipe, new Fields( "ip" ), new First(), Fields.RESULTS );
+    pipe = new Every( pipe, new Fields( "ip" ), new First(),
+      Fields.RESULTS );
     //@extract-end
     }
 
@@ -197,9 +208,10 @@ public class CompiledCookBook
 
     //@extract-start cookbook-distinctorder
     // group on all unique 'ip' values
-    // secondary sort on 'datetime', whose natural order is in ascending order
+    // secondary sort on 'datetime', natural order is in ascending order
     pipe = new GroupBy( pipe, new Fields( "ip" ), new Fields( "datetime" ) );
-    // take the first 'ip' tuple in the group which has the oldest 'datetime' value
+    // take the first 'ip' tuple in the group which has the
+    // oldest 'datetime' value
     pipe = new Every( pipe, Fields.ALL, new First(), Fields.RESULTS );
     //@extract-end
     }
@@ -211,7 +223,7 @@ public class CompiledCookBook
     //@extract-start cookbook-passproperties
     // set property on Flow
     Properties properties = new Properties();
-    properties.put( "key", "value");
+    properties.put( "key", "value" );
     FlowConnector flowConnector = new FlowConnector( properties );
     // ...
 
