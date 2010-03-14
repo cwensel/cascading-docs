@@ -1,44 +1,35 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
  *
- * Project and contact information: http://www.cascading.org/
- *
- * This file is part of the Cascading project.
- *
- * Cascading is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Cascading is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
+ * Project and contact information: http://www.concurrentinc.com/
  */
 
 package userguide;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import cascading.cascade.Cascade;
+import cascading.cascade.CascadeConnector;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
 import cascading.operation.Debug;
 import cascading.operation.DebugLevel;
-import cascading.pipe.*;
+import cascading.pipe.CoGroup;
+import cascading.pipe.Each;
+import cascading.pipe.Every;
+import cascading.pipe.GroupBy;
+import cascading.pipe.Pipe;
+import cascading.pipe.SubAssembly;
 import cascading.pipe.cogroup.InnerJoin;
+import cascading.scheme.TextDelimited;
 import cascading.scheme.TextLine;
 import cascading.tap.Hfs;
-import cascading.tap.Tap;
 import cascading.tap.SinkMode;
+import cascading.tap.Tap;
 import cascading.tap.TemplateTap;
 import cascading.tuple.Fields;
-import cascading.cascade.CascadeConnector;
-import cascading.cascade.Cascade;
 
 /**
  *
@@ -127,7 +118,8 @@ public class CompiledExamples
     String path = "some/path";
 
     //@extract-start template-tap
-    Hfs tap = new Hfs( new TextLine( new Fields( "year", "month", "entry" ) ), path );
+    TextDelimited scheme = new TextDelimited( new Fields( "year", "month", "entry" ), "\t" );
+    Hfs tap = new Hfs( scheme, path );
 
     String template = "%s-%s"; // dirs named "year-month"
     Tap months = new TemplateTap( tap, template, SinkMode.REPLACE );
@@ -294,7 +286,7 @@ public class CompiledExamples
     // ...
     FlowConnector flowConnector = new FlowConnector( properties );
 
-    Flow flow = flowConnector.connect( "debug",  source, sink, assembly );
+    Flow flow = flowConnector.connect( "debug", source, sink, assembly );
     //@extract-end
     }
 
