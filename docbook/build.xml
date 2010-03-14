@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
- Licensed to the Apache Software Foundation (ASF) under one
- or more contributor license agreements.  See the NOTICE file
- distributed with this work for additional information
- regarding copyright ownership.  The ASF licenses this file
- to you under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance
- with the License.  You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing,
- software distributed under the License is distributed on an
- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- KIND, either express or implied.  See the License for the
- specific language governing permissions and limitations
- under the License.
--->
+  ~ Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+  ~
+  ~ Project and contact information: http://www.concurrentinc.com/
+  -->
 
 <project name="dbf-docbook" default="all" basedir=".">
 
@@ -48,26 +35,15 @@
 
   <!-- assumes Cascading shares the same parent directory, change if necessary -->
   <property name="cascading.home" location="${basedir}/../cascading"/>
-  <property name="build.number" value="dev"/>
-  <property file="${cascading.home}/version.properties"/>
-  <property file="${cascading.home}/build.properties"/>
   <!-- this grabs the current hadoop.home -->
-  <property name="cascading.release.version" value="x.y.z"/>
-  <property name="cascading.filename.core" value="cascading-core-${cascading.release.version}-${build.number}.jar"/>
-  <property name="cascading.filename.xml" value="cascading-xml-${cascading.release.version}-${build.number}.jar"/>
-  <property name="cascading.filename.test" value="cascading-test-${cascading.release.version}-${build.number}.jar"/>
   <property name="cascading.libs" value="${cascading.home}/lib"/>
   <property name="cascading.libs.core" value="${cascading.libs}"/>
   <property name="cascading.libs.xml" value="${cascading.libs}/xml"/>
   <property name="cascading.libs.test" value="${cascading.libs}/build"/>
 
-  <condition property="cascading.path" value="${cascading.home}/" else="${cascading.home}/build">
-    <available file="${cascading.home}/${cascading.filename.core}"/>
+  <condition property="cascading.path" value="${cascading.home}/build" else="${cascading.home}">
+    <available file="${cascading.home}/build/"/>
   </condition>
-
-  <property name="cascading.lib.core" value="${cascading.path}/${cascading.filename.core}"/>
-  <property name="cascading.lib.xml" value="${cascading.path}/${cascading.filename.xml}"/>
-  <property name="cascading.lib.test" value="${cascading.path}/${cascading.filename.test}"/>
 
   <!-- these are optional, only used if you uncomment the project.class.path filesets below -->
   <property name="hadoop.home" location="${basedir}/../hadoop"/>
@@ -75,9 +51,10 @@
 
   <path id="cascading.class.path">
     <pathelement location="${build.examples.dir}"/>
-    <pathelement location="${cascading.lib.core}"/>
-    <pathelement location="${cascading.lib.xml}"/>
-    <pathelement location="${cascading.lib.test}"/>
+
+    <fileset dir="${cascading.path}">
+      <include name="cascading-*-*.jar"/>
+    </fileset>
 
     <fileset dir="${cascading.libs.core}">
       <include name="*.jar"/>
@@ -139,20 +116,20 @@
           failonerror="true"
           maxmemory="512m">
 
-             <arg value="-scriptSecurityOff"/>
-             <arg value="-d"/>
-             <arg value="${build.images.dir}"/>
-             <arg value="-m"/>
-             <arg value="image/png"/>
-             <arg value="${src.images.dir}/${target.doc}"/>
+      <arg value="-scriptSecurityOff"/>
+      <arg value="-d"/>
+      <arg value="${build.images.dir}"/>
+      <arg value="-m"/>
+      <arg value="image/png"/>
+      <arg value="${src.images.dir}/${target.doc}"/>
 
-             <classpath>
-               <pathelement location="${dbf.basedir}/lib/batik-all-1.7.jar"/>
-               <pathelement location="${dbf.basedir}/lib/xmlgraphics-commons-1.3.1.jar"/>
-               <pathelement location="${dbf.basedir}/lib/xml-apis-1.3.04.jar"/>
-               <pathelement location="${dbf.basedir}/lib/xml-apis-ext-1.3.04.jar"/>
-             </classpath>
-           </java>
+      <classpath>
+        <pathelement location="${dbf.basedir}/lib/batik-all-1.7.jar"/>
+        <pathelement location="${dbf.basedir}/lib/xmlgraphics-commons-1.3.1.jar"/>
+        <pathelement location="${dbf.basedir}/lib/xml-apis-1.3.04.jar"/>
+        <pathelement location="${dbf.basedir}/lib/xml-apis-ext-1.3.04.jar"/>
+      </classpath>
+    </java>
 
   </target>
 
@@ -245,8 +222,10 @@
     </copy>
 
     <!-- copy edit to src tree if newer, then reverse -->
-    <copy preservelastmodified="true" todir="${edit.dir}/${target.doc}" file="${src.docbook.dir}/${target.doc}/${target.doc}.xml"/>
-    <copy preservelastmodified="true" todir="${src.docbook.dir}/${target.doc}" file="${edit.dir}/${target.doc}/${target.doc}.xml"/>
+    <copy preservelastmodified="true" todir="${edit.dir}/${target.doc}"
+          file="${src.docbook.dir}/${target.doc}/${target.doc}.xml"/>
+    <copy preservelastmodified="true" todir="${src.docbook.dir}/${target.doc}"
+          file="${edit.dir}/${target.doc}/${target.doc}.xml"/>
 
   </target>
 
@@ -274,7 +253,7 @@
     <fail message="userguide edits are newer">
       <condition>
         <and>
-        <isset property="edits.newer"/>
+          <isset property="edits.newer"/>
           <not>
             <isset property="orig.newer"/>
           </not>

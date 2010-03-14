@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <!--
+  ~ Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+  ~
+  ~ Project and contact information: http://www.concurrentinc.com/
+  -->
+
+<!--
   $Id: //depot/calku/cascading.org/build.xml#10 $
   $Change: 1410 $
   $DateTime: 2008/07/15 14:24:06 $
@@ -77,7 +83,7 @@
   </target>
 
   <target name="rsync-javadocs" depends="site-javadoc">
-    <echo message="Starting file transfer to ${website.host}"/>
+    <echo message="Starting javadoc transfer to ${website.host}:${website.path}/${cascading.release.major}"/>
     <exec dir="." executable="rsync" failonerror="true">
       <arg value="-r"/>
       <arg value="-v"/>
@@ -91,7 +97,7 @@
   </target>
 
   <target name="rsync-userguide" depends="site-userguide">
-    <echo message="Starting file transfer to ${website.host}"/>
+    <echo message="Starting userguide transfer to ${website.host}:${website.path}/${cascading.release.major}"/>
     <exec dir="." executable="rsync" failonerror="true">
       <arg value="-r"/>
       <arg value="-v"/>
