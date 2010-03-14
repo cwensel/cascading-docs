@@ -3169,10 +3169,38 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       the value of the good/bad boolean value. Optionally, set a reason field
       as to why the Tuple was marked bad.</para>
     </section>
+
+    <section>
+      <title>Maintaining State in Operations</title>
+
+      <para>When creating custom Operations
+      (<classname>Function</classname>,<classname>
+      Filter</classname>,<classname> Aggregator</classname>, or
+      <classname>Buffer</classname>) do not store operation state in class
+      fields. For example, if implementing a custom 'counter'
+      <classname>Aggregator</classname>, do not create a field named 'count'
+      and increment it on every
+      <methodname>Aggregator.aggregate()</methodname> call. There is no
+      guarantee your Operation will be called from a single thread in a JVM,
+      future version of Hadoop could execute the same operation from multiple
+      threads.</para>
+
+      <para>To maintain state across <classname>Operation</classname> calls,
+      create and initialize a "context" object that is maintained by the
+      appropriate <classname>OperationCall</classname>
+      (<classname>FilterCall</classname>, <classname>FunctionCall</classname>,
+      <classname>AggregatorCall</classname>, and
+      <classname>BufferCall</classname>). In the example above, store an
+      Integer 0 in the <classname>AggregatorCall</classname> passed to the
+      <methodname>Aggregator.start()</methodname> method and increment it in
+      the <methodname>Aggregator.aggregate()</methodname> method.</para>
+    </section>
   </chapter>
 
   <chapter>
-    <info><title>CookBook</title></info>
+    <info>
+      <title>CookBook</title>
+    </info>
 
     <para>Some common idioms used in Cascading applications.</para>
 
@@ -3315,6 +3343,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
               <xi:include href="cookbook-passproperties.xml" />
             </listitem>
           </varlistentry>
+
           <varlistentry>
             <term>Bind multiple sources and sinks to a Flow</term>
 
