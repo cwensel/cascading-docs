@@ -222,7 +222,6 @@ public class CompiledExamples
     //@extract-end
     }
 
-
   public void compileGroupByMerge()
     {
     // the "left hand side" assembly head

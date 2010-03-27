@@ -426,7 +426,7 @@
               Fields (and types) are treated as a single stream. This is
               achieved by passing two or more <classname>Pipe</classname>
               instances to a <classname>GroupBy</classname>
-              <classname>Pipe</classname> instance. </para>
+              <classname>Pipe</classname> instance.</para>
             </listitem>
           </varlistentry>
 
@@ -2316,7 +2316,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       <link xlink:href="???">Cascading Modules</link> page for samples.</para>
     </section>
 
-    <section xml:id="custom-types">
+    <section>
       <title>Custom Types and Serialization</title>
 
       <para>The <classname>Tuple</classname> class is a generic container for
@@ -3287,6 +3287,41 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
       Integer 0 in the <classname>AggregatorCall</classname> passed to the
       <methodname>Aggregator.start()</methodname> method and increment it in
       the <methodname>Aggregator.aggregate()</methodname> method.</para>
+    </section>
+
+    <section>
+      <title>Custom Types</title>
+
+      <para>It is generally frowned upon to pass a custom class through a
+      Tuple stream. One one hand this increases coupling of custom Operations
+      to a particular type, and it removes opportunities for reducing the
+      amount of data that passes over the network (or is
+      serialized/deserialized).</para>
+
+      <para>To overcome the first objection, with every custom type with
+      multiple instance fields, attempt to provide Functions that can promote
+      a value from the custom object to a position in a Tuple or demote the
+      Tuple value to a particular field back into the custom type. This allows
+      existing operations (like ExpressionFunction or RegexFilter) to operate
+      on values owned by a custom type. For example, if you have a Person
+      object, have a Function named GetPersonAge that takes Person as an
+      argument and only returns the age as the result. The next operation can
+      then Filter all Persons based on their age. This may seem like more work
+      and less effiicient, but it keeps your application flexible and reduces
+      the amount of duplicate code (the only alternative here is to create a
+      PersonAgeFilter which results in one more thing to test).</para>
+    </section>
+
+    <section>
+      <title>Fields Constants</title>
+
+      <para>Instead of having String field names strewn about, create an
+      Interface that holds a constant value for each field name; <code>public
+      static Fields FIRST_NAME = new Fields( "firstname" );</code></para>
+
+      <para>Using the Fields class instead of String allows for building more
+      complex constants; <code>public static Fields NAME = FIRST_NAME.append(
+      LAST_NAME );</code></para>
     </section>
   </chapter>
 
