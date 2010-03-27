@@ -156,12 +156,12 @@ public class CompiledExamples
 
     join = new Every( join, new SomeAggregator() );
 
-    join = new GroupBy( join );
+    Pipe groupBy = new GroupBy( join );
 
-    join = new Every( join, new SomeAggregator() );
+    groupBy = new Every( groupBy, new SomeAggregator() );
 
     // the tail of the assembly
-    join = new Each( join, new SomeFunction() );
+    groupBy = new Each( groupBy, new SomeFunction() );
 
     Tap lhsSource = new Hfs( new TextLine(), "lhs.txt" );
     Tap rhsSource = new Hfs( new TextLine(), "rhs.txt" );
@@ -173,7 +173,7 @@ public class CompiledExamples
     sources.put( "lhs", lhsSource );
     sources.put( "rhs", rhsSource );
 
-    Flow flow = new FlowConnector().connect( "flow-name", sources, sink, join );
+    Flow flow = new FlowConnector().connect( "flow-name", sources, sink, groupBy );
     //@extract-end
     }
 
@@ -218,7 +218,7 @@ public class CompiledExamples
     Pipe assembly = new Pipe( "assembly" );
 
     //@extract-start simple-groupby
-    Pipe merge = new GroupBy( assembly, new Fields( "group1", "group2" ) );
+    Pipe groupBy = new GroupBy( assembly, new Fields( "group1", "group2" ) );
     //@extract-end
     }
 
@@ -248,7 +248,7 @@ public class CompiledExamples
     //@extract-start simple-cogroup
     Fields lhsFields = new Fields( "fieldA", "fieldB" );
     Fields rhsFields = new Fields( "fieldC", "fieldD" );
-    Pipe merge = new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
+    Pipe join = new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
     //@extract-end
     }
 
@@ -263,7 +263,7 @@ public class CompiledExamples
     //@extract-start duplicate-cogroup
     Fields common = new Fields( "url" );
     Fields declared = new Fields( "url1", "word", "wd_count", "url2", "sentence", "snt_count" );
-    Pipe merge = new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
+    Pipe join = new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
     //@extract-end
     }
 
