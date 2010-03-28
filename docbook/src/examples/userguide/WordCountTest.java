@@ -21,6 +21,9 @@
 
 package userguide;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
 import cascading.operation.Aggregator;
@@ -34,13 +37,10 @@ import cascading.pipe.Pipe;
 import cascading.scheme.Scheme;
 import cascading.scheme.TextLine;
 import cascading.tap.Hfs;
-import cascading.tap.Tap;
 import cascading.tap.SinkMode;
+import cascading.tap.Tap;
 import cascading.tuple.Fields;
 import tools.ExampleTestCase;
-
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  *
@@ -68,8 +68,8 @@ public class WordCountTest extends ExampleTestCase
     Pipe assembly = new Pipe( "wordcount" );
 
     // For each input Tuple
-    // using a regular expression
     // parse out each word into a new Tuple with the field name "word"
+    // regular expressions are optional in Cascading
     String regex = "(?<!\\pL)(?=\\pL)[^ ]*(?<=\\pL)(?!\\pL)";
     Function function = new RegexGenerator( new Fields( "word" ), regex );
     assembly = new Each( assembly, new Fields( "line" ), function );
@@ -88,7 +88,8 @@ public class WordCountTest extends ExampleTestCase
     FlowConnector.setApplicationJarClass( properties, Main.class );
 
     // plan a new Flow from the assembly using the source and sink Taps
-    FlowConnector flowConnector = new FlowConnector();
+    // with the above properties
+    FlowConnector flowConnector = new FlowConnector( properties );
     Flow flow = flowConnector.connect( "word-count", source, sink, assembly );
 
     // execute the flow, block until complete
