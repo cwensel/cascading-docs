@@ -6,6 +6,7 @@
 
 package userguide;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -214,11 +215,52 @@ public class CompiledExamples
 
   public void compileGroupBy()
     {
-    // the "left hand side" assembly head
     Pipe assembly = new Pipe( "assembly" );
 
     //@extract-start simple-groupby
     Pipe groupBy = new GroupBy( assembly, new Fields( "group1", "group2" ) );
+    //@extract-end
+    }
+
+  public void compileGroupBySecondarySort()
+    {
+    Pipe assembly = new Pipe( "assembly" );
+
+    //@extract-start simple-groupby-secondary
+    Fields groupFields = new Fields( "group1", "group2" );
+    Fields sortFields = new Fields( "value1", "value2" );
+    Pipe groupBy = new GroupBy( assembly, groupFields, sortFields );
+    //@extract-end
+    }
+
+  public void compileGroupBySecondarySortTime()
+    {
+    Pipe assembly = new Pipe( "assembly" );
+
+    //@extract-start simple-groupby-secondary-time
+    Fields groupFields = new Fields( "year", "month", "day" );
+    Fields sortFields = new Fields( "hour", "minute", "second" );
+
+    sortFields.setComparators(
+      Collections.reverseOrder(),   // hour
+      Collections.reverseOrder(),   // minute
+      Collections.reverseOrder() ); // second
+
+    Pipe groupBy = new GroupBy( assembly, groupFields, sortFields );
+    //@extract-end
+    }
+
+  public void compileGroupBySecondarySortReverse()
+    {
+    Pipe assembly = new Pipe( "assembly" );
+
+    //@extract-start simple-groupby-secondary-comparator
+    Fields groupFields = new Fields( "group1", "group2" );
+    Fields sortFields = new Fields( "value1", "value2" );
+
+    sortFields.setComparator( "value1", Collections.reverseOrder() );
+
+    Pipe groupBy = new GroupBy( assembly, groupFields, sortFields );
     //@extract-end
     }
 
