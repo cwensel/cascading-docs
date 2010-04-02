@@ -2794,7 +2794,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
             <listitem>
               <para>The
-              <classname>cascading.operation.expressionExpressionFunction</classname>
+              <classname>cascading.operation.expression.ExpressionFunction</classname>
               function dynamically resolves a given expression using argument
               Tuple values as inputs to the fields specified in the
               expression.</para>
@@ -2813,7 +2813,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data sets, we
 
             <listitem>
               <para>The
-              <classname>cascading.operation.expressionExpressionFilter</classname>
+              <classname>cascading.operation.expression.ExpressionFilter</classname>
               filter dynamically resolves a given expression using argument
               Tuple values as inputs to the fields specified in the
               expression. Any Tuple that returns true for the given expression
