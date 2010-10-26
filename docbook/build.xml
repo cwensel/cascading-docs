@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+  ~ Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
   ~
   ~ Project and contact information: http://www.concurrentinc.com/
   -->
@@ -39,7 +39,7 @@
   <property name="cascading.libs" value="${cascading.home}/lib"/>
   <property name="cascading.libs.core" value="${cascading.libs}"/>
   <property name="cascading.libs.xml" value="${cascading.libs}/xml"/>
-  <property name="cascading.libs.test" value="${cascading.libs}/build"/>
+  <property name="cascading.libs.test" value="${cascading.libs}/test"/>
 
   <condition property="cascading.path" value="${cascading.home}/build" else="${cascading.home}">
     <available file="${cascading.home}/build/"/>
@@ -86,9 +86,9 @@
       <exclude name="**/junit*"/>
     </fileset>
 
-    <fileset dir="${hadoop.home}/lib/jetty-ext">
-      <include name="*.jar"/>
-    </fileset>
+    <!--<fileset dir="${hadoop.home}/lib/jetty-ext">-->
+    <!--<include name="*.jar"/>-->
+    <!--</fileset>-->
   </path>
 
   <property name="test.showoutput" value="false"/>

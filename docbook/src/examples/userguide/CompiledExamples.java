@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -23,6 +23,9 @@ import cascading.pipe.Every;
 import cascading.pipe.GroupBy;
 import cascading.pipe.Pipe;
 import cascading.pipe.SubAssembly;
+import cascading.pipe.assembly.AggregateBy;
+import cascading.pipe.assembly.CountBy;
+import cascading.pipe.assembly.SumBy;
 import cascading.pipe.cogroup.InnerJoin;
 import cascading.scheme.TextDelimited;
 import cascading.scheme.TextLine;
@@ -331,5 +334,36 @@ public class CompiledExamples
     //@extract-end
     }
 
+  public void partialSumBy()
+    {
+    //@extract-start partials-sumby
+    Pipe assembly = new Pipe( "assembly" );
 
+    // ...
+    Fields groupingFields = new Fields( "date" );
+    Fields valueField = new Fields( "size" );
+    Fields sumField = new Fields( "total-size" );
+    assembly = new SumBy( assembly, groupingFields, valueField, sumField, long.class );
+    //@extract-end
+    }
+
+  public void partialCompose()
+    {
+    //@extract-start partials-compose
+    Pipe assembly = new Pipe( "assembly" );
+
+    // ...
+    Fields groupingFields = new Fields( "date" );
+
+    // note we do not pass the parent assembly Pipe in
+    Fields valueField = new Fields( "size" );
+    Fields sumField = new Fields( "total-size" );
+    SumBy sumBy = new SumBy( valueField, sumField, long.class );
+
+    Fields countField = new Fields( "num-events" );
+    CountBy countBy = new CountBy( countField );
+
+    assembly = new AggregateBy( assembly, groupingFields, sumBy, countBy );
+    //@extract-end
+    }
   }
