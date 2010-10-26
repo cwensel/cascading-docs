@@ -5,6 +5,7 @@
   ~
   ~ Project and contact information: http://www.concurrentinc.com/
   -->
+
 <book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -155,7 +156,7 @@
       complexity.</para>
 
       <para>Apache Hadoop is an Open Source Apache project and is freely
-      available. It can be downloaded from here the Hadoop website,<link
+      available. It can be downloaded from here the Hadoop website, <link
       xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
     </section>
   </chapter>
@@ -817,7 +818,7 @@
         <para>Above we see all supported Joiner types.</para>
 
         <para><programlisting>LHS = [0,a] [1,b] [2,c]
-          RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple data
+          RHS = [0,A] [2,C] [3,D]</programlisting> Using the above simple data
         sets, we will define each join type where the values are joined on the
         first position, a numeric value. Note when Cascading joins Tuples, the
         resulting Tuple will contain all the incoming values. The duplicate
@@ -1346,7 +1347,7 @@
       created and it makes sense to encapsulate it in a Flow class so that it
       may participate in a Cascade and be scheduled with other Flow instances.
       Alternatively, via the <link
-      xlink:href="http://github.com/cwensel/riffle">Riffle </link>
+      xlink:href="http://github.com/cwensel/riffle">Riffle</link>
       annotations, third party applications can participate in a Cascade, or
       complex algorithms that result in iterative Flow executions can be
       encapsulated as a single Flow. All patterns are covered here.</para>
@@ -1493,7 +1494,8 @@
         <title>Creating Custom Flows</title>
 
         <para>Any custom Class can be treated as a Flow if given the correct
-        Riffle annotations. Riffle is an Apache licensed set of Java
+        <link xlink:href="http://github.com/cwensel/riffle">Riffle</link>
+        annotations. Riffle is an Apache licensed set of Java
         Annotations that identify specific methods on a Class as providing
         specific life-cycle and dependency functionality. See the Riffle
         documentation and examples. To use with Cascading, a Riffle annotated
@@ -1503,7 +1505,7 @@
         instance.</para>
 
         <para>Since many algorithms need to have multiple passes over a given
-        data set, a Riffle annotated Class can be written that internall
+        data set, a Riffle annotated Class can be written that internally
         creates Cascading Flows and executes them until no more passes are
         needed. This is like nesting a Flows and Cascades in a parent Flow
         which in turn can participate in a Cascade.</para>
