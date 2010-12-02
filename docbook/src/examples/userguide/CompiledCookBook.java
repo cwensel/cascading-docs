@@ -31,6 +31,7 @@ import cascading.pipe.GroupBy;
 import cascading.pipe.Pipe;
 import cascading.pipe.SubAssembly;
 import cascading.pipe.assembly.Rename;
+import cascading.pipe.assembly.Unique;
 import cascading.pipe.cogroup.InnerJoin;
 import cascading.scheme.TextLine;
 import cascading.tap.Hfs;
@@ -64,6 +65,26 @@ public class CompiledCookBook
     parent.add( new Tuple( "john", "doe" ) );
 
     assert ( (Tuple) parent.get( 0 ) ).get( 0 ).equals( "john" );
+    //@extract-end
+    }
+
+  public void compileFieldsAppend()
+    {
+    //@extract-start cookbook-fieldsappend
+    Fields first = new Fields( "first" );
+    Fields middle = new Fields( "middle" );
+    Fields last = new Fields( "last" );
+
+    Fields full = first.append( middle ).append( last );
+    //@extract-end
+    }
+
+  public void compileFieldsSubtract()
+    {
+    //@extract-start cookbook-fieldssubtract
+    Fields full = new Fields( "first", "middle", "last" );
+
+    Fields firstLast = full.subtract( new Fields( "middle" ) );
     //@extract-end
     }
 
@@ -193,11 +214,8 @@ public class CompiledCookBook
     // to create a list of unique ip addresses
 
     //@extract-start cookbook-distinctvalue
-    // group on all unique 'ip' values
-    pipe = new GroupBy( pipe, new Fields( "ip" ) );
-    // only take one 'ip' tuple in the group
-    pipe = new Every( pipe, new Fields( "ip" ), new First(),
-      Fields.RESULTS );
+    // find all unique 'ip' values
+    pipe = new Unique( pipe, new Fields( "ip" ) );
     //@extract-end
     }
 
@@ -273,7 +291,7 @@ public class CompiledCookBook
     tapsArray = Tap.taps( sinkLeft, sinkRight );
 
     // or create the Map manually
-    Map<String, Tap> sinks = new HashMap<String,Tap>();
+    Map<String, Tap> sinks = new HashMap<String, Tap>();
     sinks.put( tailLeft.getName(), sinkLeft );
     sinks.put( tailRight.getName(), sinkRight );
 

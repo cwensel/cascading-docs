@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
   ~
   ~ Project and contact information: http://www.concurrentinc.com/
   -->
-
 <book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -16,7 +14,7 @@
   <info>
     <title>Cascading - User Guide</title>
 
-    <pubdate>October, 2010</pubdate>
+    <pubdate>December, 2010</pubdate>
 
     <copyright>
       <year>2007-2010</year>
@@ -131,8 +129,8 @@
     <section>
       <title>What is Apache Hadoop</title>
 
-      <para>From the Hadoop website, it<quote>is a software platform that lets
-      one easily write and run applications that process vast amounts of
+      <para>From the Hadoop website, it <quote>is a software platform that
+      lets one easily write and run applications that process vast amounts of
       data</quote>.</para>
 
       <para>To be a little more specific, Hadoop provides a storage layer that
@@ -1347,10 +1345,10 @@
       created and it makes sense to encapsulate it in a Flow class so that it
       may participate in a Cascade and be scheduled with other Flow instances.
       Alternatively, via the <link
-      xlink:href="http://github.com/cwensel/riffle">Riffle</link>
-      annotations, third party applications can participate in a Cascade, or
-      complex algorithms that result in iterative Flow executions can be
-      encapsulated as a single Flow. All patterns are covered here.</para>
+      xlink:href="http://github.com/cwensel/riffle">Riffle</link> annotations,
+      third party applications can participate in a Cascade, or complex
+      algorithms that result in iterative Flow executions can be encapsulated
+      as a single Flow. All patterns are covered here.</para>
 
       <section>
         <title>Creating Flows from Pipe Assemblies</title>
@@ -1495,14 +1493,13 @@
 
         <para>Any custom Class can be treated as a Flow if given the correct
         <link xlink:href="http://github.com/cwensel/riffle">Riffle</link>
-        annotations. Riffle is an Apache licensed set of Java
-        Annotations that identify specific methods on a Class as providing
-        specific life-cycle and dependency functionality. See the Riffle
-        documentation and examples. To use with Cascading, a Riffle annotated
-        instance must be passed to the
-        <classname>cascading.flow.FlowProcess</classname> constructor method.
-        The resulting FlowProcess instance can be used like any other Flow
-        instance.</para>
+        annotations. Riffle is an Apache licensed set of Java Annotations that
+        identify specific methods on a Class as providing specific life-cycle
+        and dependency functionality. See the Riffle documentation and
+        examples. To use with Cascading, a Riffle annotated instance must be
+        passed to the <classname>cascading.flow.FlowProcess</classname>
+        constructor method. The resulting FlowProcess instance can be used
+        like any other Flow instance.</para>
 
         <para>Since many algorithms need to have multiple passes over a given
         data set, a Riffle annotated Class can be written that internally
@@ -1728,10 +1725,11 @@
       <para>To use Cascading, it is not strictly necessary to create custom
       Operations. There are a number of Operations in the Cascading library
       that can be combined into very robust applications. In the same way you
-      can chain<command>sed</command>,<command>grep</command>,
-      <command>sort</command>,<command>uniq</command>, <command>awk</command>,
-      etc in Unix, you can chain existing Cascading operations. But developing
-      customs Operations is very simple in Cascading.</para>
+      can chain <command>sed</command>, <command>grep</command>,
+      <command>sort</command>, <command>uniq</command>,
+      <command>awk</command>, etc in Unix, you can chain existing Cascading
+      operations. But developing customs Operations is very simple in
+      Cascading.</para>
 
       <para>There are four kinds of Operations:
       <classname>Function</classname>,<classname>Filter</classname>,
@@ -1762,7 +1760,7 @@
       results is a<classname>Filter</classname>, but the
       <classname>Filter</classname> type has been optimized and can be
       combined with "logical" filter Operations like
-      <classname>Not</classname>,<classname>And</classname>,
+      <classname>Not</classname>, <classname>And</classname>,
       <classname>Or</classname>, etc.</para>
 
       <para>During runtime, Operations actually receive arguments as an
@@ -2447,7 +2445,7 @@
       objects be of type<classname>java.lang.Comparable</classname>).
       Subsequently any primitive value or custom Class can be stored in a
       <classname>Tuple</classname> instance, that is, returned by a
-      <classname>Function</classname>,<classname>Aggregator</classname>, or
+      <classname>Function</classname>,<classname> Aggregator</classname>, or
       <classname>Buffer</classname> as a result value.</para>
 
       <para>But for this to work any Class that isn't a primitive value or a
@@ -2463,7 +2461,7 @@
       <para>During serialization and deserialization of
       <classname>Tuple</classname> instances that contain custom types, the
       Cascading <classname>Tuple</classname> serialization framework will need
-      to store the class name (as a<classname>String</classname>) before
+      to store the class name (as a<classname> String</classname>) before
       serializing the custom object. This can be very space inneficient. To
       overcome this, custom types can add the
       <classname>SerializationToken</classname> Java annotation to the custom
@@ -2477,14 +2475,27 @@
       the amount of storage used.</para>
 
       <para>Serialization tokens may also be stored in the Hadoop config files
-      or set as a property passed to the<classname>FlowConnector</classname>,
-      with the property name<code>cascading.serialization.tokens</code>. The
+      or set as a property passed to the<classname> FlowConnector</classname>,
+      with the property name <code>cascading.serialization.tokens</code>. The
       value of this property is a comma separated list of
       <code>token=classname</code> values.</para>
 
       <para>Note Cascading will natively serialize/deserialize all primitives
       and byte arrays (<code>byte[]</code>). It also uses the token 127 for
       the Hadoop <classname>BytesWritable</classname> class.</para>
+
+      <para>Along with custom serialization, Cascading supports lazy
+      deserialization during Tuple comparison when Hadoop sorts keys during
+      the "shuffle" phase. This is accomplished by implementing the
+      <classname>StreamComparator</classname> interface. See the javadoc for
+      detailed instructions on implementing and the unit tests for examples.
+      </para>
+
+      <para>By default Cascading will lazily deserialize each element in the
+      Tuple during sorting for comparison. But the
+      <classname>StreamComparator</classname> allows for complex/custom Java
+      types to also lazily deserialize fields in the object during
+      comparison.</para>
     </section>
 
     <section>
@@ -3374,7 +3385,7 @@
       expression. When creating field names, be conscious of the fact that if
       they are used in an expression, some characters will cause compilation
       errors. For example, "first-name" is a valid field name for use with
-      Cascading, but this expression,<code>first-name.trim()</code>, will
+      Cascading, but this expression,<code> first-name.trim()</code>, will
       fail.</para>
     </section>
 
@@ -3382,7 +3393,7 @@
       <title>Debugging Planner Failures</title>
 
       <para>Oftentimes the <classname>FlowConnector</classname> will fail when
-      attempting to plan a<classname>Flow</classname>. If the exception
+      attempting to plan a<classname> Flow</classname>. If the exception
       message given by <classname>PlannerException</classname> is vague, use
       the method <code>PlannerException.writeDOT()</code> to export a text
       representation of the internal pipe assembly. DOT files can be opened by
@@ -3533,6 +3544,22 @@
 
             <listitem>
               <xi:include href="cookbook-nest.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Build a longer Fields instance</term>
+
+            <listitem>
+              <xi:include href="cookbook-fieldsappend.xml" />
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Remove a field from a longer Fields instance</term>
+
+            <listitem>
+              <xi:include href="cookbook-fieldssubtract.xml" />
             </listitem>
           </varlistentry>
         </variablelist></para>
