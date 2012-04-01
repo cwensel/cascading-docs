@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
+  ~ Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
   ~
   ~ Project and contact information: http://www.concurrentinc.com/
   -->
 
-<project name="dbf-docbook" default="all" basedir=".">
+<project name="dbf-docbook" default="all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <!-- Load our properties -->
   <property file="../build.properties"/>
@@ -27,68 +27,18 @@
   <property name="build.tools.dir" value="${build.dir}/tools"/>
   <property name="build.examples.dir" value="${build.dir}/examples"/>
 
+  <property name="lib.dir" value="${basedir}/lib"/>
+
   <property name="edit.dir" value="${basedir}/edit"/>
 
   <property name="target.dir" value="${basedir}/target"/>
 
   <property name="docbook.src.dir" value="${build.dir}/docbook"/>
 
-  <!-- assumes Cascading shares the same parent directory, change if necessary -->
-  <property name="cascading.home" location="${basedir}/../cascading"/>
-  <!-- this grabs the current hadoop.home -->
-  <property name="cascading.libs" value="${cascading.home}/lib"/>
-  <property name="cascading.libs.core" value="${cascading.libs}"/>
-  <property name="cascading.libs.xml" value="${cascading.libs}/xml"/>
-  <property name="cascading.libs.test" value="${cascading.libs}/test"/>
-
-  <condition property="cascading.path" value="${cascading.home}/build" else="${cascading.home}">
-    <available file="${cascading.home}/build/"/>
-  </condition>
-
-  <!-- these are optional, only used if you uncomment the project.class.path filesets below -->
-  <property name="hadoop.home" location="${basedir}/../hadoop"/>
-  <property name="hadoop.lib" location="${hadoop.home}/lib"/>
-
   <path id="cascading.class.path">
     <pathelement location="${build.examples.dir}"/>
 
-    <fileset dir="${cascading.path}">
-      <include name="cascading-*-*.jar"/>
-    </fileset>
-
-    <fileset dir="${cascading.libs.core}">
-      <include name="*.jar"/>
-    </fileset>
-
-    <fileset dir="${cascading.libs.xml}">
-      <include name="*.jar"/>
-    </fileset>
-
-    <fileset dir="${cascading.libs.test}">
-      <include name="*.jar"/>
-    </fileset>
-
-    <!--<fileset dir="${lib.dir}">--><!--<include name="*.jar"/>--><!--</fileset>-->
-
-    <!-- only enable if you directly access Hadoop code in your project -->
-    <fileset dir="${hadoop.home}">
-      <include name="hadoop-*-core.jar"/>
-      <include name="hadoop-*-test.jar"/>
-    </fileset>
-
-    <fileset dir="${hadoop.home}/build" erroronmissingdir="false">
-      <include name="hadoop-*-core.jar"/>
-      <include name="hadoop-*-test.jar"/>
-    </fileset>
-
-    <fileset dir="${hadoop.home}/lib">
-      <include name="*.jar"/>
-      <exclude name="**/junit*"/>
-    </fileset>
-
-    <!--<fileset dir="${hadoop.home}/lib/jetty-ext">-->
-    <!--<include name="*.jar"/>-->
-    <!--</fileset>-->
+    <fileset dir="${lib.dir}"/>
   </path>
 
   <property name="test.showoutput" value="false"/>
@@ -145,7 +95,8 @@
     <mkdir dir="${build.examples.dir}"/>
     <mkdir dir="${test.results}"/>
 
-    <javac srcdir="${src.examples.dir}" destdir="${build.examples.dir}" verbose="off" debug="${javac.debug}">
+    <javac srcdir="${src.examples.dir}" destdir="${build.examples.dir}" verbose="off" debug="${javac.debug}"
+           includeantruntime="false">
       <classpath refid="cascading.class.path"/>
     </javac>
 
@@ -290,6 +241,18 @@
       <property name="docbook.file" value="${target.doc}"/>
       <property name="images.src.dir" value="${build.images.dir}"/>
     </ant>
+  </target>
+
+  <target name="retrieve">
+    <mkdir dir="${lib.dir}"/>
+
+    <ivy:settings id="ivy.conjars.settings" url="http://conjars.org/repo/ivysettings.xml"/>
+
+    <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="default"
+                  pattern="${lib.dir}/[artifact]-[revision].[ext]" sync="true"/>
+
+    <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="test"
+                  pattern="${lib.dir}/[artifact]-[revision].[ext]" sync="true"/>
   </target>
 
 </project>

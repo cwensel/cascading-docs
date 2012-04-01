@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -10,34 +10,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import cascading.cascade.Cascade;
-import cascading.cascade.CascadeConnector;
 import cascading.cascade.Cascades;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
 import cascading.flow.FlowProcess;
-import cascading.operation.Debug;
-import cascading.operation.DebugLevel;
+import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.Identity;
 import cascading.operation.Insert;
 import cascading.operation.aggregator.First;
 import cascading.operation.text.DateFormatter;
 import cascading.operation.text.DateParser;
-import cascading.operation.text.FieldFormatter;
-import cascading.pipe.CoGroup;
 import cascading.pipe.Each;
 import cascading.pipe.Every;
 import cascading.pipe.GroupBy;
 import cascading.pipe.Pipe;
-import cascading.pipe.SubAssembly;
 import cascading.pipe.assembly.Rename;
 import cascading.pipe.assembly.Unique;
-import cascading.pipe.cogroup.InnerJoin;
-import cascading.scheme.TextLine;
-import cascading.tap.Hfs;
-import cascading.tap.SinkMode;
+import cascading.scheme.hadoop.SequenceFile;
 import cascading.tap.Tap;
-import cascading.tap.TemplateTap;
+import cascading.tap.hadoop.Hfs;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 
@@ -243,7 +234,7 @@ public class CompiledCookBook
     // set property on Flow
     Properties properties = new Properties();
     properties.put( "key", "value" );
-    FlowConnector flowConnector = new FlowConnector( properties );
+    FlowConnector flowConnector = new HadoopFlowConnector( properties );
     // ...
 
     // get the property from within an Operation (Function, Filter, etc)
@@ -274,8 +265,8 @@ public class CompiledCookBook
     tailRight = new Each( tailRight, new SomeFilter() );
 
     // source taps
-    Tap sourceLeft = new Hfs( new Fields( "some-fields" ), "some/path" );
-    Tap sourceRight = new Hfs( new Fields( "some-fields" ), "some/path" );
+    Tap sourceLeft = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
+    Tap sourceRight = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
 
     Pipe[] pipesArray = Pipe.pipes( headLeft, headRight );
     Tap[] tapsArray = Tap.taps( sourceLeft, sourceRight );
@@ -284,8 +275,8 @@ public class CompiledCookBook
     Map<String, Tap> sources = Cascades.tapsMap( pipesArray, tapsArray );
 
     // sink taps
-    Tap sinkLeft = new Hfs( new Fields( "some-fields" ), "some/path" );
-    Tap sinkRight = new Hfs( new Fields( "some-fields" ), "some/path" );
+    Tap sinkLeft = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
+    Tap sinkRight = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
 
     pipesArray = Pipe.pipes( tailLeft, tailRight );
     tapsArray = Tap.taps( sinkLeft, sinkRight );
@@ -296,7 +287,7 @@ public class CompiledCookBook
     sinks.put( tailRight.getName(), sinkRight );
 
     // set property on Flow
-    FlowConnector flowConnector = new FlowConnector();
+    FlowConnector flowConnector = new HadoopFlowConnector();
 
     Flow flow = flowConnector.connect( "flow-name", sources, sinks, tailLeft, tailRight );
     //@extract-end

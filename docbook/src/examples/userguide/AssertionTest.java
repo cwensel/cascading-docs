@@ -1,22 +1,7 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
- * Project and contact information: http://www.cascading.org/
- *
- * This file is part of the Cascading project.
- *
- * Cascading is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Cascading is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
+ * Project and contact information: http://www.concurrentinc.com/
  */
 
 package userguide;
@@ -24,27 +9,23 @@ package userguide;
 import java.io.IOException;
 import java.util.Properties;
 
-import tools.ExampleTestCase;
-import cascading.pipe.Each;
-import cascading.pipe.Pipe;
-import cascading.tuple.Fields;
-import cascading.tuple.TupleIterator;
-import cascading.tuple.TupleEntryIterator;
-import cascading.operation.regex.RegexParser;
-import cascading.operation.Identity;
-import cascading.operation.Assertion;
-import cascading.operation.AssertionLevel;
-import cascading.operation.assertion.AssertNotNull;
-import cascading.operation.assertion.AssertSizeEquals;
-import cascading.operation.assertion.AssertMatchesAll;
-import cascading.operation.text.DateParser;
-import cascading.operation.text.DateFormatter;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
-import cascading.tap.Tap;
-import cascading.tap.Hfs;
+import cascading.flow.hadoop.HadoopFlowConnector;
+import cascading.operation.AssertionLevel;
+import cascading.operation.assertion.AssertMatchesAll;
+import cascading.operation.assertion.AssertNotNull;
+import cascading.operation.assertion.AssertSizeEquals;
+import cascading.operation.regex.RegexParser;
+import cascading.pipe.Each;
+import cascading.pipe.Pipe;
+import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
-import cascading.scheme.TextLine;
+import cascading.tap.Tap;
+import cascading.tap.hadoop.Hfs;
+import cascading.tuple.Fields;
+import cascading.tuple.TupleEntryIterator;
+import tools.ExampleTestCase;
 
 /**
  *
@@ -77,8 +58,8 @@ public class AssertionTest extends ExampleTestCase
     assembly = new Each( assembly, AssertionLevel.STRICT, equals );
 
     AssertMatchesAll matchesAll = new AssertMatchesAll( "(GET|HEAD|POST)" );
-    assembly = new Each( assembly, new Fields("method"),
-                         AssertionLevel.STRICT, matchesAll );
+    assembly = new Each( assembly, new Fields( "method" ),
+      AssertionLevel.STRICT, matchesAll );
 
     // outgoing -> "ip", "time", "method", "event", "status", "size"
     //@extract-end
@@ -87,7 +68,7 @@ public class AssertionTest extends ExampleTestCase
 
 //    FlowConnector.setAssertionLevel( properties, AssertionLevel.NONE );
 
-    Flow flow = new FlowConnector( properties ).connect( source, sink, assembly );
+    Flow flow = new HadoopFlowConnector( properties ).connect( source, sink, assembly );
 
     flow.complete();
 
@@ -116,7 +97,7 @@ public class AssertionTest extends ExampleTestCase
     // removes all assertions from the Flow
     FlowConnector.setAssertionLevel( properties, AssertionLevel.NONE );
 
-    FlowConnector flowConnector = new FlowConnector( properties );
+    FlowConnector flowConnector = new HadoopFlowConnector( properties );
 
     Flow flow = flowConnector.connect( source, sink, assembly );
     //@extract-end

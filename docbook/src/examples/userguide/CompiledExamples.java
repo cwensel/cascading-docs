@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -15,6 +15,7 @@ import cascading.cascade.Cascade;
 import cascading.cascade.CascadeConnector;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
+import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.Debug;
 import cascading.operation.DebugLevel;
 import cascading.pipe.CoGroup;
@@ -26,13 +27,13 @@ import cascading.pipe.SubAssembly;
 import cascading.pipe.assembly.AggregateBy;
 import cascading.pipe.assembly.CountBy;
 import cascading.pipe.assembly.SumBy;
-import cascading.pipe.cogroup.InnerJoin;
-import cascading.scheme.TextDelimited;
-import cascading.scheme.TextLine;
-import cascading.tap.Hfs;
+import cascading.pipe.joiner.InnerJoin;
+import cascading.scheme.hadoop.TextDelimited;
+import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
-import cascading.tap.TemplateTap;
+import cascading.tap.hadoop.Hfs;
+import cascading.tap.hadoop.TemplateTap;
 import cascading.tuple.Fields;
 
 /**
@@ -137,7 +138,7 @@ public class CompiledExamples
     Pipe pipe = null;
 
     //@extract-start simple-flow
-    Flow flow = new FlowConnector().connect( "flow-name", source, sink, pipe );
+    Flow flow = new HadoopFlowConnector().connect( "flow-name", source, sink, pipe );
     //@extract-end
     }
 
@@ -177,7 +178,7 @@ public class CompiledExamples
     sources.put( "lhs", lhsSource );
     sources.put( "rhs", rhsSource );
 
-    Flow flow = new FlowConnector().connect( "flow-name", sources, sink, groupBy );
+    Flow flow = new HadoopFlowConnector().connect( "flow-name", sources, sink, groupBy );
     //@extract-end
     }
 
@@ -212,7 +213,7 @@ public class CompiledExamples
     // or pass in the path to the parent jar
     FlowConnector.setApplicationJarPath( properties, pathToJar );
 
-    FlowConnector flowConnector = new FlowConnector( properties );
+    FlowConnector flowConnector = new HadoopFlowConnector( properties );
     //@extract-end
     }
 
@@ -328,7 +329,7 @@ public class CompiledExamples
     // tell the planner remove all Debug operations
     FlowConnector.setDebugLevel( properties, DebugLevel.NONE );
     // ...
-    FlowConnector flowConnector = new FlowConnector( properties );
+    FlowConnector flowConnector = new HadoopFlowConnector( properties );
 
     Flow flow = flowConnector.connect( "debug", source, sink, assembly );
     //@extract-end
