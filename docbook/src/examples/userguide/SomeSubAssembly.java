@@ -1,32 +1,17 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
- * Project and contact information: http://www.cascading.org/
- *
- * This file is part of the Cascading project.
- *
- * Cascading is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Cascading is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
+ * Project and contact information: http://www.concurrentinc.com/
  */
 
 package userguide;
 
-import cascading.pipe.SubAssembly;
-import cascading.pipe.Each;
-import cascading.pipe.Pipe;
 import cascading.pipe.CoGroup;
+import cascading.pipe.Each;
 import cascading.pipe.Every;
 import cascading.pipe.GroupBy;
+import cascading.pipe.Pipe;
+import cascading.pipe.SubAssembly;
 
 //@extract-start custom-subassembly
 public class SomeSubAssembly extends SubAssembly
@@ -37,7 +22,7 @@ public class SomeSubAssembly extends SubAssembly
     lhs = new Each( lhs, new SomeFunction() );
     lhs = new Each( lhs, new SomeFilter() );
 
-    // continue assembling against lhs
+    // continue assembling against rhs
     rhs = new Each( rhs, new SomeFunction() );
 
     // joins the lhs and rhs

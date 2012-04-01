@@ -326,7 +326,7 @@ public class CompiledExamples
 
     Properties properties = new Properties();
 
-    // tell the planner remove all Debug operations
+    // tell the planner to remove all Debug operations
     FlowConnector.setDebugLevel( properties, DebugLevel.NONE );
     // ...
     FlowConnector flowConnector = new HadoopFlowConnector( properties );
