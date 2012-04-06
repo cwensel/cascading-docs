@@ -7,8 +7,8 @@
 <book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude"
-      xmlns:ns5="http://www.w3.org/1999/xhtml"
-      xmlns:ns4="http://www.w3.org/1998/Math/MathML"
+      xmlns:ns5="http://www.w3.org/1998/Math/MathML"
+      xmlns:ns4="http://www.w3.org/1999/xhtml"
       xmlns:ns3="http://www.w3.org/2000/svg"
       xmlns:ns="http://docbook.org/ns/docbook">
   <info>
@@ -856,12 +856,11 @@
         default.</para>
 
         <para>Note that the <classname>Every</classname> pipe associates
-        Aggregator results with the current group Tuple. For example, if you
-        are grouping on the field "department" and counting the number of
-        "names" grouped by that department, the resulting output Fields will
-        be ["department","num_employees"]. This is true for both
-        <classname>Aggregator</classname>, seen above, and
-        <classname>Buffer</classname>.</para>
+        Aggregator results with the current group Tuple (they unique keys
+        currently being grouped on). For example, if you are grouping on the
+        field "department" and counting the number of "names" grouped by that
+        department, the resulting output Fields will be
+        ["department","num_employees"].</para>
 
         <para>If you are also adding up the salaries associated with each
         "name" in each "department", the output Fields will be
@@ -882,14 +881,20 @@
         </mediaobject>
 
         <para>When the <classname>Every</classname> pipe is used with a
-        <classname>Buffer</classname>, the behavior is slightly different.
-        <?oxy_comment_start author="Jim" timestamp="20120402T204250-0700" comment="I&apos;m not confident of what this means."?>Instead
-        of being associated with the current grouping Tuple, the Buffer
-        results are associated with the current values
-        Tuple.<?oxy_comment_end ?> This is analogous to how an
-        <classname>Each</classname> pipe works with a
+        <classname>Buffer</classname>, instead of an
+        <classname>Aggregator</classname>, the behavior is different.</para>
+
+        <para>Instead of being associated with the current grouping Tuple, the
+        Buffer results are associated with the current values Tuple. This is
+        analogous to how an <classname>Each</classname> pipe works with a
         <classname>Function</classname>. This approach may seem slightly
-        unintuitive, but provides much more flexibility.</para>
+        unintuitive, but provides much more flexibility. To put it another
+        way, the results of the Buffer are not appended to the current keys
+        being grouped on. It is up to the buffer to emit them if they are
+        relevant. It is also possible for a Buffer to emit more than one
+        result Tuple per unique grouping. That is, a Buffer may or may not
+        emulate an Aggregator, where an Aggregator is just a special optmized
+        case of a Buffer.</para>
 
         <para>For more information on how operations process fields, see <xref
         linkend="field-processing"/>.</para>
@@ -931,7 +936,7 @@
           of tuples from two or more streams into a stream of hybrid tuples
           based on matching field values. It is analogous to a SQL join, and
           can be an inner, outer, left, or right join. With a join, the tuples
-          in the different source streams do typically not contain the same
+          in the different source streams do not typically contain the same
           field lists, but must have at least one field in common (for the
           purpose of matching). One sample use case would be to combine the
           values from a customer file, a sales order file, and a shipped
@@ -1005,12 +1010,16 @@
 
             <para>It might seem preferable for Cascading to automatically
             recognize the duplication and simply merge the identically-named
-            fields, saving effort for the developer. However, the internal
-            implementation relies on field position, not field names, when
-            reading tuples; the field names are a device for the developer.
-            This approach is beneficial in terms of execution speed,
-            readability, and abstraction of subassemblies from specific field
-            names.</para>
+            fields, saving effort for the developer. However, during an outer
+            type join, one field (or set of fields used for the join) for a
+            given join side may be <code>null</code>. Discarding one of the
+            duplicate fields would lose this information.</para>
+
+            <para>Further, the internal implementation relies on field
+            position, not field names, when reading tuples; the field names
+            are a device for the developer. This approach is beneficial in
+            terms of execution speed, readability, and abstraction of
+            subassemblies from specific field names.</para>
           </section>
 
           <section>
@@ -1298,10 +1307,10 @@
       some instance of <classname>cascading.tap.tap</classname>. A tap
       represents a data resource - such as a file on the local file system, on
       a Hadoop distributed file system, or on Amazon S3. A tap can be read
-      from, which makes it a<emphasis role="italic">source</emphasis>, or
-      written to, which makes it a<emphasis role="italic">sink</emphasis>. Or,
-      more commonly, taps act as both sinks and sources when shared between
-      Flows.</para>
+      from, which makes it a <emphasis role="italic">source</emphasis>, or
+      written to, which makes it a <emphasis role="italic">sink</emphasis>.
+      Or, more commonly, taps act as both sinks and sources when shared
+      between Flows.</para>
 
       <para>Depending on your operating mode (Cascading local mode or Hadoop
       mode), the specific classes you use may vary. Details are provided in
@@ -1312,7 +1321,7 @@
 
         <para>If the Tap is about where the data is and how to access it, the
         Scheme is about what the data is and how to read it. Every Tap must
-        have a Scheme that describes the data. Cascading supports four Scheme
+        have a Scheme that describes the data. Cascading provides four Scheme
         classes:</para>
 
         <variablelist>
@@ -1321,10 +1330,10 @@
 
             <listitem>
               <para>TextLine reads and writes raw text files and returns
-              tuples with two field names by default, "num" (i.e., line
-              number) and "line". These values are inherited from Hadoop. When
-              written to, all Tuple values are converted to Strings delimited
-              with the TAB character (\t).</para>
+              tuples with two field names by default, specfic to the platform
+              used. Either the bytes offset or line number, and the actual
+              line of text. When written to, all Tuple values are converted to
+              Strings delimited with the TAB character (\t).</para>
             </listitem>
           </varlistentry>
 
@@ -1338,7 +1347,8 @@
               values are converted to Strings and joined with the specified
               character delimiter. This Scheme can optionally handle quoted
               values with custom quote characters. Further, TextDelimited can
-              coerce each value to a primitive type.</para>
+              coerce each value to a primitive type when reading a text
+              file.</para>
             </listitem>
           </varlistentry>
 
@@ -1350,7 +1360,8 @@
               is a binary format. When written to or read from, all Tuple
               values are saved in their native binary form. This is the most
               efficient file format - but be aware that the resulting files
-              are binary and can only be read by Hadoop applications.</para>
+              are binary and can only be read by Hadoop applications in Hadoop
+              mode.</para>
             </listitem>
           </varlistentry>
 
@@ -1366,7 +1377,8 @@
               and/or value fields are serialized directly into the sequence
               file. During reading (sourcing), the key and/or value objects
               are deserialized and wrapped in a Cascading Tuple object and
-              passed to the downstream pipe assembly.</para>
+              passed to the downstream pipe assembly. This class is only
+              available in Hadoop mode.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -1374,22 +1386,18 @@
         <para>There's a key difference between the
         <classname>TextLine</classname> and
         <classname>SequenceFile</classname> schemes. With the
-        <classname>SequenceFile</classname> option, data is stored as tuples,
-        which can be read without having to be parsed. But with the
+        <classname>SequenceFile</classname> scheme, data is stored as binary
+        tuples, which can be read without having to be parsed. But with the
         <classname>TextLine</classname> option, Cascading must parse each line
         into a <classname>Tuple</classname> before processing it, causing a
-        performance hit. The resulting tuples are saved in the
-        <classname>SequenceFile</classname> scheme, so future applications can
-        just read the file directly into <classname>Tuple</classname>
-        instances without parsing.</para>
+        performance hit.</para>
 
         <section>
-          <title><?oxy_comment_start author="Jim" timestamp="20120328T005308-0700" comment="Chris - you&apos;ll need to check and expand this info."?>
-          Mode-specific implementation details<?oxy_comment_end ?></title>
+          <title>Mode-specific implementation details</title>
 
           <para>Depending on your operating mode (Cascading local mode or
           Hadoop mode), the classes you use to specify schemes will vary.
-          Mode-specifric details for each standard scheme are shown
+          Mode-specific details for each standard scheme are shown
           below.</para>
 
           <table frame="all">
@@ -1404,16 +1412,15 @@
 
               <tbody>
                 <row>
-                  <entry/>
+                  <entry><emphasis role="bold">Description</emphasis></entry>
 
-                  <entry><emphasis role="bold">Cascading local mode
-                  </emphasis></entry>
+                  <entry><emphasis role="bold">Local mode </emphasis></entry>
 
                   <entry><emphasis role="bold">Hadoop mode</emphasis></entry>
                 </row>
 
                 <row>
-                  <entry><emphasis role="bold">TextLine</emphasis></entry>
+                  <entry>Read lines of text</entry>
 
                   <entry><classname>cascading.scheme.local.TextLine</classname></entry>
 
@@ -1421,8 +1428,7 @@
                 </row>
 
                 <row>
-                  <entry><emphasis role="bold">TextDelimited
-                  </emphasis></entry>
+                  <entry>Read delimited text (CSV, TSV, etc)</entry>
 
                   <entry><classname>cascading.scheme.local.TextDelimited</classname></entry>
 
@@ -1430,18 +1436,18 @@
                 </row>
 
                 <row>
-                  <entry><emphasis role="bold">SequenceFile</emphasis></entry>
+                  <entry>Cascading proprietary efficient binary</entry>
 
-                  <entry><classname>cascading.scheme.hadoop.SequenceFile</classname></entry>
+                  <entry><classname/></entry>
 
                   <entry><classname>cascading.scheme.hadoop.SequenceFile</classname></entry>
                 </row>
 
                 <row>
-                  <entry><emphasis role="bold">WritableSequenceFile
-                  </emphasis></entry>
+                  <entry>External Hadoop application binary (custom
+                  <classname>Writable</classname> type)</entry>
 
-                  <entry><classname>cascading.scheme.hadoop.WritableSequenceFile</classname></entry>
+                  <entry><classname/></entry>
 
                   <entry><classname>cascading.scheme.hadoop.WritableSequenceFile</classname></entry>
                 </row>
@@ -1453,11 +1459,10 @@
         <section>
           <title>Sequence File Compression</title>
 
-          <para>For best performance when operating in Hadoop local or
-          Distributed mode, enable Sequence File Compression in the Hadoop
-          property settings - either block or record-based compression. Refer
-          to the Hadoop documentation for the available properties and
-          compression types.</para>
+          <para>For best performance when operating in Hadoop mode, enable
+          Sequence File Compression in the Hadoop property settings - either
+          block or record-based compression. Refer to the Hadoop documentation
+          for the available properties and compression types.</para>
         </section>
       </section>
 
@@ -1475,32 +1480,16 @@
           <xi:include href="simple-tap.xml"/>
         </example>
 
-        <para>Here are the three most commonly-used tap types:</para>
+        <para>Here are the most commonly-used tap types:</para>
 
         <variablelist>
           <varlistentry>
-            <term>Lfs</term>
+            <term>FileTap</term>
 
             <listitem>
-              <para>The <classname>cascading.tap.Lfs</classname> tap is used
-              to reference local files, i.e., files located on the machine on
-              which your Cascading application is started. Note that even when
-              Hadoop is configured to use a remote cluster, if an Lfs tap is
-              used as either a source or sink in a Flow, Cascading is
-              automatically forced to run in local mode and not on the
-              cluster. <?oxy_comment_start author="Jim" timestamp="20120402T024640-0700" comment="It&apos;d be nice if we could be more clear about this. If this forces the app to run in local mode, how is it able to write anything to the Hadoop distributed file system? This is one of the use cases described in the Overview section, so it&apos;s probably worth explaining."?>This
-              is useful when creating applications to read local files and
-              import them into the Hadoop distributed file
-              system.<?oxy_comment_end ?></para>
-            </listitem>
-          </varlistentry>
-
-          <varlistentry>
-            <term>Dfs</term>
-
-            <listitem>
-              <para>The <classname>cascading.tap.Dfs</classname> tap is used
-              to reference files on the Hadoop distributed file system.</para>
+              <para>The <classname>cascading.tap.local.FileTap</classname> tap
+              is used with Cascading local mode to access files on the local
+              filesystem.</para>
             </listitem>
           </varlistentry>
 
@@ -1508,14 +1497,19 @@
             <term>Hfs</term>
 
             <listitem>
-              <para>The <classname>cascading.tap.Hfs</classname> tap uses the
-              current Hadoop default file system. If Hadoop is configured for
-              "local mode" its default file system is the local file system.
-              If configured for distributed mode, the default file system is
-              typically the Hadoop distributed file system. The Hfs is
-              convenient when writing Cascading applications that may or may
-              not be run on a cluster. Lhs and Dfs subclass the Hfs
-              tap.</para>
+              <para>The <classname>cascading.tap.hadoop.Hfs</classname> tap
+              uses the current Hadoop default file system, in Hadoop mode. If
+              Hadoop is configured for "local mode" its default file system is
+              the local file system. If configured for distributed mode, the
+              default file system is typically the Hadoop distributed file
+              system. The Hfs is convenient when writing Cascading
+              applications that may or may not be run on a cluster.
+              <classname>Lhs</classname> and <classname>Dfs</classname>
+              subclass the <classname>Hfs</classname> tap. Note, specifing a
+              prefix to the URL passed into a new Hfs tap, like
+              "s3://somebucket/path" will force Hadoop to use the S3
+              <classname>FileSystem</classname> implementation to access files
+              in an Amazon S3 bucket.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -1554,7 +1548,7 @@
               <para>The <classname>cascading.tap.Templatetap</classname> is
               used to sink tuples into directory paths based on the values in
               the Tuple. More can be read below in <xref
-              linkend="template-tap"/>.</para>
+              linkend="template-tap"/>. Only available in Hadoop mode.</para>
             </listitem>
           </varlistentry>
 
@@ -1565,76 +1559,88 @@
               <para>The <classname>cascading.tap.GlobHfs</classname> tap
               accepts Hadoop style "file globbing" expression patterns. This
               allows for multiple paths to be used as a single source, where
-              all paths match the given pattern.</para>
+              all paths match the given pattern. Only available in Hadoop
+              mode.</para>
             </listitem>
           </varlistentry>
         </variablelist>
 
         <section>
-          <title><?oxy_comment_start author="Jim" timestamp="20120328T005308-0700" comment="Chris - this is an experiment to see if you can fit the necessary details into a table."?>
-          Mode-specific implementation details<?oxy_comment_end ?></title>
+          <title>Mode-specific implementation details</title>
 
-          <para>Depending on your operating mode (Cascading local, Hadoop
-          mode, or Distributed), the classes you use to specify file systems
-          will vary. Mode-specifric details for each tap type are shown
-          below.</para>
+          <para>Depending on your operating mode, local or Hadoop mode, the
+          classes you use to specify file systems will vary. Mode-specifric
+          details for each tap type are shown below.</para>
 
           <table frame="all">
             <title>Mode-specific details for setting file system</title>
 
-            <tgroup cols="2">
-              <colspec colname="c1" colnum="1" colwidth="1*"/>
+            <tgroup cols="4">
+              <colspec colname="c1" colwidth="1*"/>
 
-              <colspec colname="c2" colnum="2" colwidth="3.4*"/>
+              <colspec/>
+
+              <colspec colname="c2" colwidth="3.4*"/>
 
               <tbody>
                 <row>
-                  <entry><emphasis role="bold">Tap</emphasis></entry>
+                  <entry><emphasis role="bold">Description</emphasis></entry>
 
-                  <entry><emphasis role="bold">Class Details
-                  </emphasis></entry>
+                  <entry><emphasis role="bold">Either mode</emphasis></entry>
+
+                  <entry><emphasis role="bold">Local mode</emphasis></entry>
+
+                  <entry><emphasis role="bold">Hadoop Mode</emphasis></entry>
                 </row>
 
                 <row>
-                  <entry>Cascading local mode</entry>
+                  <entry>File access</entry>
+
+                  <entry/>
+
+                  <entry><classname>cascading.tap.local.FileTap</classname></entry>
+
+                  <entry><classname>cascading.tap.hadoop.Hfs</classname></entry>
+                </row>
+
+                <row>
+                  <entry>Multiple Taps as single source</entry>
+
+                  <entry><classname>cascading.tap.MultiSourceTap</classname></entry>
+
+                  <entry/>
 
                   <entry/>
                 </row>
 
                 <row>
-                  <entry>Hadoop local file system</entry>
+                  <entry>Multiple Taps as single sink</entry>
+
+                  <entry><classname>cascading.tap.MultiSinkTap</classname></entry>
+
+                  <entry/>
 
                   <entry/>
                 </row>
 
                 <row>
-                  <entry>Hadoop distributed file system</entry>
+                  <entry>Bin/Partition data into multiple files</entry>
 
                   <entry/>
+
+                  <entry/>
+
+                  <entry><classname>cascading.tap.hadoop.TemplateTap</classname></entry>
                 </row>
 
                 <row>
-                  <entry>Multiple Source</entry>
+                  <entry>Pattern match mulitiple files/dirs</entry>
 
                   <entry/>
-                </row>
-
-                <row>
-                  <entry>Multiple Sink</entry>
 
                   <entry/>
-                </row>
 
-                <row>
-                  <entry>Tuple-directed file path</entry>
-
-                  <entry/>
-                </row>
-
-                <row>
-                  <entry>Hadoop file globbing</entry>
-
-                  <entry/>
+                  <entry><classname>cascading.tap.hadoop.GlobHfs</classname></entry>
                 </row>
               </tbody>
             </tgroup>
@@ -1652,17 +1658,23 @@
           <xi:include href="simple-replace-tap.xml"/>
         </example></para>
 
-      <para>It's important to understand how Hadoop deals with directories.
-      Hadoop cannot source data from directories with nested sub-directories,
-      and it cannot write to directories that already exist. However, the good
-      news is that you can simply point the <classname>Hfs</classname>
-      <classname>tap</classname> to a directory of data files, and they are
-      all used as input - there's no need to enumerate each individual file
-      into a<classname>MultiSourcetap</classname>.</para>
+      <para>All applications created with Cascading read data from one or more
+      sources, process it, then write data to one or more sinks. This is done
+      via the various <classname>Tap</classname> classes, where each class
+      abstracts different types of back-end systems that store data as files,
+      tables, blobs, or whatever. But to sink data, some systems require that
+      the resource (a file for example) not exist before processing. That is,
+      it must be removed (deleted) before the processing can begin. Other
+      systems my allow for appending or updating of a resource (typical with
+      database tables).</para>
 
-      <para>To deal with the possibility of existing directories, the
-      Hadoop-related taps allow for a <classname>SinkMode</classname> value to
-      be set when constructed. Here are the modes supported:</para>
+      <para>When creating a new <classname>Tap</classname> instance, a
+      <classname>SinkMode</classname> may be provided so that the Tap will
+      know how to handle any existing resources. Note not all Taps support all
+      <classname>SinkMode</classname> values, for example Hadoop does not
+      support appends (update) from a MapReduce job. </para>
+
+      <para>The available SinkModes are:</para>
 
       <variablelist>
         <varlistentry>
@@ -1695,6 +1707,37 @@
           </listitem>
         </varlistentry>
       </variablelist>
+
+      <para>Note that Cascading itself only uses these labels internally to
+      know when to automatically call
+      <methodname>deleteResource()</methodname> on the
+      <classname>Tap</classname> or to leave the Tap alone. It is up the the
+      <classname>Tap</classname> implementation to actually perform a write or
+      update when processing starts. Thus, when
+      <methodname>start()</methodname> or <methodname>complete()</methodname>
+      is called on a <classname>Flow</classname>, any sink
+      <classname>Tap</classname> labeled
+      <classname>SinkMode.REPLACE</classname> will have its
+      <methodname>deleteResource()</methodname> method called. If a
+      <classname>Flow</classname> is in a <classname>Cascade</classname>,
+      <methodname>deleteResource()</methodname> will be called if the
+      <classname>Tap</classname> is set to
+      <classname>SinkMode.KEEP</classname> or
+      <classname>SinkMode.REPLACE</classname> if and only if the sink is stale
+      (older) than the source (newer). This allows a
+      <classname>Cascade</classname> to behave like a "make" or "ant" build
+      file, only running Flows that should be run.</para>
+
+      <para>It's important to understand how Hadoop deals with directories.
+      Hadoop cannot source data from directories with nested sub-directories,
+      and it cannot write to directories that already exist. However, the good
+      news is that you can simply point the <classname>Hfs</classname> tap to
+      a directory of data files, and they are all used as input - there's no
+      need to enumerate each individual file into a
+      <classname>MultiSourcetap</classname>. But for a
+      <classname>Flow</classname> to execute (when not used in a
+      <classname>Cascade</classname> object), all of its sinks must be set to
+      <classname>SinkMode.REPLACE</classname>. </para>
     </section>
 
     <section>
@@ -1792,13 +1835,11 @@
             <term>Fields.VALUES</term>
 
             <listitem>
-              <para><?oxy_comment_start author="Jim" timestamp="20120402T030534-0700" comment="This doesn&apos;t make
-                sense to me or seem to match the Javadoc, which says &quot;all fields used as values for the last
-                grouping&quot;. Not actually sure what that means, either, but it doesn&apos;t seem like the same
-                thing."?>The
-              <classname>cascading.tuple.Fields.VALUES</classname> constant
-              represent all the fields not used as grouping fields in a
-              previous Group.<?oxy_comment_end ?></para>
+              <para>The <classname>cascading.tuple.Fields.VALUES</classname>
+              constant represent all the fields not used as grouping fields in
+              a previous Group. That is, if you have fields "a", "b", and "c",
+              and group on "a", <classname>Fields.VALUES</classname> will
+              resolve to "b" and "c".</para>
             </listitem>
           </varlistentry>
 
@@ -1811,6 +1852,17 @@
               known how many fields or what their names are. This allows for
               processing tuples of arbitrary length from an input source or
               some operation. Use this Fields set with caution.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Fields.NONE</term>
+
+            <listitem>
+              <para>The <classname>cascading.tuple.Fields.NONE</classname>
+              constant is used to specify no fields. Typically used as an
+              argument selector for Operations that do not process any Tuples,
+              like <classname>cascading.operation.Insert</classname>.</para>
             </listitem>
           </varlistentry>
         </variablelist>The chart below shows common ways to merge input and
@@ -1843,7 +1895,8 @@
       <para>When pipe assemblies are bound to source and sink taps, a
       <classname>Flow</classname> is created. Flows are executable in the
       sense that, once they are created, they can be started and will execute
-      on a configured Hadoop cluster.</para>
+      on the configured platform. In the case of Hadoop mode, the Flow will
+      execute on a Hadoop cluster.</para>
 
       <para>A Flow is essentially a data processing workflow that reads data
       from sources, processes the data as defined by the pipe assembly, and
@@ -1853,14 +1906,16 @@
       linkend="cascades"/>).</para>
 
       <para>The most common pattern is to create a Flow from an existing pipe
-      assembly. But there are cases where a MapReduce job has already been
-      created and it makes sense to encapsulate it in a Flow class, so that it
-      may participate in a Cascade and be scheduled with other Flow instances.
+      assembly. But there are cases where a MapReduce job (for Hadoop mode)
+      has already been created and it makes sense to encapsulate it in a Flow
+      class, so that it may participate in a <classname>Cascade</classname>
+      and be scheduled with other <classname>Flow</classname> instances.
       Alternatively, via the <link
       xlink:href="http://github.com/cwensel/riffle">Riffle </link>
-      annotations, third-party applications can participate in a Cascade, and
-      complex algorithms that result in iterative Flow executions can be
-      encapsulated as a single Flow. All patterns are covered here.</para>
+      annotations, third-party applications can participate in a
+      <classname>Cascade</classname>, and complex algorithms that result in
+      iterative Flow executions can be encapsulated as a single Flow. All
+      patterns are covered here.</para>
 
       <section>
         <title>Creating Flows from Pipe Assemblies</title>
@@ -1871,10 +1926,12 @@
           <xi:include href="simple-flow.xml"/>
         </example>
 
-        <para>To create a Flow, it must be planned though the FlowConnector
-        object. The <code>connect()</code> method is used to create new Flow
-        instances based on a set of sink taps, source taps, and a pipe
-        assembly. The example above is quite trivial.</para>
+        <para>To create a Flow, it must be planned though a FlowConnector
+        object, each mode, local and Hadoop have their own connectors. The
+        <code>connect()</code> method is used to create new Flow instances
+        based on a set of sink taps, source taps, and a pipe assembly. The
+        example above is quite trivial and is using the Hadoop mode
+        connector.</para>
 
         <example>
           <title>Binding taps in a Flow</title>
@@ -2097,21 +2154,31 @@
 
       <variablelist>
         <varlistentry>
-          <term>cascading-1.2.x.jar</term>
+          <term>cascading-core-2.0.x.jar</term>
 
           <listitem>
-            <para>This jar contains the relevant Cascading class files and
-            libraries, with a Hadoop-friendly <filename>lib</filename> folder
-            that contains all third-party dependencies.</para>
+            <para>This jar contains the Cascading Core class files. It should
+            be packaged with<filename> lib/*.jar</filename> when using
+            Hadoop.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-core-1.2.x.jar</term>
+          <term>cascading-local-2.0.x.jar</term>
 
           <listitem>
-            <para>This jar contains the Cascading Core class files. It should
-            be packaged with<filename>lib/*.jar</filename>.</para>
+            <para>This jar contains the Cascading local mode class files. Not
+            used with Hadoop.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>cascading-hadoop-2.0.x.jar</term>
+
+          <listitem>
+            <para>This jar contains the Cascading Hadoop specific
+            dependencies.It should be packaged with
+            <filename>lib/*.jar</filename> when using Hadoop.</para>
           </listitem>
         </varlistentry>
 
@@ -2119,8 +2186,9 @@
           <term>cascading-xml-1.2.x.jar</term>
 
           <listitem>
-            <para>This jar contains Cascading XML module class files. It
-            should be packaged with<filename>lib/xml/*.jar</filename>.</para>
+            <para>This jar contains Cascading XML module class files and is
+            optional. It should be packaged with
+            <filename>lib/xml/*.jar</filename> when using Hadoop.</para>
           </listitem>
         </varlistentry>
 
@@ -2140,9 +2208,8 @@
       specified in the Hadoop documentation, running in cluster mode requires
       the creation of a Hadoop job jar that includes the Cascading jars, plus
       any dependent third-party jars, in its <filename>lib</filename>
-      directory. This is true regardless of whether they are Cascading
-      local-mode applications or raw Hadoop MapReduce applications. For more
-      information, see <xref linkend="operating-modes"/>.</para>
+      directory. This is true regardless of whether they are Cascading Hadoop
+      mode applications or raw Hadoop MapReduce applications.</para>
 
       <para>The following Ant snippets can be used in your project to create a
       Hadoop jar for submission on your cluster.</para>
