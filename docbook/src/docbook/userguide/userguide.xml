@@ -7,9 +7,9 @@
 <book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude"
-      xmlns:ns5="http://www.w3.org/2000/svg"
+      xmlns:ns5="http://www.w3.org/1999/xhtml"
       xmlns:ns4="http://www.w3.org/1998/Math/MathML"
-      xmlns:ns3="http://www.w3.org/1999/xhtml"
+      xmlns:ns3="http://www.w3.org/2000/svg"
       xmlns:ns="http://docbook.org/ns/docbook">
   <info>
     <title>Cascading 2 - User Guide</title>
@@ -55,9 +55,9 @@
 
       <para>Cascading is a data processing API and processing query planner
       used for defining, sharing, and executing data-processing workflows on a
-      single computing node or distributed computing cluster. On a single node
-      Cascading "local-mode" can be used to efficiently process local files
-      and test code before being deployed on a cluster. On a distributed
+      single computing node or distributed computing cluster. On a single
+      node, Cascading's "local mode" can be used to efficiently test code and
+      process local files before being deployed on a cluster. On a distributed
       computing cluster using Apache Hadoop platform, Cascading adds an
       abstraction layer over the Hadoop API, greatly simplifying Hadoop
       application development, job creation, and job scheduling.</para>
@@ -82,7 +82,7 @@
         applications that scale linearly across a cluster of computers.</para>
 
         <para><emphasis role="bold">Increasing process complexity in data
-        centers </emphasis> results in one-off data-processing applications
+        centers</emphasis> results in one-off data-processing applications
         sprawling haphazardly onto any available disk space or CPU. Apache
         Hadoop solves the problem with its Global Namespace file system, which
         provides a single reliable storage framework. In this scenario,
@@ -93,12 +93,12 @@
         to extract data from the Hadoop file system.</para>
 
         <para>Since Cascading's creation, a number of Domain Specific
-        Languages (DSLs) have emerged as query languages that wrap the
-        Cascading APIs allowing developers and analysts to create ad-hoc
-        queries for data mining and exploration. These DSLs coupled with
+        Languages (DSL's) have emerged as query languages that wrap the
+        Cascading API's, allowing developers and analysts to create ad-hoc
+        queries for data mining and exploration. These DSL's coupled with
         Cascading local-mode allow users to rapidly query and analyze
         reasonably large datasets on their local systems before executing them
-        at scale in a production environment. See the section on DSLs for
+        at scale in a production environment. See the section on DSL's for
         references.</para>
       </section>
 
@@ -112,9 +112,9 @@
         that runs a data processing application on a given cluster. This is
         typically done via the command line, using a pre-packaged Java Jar
         file compiled against the Apache Hadoop and Cascading libraries. The
-        application may accept command line parameters to customize it for a
-        given execution, and generally results in a data-set to be exported
-        from the Hadoop file system for some specific purpose.</para>
+        application may accept command-line parameters to customize it for a
+        given execution, and generally outputs a data set to be exported from
+        the Hadoop file system for some specific purpose.</para>
 
         <para><emphasis role="bold">The process Assembler</emphasis> is a
         person who assembles data processing workflows into unique
@@ -122,7 +122,7 @@
         chaining together operations to act on one or more input data sets,
         producing one or more output data sets. This can be done with the raw
         Java Cascading API, or with a scripting language such as Scale,
-        Clojure, Groovy, JRuby, or Jython (or by one of the DSLs implemented
+        Clojure, Groovy, JRuby, or Jython (or by one of the DSL's implemented
         in these languages).</para>
 
         <para><emphasis role="bold">The operation Developer</emphasis> is a
@@ -145,8 +145,8 @@
     <section>
       <title>What is Apache Hadoop?</title>
 
-      <para>From the Hadoop website, it<quote>is a software platform that lets
-      one easily write and run applications that process vast amounts of
+      <para>From the Hadoop website, it <quote>is a software platform that
+      lets one easily write and run applications that process vast amounts of
       data</quote>. Hadoop does this by providing a storage layer that holds
       vast amounts of data, and an execution layer that runs an application in
       parallel across the cluster, using coordinated subsets of the stored
@@ -174,14 +174,13 @@
       testing and debugging), pseudo-distributed mode (i.e., on an emulated
       "cluster" of one computer, useful for testing), and fully-distributed
       mode (on a full cluster, for production purposes). The
-      pseudo-distributed mode is fairly useless from a practical perspective
-      and will not be discussed further. Cascading itself supports a
-      local-mode and a Hadoop mode, where the Hadoop mode can be in standalone
-      or distributed. The primary difference is Cascading local-mode makes no
-      use of Hadoop APIs and performs all its work in memory allowing it to be
-      very fast, subsequently it is not as robust or scaleable as running
-      Cascading in Hadoop mode, where Cascading inherites Hadoop's
-      scalability.</para>
+      pseudo-distributed mode does not add value for most purposes, and will
+      not be discussed further. Cascading itself supports a local-mode and a
+      Hadoop mode, where the Hadoop mode can be in standalone or distributed.
+      The primary difference is that in local mode, Cascading makes no use of
+      Hadoop API's and performs all of its work in memory, allowing it to be
+      very fast - but consequently is not as robust or scaleable as Cascading
+      in Hadoop mode, which inherits Hadoop's scalability.</para>
 
       <para>Apache Hadoop is an Open Source Apache project and is freely
       available. It can be downloaded from the Hadoop website:<link
@@ -229,7 +228,7 @@
     (If more information is desired on the planner, see <xref
     linkend="job-planner"/> .)</para>
 
-    <para>Second, note that pipe assemblies are assembled through constructor
+    <para>Also notice that pipe assemblies are assembled through constructor
     chaining. This may seem odd, but it is done for two reasons. First, it
     keeps the code more concise. Second, it prevents developers from creating
     "cycles" (i.e., recursive loops) in the resulting pipe assembly. Pipe
@@ -238,19 +237,19 @@
     processes that feed themselves. (If desired, there are safer approaches to
     achieving this result.</para>
 
-    <para>Third, finally, notice that the very first <code>Pipe</code>
-    instance has a name. That instance is the <emphasis role="italic">head
-    </emphasis> of this particular pipe assembly. Pipe assemblies can have any
-    number of heads, and any number of<emphasis
-    role="italic">tails</emphasis>. Although the tail in this example does not
-    have a name, in a more complex assembly it would. In general, heads and
-    tails of pipe assemblies will be assigned names to disambiguate them. One
-    reason is that names are used to bind sources and sinks to pipes during
-    planning. (The example above is an exception, because there is only one
-    head and one tail - and consequently only one source and one sink - so the
-    binding is unmistakable.) Another reason is that the naming of pipes
-    contributes to self-documention of pipe assemblies, especially where there
-    are splits, joins, and merges in the assembly.</para>
+    <para>Finally, notice that the very first <code>Pipe</code> instance has a
+    name. That instance is the <emphasis role="italic">head</emphasis> of this
+    particular pipe assembly. Pipe assemblies can have any number of heads,
+    and any number of <emphasis role="italic">tails</emphasis>. Although the
+    tail in this example does not have a name, in a more complex assembly it
+    would. In general, heads and tails of pipe assemblies are assigned names
+    to disambiguate them. One reason is that names are used to bind sources
+    and sinks to pipes during planning. (The example above is an exception,
+    because there is only one head and one tail - and consequently only one
+    source and one sink - so the binding is unmistakable.) Another reason is
+    that the naming of pipes contributes to self-documention of pipe
+    assemblies, especially where there are splits, joins, and merges in the
+    assembly.</para>
 
     <para>To sum up, the example word-counting application will:</para>
 
@@ -297,24 +296,24 @@
       group, or join streams of data while applying operations to each data
       record or groups of records.</para>
 
-      <para>In Cascading, we call a data record a<emphasis
+      <para>In Cascading, we call a data record a <emphasis
       role="italic">tuple</emphasis>, a simple chain of pipes without forks or
-      merges a<emphasis role="italic">branch</emphasis>, an interconnected set
-      of pipe branches are a<emphasis>pipe assembly</emphasis>, and a series
-      of tuples passing through a pipe branch or assembly a<emphasis
+      merges a <emphasis role="italic">branch</emphasis>, an interconnected
+      set of pipe branches a <emphasis>pipe assembly</emphasis>, and a series
+      of tuples passing through a pipe branch or assembly a <emphasis
       role="italic">tuple stream</emphasis>.</para>
 
       <para>Pipe assemblies are specified independently of the data source
       they are to process. So before a pipe assembly can be executed, it must
-      be bound to<emphasis role="italic">taps</emphasis>, i.e., data sources
+      be bound to <emphasis role="italic">taps</emphasis>, i.e., data sources
       and sinks. The result of binding one or more pipe assemblies to taps is
-      a<emphasis role="italic">flow</emphasis>, which is executed on a
+      a <emphasis role="italic">flow</emphasis>, which is executed on a
       computer or cluster using the Hadoop framework.</para>
 
       <para>Multiple flows can be grouped together and executed as a single
       process. In this context, if one flow depends on the output of another,
       it is not executed until all of its data dependencies are satisfied.
-      Such a collection of flows is called a<emphasis
+      Such a collection of flows is called a <emphasis
       role="italic">cascade</emphasis>.</para>
     </section>
 
@@ -323,7 +322,7 @@
 
       <para>Pipe assemblies define what work should be done against tuple
       streams, which are read from tap <emphasis role="italic">sources
-      </emphasis> and written to tap<emphasis role="italic">sinks</emphasis>.
+      </emphasis> and written to tap <emphasis role="italic">sinks</emphasis>.
       The work performed on the data stream may include actions such as
       filtering, transforming, organizing, and calculating. Pipe assemblies
       may use multiple sources and multiple sinks, and may define splits,
@@ -456,7 +455,7 @@
               is effectively an array of (field) values, where each value can
               be any <classname>java.lang.Object</classname> Java type (or
               <code>byte[]</code> array). For information on supporting
-              non-primitive types, see<xref linkend="custom-types"/>.</para>
+              non-primitive types, see <xref linkend="custom-types"/>.</para>
             </listitem>
           </varlistentry>
 
@@ -471,8 +470,8 @@
               position, starting at<code>0</code>, and using <code>-1</code>
               for the last position), or one of eight predefined Fields "sets"
               (such as<code>Fields.ALL</code>, which selects all values in the
-              Tuple, like an asterisk in SQL). For more on Fields sets,
-              see<xref linkend="field-algebra"/>).</para>
+              Tuple, like an asterisk in SQL). For more on Fields sets, see
+              <xref linkend="field-algebra"/>).</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -482,7 +481,7 @@
     <section>
       <title>Pipes</title>
 
-      <para>The code for the sample pipe assembly above,<xref
+      <para>The code for the sample pipe assembly above, <xref
       linkend="chaining-pipes"/>, consists almost entirely of a series of
       <classname>Pipe</classname> constructors, which are the subject of this
       section. The base class <classname>cascading.pipe.Pipe</classname> and
@@ -516,7 +515,7 @@
           subclass </emphasis> is a special type of pipe. It is used to nest
           reusable pipe assemblies within a <classname>Pipe</classname> class
           for inclusion in a larger pipe assembly. For more information on
-          this, see the section on<xref linkend="subassemblies"/>.</para>
+          this, see the section on <xref linkend="subassemblies"/>.</para>
 
           <para><emphasis role="bold">The other six types of pipes</emphasis>
           are used to perform operations on the tuple streams as they pass
@@ -564,10 +563,10 @@
               joining of tuples from two or more streams into a stream of
               hybrid tuples based on matching field values. It is analogous to
               a SQL join. With a join, the tuples in the different source
-              streams do typically not contain the same field names, but at
+              streams typically do not contain the same field names, but at
               least one field must be used from each stream for the purpose of
-              joining, regardless of the field name (by default the fields
-              must be mutually comparable for matching purposes). One sample
+              joining, regardless of the field name. (By default, the fields
+              must be mutually comparable for matching purposes.) One sample
               use case would be to combine the values from a customer file, a
               sales order file, and a shipped orders file into a single tuple
               stream for analysis.</para>
@@ -669,7 +668,7 @@
 
                 <entry>grouped stream</entry>
 
-                <entry>the tuple stream; field list may be altered; plus
+                <entry>the tuple stream (field list may be altered) plus new
                 fields with operation results</entry>
               </row>
 
@@ -777,11 +776,11 @@
         subclasses of <classname>Aggregators</classname> and
         <classname>Buffers</classname>. These operate on groups of tuples -
         i.e., the output of a <classname>GroupBy</classname> or
-        <classname>CoGroup</classname> pipe, expressed via the Group interface
-        - one group at a time. For example, an Every pipe could accept the
-        output of the above Each pipes and count the page requests by date.
-        The Every pipe outputs the results of the operation, e.g., one tuple
-        per group containing the date and the count value.</para>
+        <classname>CoGroup</classname> pipe - one group at a time. For
+        example, an Every pipe could accept the output of the above Each pipes
+        and count the page requests by date. In this example, the pipe would
+        output the operation results as the date and the count for each group,
+        appended to each of the input tuples that are in that group.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -802,24 +801,23 @@
         to the Operation as a set of argument values.</para>
 
         <para>Most Operations declare result fields (shown as "declared
-        fields" in the diagram). The <emphasis role="italic">output selector
-        </emphasis> specifies the fields of the output Tuple from an
-        "appended" version of the input Tuple and the Operation result Tuple.
-        This new output Tuple becomes the input Tuple to the next pipe in the
-        pipe assembly. That is, when the output selector is
-        <code>Fields.ALL</code>, the output Tuple will be the input Tuple plus
-        the Operation result Tuple merged into a single Tuple.</para>
+        fields" in the diagram). The <emphasis role="italic">output
+        selector</emphasis> specifies the fields of the output Tuple from the
+        fields of the input Tuple and the Operation result. This new output
+        Tuple becomes the input Tuple to the next pipe in the pipe assembly.
+        If the output selector is <code>Fields.ALL</code>, the output Tuple is
+        the input Tuple plus the Operation result, merged into a single
+        Tuple.</para>
 
-        <para>Note that if a <classname>Function</classname> or
-        <classname>Aggregator</classname> outputs more than one Tuple per
-        invocation, the process to create the output Tuple is repeated for
-        each result Tuple against the original input Tuple. Depending on the
-        output selector, input Tuple values could be duplicated across each
-        output Tuple. Another way to think of this is as the same "expansion"
-        that happends during a join. If a Function was designed to always emit
-        three result Tuples for every incoming input Tuple, each of the three
-        outgoing Tuples will duplicate the input Tuple values with the unique
-        Function result Tuple values.</para>
+        <para>Note that it's possible for a <classname>Function</classname> or
+        <classname>Aggregator</classname> to return more than one output Tuple
+        per input Tuple. In this case, the input Tuple is duplicated as many
+        times as necessary to create the necessary output Tuples. This is
+        similar to the reiteration of values that happens during a join. If a
+        Function is designed to always emit three result Tuples for every
+        input Tuple, each of the three outgoing Tuples will consist of the
+        selected input Tuple values plus one of the three sets of Function
+        result values.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -885,11 +883,16 @@
 
         <para>When the <classname>Every</classname> pipe is used with a
         <classname>Buffer</classname>, the behavior is slightly different.
-        Instead of being associated with the current grouping Tuple, the
-        Buffer results are associated with the current values Tuple. This is
-        analogous to how an <classname>Each</classname> pipe works with a
-        <classname>Function</classname>. It may seem slightly more confusing,
-        but provides much more flexibility.</para>
+        <?oxy_comment_start author="Jim" timestamp="20120402T204250-0700" comment="I&apos;m not confident of what this means."?>Instead
+        of being associated with the current grouping Tuple, the Buffer
+        results are associated with the current values
+        Tuple.<?oxy_comment_end ?> This is analogous to how an
+        <classname>Each</classname> pipe works with a
+        <classname>Function</classname>. This approach may seem slightly
+        unintuitive, but provides much more flexibility.</para>
+
+        <para>For more information on how operations process fields, see <xref
+        linkend="field-processing"/>.</para>
       </section>
 
       <section>
@@ -1074,7 +1077,7 @@
 
                   <listitem>
                     <para>An inner join only returns a joined Tuple if neither
-                    bag is empty. <programlisting>[0,a,0,A] [2,c,2,C]</programlisting></para>
+                    bag is empty. <programlisting>[0,a,0,A] [2,c,2,C] </programlisting></para>
                   </listitem>
                 </varlistentry>
 
@@ -1084,7 +1087,7 @@
                   <listitem>
                     <para>An outer join performs a join if one bag (left or
                     right) is empty, or if neither bag is empty.
-                    <programlisting>[0,a,0,A] [1,b,null,null] [2,c,2,C] [null,null,3,D]</programlisting></para>
+                    <programlisting>[0,a,0,A] [1,b,null,null] [2,c,2,C] [null,null,3,D] </programlisting></para>
                   </listitem>
                 </varlistentry>
 
@@ -1106,7 +1109,7 @@
                   <listitem>
                     <para>A right join can also be stated as a left outer and
                     right inner join, where it is acceptable for the left bag
-                    to be empty (but not the right). <programlisting>[0,a,0,A] [2,c,2,C] [null,null,3,D]</programlisting></para>
+                    to be empty (but not the right). <programlisting>[0,a,0,A] [2,c,2,C] [null,null,3,D] </programlisting></para>
                   </listitem>
                 </varlistentry>
 
@@ -1135,17 +1138,16 @@
           </section>
 
           <section>
-            <title><?oxy_comment_start author="Jim" timestamp="20120402T014844-0700" comment="Chris - not sure I&apos;ve
-              got this quite right..."?>Memory
+            <title><?oxy_comment_start author="Jim" timestamp="20120402T014844-0700" comment="Chris - not sure I've got this quite right..."?>Memory
             considerations<?oxy_comment_end ?></title>
 
-            <para>During a join of two streams, the current tuple group of the
-            right-hand stream is stored in memory for rapid comparison. If the
-            group is very large, it may exceed a configurable spill threshold
-            and be spilled to disk, reducing performance. For this reason,
-            alway use the shorter stream or the stream with shorter groups on
-            the right-hand side. If necessary, adjust the spill threshold as
-            described in the Javadoc.</para>
+            <para>During a join of two streams, the entire current tuple group
+            of the right-hand stream is stored in memory for rapid comparison.
+            If the group is very large, it may exceed a configurable spill
+            threshold and be spilled to disk, reducing performance. For this
+            reason, alway use the shorter stream or the stream with shorter
+            groups on the right-hand side. If necessary, adjust the spill
+            threshold as described in the Javadoc.</para>
           </section>
         </section>
       </section>
@@ -1221,7 +1223,7 @@
           <para>Whenever there is an implied sort during grouping or secondary
           sorting, a custom <classname>java.util.Comparator</classname> can
           optionally be supplied to the grouping <classname>Fields</classname>
-          or secondary sort<classname>Fields</classname>, in order to
+          or secondary sort <classname>Fields</classname>, in order to
           influence the sorting through the
           <code>Fields.setComparator()</code> call.</para>
 
@@ -1293,7 +1295,7 @@
       <title>Source and Sink taps</title>
 
       <para>All input data comes in from, and all output data goes out to,
-      some instance of<classname>cascading.tap.tap</classname>. A tap
+      some instance of <classname>cascading.tap.tap</classname>. A tap
       represents a data resource - such as a file on the local file system, on
       a Hadoop distributed file system, or on Amazon S3. A tap can be read
       from, which makes it a<emphasis role="italic">source</emphasis>, or
@@ -1301,9 +1303,9 @@
       more commonly, taps act as both sinks and sources when shared between
       Flows.</para>
 
-      <para>Depending on your operating mode (Cascading local mode, Hadoop
-      current mode, or Hadoop distributed mode), the specific classes you use
-      may vary. Details are provided in the sections below.</para>
+      <para>Depending on your operating mode (Cascading local mode or Hadoop
+      mode), the specific classes you use may vary. Details are provided in
+      the sections below.</para>
 
       <section>
         <title>Schemes</title>
@@ -1382,25 +1384,23 @@
         instances without parsing.</para>
 
         <section>
-          <title><?oxy_comment_start author="Jim" timestamp="20120328T005308-0700" comment="Chris - this is an experiment to see if you can fit the necessary details into a table. If not, we can use a variable list."?>
+          <title><?oxy_comment_start author="Jim" timestamp="20120328T005308-0700" comment="Chris - you&apos;ll need to check and expand this info."?>
           Mode-specific implementation details<?oxy_comment_end ?></title>
 
-          <para>Depending on your operating mode (Cascading local, Hadoop
-          local, or Distributed), the classes you use to specify schemes will
-          vary. Mode-specifric details for each standard scheme are shown
+          <para>Depending on your operating mode (Cascading local mode or
+          Hadoop mode), the classes you use to specify schemes will vary.
+          Mode-specifric details for each standard scheme are shown
           below.</para>
 
           <table frame="all">
-            <title>Mode-specific details for setting scheme</title>
+            <title>Mode-specific tap scheme classes</title>
 
-            <tgroup cols="4">
+            <tgroup cols="3">
               <colspec colname="c1" colnum="1" colwidth="1.0*"/>
 
               <colspec colname="c2" colnum="2" colwidth="1.0*"/>
 
               <colspec colname="c3" colnum="3" colwidth="1.0*"/>
-
-              <colspec colname="c4" colnum="4" colwidth="1.0*"/>
 
               <tbody>
                 <row>
@@ -1409,53 +1409,41 @@
                   <entry><emphasis role="bold">Cascading local mode
                   </emphasis></entry>
 
-                  <entry><emphasis role="bold">Hadoop current mode
-                  </emphasis></entry>
-
-                  <entry><emphasis role="bold">Distributed mode
-                  </emphasis></entry>
+                  <entry><emphasis role="bold">Hadoop mode</emphasis></entry>
                 </row>
 
                 <row>
                   <entry><emphasis role="bold">TextLine</emphasis></entry>
 
-                  <entry/>
+                  <entry><classname>cascading.scheme.local.TextLine</classname></entry>
 
-                  <entry/>
-
-                  <entry/>
+                  <entry><classname>cascading.scheme.hadoop.TextLine</classname></entry>
                 </row>
 
                 <row>
                   <entry><emphasis role="bold">TextDelimited
                   </emphasis></entry>
 
-                  <entry/>
+                  <entry><classname>cascading.scheme.local.TextDelimited</classname></entry>
 
-                  <entry/>
-
-                  <entry/>
+                  <entry><classname>cascading.scheme.hadoop.TextDelimited</classname></entry>
                 </row>
 
                 <row>
                   <entry><emphasis role="bold">SequenceFile</emphasis></entry>
 
-                  <entry/>
+                  <entry><classname>cascading.scheme.hadoop.SequenceFile</classname></entry>
 
-                  <entry/>
-
-                  <entry/>
+                  <entry><classname>cascading.scheme.hadoop.SequenceFile</classname></entry>
                 </row>
 
                 <row>
                   <entry><emphasis role="bold">WritableSequenceFile
                   </emphasis></entry>
 
-                  <entry/>
+                  <entry><classname>cascading.scheme.hadoop.WritableSequenceFile</classname></entry>
 
-                  <entry/>
-
-                  <entry/>
+                  <entry><classname>cascading.scheme.hadoop.WritableSequenceFile</classname></entry>
                 </row>
               </tbody>
             </tgroup>
@@ -1476,10 +1464,10 @@
       <section>
         <title>Taps</title>
 
-        <para>This sample code creates a new Hadoop FileSystem Tap that can
-        read and write raw text files. Since only one field name is provided,
-        the "offset" field is discarded, resulting in an input tuple stream
-        with only "line" values.</para>
+        <para>The following sample code creates a new Hadoop FileSystem Tap
+        that can read and write raw text files. Since only one field name is
+        provided, the "offset" field is discarded, resulting in an input tuple
+        stream with only "line" values.</para>
 
         <example>
           <title>Creating a new tap</title>
@@ -1500,12 +1488,10 @@
               Hadoop is configured to use a remote cluster, if an Lfs tap is
               used as either a source or sink in a Flow, Cascading is
               automatically forced to run in local mode and not on the
-              cluster. <?oxy_comment_start author="Jim" timestamp="20120402T024640-0700" comment="It&apos;d be nice if
-                we could be more clear about this. If we are forced to run in local mode, how are we able to write
-                anything to the Hadoop distributed file system? This is one of the use cases described in the Overview
-                section, so it&apos;s probably worth explaining."?>This is
-              useful when creating applications to read local files and import
-              them into the Hadoop distributed file system.<?oxy_comment_end ?></para>
+              cluster. <?oxy_comment_start author="Jim" timestamp="20120402T024640-0700" comment="It&apos;d be nice if we could be more clear about this. If this forces the app to run in local mode, how is it able to write anything to the Hadoop distributed file system? This is one of the use cases described in the Overview section, so it&apos;s probably worth explaining."?>This
+              is useful when creating applications to read local files and
+              import them into the Hadoop distributed file
+              system.<?oxy_comment_end ?></para>
             </listitem>
           </varlistentry>
 
@@ -1567,7 +1553,7 @@
             <listitem>
               <para>The <classname>cascading.tap.Templatetap</classname> is
               used to sink tuples into directory paths based on the values in
-              the Tuple. More can be read below in<xref
+              the Tuple. More can be read below in <xref
               linkend="template-tap"/>.</para>
             </listitem>
           </varlistentry>
@@ -1599,31 +1585,30 @@
             <tgroup cols="2">
               <colspec colname="c1" colnum="1" colwidth="1*"/>
 
-              <colspec colname="c2" colnum="2" colwidth="4.41*"/>
+              <colspec colname="c2" colnum="2" colwidth="3.4*"/>
 
               <tbody>
                 <row>
-                  <entry><emphasis role="bold">File system mode
-                  </emphasis></entry>
+                  <entry><emphasis role="bold">Tap</emphasis></entry>
 
                   <entry><emphasis role="bold">Class Details
                   </emphasis></entry>
                 </row>
 
                 <row>
-                  <entry>Cascading local file system</entry>
+                  <entry>Cascading local mode</entry>
 
                   <entry/>
                 </row>
 
                 <row>
-                  <entry>Hadoop distributed</entry>
+                  <entry>Hadoop local file system</entry>
 
                   <entry/>
                 </row>
 
                 <row>
-                  <entry>Hadoop current</entry>
+                  <entry>Hadoop distributed file system</entry>
 
                   <entry/>
                 </row>
@@ -1828,14 +1813,16 @@
               some operation. Use this Fields set with caution.</para>
             </listitem>
           </varlistentry>
-        </variablelist></para>
+        </variablelist>The chart below shows common ways to merge input and
+      result fields for the desired output fields. A few minutes with this
+      chart may help clarify the discussion of fields, tuples, and pipes. Also
+      see the section on <xref linkend="each-every"/> for details on the
+      different columns and their relationships to the
+      <classname>Each</classname> and <classname>Every</classname> pipes and
+      Functions, Aggregators, and Buffers.</para>
 
-      <para>Below is a reference chart showing common ways to merge input and
-      result fields for the desired output fields. See the section on <xref
-      linkend="each-every"/> for details on the different columns and their
-      relationships to the <classname>Each</classname> and
-      <classname>Every</classname> Pipes and Functions, Aggregators, and
-      Buffers.</para>
+      <para xml:id="field-processing"><emphasis role="bold">Operations and
+      Field-processing</emphasis></para>
 
       <mediaobject>
         <imageobject role="fo">
@@ -1862,7 +1849,7 @@
       from sources, processes the data as defined by the pipe assembly, and
       writes data to the sinks. Input source data does not need to exist at
       the time the Flow is created, but it must exist by the time the Flow is
-      executed (unless it is executed as part of a Cascade - see<xref
+      executed (unless it is executed as part of a Cascade - see <xref
       linkend="cascades"/>).</para>
 
       <para>The most common pattern is to create a Flow from an existing pipe
@@ -1934,7 +1921,7 @@
         </example>
 
         <para>More information on packaging production applications can be
-        found in<xref linkend="executing-processes"/>.</para>
+        found in <xref linkend="executing-processes"/>.</para>
 
         <para>Note the pattern of using a static property-setter method
         (<classname>cascading.flow.FlowConnector.setApplicationJarPath</classname>).
@@ -2059,7 +2046,7 @@
 
       <para>By default, a Cascade only executes Flows that have stale sinks -
       i.e., output data that is older than the input data. For more on this,
-      see<xref linkend="skipping-flows"/>.</para>
+      see <xref linkend="skipping-flows"/>.</para>
 
       <example>
         <title>Creating a new Cascade</title>
@@ -2083,7 +2070,7 @@
       <classname>Cascade#setFlowSkipStrategy()</classname> method), it is
       consulted for every Flow instance managed by that Cascade, and all skip
       strategies on those Flow instances are ignored. For more information on
-      skip strategies, see<xref linkend="skipping-flows"/>.</para>
+      skip strategies, see <xref linkend="skipping-flows"/>.</para>
     </section>
   </chapter>
 
@@ -2148,13 +2135,17 @@
         </varlistentry>
       </variablelist>
 
-      <para><?oxy_comment_start author="Jim" timestamp="20120402T042508-0700" comment="Jim - this plus the text following the code samples is a little repetitive/messy."?>
-      Cascading<?oxy_comment_end ?> works with either of the two Hadoop
-      processing modes - the default local stand-alone mode, and the pseudo-
-      or fully-distributed cluster mode. As specified in the Hadoop
-      documentation, running in cluster mode requires the creation of a Hadoop
-      job jar that includes the Cascading jars, and any dependent third-party
-      jars, in its <filename>lib</filename> directory.</para>
+      <para>Cascading works with either of the Hadoop processing modes - the
+      default local stand-alone mode and the distributed cluster mode. As
+      specified in the Hadoop documentation, running in cluster mode requires
+      the creation of a Hadoop job jar that includes the Cascading jars, plus
+      any dependent third-party jars, in its <filename>lib</filename>
+      directory. This is true regardless of whether they are Cascading
+      local-mode applications or raw Hadoop MapReduce applications. For more
+      information, see <xref linkend="operating-modes"/>.</para>
+
+      <para>The following Ant snippets can be used in your project to create a
+      Hadoop jar for submission on your cluster.</para>
 
       <example>
         <title>Sample Ant Build - Properties</title>
@@ -2168,15 +2159,7 @@
         <xi:include href="sample-build-target.xml"/>
       </example>
 
-      <para>The above Ant snippets can be used in your project to create a
-      Hadoop jar for submission on your cluster. As noted earlier, all Hadoop
-      applications that are to be run in a cluster must be packaged with all
-      third-party libraries in a directory named <filename>lib</filename> in
-      the final application Jar file. This is true regardless of whether they
-      are Cascading applications or raw Hadoop MapReduce applications. For
-      more information, see<xref linkend="operating-modes"/>.</para>
-
-      <para>Note that the snippets above are only intended to show how to
+      <para>Note that these Ant snippets are only intended to show how to
       include Cascading libraries. You are still required to compile your
       project into the <property>build.classes</property> path.</para>
     </section>
@@ -2188,81 +2171,65 @@
       should be pushed to the cluster. Typically, this is done via the Hadoop
       API <classname>JobConf</classname> object.</para>
 
-      <para>Cascading offers a shorthand for configuring this
-      parameter.</para>
+      <para>Cascading offers a shorthand for configuring this parameter,
+      demonstrated here:</para>
 
       <xi:include href="flow-properties.xml"/>
 
       <para>Above we see two ways to set the same property - via the
       <methodname>setApplicationJarClass()</methodname> method, and via the
-      <methodname>setApplicationJarPath()</methodname> method. The first
-      method takes a Class object that owns the "main" function for this
-      application. The assumption here is that <code>Main.class</code> is not
-      located in a Java Jar that is stored in the <filename>lib</filename>
-      folder of the application Jar. If it is, that Jar is pushed to the
-      cluster, not the parent application jar.</para>
+      <methodname>setApplicationJarPath()</methodname> method.
+      <?oxy_comment_start author="Jim" timestamp="20120402T205343-0700" comment="Chris, I added two sentences here because it felt odd to only mention the first of the two approaches shown.  I&apos;m not sure I get this part; hopefully this statement is true."?>One
+      is based on a Class name, and the other is based on a literal
+      path.<?oxy_comment_end ?></para>
+
+      <para>The first method takes a Class object that owns the "main"
+      function for this application. The assumption here is that
+      <code>Main.class</code> is not located in a Java Jar that is stored in
+      the <filename>lib</filename> folder of the application Jar. If it is,
+      that Jar is pushed to the cluster, not the parent application
+      jar.</para>
+
+      <para><?oxy_comment_start author="Jim" timestamp="20120402T205332-0700" comment="Chris, not sure I get this part; hopefully this statemet is true."?>The
+      second method simply sets the path to the parent Class as a
+      property.<?oxy_comment_end ?></para>
 
       <para>In your application, only one of these methods needs to be called,
       but one of them must be called to properly configure Hadoop.</para>
     </section>
 
     <section>
-      <title xml:id="operating-modes"><?oxy_comment_start author="Jim" timestamp="20120402T042700-0700" comment="Chris, it
-        &apos;s probably best if you write this section. I just threw in this dummy text to get you started."?>Operating
+      <title xml:id="operating-modes"><?oxy_comment_start author="Jim" timestamp="20120402T042700-0700" comment="Chris, you&apos;ll need to either plug in some information here or brief me so I can do it. For now, I just threw in this dummy text to get you started."?>Operating
       Modes<?oxy_comment_end ?></title>
 
-      <para>Cascading and Hadoop both support multiple operating modes that
-      let you control whether data storage and processing are handled on a
-      single computer or distributed throughout a cluster. (For development
-      purposes, obviously, it's more practical to work on a single computer in
-      local mode.)</para>
-
-      <para>In Hadoop, the three modes are: standalone mode (run on the local
-      computer, useful for coding), pseudo-distributed mode (run on an
-      emulated "cluster" of one computer, useful for testing), and
-      fully-distributed mode (run on a cluster, usually reserved for
-      production purposes).</para>
-
-      <para>In Cascading, the three modes are Cascading local mode (forced
-      local processing), Hadoop current mode (local or distributed, as
-      currently set in Hadoop), or Hadoop distributed mode (forced distributed
-      processing).</para>
-
-      <para>The three modes are described below.</para>
+      <para>Although applications that use Cascading are typically run in
+      distributed mode on a computer cluster, for development and testing it's
+      often more practical to run on in local mode. Cascading provides several
+      options for controlling the operating mode:</para>
 
       <variablelist>
         <varlistentry>
-          <term>Local mode (Cascading)</term>
+          <term>Cascading local mode</term>
 
           <listitem>
-            <para>description</para>
+            <para>This mode causes the application to bypass Hadoop and run
+            entirely on the local machine using the local file system.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term>Local mode (Hadoop)</term>
+          <term>MapReduce mode</term>
 
           <listitem>
-            <para>description</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Pseudo-distributed mode</term>
-
-          <listitem>
-            <para>description</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>Distributed mode</term>
-
-          <listitem>
-            <para>description</para>
+            <para>This mode causes the application to run in the mode that
+            Hadoop is currently configured for, and use the Hadoop file
+            system.</para>
           </listitem>
         </varlistentry>
       </variablelist>
+
+      <para><?oxy_comment_start author="Jim" timestamp="20120402T205646-0700" comment="One question I have, from what I&apos;ve read so far, is that I think I see how to set the file mode, but how do you tell the MapReduce whether to divide the work up among multiple CPU&apos;s or not...?"?>To
+      select a mode for your application... <?oxy_comment_end ?></para>
     </section>
 
     <section>
@@ -2298,8 +2265,8 @@
       push this jar into the cluster. You must still call one of the property
       setters mentioned above to set the proper path to the application jar.
       If misconfigured, it's likely that one of the internal libraries (found
-      in the lib folder) will be pushed to the cluster instead, and
-      <classname>ClassNotFoundException</classname>'s will be thrown.</para>
+      in the lib folder) will be pushed to the cluster instead, and "Class Not
+      Found" exceptions will be thrown.</para>
     </section>
   </chapter>
 
@@ -3206,8 +3173,7 @@
 
       <para><variablelist>
           <varlistentry>
-            <term><?oxy_comment_start author="Jim" timestamp="20120321T173204-0700" comment="I resequenced these four items to match the sequence of the cascading.operation.text package documentation in the Javadoc. It
-              &apos;s a trivial change but it seemed as good a sequence as any."?>
+            <term><?oxy_comment_start author="Jim" timestamp="20120321T173204-0700" comment="I resequenced these four items to match the sequence of the package documentation in the Javadoc. It&apos;s a trivial change but it seemed as good a sequence as any."?>
             DateFormatter<?oxy_comment_end ?></term>
 
             <listitem>
@@ -3522,11 +3488,8 @@
               <para>The
               <classname>cascading.operation.xml.XPathFilter</classname>
               filter removes a Tuple if the specified XPath expression returns
-              <code><?oxy_comment_start author="Jim" timestamp="20120325T210244-0700" comment="Does this mean that no node was found at the specified location, or that the value of the node was somehow
-                  &quot;false&quot;? If the latter, should we explain how it is false - e.g., the node contains a
-                  Boolean &quot;false&quot;, a specific integer value... what if it is a string, a long, etc."?>
-              false<?oxy_comment_end ?></code>. Set the removeMatch parameter
-              to <code>true</code> if the filter should be reversed, i.e., to
+              <code> false</code>. Set the removeMatch parameter to
+              <code>true</code> if the filter should be reversed, i.e., to
               keep only those Tuples where the XPath expression
               returns<code>true</code>.</para>
             </listitem>
@@ -3640,8 +3603,7 @@
               <para>The
               <classname>cascading.operation.assertion.AssertNotNull</classname>
               Assertion asserts that every value in the argument Tuple is not
-              a <code><?oxy_comment_start author="Jim" timestamp="20120323T185743-0700" comment="Should we say how this is checked and/or whether Cascading treats null, empty, and white space as the same thing? This may be obvious to the target readership in this context, I don
-                  &apos;t know."?>null<?oxy_comment_end ?></code>
+              a <code><?oxy_comment_start author="Jim" timestamp="20120323T185743-0700" comment="Should we say how this is checked and/or whether Cascading treats null, empty, and white space as the same thing? This may be obvious to the target readership in this context, I don&apos;t know."?>null<?oxy_comment_end ?></code>
               value.</para>
             </listitem>
           </varlistentry>
@@ -3665,12 +3627,9 @@
               <para>The
               <classname>cascading.operation.assertion.AssertSizeEquals</classname>
               Assertion asserts that the current Tuple in the tuple stream is
-              exactly the given size. <?oxy_comment_start author="Jim" timestamp="20120326T202613-0700" comment="I
-                &apos;ve added an explanation (to these three assertions) that size() is the number of fields, not a
-                byte length."?>Size, here, is the number of fields in the
-              Tuple, as returned by<code>Tuple#size()</code>. Note that some
-              or all fields may contain <code>null</code>
-              values.<?oxy_comment_end ?></para>
+              exactly the given size. Size, here, is the number of fields in
+              the Tuple, as returned by<code>Tuple#size()</code>. Note that
+              some or all fields may contain <code>null</code> values.</para>
             </listitem>
           </varlistentry>
 
@@ -3808,11 +3767,8 @@
               (exclusive or) on the results of the constructor-provided
               <classname>Filter</classname> instances. Xor can only be applied
               to two instances at a time. It returns
-              <code><?oxy_comment_start author="Jim" timestamp="20120324T161338-0700" comment="Chris - The 1.2 document says the opposite of what I
-                  &apos;m saying here, and so does the Javadoc - i.e., they say that this will return True if both truth
-                  values match. To me that seems the opposite of XOR, so I changed it. Thought I&apos;d better warn you
-                  that I changed it."?>true<?oxy_comment_end ?></code> if the
-              two instances have different truth values, and
+              <code><?oxy_comment_start author="Jim" timestamp="20120324T161338-0700" comment="Chris - The 1.2 document says the opposite of what I&apos;m saying here, and so does the Javadoc - i.e., they say that this will return True if both truth values match. To me that seems the opposite of XOR, so I changed it. Thought I&apos;d better warn you in case I&apos;m in error."?>true<?oxy_comment_end ?></code>
+              if the two instances have different truth values, and
               <code>false</code> if they have the same truth value. That is,
               if <methodname>Filter#isRemove()</methodname> returns
               <code>true</code> for both, or returns <code>false</code> for
@@ -3936,8 +3892,9 @@
       <title>Local versus Distributed Mode</title>
 
       <para><?oxy_comment_start author="Jim" timestamp="20120326T232235-0700" comment="local v. distributed modes here?"?>
-      Chris, if we don't explain this in Chapter 4, then maybe this would be a
-      good place to talk about local v. distributed modes.<?oxy_comment_end ?></para>
+      Chris, we can probably cover the how-to of local v. distributed mode in
+      Chapter 4, and put any tips, fine points, or best practices
+      here.<?oxy_comment_end ?></para>
     </section>
 
     <section>
@@ -4165,8 +4122,8 @@
 
     <section>
       <title xreflabel="Custom Types"
-      xml:id="custom-types"><?oxy_comment_start author="Jim" timestamp="20120327T003300-0700" comment="Chris, I think you said you needed to add some information to this section to cover some major changes you
-        &apos;ve made...?"?>Custom taps and schemes<?oxy_comment_end ?></title>
+      xml:id="custom-types"><?oxy_comment_start author="Jim" timestamp="20120327T003300-0700" comment="Chris, I think you said you needed to add some information to this section to cover some major changes you&apos;ve made...?"?>Custom
+      taps and schemes<?oxy_comment_end ?></title>
 
       <para>Cascading is designed to be easily configured and enhanced by
       developers. In addition to creating custom Operations, developers can
@@ -4392,13 +4349,12 @@
               <xi:include href="cookbook-formatdate.xml"/>
             </listitem>
           </varlistentry>
-        </variablelist></para>
+        </variablelist>Stream Ordering</para>
     </section>
 
     <section>
-      <title>Stream Ordering</title>
-
-      <para><variablelist>
+      <para>
+        <variablelist>
           <varlistentry>
             <term>Remove duplicate tuples in a stream</term>
 
@@ -4422,7 +4378,8 @@
               <xi:include href="cookbook-distinctorder.xml"/>
             </listitem>
           </varlistentry>
-        </variablelist></para>
+        </variablelist>
+      </para>
     </section>
 
     <section>
@@ -4547,13 +4504,14 @@
     </section>
 
     <section>
-      <title>Processing Mode</title>
+      <title><?oxy_comment_start author="Jim" timestamp="20120403T002605-0700" comment="Chris - another place you could talk about Operating Mode if you want to.  Otherwise let&apos;s delete this section."?>Operating
+      Mode<?oxy_comment_end ?></title>
 
       <para>This section is probably unnecessary but I'm throwing it in just
-      in case. Local v. distributed mode are mentioned in the Hadoop section
-      of the introduction, described in some detail in the Execution section,
-      and discussed pro/con in the Best Practices section, just after
-      Testing.</para>
+      in case you want to talk about how this works. Local v. distributed mode
+      are or can be mentioned in the Hadoop section of the introduction,
+      described in some detail in the Execution section, and discussed pro/con
+      in the Best Practices section, just after Testing.</para>
     </section>
   </chapter>
 </book>
