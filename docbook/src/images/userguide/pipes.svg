@@ -1,3 +1,211 @@
 <?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
+  ~
+  ~ Project and contact information: http://www.concurrentinc.com/
+  -->
+
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="316 184 343 156" width="343pt" height="13pc"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:date>2008-11-11 01:04Z</dc:date><!-- Produced by OmniGraffle Professional 5.0.2 --></metadata><defs><font-face font-family="Helvetica" font-size="10" units-per-em="1000" underline-position="-75.683594" underline-thickness="49.316406" slope="0" x-height="550" cap-height="700" ascent="770.01953" descent="-229.98047" font-weight="bold"><font-face-src><font-face-name name="Helvetica-Bold"/></font-face-src></font-face><marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black"><g><path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/></g></marker></defs><g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1"><title>Model</title><g><title>Layer 1</title><circle cx="487.229" cy="309.16498" r="28.800053" fill="#ffac73"/><circle cx="487.229" cy="309.16498" r="28.800053" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><text transform="translate(466.189 303.165)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".33740234" y="10" textLength="43.325195">CoGroup</tspan></text><circle cx="417.13797" cy="309.16498" r="28.800062" fill="#ffac73"/><circle cx="417.13797" cy="309.16498" r="28.800062" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><text transform="translate(396.098 303.165)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".110839844" y="10" textLength="42.77832">GroupBy</tspan></text><path d="M 417.13797 280.36496 L 417.13797 268.46497 L 417.13797 268.46497 L 487.22897 268.46497 L 487.22897 256.199 L 487.22897 254.199" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M 487.22897 280.36496 L 487.22897 268.46497 L 487.22897 256.199 L 487.22897 254.199" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><circle cx="487.229" cy="215.49902" r="28.800045" fill="#ffac73"/><circle cx="487.229" cy="215.49902" r="28.800045" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><text transform="translate(469.189 209.49901)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.480917" y="10" textLength="21.118164">Pipe</tspan></text><circle cx="347.04697" cy="309.16498" r="28.800062" fill="#ffac73"/><circle cx="347.04697" cy="309.16498" r="28.800062" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><text transform="translate(329.00699 303.165)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold" x="6.0893154" y="10" textLength="23.901367">Each</tspan></text><circle cx="557.32" cy="309.16498" r="28.800072" fill="#ffac73"/><circle cx="557.32" cy="309.16498" r="28.800072" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><text transform="translate(539.28003 303.165)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold" x="4.4169521" y="10" textLength="27.246094">Every</tspan></text><path d="M 347.04697 280.36496 L 347.04697 268.46497 L 347.04697 268.46497 L 487.22897 268.46497 L 487.22897 256.199 L 487.22897 254.199" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M 557.32 280.36496 L 557.32 268.46497 L 557.32 268.46497 L 487.22897 268.46497 L 487.22897 256.199 L 487.22897 254.199" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><circle cx="627.411" cy="309.16498" r="28.800072" fill="#ffac73"/><circle cx="627.411" cy="309.16498" r="28.800072" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><text transform="translate(604.37103 297.165)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold" x="14.556641" y="10" textLength="18.886719">Sub</tspan><tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".37695312" y="22" textLength="47.246094">Assembly</tspan></text><path d="M 627.411 280.36496 L 627.411 268.46497 L 627.411 268.46497 L 487.22897 268.46497 L 487.22897 256.199 L 487.22897 254.199" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="337 96 483 341" width="483pt" height="341pt">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:date>2012-04-02 16:22Z</dc:date>
+    <!-- Produced by OmniGraffle Professional 5.3.6 -->
+  </metadata>
+  <defs>
+    <font-face font-family="Helvetica" font-size="10" units-per-em="1000" underline-position="-75.683594"
+               underline-thickness="49.316406" slope="0" x-height="532.22656" cap-height="719.72656" ascent="770.01953"
+               descent="-229.98047" font-weight="bold">
+      <font-face-src>
+        <font-face-name name="Helvetica-Bold"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" viewBox="-1 -4 10 8"
+            markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="StickArrow_Marker" viewBox="-1 -4 10 8"
+            markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 0 M 0 -3 L 8 0 L 0 3" fill="none" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>Model</title>
+    <rect fill="white" width="1466" height="576"/>
+    <g>
+      <title>Layer 1</title>
+      <circle cx="648.5506" cy="221.35597" r="28.800066" fill="#ffac73"/>
+      <circle cx="648.5506" cy="221.35597" r="28.800066" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(627.51062 215.35597)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".33740234" y="10" textLength="43.325195">
+          CoGroup
+        </tspan>
+      </text>
+      <circle cx="474.1333" cy="405.95609" r="28.800062" fill="#e8c71d"/>
+      <circle cx="474.1333" cy="405.95609" r="28.800062" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(452.09332 399.95612)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".4975586" y="10" textLength="45.004883">
+          InnerJoin
+        </tspan>
+      </text>
+      <circle cx="544.2243" cy="405.95609" r="28.800072" fill="#e8c71d"/>
+      <circle cx="544.2243" cy="405.95609" r="28.800072" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(521.18433 399.95612)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".38671875" y="10" textLength="47.226562">
+          OuterJoin
+        </tspan>
+      </text>
+      <circle cx="614.71436" cy="405.95609" r="28.800072" fill="#e8c71d"/>
+      <circle cx="614.71436" cy="405.95609" r="28.800072" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(595.67438 399.95612)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".056640625" y="10" textLength="38.886719">
+          LeftJoin
+        </tspan>
+      </text>
+      <circle cx="684.40637" cy="405.95609" r="28.800072" fill="#e8c71d"/>
+      <circle cx="684.40637" cy="405.95609" r="28.800072" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(661.3664 399.95612)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".4482422" y="10" textLength="46.103516">
+          RightJoin
+        </tspan>
+      </text>
+      <circle cx="614.71436" cy="310.25708" r="28.800072" fill="#e8c71d"/>
+      <circle cx="614.71436" cy="310.25708" r="28.800072" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(596.67438 304.25711)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="3.0351162" y="10" textLength="30.009766">
+          Joiner
+        </tspan>
+      </text>
+      <path
+        d="M 474.1333 377.15607 L 474.1333 365.25607 L 474.1333 358.25607 L 614.71436 358.25607 L 614.71436 350.9571 L 614.71436 348.9571"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <path
+        d="M 544.2243 377.15607 L 544.2243 365.25607 L 544.2243 358.25607 L 614.71436 358.25607 L 614.71436 350.9571 L 614.71436 348.9571"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <path d="M 614.71436 377.15607 L 614.71436 365.25607 L 614.71436 350.9571 L 614.71436 348.9571"
+            marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="1"/>
+      <path
+        d="M 684.40637 377.15607 L 684.40637 365.25607 L 684.40637 358.25607 L 614.71436 358.25607 L 614.71436 350.9571 L 614.71436 348.9571"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <circle cx="754.4973" cy="405.95609" r="28.800072" fill="#e8c71d"/>
+      <circle cx="754.4973" cy="405.95609" r="28.800072" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(730.45734 399.95612)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".051757812" y="10" textLength="48.896484">
+          MixedJoin
+        </tspan>
+      </text>
+      <path
+        d="M 754.4973 377.15607 L 754.4973 365.25607 L 754.4973 358.25607 L 614.71436 358.25607 L 614.71436 350.9571 L 614.71436 348.9571"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <path
+        d="M 648.5506 250.156 L 648.5506 262.056 L 648.5506 266.056 L 614.71436 266.056 L 614.71436 269.55707 L 614.71436 271.55707"
+        marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1" stroke-dasharray="4,4"/>
+      <circle cx="508.2101" cy="221.35597" r="28.800047" fill="#ffac73"/>
+      <circle cx="508.2101" cy="221.35597" r="28.800047" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(487.17014 215.35597)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".110839844" y="10" textLength="42.77832">
+          GroupBy
+        </tspan>
+      </text>
+      <path
+        d="M 508.2101 192.55595 L 508.2101 180.65596 L 508.2101 180.65596 L 578.80933 180.65596 L 578.80933 168.44615 L 578.80933 166.44615"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <path
+        d="M 648.5506 192.55595 L 648.5506 180.65596 L 648.5506 180.65596 L 578.80933 180.65596 L 578.80933 168.44615 L 578.80933 166.44615"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <circle cx="578.80933" cy="127.74613" r="28.800064" fill="#ffac73"/>
+      <circle cx="578.80933" cy="127.74613" r="28.800064" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(560.76935 121.74614)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.480917" y="10" textLength="21.118164">
+          Pipe
+        </tspan>
+      </text>
+      <circle cx="438.03989" cy="221.35597" r="28.800055" fill="#ffac73"/>
+      <circle cx="438.03989" cy="221.35597" r="28.800055" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(419.9999 215.35597)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="3.3134365" y="10" textLength="29.453125">
+          Merge
+        </tspan>
+      </text>
+      <circle cx="718.72083" cy="221.35597" r="28.800066" fill="#ffac73"/>
+      <circle cx="718.72083" cy="221.35597" r="28.800066" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(700.68085 215.35597)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="4.4169521" y="10" textLength="27.246094">
+          Every
+        </tspan>
+      </text>
+      <path
+        d="M 438.03989 192.55595 L 438.03989 180.65596 L 438.03989 180.65596 L 578.80933 180.65596 L 578.80933 168.44615 L 578.80933 166.44615"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <path
+        d="M 718.72083 192.55595 L 718.72083 180.65596 L 718.72083 180.65596 L 578.80933 180.65596 L 578.80933 168.44615 L 578.80933 166.44615"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <circle cx="788.89105" cy="221.35597" r="28.800066" fill="#ffac73"/>
+      <circle cx="788.89105" cy="221.35597" r="28.800066" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(765.85107 209.35597)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="14.556641" y="10" textLength="18.886719">
+          Sub
+        </tspan>
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x=".37695312" y="22" textLength="47.246094">
+          Assembly
+        </tspan>
+      </text>
+      <path
+        d="M 788.89105 192.55595 L 788.89105 180.65596 L 788.89105 180.65596 L 578.80933 180.65596 L 578.80933 168.44615 L 578.80933 166.44615"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <circle cx="578.38037" cy="221.35597" r="28.800066" fill="#ffac73"/>
+      <circle cx="578.38037" cy="221.35597" r="28.800066" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(560.3404 215.35597)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="7.7616787" y="10" textLength="20.556641">
+          Join
+        </tspan>
+      </text>
+      <circle cx="367.86966" cy="221.35597" r="28.800055" fill="#ffac73"/>
+      <circle cx="367.86966" cy="221.35597" r="28.800055" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="1"/>
+      <text transform="translate(349.82968 215.35597)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="bold" x="6.0893154" y="10" textLength="23.901367">
+          Each
+        </tspan>
+      </text>
+      <path
+        d="M 367.86966 192.55595 L 367.86966 180.65596 L 367.86966 180.65596 L 578.80933 180.65596 L 578.80933 168.44615 L 578.80933 166.44615"
+        marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1"/>
+      <path d="M 578.38037 192.55595 L 578.38037 180.65596 L 578.80933 168.44615 L 578.80933 166.44615"
+            marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="1"/>
+      <path
+        d="M 578.38037 250.156 L 578.38037 262.056 L 578.38037 266.056 L 614.71436 266.056 L 614.71436 269.55707 L 614.71436 271.55707"
+        marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="1" stroke-dasharray="4,4"/>
+    </g>
+  </g>
+</svg>

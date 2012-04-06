@@ -22,6 +22,8 @@ import cascading.pipe.CoGroup;
 import cascading.pipe.Each;
 import cascading.pipe.Every;
 import cascading.pipe.GroupBy;
+import cascading.pipe.Join;
+import cascading.pipe.Merge;
 import cascading.pipe.Pipe;
 import cascading.pipe.SubAssembly;
 import cascading.pipe.assembly.AggregateBy;
@@ -279,6 +281,49 @@ public class CompiledExamples
     //@extract-start simple-groupby-merge
     Pipe[] pipes = Pipe.pipes( lhs, rhs );
     Pipe merge = new GroupBy( pipes, new Fields( "group1", "group2" ) );
+    //@extract-end
+    }
+
+  public void compileMerge()
+    {
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    //@extract-start simple-merge
+    Pipe merge = new Merge( lhs, rhs );
+    //@extract-end
+    }
+
+  public void compileJoin()
+    {
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    //@extract-start simple-join
+    Fields lhsFields = new Fields( "fieldA", "fieldB" );
+    Fields rhsFields = new Fields( "fieldC", "fieldD" );
+    Pipe join = new Join( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
+    //@extract-end
+    }
+
+  public void compileJoinExample()
+    {
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    //@extract-start duplicate-join
+    Fields common = new Fields( "url" );
+    Fields declared = new Fields( "url1", "word", "wd_count", "url2", "sentence", "snt_count" );
+    Pipe join = new Join( lhs, common, rhs, common, declared, new InnerJoin() );
     //@extract-end
     }
 
