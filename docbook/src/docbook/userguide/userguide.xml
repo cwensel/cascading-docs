@@ -1253,8 +1253,7 @@
       </section>
 
       <section>
-        <title><?oxy_comment_start author="Jim" timestamp="20120327T003740-0700" comment="Chris, this new section is for discussing advanced local override properties for a pipe. I threw in some bad boilerplate to get you started..."?>
-        Setting Custom Pipe Properties<?oxy_comment_end ?></title>
+        <title> Setting Custom Pipe Properties</title>
 
         <para>The Cascading planner assigns the same properties to all pipes
         in a flow, based on the defaults for that flow. However, it's possible
@@ -1672,7 +1671,7 @@
       <classname>SinkMode</classname> may be provided so that the Tap will
       know how to handle any existing resources. Note not all Taps support all
       <classname>SinkMode</classname> values, for example Hadoop does not
-      support appends (update) from a MapReduce job. </para>
+      support appends (update) from a MapReduce job.</para>
 
       <para>The available SinkModes are:</para>
 
@@ -1737,7 +1736,7 @@
       <classname>MultiSourcetap</classname>. But for a
       <classname>Flow</classname> to execute (when not used in a
       <classname>Cascade</classname> object), all of its sinks must be set to
-      <classname>SinkMode.REPLACE</classname>. </para>
+      <classname>SinkMode.REPLACE</classname>.</para>
     </section>
 
     <section>
@@ -1898,7 +1897,7 @@
       on the configured platform. In the case of Hadoop mode, the Flow will
       execute on a Hadoop cluster.</para>
 
-      <para>A Flow is essentially a data processing workflow that reads data
+      <para>A Flow is essentially a data processing pipeline that reads data
       from sources, processes the data as defined by the pipe assembly, and
       writes data to the sinks. Input source data does not need to exist at
       the time the Flow is created, but it must exist by the time the Flow is
@@ -1926,12 +1925,12 @@
           <xi:include href="simple-flow.xml"/>
         </example>
 
-        <para>To create a Flow, it must be planned though a FlowConnector
-        object, each mode, local and Hadoop have their own connectors. The
-        <code>connect()</code> method is used to create new Flow instances
-        based on a set of sink taps, source taps, and a pipe assembly. The
-        example above is quite trivial and is using the Hadoop mode
-        connector.</para>
+        <para>To create a Flow, it must be planned though one of the
+        FlowConnector sub-class objects. Each platform mode, local mode and
+        Hadoop mode, have their own connectors. The <code>connect()</code>
+        method is used to create new Flow instances based on a set of sink
+        taps, source taps, and a pipe assembly. The example above is quite
+        trivial and is using the Hadoop mode connector.</para>
 
         <example>
           <title>Binding taps in a Flow</title>
@@ -1940,18 +1939,12 @@
         </example>
 
         <para>The example above expands on our previous pipe assembly example
-        by creating source and sink taps and planning a Flow. Note there are
-        two branches in the pipe assembly - one named "lhs" and the other
-        named "rhs". Cascading uses those names to bind the source taps to the
-        pipe assembly. A HashMap of names and taps must be passed to
-        FlowConnector in order to bind taps to branches.</para>
-
-        <para>Since there is only one tail (the "join" pipe), we don't need to
-        bind the sink to a branch name. Nor do we need to pass the heads of
-        the assembly to the FlowConnector, since it can determine the heads of
-        the pipe assembly on the fly. However, when creating more complex
-        Flows with multiple heads and tails, all taps must be explicitly named
-        and the proper <code>connect()</code> method must be called.</para>
+        by creating multiple source and sink taps and planning a Flow. Note
+        there are two branches in the pipe assembly - one named "lhs" and the
+        other named "rhs". Internally Cascading uses those names to bind the
+        source taps to the pipe assembly. New in 2.0, a FlowDef can be created
+        to manage the names and taps that must be passed to a
+        FlowConnector.</para>
       </section>
 
       <section>
@@ -1960,10 +1953,10 @@
 
         <para>The FlowConnector constructor accepts the
         <classname>java.util.Property</classname> object so that default
-        Cascading and Hadoop properties can be passed down through the planner
-        to the Hadoop runtime. Subsequently any relevant Hadoop
-        <code>hadoop-default.xml</code> properties may be added. For instance,
-        it's very common to add
+        Cascading and any platform specific properties can be passed down
+        through the planner to the platform runtime. In the case of Hadoop,
+        any relevant Hadoop <code>hadoop-default.xml</code> properties may be
+        added. For instance, it's very common to add
         <code>mapred.map.tasks.speculative.execution</code>,
         <code>mapred.reduce.tasks.speculative.execution</code>, or
         <code>mapred.child.java.opts</code>.</para>
@@ -1982,15 +1975,15 @@
 
         <para>Note the pattern of using a static property-setter method
         (<classname>cascading.flow.FlowConnector.setApplicationJarPath</classname>).
-        Other classes that can be used to set properties are
-        <classname>cascading.flow.MultiMapReducePlanner</classname> and
-        <classname>cascading.flow.Flow</classname>.</para>
+        See <classname>cascading.flow.Flow</classname> for other
+        properties..</para>
 
         <para>Since the <classname>FlowConnector</classname> can be reused,
         any properties passed on the constructor will be handed to all the
         Flows it is used to create. If Flows need to be created with different
         default properties, a new FlowConnector will need to be instantiated
-        with those properties.</para>
+        with those properties, or properties will need to be set on a given
+        <classname>Pipe</classname> instance directly.</para>
       </section>
 
       <section>
@@ -1998,13 +1991,13 @@
         Flows</title>
 
         <para>When a Flow participates in a Cascade, the
-        <classname>Flow#isSkip()</classname> method is consulted before
-        calling <classname>Flow#start()</classname> on the flow. The result is
+        <classname>Flow.isSkip()</classname> method is consulted before
+        calling <classname>Flow.start()</classname> on the flow. The result is
         based on the Flow's "skip strategy". By default,
         <methodname>isSkip()</methodname> returns true if any of the sinks are
         stale - i.e., the sinks don't exist or the resources are older than
         the sources. However, the strategy can be changed via the
-        <classname>Cascade#setFlowSkipStrategy()</classname> method, which can
+        <classname>Cascade.setFlowSkipStrategy()</classname> method, which can
         be called before or after a particular <classname>Flow</classname>
         instance has been created.</para>
 
@@ -2017,9 +2010,9 @@
 
             <listitem>
               <para>This strategy -
-              <classname>cascading.flow.FlowSkipIfSinkStale</classname> - is
-              the default. Sinks are treated as stale if they don't exist or
-              the resources are older than the sources. If the SinkMode for
+              <classname>cascading.flow.FlowSkipIfNotSinkStale</classname> -
+              is the default. Sinks are treated as stale if they don't exist
+              or the resources are older than the sources. If the SinkMode for
               the sink tap is REPLACE, then the tap is treated as
               stale.</para>
             </listitem>
@@ -2042,7 +2035,7 @@
         the interface
         <classname>cascading.flow.FlowSkipStrategy</classname>.</para>
 
-        <para>Note that <classname>Flow#start()</classname> does not consult
+        <para>Note that <classname>Flow.start()</classname> does not consult
         the <methodname>isSkip()</methodname> method, and consequently always
         tries to start the Flow if called. It is up to the user code to call
         <classname>isSkip()</classname> to determine whether the current
@@ -2066,9 +2059,9 @@
 
         <para>Any custom Class can be treated as a Flow if given the correct
         <link xlink:href="http://github.com/cwensel/riffle">Riffle</link>
-        annotations. Riffle is an Apache-licensed set of Java Annotations that
-        identify specific methods on a Class as providing specific life-cycle
-        and dependency functionality. For more information, see the Riffle
+        annotations. Riffle is a set of Java Annotations that identify
+        specific methods on a Class as providing specific life-cycle and
+        dependency functionality. For more information, see the Riffle
         documentation and examples. To use with Cascading, a Riffle-annotated
         instance must be passed to the
         <classname>cascading.flow.ProcessFlow</classname> constructor method.
@@ -2099,11 +2092,9 @@
       <para>A Cascade allows multiple Flow instances to be executed as a
       single logical unit. If there are dependencies between the Flows, they
       are executed in the correct order. Further, Cascades act like Ant builds
-      or Unix make files.</para>
-
-      <para>By default, a Cascade only executes Flows that have stale sinks -
-      i.e., output data that is older than the input data. For more on this,
-      see <xref linkend="skipping-flows"/>.</para>
+      or Unix make files, that is, a Cascade only executes Flows that have
+      stale sinks - i.e., output data that is older than the input data. For
+      more on this, see <xref linkend="skipping-flows"/>.</para>
 
       <example>
         <title>Creating a new Cascade</title>
@@ -2115,8 +2106,8 @@
       important. The CascadeConnector automatically identifies the
       dependencies between the given Flows and creates a scheduler that starts
       each Flow as its data sources become available. If two or more Flow
-      instances have no dependencies, they are submitted together so that they
-      can execute in parallel.</para>
+      instances have no interdependencies, they are submitted together so that
+      they can execute in parallel.</para>
 
       <para>For more information, see the section on<xref
       linkend="cascade-scheduler"/>.</para>
@@ -2124,7 +2115,7 @@
       <para>If an instance of
       <classname>cascading.flow.FlowSkipStrategy</classname> is given to a
       <classname>Cascade</classname> instance (via the
-      <classname>Cascade#setFlowSkipStrategy()</classname> method), it is
+      <classname>Cascade.setFlowSkipStrategy()</classname> method), it is
       consulted for every Flow instance managed by that Cascade, and all skip
       strategies on those Flow instances are ignored. For more information on
       skip strategies, see <xref linkend="skipping-flows"/>.</para>
@@ -2141,8 +2132,9 @@
       <title>Introduction</title>
 
       <para>Cascading requires Apache Hadoop to be installed and correctly
-      configured. Hadoop is an Open Source Apache project, freely available
-      for download from the Hadoop website,<link
+      configured when using the <classname>HadoopFlowConnector</classname>.
+      Hadoop is an Open Source Apache project, freely available for download
+      from the Hadoop website,<link
       xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
     </section>
 

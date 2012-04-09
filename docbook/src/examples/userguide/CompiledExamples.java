@@ -15,6 +15,7 @@ import cascading.cascade.Cascade;
 import cascading.cascade.CascadeConnector;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
+import cascading.flow.FlowDef;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.Debug;
 import cascading.operation.DebugLevel;
@@ -175,12 +176,13 @@ public class CompiledExamples
 
     Tap sink = new Hfs( new TextLine(), "output" );
 
-    Map<String, Tap> sources = new HashMap<String, Tap>();
+    FlowDef flowDef = new FlowDef()
+      .setName( "flow-name" )
+      .addSource( rhs, rhsSource)
+      .addSource( lhs, lhsSource )
+      .addSink( groupBy, sink );
 
-    sources.put( "lhs", lhsSource );
-    sources.put( "rhs", rhsSource );
-
-    Flow flow = new HadoopFlowConnector().connect( "flow-name", sources, sink, groupBy );
+    Flow flow = new HadoopFlowConnector().connect( flowDef );
     //@extract-end
     }
 
@@ -212,7 +214,9 @@ public class CompiledExamples
     // this will find the parent jar at runtime
     FlowConnector.setApplicationJarClass( properties, Main.class );
 
-    // or pass in the path to the parent jar
+    // OR ...
+
+    // pass in the path to the parent jar
     FlowConnector.setApplicationJarPath( properties, pathToJar );
 
     FlowConnector flowConnector = new HadoopFlowConnector( properties );
