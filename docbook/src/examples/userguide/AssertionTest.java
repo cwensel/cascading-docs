@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
+import cascading.flow.FlowDef;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.AssertionLevel;
 import cascading.operation.assertion.AssertMatchesAll;
@@ -92,14 +93,16 @@ public class AssertionTest extends ExampleTestCase
     Pipe assembly = new Pipe( "logs" );
 
     //@extract-start simple-assertion-planner
-    Properties properties = new Properties();
 
     // removes all assertions from the Flow
-    FlowConnector.setAssertionLevel( properties, AssertionLevel.NONE );
+    FlowDef flowDef = FlowDef.flowDef()
+      .addSource( assembly, source )
+      .addSink( assembly, source )
+      .setAssertionLevel( AssertionLevel.NONE );
 
-    FlowConnector flowConnector = new HadoopFlowConnector( properties );
+    FlowConnector flowConnector = new HadoopFlowConnector();
 
-    Flow flow = flowConnector.connect( source, sink, assembly );
+    Flow flow = flowConnector.connect( flowDef );
     //@extract-end
     }
 

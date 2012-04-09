@@ -1253,7 +1253,7 @@
       </section>
 
       <section>
-        <title> Setting Custom Pipe Properties</title>
+        <title>Setting Custom Pipe Properties</title>
 
         <para>The Cascading planner assigns the same properties to all pipes
         in a flow, based on the defaults for that flow. However, it's possible
@@ -2343,8 +2343,8 @@
       filter it, analyze it, and so on. You can use the standard Operations in
       the Cascading library to create powerful and robust applications, and
       you can combine them in chains (much like Unix operations such
-      as<command>sed</command>,<command>grep</command>,
-      <command>sort</command>,<command>uniq</command>, and
+      as<command> sed</command>, <command>grep</command>,
+      <command>sort</command>, <command>uniq</command>, and
       <command>awk</command>). And if you want to go further, it's also very
       simple to develop custom Operations in Cascading.</para>
 
@@ -2365,28 +2365,30 @@
         </imageobject>
       </mediaobject>
 
-      <para>All Operations require an input argument Tuple. All Operations
-      return zero or more Tuple object results - except
+      <para>Operations may require an input argument Tuple to act on. And all
+      Operations can return zero or more Tuple object results - except
       <classname>Filter</classname>, which simply returns a Boolean indicating
-      whether to discard the current Tuple. A<classname>Function</classname>,
-      for instance, can parse a string and return a new Tuple for every value
-      parsed (i.e., one Tuple for each "word"), or it may create a single
-      Tuple with every parsed value included as an element in one Tuple object
-      (e.g., one Tuple with "first-name" and "last-name" fields).</para>
+      whether to discard the current Tuple. A <classname>Function</classname>,
+      for instance, can parse a string passed by an argument Tuple and return
+      a new Tuple for every value parsed (i.e., one Tuple for each "word"), or
+      it may create a single Tuple with every parsed value included as an
+      element in one Tuple object (e.g., one Tuple with "first-name" and
+      "last-name" fields).</para>
 
       <para>In theory, a <classname>Function</classname> can be used as a
       <classname>Filter</classname>. However, the
       <classname>Filter</classname> type is optimized for filtering, and can
-      be combined with logical Operations such as<classname>Not</classname>,
-      <classname>And</classname>,<classname>Or</classname>, etc.</para>
+      be combined with logical Operations such as <classname>Not</classname>,
+      <classname>And</classname>, <classname>Or</classname>, etc.</para>
 
       <para>During runtime, Operations actually receive arguments as one or
-      more instances of the TupleEntry object. The TupleEntry object holds
-      both an instance of <classname>Fields</classname> and the current
+      more instances of the <classname>TupleEntry</classname> object. The
+      TupleEntry object holds both an instance of
+      <classname>Fields</classname> and the current
       <classname>Tuple</classname> for which the <classname>Fields</classname>
       object defines fields.</para>
 
-      <para>Except for<classname>Filter</classname>, all Operations must
+      <para>Except for <classname>Filter</classname>, all Operations must
       declare result Fields, and if the actual output does not match the
       declaration, the process will fail. For example, consider a
       <classname>Function</classname> written to parse words out of a String
@@ -2394,7 +2396,7 @@
       output is a Tuple with a single field named "word", and then returns
       more values in the Tuple beyond that single "word", processing will
       halt. However, Operations designed to return arbitrary numbers of values
-      in a result Tuple may declare<code>Fields.UNKNOWN</code>.</para>
+      in a result Tuple may declare <code>Fields.UNKNOWN</code>.</para>
 
       <para>The Cascading planner always attempts to "fail fast" where
       possible by checking the field name dependencies between Pipes and
@@ -2406,11 +2408,11 @@
       instance. The pipe is responsible for passing in an argument Tuple and
       accepting the resulting output Tuple.</para>
 
-      <para>Operations, by default, <?oxy_comment_start author="Jim" timestamp="20120312T181425-0700" comment="Does this mean that Cascading guarantees they are safe, or that devs should make them safe?"?>
-      are<?oxy_comment_end ?> "safe". A safe Operation is idempotent; it can
-      safely execute multiple times on the same Tuple; it has no side-effects.
-      If an Operation is not idempotent, the method <code>isSafe()</code> must
-      return<code>false</code>. This value influences how the Cascading
+      <para>Operations by default are assumed by the Cascading planner to be
+      "safe". A safe Operation is idempotent; it can safely execute multiple
+      times on the exact same record or Tuple; it has no side-effects. If a
+      custom Operation is not idempotent, the method <code>isSafe()</code>
+      must return <code>false</code>. This value influences how the Cascading
       planner renders the Flow under certain circumstances.</para>
     </section>
 
@@ -2419,13 +2421,13 @@
 
       <para>A <classname>Function</classname> expects a stream of individual
       argument Tuples, and returns zero or more result Tuples for each of
-      them. Like a<classname>Filter</classname>, a
+      them. Like a <classname>Filter</classname>, a
       <classname>Function</classname> is used with an
       <classname>Each</classname> pipe, which may follow any pipe type.</para>
 
-      <para>To create a custom<classname>Function</classname>, subclass the
+      <para>To create a custom <classname>Function</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Function</code>. Since the
+      interface <code>cascading.operation.Function</code>. Since the
       <code>BaseOperation</code> has been subclassed, the <code>operate</code>
       method, as defined on the <code>Function</code> interface, is the only
       method that must be implemented.</para>
@@ -2452,7 +2454,7 @@
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - input arguments and output fields - must be
+      <para>Both declarations - input argument and output fields - must be
       done on the constructor, either by passing default values to the
       <code>super</code> constructor, or by accepting the values from the user
       via a constructor implementation.</para>
@@ -2472,6 +2474,39 @@
       it's good to give the user the option of overriding the declared field
       names, allowing them to prevent possible field name collisions that
       might cause the planner to fail.</para>
+
+      <example>
+        <title>Add Values Function and Context</title>
+
+        <xi:include href="efficient-sum-function.xml"/>
+      </example>
+
+      <para>This example is a minor variation on the previous and introduces
+      the notion of a "context" object and the
+      <methodname>prepare()</methodname> and
+      <methodname>cleanup()</methodname> methods.</para>
+
+      <para>All Operations allow for a context object, simply a user defined
+      object that holds state between calls of the
+      <methodname>operate()</methodname> method. This allows for a given
+      instance of the Operation to be multi-thread safe on a platform that may
+      use multiple threads of execution versus multiple processes. It also
+      allows deferring complex resources until the Operation will be
+      engaged.</para>
+
+      <para>The <methodname>prepare()</methodname> and
+      <methodname>cleanup()</methodname> methods are invoked once per thread
+      of execution, and in the case of the Hadoop platform, only on the
+      cluster side, never on the client.</para>
+
+      <para>In the above example, a <classname>Tuple</classname> is used as
+      the context a more complex type isn't necessary. Also note the Tuple
+      isn't storing state but it is re-used to reduce the number of new Object
+      instances created. In Cascading, it is perfectly safe to output the same
+      Tuple instance from the <methodname>operate()</methodname>. The method
+      <code>functionCall.getOutputCollector().add( result )</code> will not
+      return until the result <classname>Tuple</classname> has been processed
+      or persisted downstream.</para>
     </section>
 
     <section>
@@ -2479,11 +2514,11 @@
 
       <para>A <classname>Filter</classname> expects a stream of individual
       argument Tuples and returns a Boolean value for each, stating whether it
-      should be discarded. Like a<classname>Function</classname>, a
+      should be discarded. Like a <classname>Function</classname>, a
       <classname>Filter</classname> is used with an
       <classname>Each</classname> pipe, which may follow any pipe type.</para>
 
-      <para>To create a custom<classname>Filter</classname>, subclass the
+      <para>To create a custom <classname>Filter</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
       interface<code>cascading.operation.Filter</code>. Because
       <code>BaseOperation</code> has been subclassed, the
@@ -2534,7 +2569,7 @@
       <para>To create a custom<classname>Aggregator</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
       interface<code>cascading.operation.Aggregator</code>. Because
-      <code>BaseOperation</code> has been subclassed, the<code>start</code>,
+      <code>BaseOperation</code> has been subclassed, the <code>start</code>,
       <code>aggregate</code>, and <code>complete</code> methods, as defined on
       the <code>Aggregator</code> interface, are the only methods that must be
       implemented.</para>
@@ -2561,7 +2596,7 @@
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - input arguments and output fields - must be
+      <para>Both declarations - input argument and output fields - must be
       done on the constructor, either by passing default values to the
       <code>super</code> constructor, or by accepting the values from the user
       via a constructor implementation.</para>
@@ -2596,19 +2631,19 @@
       <classname>Aggregator</classname>, except that it receives the current
       Grouping Tuple, and an iterator of all the arguments it expects, for
       every value Tuple in the current grouping - all on the same method call.
-      This is very similar to the typical Reducer interface, and is best used
-      for operations that need high visibility to the previous and next
-      elements in the stream - such as smoothing a series of time-stamps where
-      there are missing values.</para>
+      This is very similar to the typical Reducer interface in MapReduce, and
+      is best used for operations that need high visibility to the previous
+      and next elements in the stream - such as smoothing a series of
+      time-stamps where there are missing values.</para>
 
       <para>A <classname>Buffer</classname> may only be used with an
       <classname>Every</classname> pipe, and it may only follow a
       <classname>GroupBy</classname> or <classname>CoGroup</classname> pipe
       type.</para>
 
-      <para>To create a custom<classname>Buffer</classname>, subclass the
+      <para>To create a custom <classname>Buffer</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Buffer</code>. Because
+      interface <code>cascading.operation.Buffer</code>. Because
       <code>BaseOperation</code> has been subclassed, the <code>operate</code>
       method, as defined on the <code>Buffer</code> interface, is the only
       method that must be implemented.</para>
@@ -2628,12 +2663,12 @@
       that the number of arguments selected is the same as the number of
       arguments expected.</para>
 
-      <para>For output, it's good practice for Aggregators to declare the
-      field names they return. If not specified, the default is
+      <para>For output, it's good practice for Buffers to declare the field
+      names they return. If not specified, the default is
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - input arguments and output fields - must be
+      <para>Both declarations - input argument and output fields - must be
       done on the constructor, either by passing default values to the
       <code>super</code> constructor, or by accepting the values from the user
       via a constructor implementation.</para>
@@ -2663,6 +2698,12 @@
 
       <para>There are several constraints on the use of Buffers that may not
       be self-evident. These are detailed in the Javadoc.</para>
+
+      <para>As with the <classname>Function</classname> example above, a
+      <classname>Buffer</classname> may define a custom context object and
+      implement the <methodname>prepare()</methodname> and
+      <methodname>cleanup()</methodname> methods to maintain state, or re-use
+      outgoing <classname>Tuple</classname> instances for efficiency.</para>
     </section>
 
     <section>
@@ -2802,8 +2843,9 @@
 
       <para>Assertions are treated like any other function or aggregator in
       Cascading. They are embedded directly into the pipe assembly by the
-      developer. By default, if an assertion fails, the processing stops. As
-      an alternative, an assertion failure can trigger a Failure Trap.</para>
+      developer. By default, if an assertion fails, the processing fails. As
+      an alternative, an assertion failure can be caught by a failure
+      Trap.</para>
 
       <para>Assertions may be more, or less, desirable in different contexts.
       For this reason, stream assertions can be treated as either "strict" or
@@ -2822,13 +2864,9 @@
       <para>To handle all three of these situations, Cascading can be
       instructed to <emphasis role="italic">plan out</emphasis> (i.e., omit)
       strict assertions, validation assertions, or both when building the
-      final MapReduce jobs. To create optimal performance, Cascading
-      implements this by actually leaving the undesired assertions out of the
-      final job (not merely switching them off).</para>
-
-      <para>In this way, assertions support robust code while saving labor,
-      demonstrating some of the advantages of building MapReduce jobs via a
-      planner instead of manually hardcoding them.</para>
+      Flow. To create optimal performance, Cascading implements this by
+      actually leaving the undesired assertions out of the final Flow (not
+      merely switching them off).</para>
 
       <example>
         <title>Adding Assertions</title>
@@ -2848,11 +2886,12 @@
       </example>
 
       <para>To configure the planner to remove some or all assertions, a
-      property must be set via the
-      <classname>FlowConnector#setAssertionLevel()</classname> method. Setting
-      <classname>AssertionLevel.NONE</classname> removes all assertions.
-      <classname>AssertionLevel.VALID</classname> keeps <code>VALID</code>
-      assertions but removes <code>STRICT</code> ones. And
+      property can be set via the
+      <classname>FlowConnector.setAssertionLevel()</classname> method or
+      directly on the <classname>FlowDef</classname> instance, as can be seen
+      above. Setting <classname>AssertionLevel.NONE</classname> removes all
+      assertions. <classname>AssertionLevel.VALID</classname> keeps
+      <code>VALID</code> assertions but removes <code>STRICT</code> ones. And
       <classname>AssertionLevel.STRICT</classname> keeps all assertions - the
       planner default value.</para>
     </section>
