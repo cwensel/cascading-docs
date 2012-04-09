@@ -12,6 +12,7 @@ import java.util.Map;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
+import cascading.flow.FlowDef;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.AssertionLevel;
 import cascading.operation.assertion.AssertMatchesAll;
@@ -65,18 +66,25 @@ public class TrapTest extends ExampleTestCase
     assembly = new Each( assembly, AssertionLevel.STRICT, equals );
 
     AssertMatchesAll matchesAll = new AssertMatchesAll( "(GET|HEAD|POST)" );
-    assembly = new Each( assembly, new Fields( "method" ),
-      AssertionLevel.STRICT, matchesAll );
+    assembly =
+      new Each( assembly, new Fields( "method" ), AssertionLevel.STRICT, matchesAll );
 
     // ...some more useful pipes here
 
-    Map<String, Tap> traps = new HashMap<String, Tap>();
+    FlowDef flowDef = new FlowDef();
 
-    traps.put( "assertions", trap );
+    flowDef
+      .setName( "log-parser" )
+      .addSource( "logs", source )
+      .addTailSink( assembly, sink );
+
+    // set the trap on the "assertions" branch
+    flowDef
+      .addTrap( "assertions", trap );
 
     FlowConnector flowConnector = new HadoopFlowConnector();
     Flow flow =
-      flowConnector.connect( "log-parser", source, sink, traps, assembly );
+      flowConnector.connect( flowDef );
     //@extract-end
 
     flow.complete();

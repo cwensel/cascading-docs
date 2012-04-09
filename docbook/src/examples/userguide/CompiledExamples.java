@@ -178,9 +178,9 @@ public class CompiledExamples
 
     FlowDef flowDef = new FlowDef()
       .setName( "flow-name" )
-      .addSource( rhs, rhsSource)
+      .addSource( rhs, rhsSource )
       .addSource( lhs, lhsSource )
-      .addSink( groupBy, sink );
+      .addTailSink( groupBy, sink );
 
     Flow flow = new HadoopFlowConnector().connect( flowDef );
     //@extract-end
@@ -214,11 +214,13 @@ public class CompiledExamples
     // this will find the parent jar at runtime
     FlowConnector.setApplicationJarClass( properties, Main.class );
 
-    // OR ...
+    // ALTERNATELY ...
 
     // pass in the path to the parent jar
     FlowConnector.setApplicationJarPath( properties, pathToJar );
 
+
+    // pass properties to the connector
     FlowConnector flowConnector = new HadoopFlowConnector( properties );
     //@extract-end
     }
@@ -373,14 +375,22 @@ public class CompiledExamples
     assembly = new Each( assembly, DebugLevel.VERBOSE, new Debug() );
     // ...
 
-    Properties properties = new Properties();
+    // head and tail have same name
+    FlowDef flowDef = new FlowDef()
+      .setName( "debug" )
+      .addSource( "assembly", source )
+      .addSink( "assembly", sink )
+      .addTail( assembly );
+
 
     // tell the planner to remove all Debug operations
-    FlowConnector.setDebugLevel( properties, DebugLevel.NONE );
-    // ...
-    FlowConnector flowConnector = new HadoopFlowConnector( properties );
+    flowDef
+      .setDebugLevel( DebugLevel.NONE );
 
-    Flow flow = flowConnector.connect( "debug", source, sink, assembly );
+    // ...
+    FlowConnector flowConnector = new HadoopFlowConnector();
+
+    Flow flow = flowConnector.connect( flowDef );
     //@extract-end
     }
 

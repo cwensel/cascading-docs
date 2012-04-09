@@ -93,16 +93,20 @@ public class AssertionTest extends ExampleTestCase
     Pipe assembly = new Pipe( "logs" );
 
     //@extract-start simple-assertion-planner
+    // FlowDef is a fluent way to define a Flow
+    FlowDef flowDef = new FlowDef();
+
+    // bind the taps and pipes
+    flowDef
+      .addSource( assembly.getName(), source )
+      .addSink( assembly.getName(), sink )
+      .addTail( assembly );
 
     // removes all assertions from the Flow
-    FlowDef flowDef = FlowDef.flowDef()
-      .addSource( assembly, source )
-      .addSink( assembly, source )
+    flowDef
       .setAssertionLevel( AssertionLevel.NONE );
 
-    FlowConnector flowConnector = new HadoopFlowConnector();
-
-    Flow flow = flowConnector.connect( flowDef );
+    Flow flow = new HadoopFlowConnector().connect( flowDef );
     //@extract-end
     }
 

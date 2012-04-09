@@ -2820,9 +2820,8 @@
     </section>
 
     <section>
-      <title xreflabel="Stream Assertions"
-      xml:id="stream-assertions"><?oxy_comment_start author="Jim" timestamp="20120323T171050-0700" comment="Jim - this section could be tightened up a little, esp at the end."?>
-      Stream Assertions<?oxy_comment_end ?></title>
+      <title xreflabel="Stream Assertions" xml:id="stream-assertions"> Stream
+      Assertions</title>
 
       <mediaobject>
         <imageobject role="fo">
@@ -2916,23 +2915,27 @@
         </inlinemediaobject></para>
 
       <para>Failure Traps are very similar to tap sinks (as opposed to tap
-      sources), except that, <?oxy_comment_start author="Jim" timestamp="20120402T043525-0700" comment="This does not seem clear to me."?>
-      since they are bound to a particular tail element of the pipe assembly,
-      traps can be bound to intermediate pipe assembly segments - just like to
-      a Stream Assertion.<?oxy_comment_end ?></para>
+      sources) in that they allow data to be stored. Except that Tap sinks are
+      bound to a particular tail pipe in a pipe assembly and are the primary
+      outlet of a branch in a pipe assembly. Tap traps can be bound to
+      intermediate pipe assembly branches - just like Stream Assertions - yet
+      they only capture data that causes and Operation to fail (throw an
+      Exception).</para>
 
       <para>Whenever an operation fails and throws an exception, if there is
       an associated trap, the offending Tuple is saved to the resource
-      specified by the trap tap. This allows the job to continue processing
+      specified by the trap Tap. This allows the job to continue processing
       without any data loss.</para>
 
       <para>By design, clusters are hardware fault-tolerant - lose a node, and
       the cluster continues working. But fault tolerance for software is a
       little different. Failure Traps provide a means for the processing to
       continue without losing track of the data that caused the fault. For
-      high fidelity applications, this may not be very important, but for low
-      fidelity applications (like webpage indexing) this can dramatically
-      improve processing reliability.</para>
+      high fidelity applications, this may not be very important, you likely
+      will want any errors during processing to cause the application to stop.
+      But for low fidelity applications (like webpage indexing) this can
+      dramatically improve processing reliability, skipping a page out of a
+      few million won't wreck things.</para>
 
       <example>
         <title>Setting Traps</title>
@@ -4399,6 +4402,14 @@
 
             <listitem>
               <xi:include href="cookbook-discardfield.xml"/>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Retain (keep) a field</term>
+
+            <listitem>
+              <xi:include href="cookbook-retainfield.xml"/>
             </listitem>
           </varlistentry>
 

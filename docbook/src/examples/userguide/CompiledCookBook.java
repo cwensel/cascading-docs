@@ -13,6 +13,7 @@ import java.util.Properties;
 import cascading.cascade.Cascades;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
+import cascading.flow.FlowDef;
 import cascading.flow.FlowProcess;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.Identity;
@@ -24,7 +25,10 @@ import cascading.pipe.Each;
 import cascading.pipe.Every;
 import cascading.pipe.GroupBy;
 import cascading.pipe.Pipe;
+import cascading.pipe.assembly.Coerce;
+import cascading.pipe.assembly.Discard;
 import cascading.pipe.assembly.Rename;
+import cascading.pipe.assembly.Retain;
 import cascading.pipe.assembly.Unique;
 import cascading.scheme.hadoop.SequenceFile;
 import cascading.tap.Tap;
@@ -46,6 +50,7 @@ public class CompiledCookBook
     Tuple copy = new Tuple( original );
 
     assert copy.get( 0 ).equals( "john" );
+    assert copy.get( 1 ).equals( "doe" );
     //@extract-end
     }
 
@@ -56,6 +61,7 @@ public class CompiledCookBook
     parent.add( new Tuple( "john", "doe" ) );
 
     assert ( (Tuple) parent.get( 0 ) ).get( 0 ).equals( "john" );
+    assert ( (Tuple) parent.get( 1 ) ).get( 1 ).equals( "doe" );
     //@extract-end
     }
 
@@ -117,8 +123,18 @@ public class CompiledCookBook
 
     //@extract-start cookbook-discardfield
     // incoming -> "keepField", "dropField"
-    pipe = new Each( pipe, new Fields( "keepField" ), new Identity(),
-      Fields.RESULTS );
+    pipe = new Discard( pipe, new Fields( "dropField" ) );
+    // outgoing -> "keepField"
+    //@extract-end
+    }
+
+  public void compileRetainField()
+    {
+    Pipe pipe = new Pipe( "head" );
+
+    //@extract-start cookbook-retainfield
+    // incoming -> "keepField", "dropField"
+    pipe = new Retain( pipe, new Fields( "keepField" ) );
     // outgoing -> "keepField"
     //@extract-end
     }
@@ -138,12 +154,11 @@ public class CompiledCookBook
     Pipe pipe = new Pipe( "head" );
 
     //@extract-start cookbook-coercefields
-    Fields arguments = new Fields( "longField", "booleanField" );
+    Fields fields = new Fields( "longField", "booleanField" );
     Class types[] = new Class[]{long.class, boolean.class};
-    Identity identity = new Identity( types );
 
-    // convert from string to given type, inline replace values
-    pipe = new Each( pipe, arguments, identity, Fields.REPLACE );
+    // convert to given type
+    pipe = new Coerce( pipe, fields, types );
     //@extract-end
     }
 
@@ -153,8 +168,9 @@ public class CompiledCookBook
 
     //@extract-start cookbook-insertvalue
     Fields fields = new Fields( "constant1", "constant2" );
-    pipe = new Each( pipe, new Insert( fields, "value1", "value2" ),
-      Fields.ALL );
+    Insert function = new Insert( fields, "value1", "value2" );
+
+    pipe = new Each( pipe, function, Fields.ALL );
     //@extract-end
     }
 
@@ -167,6 +183,7 @@ public class CompiledCookBook
     // milliseconds "timestamp" value
     String format = "yyyy:MM:dd:HH:mm:ss.SSS";
     DateParser parser = new DateParser( new Fields( "ts" ), format );
+
     pipe = new Each( pipe, new Fields( "datetime" ), parser, Fields.ALL );
     //@extract-end
     }
@@ -178,8 +195,9 @@ public class CompiledCookBook
     //@extract-start cookbook-formatdate
     // convert a long milliseconds "timestamp" value to a string
     String format = "HH:mm:ss.SSS";
-    DateFormatter formatter = new DateFormatter( new Fields( "datetime" ),
-      format );
+    DateFormatter formatter =
+      new DateFormatter( new Fields( "datetime" ), format );
+
     pipe = new Each( pipe, new Fields( "ts" ), formatter, Fields.ALL );
     //@extract-end
     }
@@ -191,10 +209,8 @@ public class CompiledCookBook
     // remove all duplicate tuples in the stream
 
     //@extract-start cookbook-distinctgroup
-    // group on all values
-    pipe = new GroupBy( pipe, Fields.ALL );
-    // only take the first tuple in the grouping, ignore the rest
-    pipe = new Every( pipe, Fields.ALL, new First(), Fields.RESULTS );
+    // remove all duplicates from the stream
+    pipe = new Unique( pipe, Fields.ALL );
     //@extract-end
     }
 
@@ -205,6 +221,8 @@ public class CompiledCookBook
     // to create a list of unique ip addresses
 
     //@extract-start cookbook-distinctvalue
+    // narrow stream to just ips
+    pipe = new Retain( pipe, new Fields( "ip" ) );
     // find all unique 'ip' values
     pipe = new Unique( pipe, new Fields( "ip" ) );
     //@extract-end
@@ -268,28 +286,46 @@ public class CompiledCookBook
     Tap sourceLeft = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
     Tap sourceRight = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
 
-    Pipe[] pipesArray = Pipe.pipes( headLeft, headRight );
-    Tap[] tapsArray = Tap.taps( sourceLeft, sourceRight );
-
-    // a convenience function for creating branch names to tap maps
-    Map<String, Tap> sources = Cascades.tapsMap( pipesArray, tapsArray );
-
     // sink taps
     Tap sinkLeft = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
     Tap sinkRight = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
 
-    pipesArray = Pipe.pipes( tailLeft, tailRight );
-    tapsArray = Tap.taps( sinkLeft, sinkRight );
 
-    // or create the Map manually
-    Map<String, Tap> sinks = new HashMap<String, Tap>();
-    sinks.put( tailLeft.getName(), sinkLeft );
-    sinks.put( tailRight.getName(), sinkRight );
+    FlowDef flowDef = new FlowDef()
+      .setName( "flow-name" );
+
+    // bind source Taps to Pipe heads
+    flowDef
+      .addSource( headLeft, sourceLeft )
+      .addSource( headRight, sourceRight );
+
+    // bind sink Taps to Pipe tails
+    flowDef
+      .addSink( tailLeft, sinkLeft )
+      .addTailSink( tailRight, sinkRight );
+
+    // ALTERNATELY ...
+
+    // add named source Taps
+    // the head pipe name to bind too
+    flowDef
+      .addSource( "headLeft", sourceLeft )    // headLeft.getName()
+      .addSource( "headRight", sourceRight ); // headRight.getName()
+
+    // add named sink Taps
+    flowDef
+      .addSink( "tailLeft", sinkLeft )    // tailLeft.getName()
+      .addSink( "tailRight", sinkRight ); // tailRight.getName()
+
+    // add tails -- heads are reachable from the tails
+    flowDef
+      .addTail( tailLeft )
+      .addTail( tailRight );
 
     // set property on Flow
     FlowConnector flowConnector = new HadoopFlowConnector();
 
-    Flow flow = flowConnector.connect( "flow-name", sources, sinks, tailLeft, tailRight );
+    Flow flow = flowConnector.connect( flowDef );
     //@extract-end
     }
 
