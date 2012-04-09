@@ -48,8 +48,8 @@ public class IdentityTest extends ExampleTestCase
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
     Identity identity = new Identity( Fields.ARGS );
-    pipe = new Each( pipe, new Fields( "ip", "method" ), identity,
-      Fields.RESULTS );
+    pipe =
+      new Each( pipe, new Fields( "ip", "method" ), identity, Fields.RESULTS );
 
     // outgoing -> "ip", "method"
     //@extract-end
@@ -95,7 +95,6 @@ public class IdentityTest extends ExampleTestCase
     // outgoing -> "address", "request"
     //@extract-end
     }
-
 
     Flow flow = new HadoopFlowConnector().connect( source, sink, pipe );
 
@@ -181,8 +180,8 @@ public class IdentityTest extends ExampleTestCase
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
     Identity identity = new Identity( Integer.TYPE );
-    pipe = new Each( pipe, new Fields( "status" ), identity,
-      Fields.REPLACE );
+    pipe =
+      new Each( pipe, new Fields( "status" ), identity, Fields.REPLACE );
 
     // outgoing -> "ip", "time", "method", "event", "status", "size"
     //@extract-end

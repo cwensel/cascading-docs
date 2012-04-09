@@ -2820,7 +2820,7 @@
     </section>
 
     <section>
-      <title xreflabel="Stream Assertions" xml:id="stream-assertions"> Stream
+      <title xreflabel="Stream Assertions" xml:id="stream-assertions">Stream
       Assertions</title>
 
       <mediaobject>
@@ -2961,17 +2961,13 @@
 
       <para>Each Flow has the ability to execute callbacks via an event
       listener. This ability is useful when an external application needs to
-      be notified that a Flow has started, halted, completed, or thrown an
+      be notified that a Flow has started, halted, completed, or has thrown an
       exception.</para>
 
       <para>For instance, at the completion of a flow that runs on an Amazon
-      EC2 Hadoop cluster, an SQS message can be sent to notify another
-      application to fetch the job results from S3. At the same time,
-      <?oxy_comment_start author="Jim" timestamp="20120326T002427-0700" comment="Chris - this originally said &quot;it
-        can start&quot;, but I wasn&apos;t clear what &quot;it&quot; is, so I tried this wording to see if it would fly.
-        Change it if it&apos;s not quite right."?>the callback can
-      start<?oxy_comment_end ?> the process of shutting down the cluster if no
-      more work is queued up.</para>
+      EC2 Hadoop cluster, an Amazon SQS message can be sent to notify another
+      application to fetch the job results from S3 or begin the shutdown of
+      the cluster.</para>
 
       <para>Flows support event listeners through the
       <classname>cascading.flow.FlowListener</classname> interface, which
@@ -3027,10 +3023,11 @@
 
       <para>The <classname>Templatetap</classname> <classname>tap</classname>
       class provides a simple means to break large datasets into smaller sets
-      based on data item values. This is commonly called "binning" the data,
-      where each "bin" of data is named after the data value(s) shared by the
-      members of that bin. For example, organizing log files by month and
-      year.</para>
+      based on data item values. This is commonly called partioning or
+      "binning" the data, where each "bin" of data is named after some data
+      value(s) shared by the members of that bin. For example, organizing log
+      files by month and year. The <classname>TemplateTap</classname> is only
+      available in Hadoop mode.</para>
 
       <xi:include href="template-tap.xml"/>
 
@@ -3040,7 +3037,7 @@
       a String format "template". This format template is populated in the
       order in which values are declared via the <classname>Scheme</classname>
       class. If more complex path formatting is necessary, you may subclass
-      the<classname>Templatetap</classname>.</para>
+      the <classname>Templatetap</classname>.</para>
 
       <para>Note that you can only create sub-directories to bin data into.
       Hadoop must still write "part" files into each bin directory.</para>
@@ -3050,37 +3047,37 @@
       <classname>GroupBy</classname> on the values used to populate the
       template, binning will happen during the Reduce phase, and will likely
       scale much better in cases where there are a very large number of unique
-      grouping keys.</para>
+      values used in the template resulting in a large number of
+      directories.</para>
     </section>
 
     <section>
       <title>Partial Aggregation instead of Combiners</title>
 
-      <para>Cascading does not support MapReduce "Combiners".
-      <?oxy_comment_start author="Jim" timestamp="20120325T191036-0700" comment="At some future point it might be good to add a one-sentence definition of Combiner to serve a larger, less Hadoop-savvy audience. This hints at it but doesn
-        &apos;t quite state what it is."?>Combiners<?oxy_comment_end ?> are
-      very powerful in that they reduce the I/O between the Mappers and
-      Reducers - why send all of your Mapper data to Reducers when you can
-      compute some values on the Map side and combine them in the Reducer? But
-      Combiners are limited to Associative and Commutative functions only,
-      such as "sum" and "max". And the process requires that the values output
-      by the Map task must be serialized, sorted (which involves
-      deserialization and comparison), deserialized again, and operated on -
-      after which the results are again serialized and sorted. Combiners trade
-      CPU for gains in I/O.</para>
+      <para>In Hdoop mode, Cascading does not support MapReduce "Combiners".
+      Combiners are a simple optimization allowing some Reduce functions to
+      run on the Map side of MapReduce. Combiners are very powerful in that
+      they reduce the I/O between the Mappers and Reducers - why send all of
+      your Mapper data to Reducers when you can compute some values on the Map
+      side and combine them in the Reducer? But Combiners are limited to
+      Associative and Commutative functions only, such as "sum" and "max". And
+      the process requires that the values output by the Map task must be
+      serialized, sorted (which involves deserialization and comparison),
+      deserialized again, and operated on - after which the results are again
+      serialized and sorted. Combiners trade CPU for gains in I/O.</para>
 
       <para>Cascading takes a different approach. It provides a mechanism to
       perform partial aggregations on the Map side and combine the results on
       the Reduce side, but trades memory, instead of CPU, for I/O gains by
       caching values (up to a threshold limit). This bypasses the redundant
-      serialization, deserialization, and sorting. Also, Cascading allows
+      serialization, deserialization, and sorting. Also, Cascading allows any
       aggregate function to be implemented - not just Associative and
       Commutative functions.</para>
 
       <para>Cascading supports a few built-in partial aggregate operations,
       including AverageBy, CountBy, and SumBy. These are actually
-      SubAssemblies, not operations, and are implementations of the
-      AggregateBy SubAssembly. For more on this, see the section on<xref
+      SubAssemblies, not operations, and are sub-classes of the AggregateBy
+      SubAssembly. For more on this, see the section on<xref
       linkend="aggregate-by"/>.</para>
 
       <para>Using partial aggregate operations is quite easy. They are
@@ -3119,8 +3116,11 @@
     <section>
       <title>Identity Function</title>
 
-      <para>The <classname>cascading.operation.Identify</classname> function
-      is used to "shape" a tuple stream. Here are some common patterns.</para>
+      <para>The <classname>cascading.operation.Identity</classname> function
+      is used to "shape" a tuple stream. Here are some common patterns that
+      should help illustrate how the Cascading "field algebra" works even
+      though there are helper sub-assemblies for many of these examples, like
+      <classname>Rename</classname> and <classname>Discard</classname>.</para>
 
       <para><variablelist>
           <varlistentry>
@@ -3208,11 +3208,11 @@
       Function</title>
 
       <para>The <classname>cascading.operation.Debug</classname> function is a
-      utility function (actually, it's a<classname>Filter</classname>) that
+      utility function (actually, it's a <classname>Filter</classname>) that
       prints the current argument Tuple to either <code>stdout</code> or
       <code>stderr</code>. Used with one of the
       <classname>DebugLevel</classname> enum values
-      (<classname>NONE</classname>,<classname>DEFAULT</classname>, or
+      (<classname>NONE</classname>, <classname>DEFAULT</classname>, or
       <classname>VERBOSE</classname>), different debug levels can be embedded
       in a pipe assembly.</para>
 
@@ -3222,6 +3222,11 @@
       <classname>Flow</classname>.</para>
 
       <xi:include href="flow-debug.xml"/>
+
+      <para>Note that if the above Flow is run on a cluster, the
+      <code>stdout</code> on the cluster nodes will be used. Nothing from the
+      debug output will display client side. Debug is only useful when testing
+      things in an IDE or if the remote logs are readily available.</para>
     </section>
 
     <section>
@@ -3274,8 +3279,7 @@
 
       <para><variablelist>
           <varlistentry>
-            <term><?oxy_comment_start author="Jim" timestamp="20120321T173204-0700" comment="I resequenced these four items to match the sequence of the package documentation in the Javadoc. It&apos;s a trivial change but it seemed as good a sequence as any."?>
-            DateFormatter<?oxy_comment_end ?></term>
+            <term> DateFormatter</term>
 
             <listitem>
               <para>The
@@ -3283,7 +3287,7 @@
               function is used to convert a date timestamp to a formatted
               String. This function expects a <classname>long</classname>
               value representing the number of milliseconds since January 1,
-              1970, 00:00:00 GMT, and formats the output using
+              1970, 00:00:00 GMT/UTC, and formats the output using
               <classname>java.text.SimpleDateFormat</classname> syntax.</para>
 
               <xi:include href="text-format-date.xml"/>
@@ -3303,15 +3307,15 @@
               using the <classname>java.text.SimpleDateFormat</classname>
               syntax. The timestamp is a <classname>long</classname> value
               representing the number of milliseconds since January 1, 1970,
-              00:00:00 GMT. By default, the output is a field with the name
-              "ts" (for timestamp), but this can be overridden by passing a
-              declared Fields value.</para>
+              00:00:00 GMT/UTC. By default, the output is a field with the
+              name "ts" (for timestamp), but this can be overridden by passing
+              a declared Fields value.</para>
 
               <xi:include href="text-create-timestamp.xml"/>
 
               <para>In the example above, an Apache log-style date-time field
-              is converted into a <classname>long</classname>
-              timestamp.</para>
+              is converted into a <classname>long</classname> timestamp in
+              UTC.</para>
             </listitem>
           </varlistentry>
 
@@ -3323,7 +3327,8 @@
               <classname>cascading.operation.text.FieldJoiner</classname>
               function joins all the values in a Tuple with a specified
               delimiter and places the result into a new field. (For the
-              opposite effect, see the RegexSplitter function.)</para>
+              opposite effect, see the <classname>RegexSplitter</classname>
+              function.)</para>
             </listitem>
           </varlistentry>
 
@@ -3355,13 +3360,13 @@
               function splits an argument value based on a regex pattern
               String. (For the opposite effect, see the FieldJoiner function.)
               Internally, this function uses
-              <classname>java.util.regex.Pattern#split()</classname>, and it
+              <classname>java.util.regex.Pattern.split()</classname>, and it
               behaves accordingly. By default, it splits on the TAB character
               ("\t"). If it is known that a determinate number of values will
               emerge from this function, it can declare field names. In this
               case, if the splitter encounters more split values than field
               names, the remaining values are discarded. For more information,
-              see<classname>java.util.regex.Pattern#split( input, limit
+              see<classname>java.util.regex.Pattern.split( input, limit
               )</classname>.</para>
             </listitem>
           </varlistentry>
@@ -3397,8 +3402,8 @@
               function is used to replace a regex-matched value with a
               specified replacement value. It can operate in a "replace all"
               or "replace first" mode. For more information, see the methods
-              <classname>java.util.regex.Matcher#replaceAll()</classname> and
-              <classname>java.util.regex.Matcher#replaceFirst()</classname>.</para>
+              <classname>java.util.regex.Matcher.replaceAll()</classname> and
+              <classname>java.util.regex.Matcher.replaceFirst()</classname>.</para>
 
               <xi:include href="regex-replace.xml"/>
 
@@ -3421,7 +3426,7 @@
               String (in tab-delimited sections). If "matchEachElement" is set
               to<code>true</code>, the pattern is applied to each Tuple value
               individually. For more information, see the
-              <classname>java.util.regex.Matcher#find()</classname>
+              <classname>java.util.regex.Matcher.find()</classname>
               method.</para>
 
               <xi:include href="regex-filter.xml"/>
@@ -3455,13 +3460,12 @@
               <para>The
               <classname>cascading.operation.regex.RegexSplitGenerator</classname>
               function emits a new Tuple for every split on the incoming
-              argument value delimited by the given pattern String.
-              <?oxy_comment_start author="Jim" timestamp="20120321T191258-0700" comment="Chris - hopefully this statement is accurate."?>
-              The behavior is similar to the RegexSplitter function, except
-              that (assuming multiple matches) RegexSplitter outputs a single
-              tuple that may contain multiple values, and RegexSplitGenerator
-              outputs multiple tuples that each contain only one
-              value<?oxy_comment_end ?>.</para>
+              argument value delimited by the given pattern String. The
+              behavior is similar to the RegexSplitter function, except that
+              (assuming multiple matches) RegexSplitter outputs a single tuple
+              that may contain multiple values, and RegexSplitGenerator
+              outputs multiple tuples that each contain only one value, as
+              does <classname>RegexGenerator</classname>.</para>
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -3481,7 +3485,7 @@
 
       <para>This capability allows an Operation to evaluate a suitable
       one-line Java expression, such as <code>a + 3 * 2</code> or<code>a &lt;
-      7</code>, where the variable values ( <code>a</code> and<code>b</code>)
+      7</code>, where the variable values (<code>a</code> and <code>b</code>)
       are passed in as Tuple fields. The result of the Operation thus depends
       on the evaluated result of the expression - in the first example, some
       number, and in the second, a Boolean value.</para>
@@ -3491,12 +3495,10 @@
             <term>ExpressionFunction</term>
 
             <listitem>
-              <para><?oxy_comment_start author="Jim" timestamp="20120321T203349-0700" comment="Originally said: &quot;
-                function dynamically resolves a given expression using argument Tuple values as inputs to the fields
-                specified in the expression.&quot;"?>The<?oxy_comment_end ?>
+              <para>The
               <classname>cascading.operation.expression.ExpressionFunction</classname>
-              function dynamically composes a string expression, using
-              incoming Tuple values to replace variables in the
+              function dynamically composes a string expression when executed
+              assigns argument Tuple values to the variables in the
               expression.</para>
 
               <xi:include href="expression-function.xml"/>
@@ -3515,10 +3517,9 @@
             <listitem>
               <para>The
               <classname>cascading.operation.expression.ExpressionFilter</classname>
-              filter evaluates a Boolean expression, using argument Tuple
-              values to replace variables in the expression. If the expression
-              returns<code>true</code>, the Tuple is removed from the
-              stream.</para>
+              filter evaluates a Boolean expression, assigning argument Tuple
+              values to variables in the expression. If the expression returns
+              <code>true</code>, the Tuple is removed from the stream.</para>
 
               <xi:include href="expression-filter.xml"/>
 
@@ -3526,7 +3527,7 @@
               not have a status of "200" is filtered out. ExpressionFilter
               coerces the value into the specified type if necessary to make
               the comparison - in this case, coercing the status String into
-              an<classname>int</classname>.</para>
+              an <classname>int</classname>.</para>
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -3536,17 +3537,15 @@
       <title>XML Operations</title>
 
       <para>To use XML Operations in a Cascading application, include the
-      <filename>cascading-xml-x.y.z.jar</filename> in the project.
-      <?oxy_comment_start author="Jim" timestamp="20120323T163548-0700" comment="Chris - I changed this to say that the TagSoup library only has to be included if using the tagSoupParser operation. Hopefully that is correct."?>
-      When using the tagSoupParser operation, <?oxy_comment_end ?>this module
-      requires the TagSoup library, which provides support for HTML and XML
-      "tidying". More information is available at the TagSoup website,<link
+      <filename>cascading-xml-x.y.z.jar</filename> in the project. When using
+      the <classname>TagSoupParser</classname> operation, this module requires
+      the TagSoup library, which provides support for HTML and XML "tidying".
+      More information is available at the TagSoup website, <link
       xlink:href="http://home.ccil.org/~cowan/XML/tagsoup/">http://home.ccil.org/~cowan/XML/tagsoup/</link>.</para>
 
       <para><variablelist>
           <varlistentry>
-            <term><?oxy_comment_start author="Jim" timestamp="20120323T164425-0700" comment="Chris - please check this to see if it is correct."?>
-            XPathParser<?oxy_comment_end ?></term>
+            <term> XPathParser</term>
 
             <listitem>
               <para>The
@@ -3555,16 +3554,15 @@
               constructor, to extract one or more node values from an XML
               document contained in the passed Tuple argument, and places the
               result(s) into one or more new fields in the current Tuple. In
-              this way, it effectively converts an XML document (in a tuple)
-              into a table of fields (added to the same tuple), creating one
-              Tuple field value for every given XPath expression. The
-              <classname>Node</classname> is converted to a String type
-              containing an XML document. If only the text values are
-              required, search on the <code>text()</code> nodes, or consider
-              using XPathGenerator to handle multiple
+              this way, it effectively parses an XML document into a table of
+              fields, creating one Tuple field value for every given XPath
+              expression. The <classname>Node</classname> is converted to a
+              String type containing an XML document. If only the text values
+              are required, search on the <code>text()</code> nodes, or
+              consider using XPathGenerator to handle multiple
               <classname>NodeList</classname> values. If the returned result
-              of an XPath expression is a<classname>NodeList</classname>, only
-              the first <classname>Node</classname> is used for the field
+              of an XPath expression is a <classname>NodeList</classname>,
+              only the first <classname>Node</classname> is used for the field
               value and the rest are ignored.</para>
             </listitem>
           </varlistentry>
@@ -3575,10 +3573,9 @@
             <listitem>
               <para>Similar to XPathParser, the
               <classname>cascading.operation.xml.XPathGenerator</classname>
-              function outputs a new <?oxy_comment_start author="Jim" timestamp="20120323T164856-0700" comment="Please check for accuracy."?>
-              Tuple<?oxy_comment_end ?> for every <classname>Node</classname>
-              returned by the given XPath expression from the XML in the
-              current Tuple.</para>
+              function outputs a new <classname>Tuple</classname> for every
+              <classname>Node</classname> returned by the given XPath
+              expression from the XML in the current Tuple.</para>
             </listitem>
           </varlistentry>
 
@@ -3589,15 +3586,15 @@
               <para>The
               <classname>cascading.operation.xml.XPathFilter</classname>
               filter removes a Tuple if the specified XPath expression returns
-              <code> false</code>. Set the removeMatch parameter to
+              <code>false</code>. Set the removeMatch parameter to
               <code>true</code> if the filter should be reversed, i.e., to
-              keep only those Tuples where the XPath expression
-              returns<code>true</code>.</para>
+              keep only those Tuples where the XPath expression returns
+              <code>true</code>.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
-            <term>tagSoupParser</term>
+            <term>TagSoupParser</term>
 
             <listitem>
               <para>The
@@ -3703,9 +3700,8 @@
             <listitem>
               <para>The
               <classname>cascading.operation.assertion.AssertNotNull</classname>
-              Assertion asserts that every value in the argument Tuple is not
-              a <code><?oxy_comment_start author="Jim" timestamp="20120323T185743-0700" comment="Should we say how this is checked and/or whether Cascading treats null, empty, and white space as the same thing? This may be obvious to the target readership in this context, I don&apos;t know."?>null<?oxy_comment_end ?></code>
-              value.</para>
+              Assertion asserts that every position/field in the argument
+              Tuple is not <code>null</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -3715,9 +3711,8 @@
             <listitem>
               <para>The
               <classname>cascading.operation.assertion.AssertNull</classname>
-              Assertion asserts that every value in the argument Tuple is a
-              <code><?oxy_comment_start author="Jim" timestamp="20120323T185841-0700" comment="Same note as in AssertNull"?>
-              null<?oxy_comment_end ?></code> value.</para>
+              Assertion asserts that every position/field in the argument
+              Tuple is <code>null</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -3729,8 +3724,8 @@
               <classname>cascading.operation.assertion.AssertSizeEquals</classname>
               Assertion asserts that the current Tuple in the tuple stream is
               exactly the given size. Size, here, is the number of fields in
-              the Tuple, as returned by<code>Tuple#size()</code>. Note that
-              some or all fields may contain <code>null</code> values.</para>
+              the Tuple, as returned by<code>Tuple.size()</code>. Note that
+              some or all fields may be <code>null</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -3743,8 +3738,8 @@
               Assertion asserts that the current Tuple in the stream has a
               size less than (<code>&lt;</code>) the given size. Size, here,
               is the number of fields in the Tuple, as returned by
-              <code>Tuple#size()</code>. Note that some or all fields may
-              contain <code>null</code> values.</para>
+              <code>Tuple.size()</code>. Note that some or all fields may be
+              <code>null</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -3757,8 +3752,8 @@
               Assertion asserts that the current Tuple in the stream has a
               size greater than (<code>&gt;</code>) the given size. Size,
               here, is the number of fields in the Tuple, as returned by
-              <code>Tuple#size()</code>. Note that some or all fields may
-              contain <code>null</code> values.</para>
+              <code>Tuple.size()</code>. Note that some or all fields may be
+              <code>null</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -3867,14 +3862,13 @@
               <classname>Filter</classname> performs a logical "xor"
               (exclusive or) on the results of the constructor-provided
               <classname>Filter</classname> instances. Xor can only be applied
-              to two instances at a time. It returns
-              <code><?oxy_comment_start author="Jim" timestamp="20120324T161338-0700" comment="Chris - The 1.2 document says the opposite of what I&apos;m saying here, and so does the Javadoc - i.e., they say that this will return True if both truth values match. To me that seems the opposite of XOR, so I changed it. Thought I&apos;d better warn you in case I&apos;m in error."?>true<?oxy_comment_end ?></code>
-              if the two instances have different truth values, and
+              to two instances at a time. It returns <code>true</code> if the
+              two instances have different truth values, and
               <code>false</code> if they have the same truth value. That is,
-              if <methodname>Filter#isRemove()</methodname> returns
+              if <methodname>Filter.isRemove()</methodname> returns
               <code>true</code> for both, or returns <code>false</code> for
-              both, this filter returns<code>false</code>; otherwise it
-              returns<code>true</code>.</para>
+              both, this filter returns <code>false</code>; otherwise it
+              returns <code>true</code>.</para>
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -3955,8 +3949,7 @@
 
   <chapter>
     <info>
-      <title><?oxy_comment_start author="Jim" timestamp="20120402T045152-0700" comment="There are a lot of these in the list, so it would be nice if we can logically group them, which would add a little more value for the reader. And the groupings themselves may suggest some further ideas for best practices. If you want to suggest some categories to me (add a list here, for instance), I can create subsections and move things around. Otherwise I can try to come up with my own categories for these."?>
-      Best Practices<?oxy_comment_end ?></title>
+      <title> Best Practices</title>
     </info>
 
     <section>
@@ -3980,9 +3973,19 @@
       Tuple size, and check to see whether the values match a given regular
       expression pattern.</para>
 
-      <para>The <classname>cascading.ClusterTestCase</classname> can be used
-      if you want to launch an embedded Hadoop cluster inside your
-      TestCase.</para>
+      <para>New to Cascading 2, it is possible to write tests that are
+      independent of the underlying platform or mode. Any unit-test should
+      sub-class <classname>cascading.PlatformTestCase</classname> and apply
+      the <classname>PlatformRunner.Platform</classname> annotion. </para>
+
+      <para>For example, the following annotation,
+      <code>@PlatformRunner.Platform({LocalPlatform.class,
+      HadoopPlatform.class})</code>, will convince the PlatformTestCase to run
+      all the unit tests defined on the sub-class with the
+      <classname>LocalPlatform</classname> and
+      <classname>HadoopPlatform</classname> platform instances. </para>
+
+      <para>See the existing Cascading unit tests for examples.</para>
 
       <para>To use any of these helper classes, make sure that
       <filename>cascading-test-x.y.z.jar</filename> is in your testing class
@@ -4003,14 +4006,16 @@
 
       <para>Although using one large <classname>Flow</classname> may result in
       slightly more efficient performance, it's advisable to use a more
-      modular and flexible approach, creating smaller Flows with well-defined
-      responsibilities, and passing all the resulting interdependent Flows to
-      a <classname>Cascade</classname> to sequence and execute as a single
-      unit. Similarly, using the <classname>TextDelimited</classname>
-      <classname>Scheme</classname> between <classname>Flow</classname>
-      instances allows you to hand off intermediate data to other systems for
-      reporting or QA purposes, incurring a minimal performance penalty while
-      remaining compatible with other tools.</para>
+      modular and flexible approach, creating medium to small Flows with
+      well-defined responsibilities, and passing all the resulting
+      interdependent Flows to a <classname>Cascade</classname> to sequence and
+      execute as a single unit. Similarly, using the
+      <classname>TextDelimited</classname> <classname>Scheme</classname> (or
+      any custom format for long term archival) between
+      <classname>Flow</classname> instances allows you to hand off
+      intermediate data to other systems for reporting or QA purposes,
+      incurring a minimal performance penalty while remaining compatible with
+      other tools.</para>
     </section>
 
     <section>
@@ -4023,8 +4028,8 @@
       <para>It's worth noting that the <classname>Object</classname>
       constructors are "factories", so there isn't much reason to build
       frameworks to duplicate what a constructor already does. Of course there
-      are exceptions, but in practice they are rare when you can use a
-      <classname>SubAssembly</classname>.</para>
+      are exceptions, but in practice they are rare when you have the option
+      to use a <classname>SubAssembly</classname>.</para>
     </section>
 
     <section>
@@ -4059,15 +4064,15 @@
       take care to create field names that don't contain characters which will
       cause compilation errors if they are used in an expression. For example,
       "first-name" is a valid field name for use with Cascading, but might
-      result in the expression<code>first-name.trim()</code>, which will cause
-      a compilation error.</para>
+      result in the expression <code>first-name.trim()</code>, which will
+      cause a compilation error.</para>
     </section>
 
     <section>
       <title>Debugging Planner Failures</title>
 
       <para>The <classname>FlowConnector</classname> will sometimes fail when
-      attempting to plan a<classname>Flow</classname>. If the error message
+      attempting to plan a <classname>Flow</classname>. If the error message
       given by <classname>PlannerException</classname> is vague, use the
       method <code>PlannerException.writeDOT()</code> to export a
       representation of the internal pipe assembly. DOT files can be opened by
@@ -4082,12 +4087,13 @@
     <section>
       <title>Optimizing Joins</title>
 
-      <para>When joining two streams via a CoGroup Pipe, try to put the
-      largest of the streams in the leftmost argument to the CoGroup. The
-      reason for this is that joining multiple streams requires some
-      accumulation of values before the join operator can begin, but the
-      leftmost stream is not accumulated, so this technique should improve the
-      performance of most joins.</para>
+      <para>When joining two streams via a <classname>CoGroup</classname>
+      <classname>Pipe</classname>, try to put the largest of the streams in
+      the leftmost argument to the <classname>CoGroup</classname>. The reason
+      for this is that joining multiple streams requires some accumulation of
+      values before the join operator can begin, but the leftmost stream is
+      not accumulated, so this technique should improve the performance of
+      most joins.</para>
     </section>
 
     <section>
@@ -4129,26 +4135,15 @@
       <title>Maintaining State in Operations</title>
 
       <para>When creating custom Operations
-      (<classname>Function</classname>,<classname>
-      Filter</classname>,<classname>Aggregator</classname>, or
-      <classname>Buffer</classname>) do not store operation state in class
-      fields. For example, if implementing a custom "counter"
-      <classname>Aggregator</classname>, do not create a field named "count"
-      and increment it on every
+      (<classname>Function</classname>,<classname> Filter</classname>,
+      <classname>Aggregator</classname>, or <classname>Buffer</classname>) do
+      not store operation state in class fields. For example, if implementing
+      a custom "counter" <classname>Aggregator</classname>, do not create a
+      field named "count" and increment it on every
       <methodname>Aggregator.aggregate()</methodname> call. There is no
       guarantee your Operation will be called from a single thread in a JVM,
-      future version of Hadoop could execute the same operation from multiple
-      threads.</para>
-
-      <para>To maintain state across <classname>Operation</classname> calls,
-      create and initialize a "context" object that is maintained by the
-      appropriate <classname>OperationCall</classname>
-      (<classname>FilterCall</classname>,<classname>FunctionCall</classname>,
-      <classname>AggregatorCall</classname>, and
-      <classname>BufferCall</classname>). In the example above, store an
-      Integer 0 in the <classname>AggregatorCall</classname> passed to the
-      <methodname>Aggregator.start()</methodname> method and increment it in
-      the <methodname>Aggregator.aggregate()</methodname> method.</para>
+      future version of Hadoop or Cascading local mode could execute the same
+      operation from multiple threads.</para>
     </section>
 
     <section>
@@ -4157,21 +4152,24 @@
       <para>It is generally frowned upon to pass a custom class through a
       Tuple stream. One one hand this increases coupling of custom Operations
       to a particular type, and it removes opportunities for reducing the
-      amount of data that passes over the network (or is
-      serialized/deserialized).</para>
+      amount of data that passes over the network.</para>
 
       <para>To overcome the first objection, with every custom type with
       multiple instance fields, attempt to provide Functions that can promote
       a value from the custom object to a position in a Tuple or demote the
       Tuple value to a particular field back into the custom type. This allows
-      existing operations (like ExpressionFunction or RegexFilter) to operate
-      on values owned by a custom type. For example, if you have a Person
-      object, have a Function named GetPersonAge that takes Person as an
-      argument and only returns the age as the result. The next operation can
-      then Filter all Persons based on their age. This may seem like more work
-      and less effiicient, but it keeps your application flexible and reduces
-      the am ount of duplicate code (the only alternative here is to create a
-      PersonAgeFilter which results in one more thing to test).</para>
+      existing operations (like <classname>ExpressionFunction</classname> or
+      <classname>RegexFilter</classname>) to operate on values owned by a
+      custom type. </para>
+
+      <para>For example, if you have a <classname>Person</classname> object,
+      have a Function named <classname>GetPersonAge</classname> that takes
+      Person as an argument and only returns the age as the result. The next
+      operation can then Filter all Persons based on their age. This may seem
+      like more work and less effiicient, but it keeps your application
+      flexible and reduces the amount of duplicate code (the only alternative
+      here is to create a <classname>PersonAgeFilter</classname> which results
+      in one more thing to test).</para>
     </section>
 
     <section>
@@ -4222,18 +4220,17 @@
     </section>
 
     <section>
-      <title xreflabel="Custom Types"
-      xml:id="custom-types"><?oxy_comment_start author="Jim" timestamp="20120327T003300-0700" comment="Chris, I think you said you needed to add some information to this section to cover some major changes you&apos;ve made...?"?>Custom
-      taps and schemes<?oxy_comment_end ?></title>
+      <title xreflabel="Custom Types" xml:id="custom-types">Custom taps and
+      schemes</title>
 
       <para>Cascading is designed to be easily configured and enhanced by
       developers. In addition to creating custom Operations, developers can
-      create custom <classname>tap</classname> and
+      create custom <classname>Tap</classname> and
       <classname>Scheme</classname> types that let applications connect to
-      systems external to Hadoop.</para>
+      external systems.</para>
 
-      <para>A tap represents something physical, like a file or a database
-      table. Consequently, tap implementations are responsible for life-cycle
+      <para>A Tap represents something physical, like a file or a database
+      table. Consequently, Tap implementations are responsible for life-cycle
       issues around the resource they represent, such as tests for existence,
       or eventual deletion.</para>
 
@@ -4242,13 +4239,13 @@
       convert between the source data's native format and a
       <classname>cascading.tuple.Tuple</classname> instance.</para>
 
-      <para>Creating custom taps and schemes can be an involved process, and
-      requires some knowledge of Hadoop and the Hadoop FileSystem API. If a
-      flow needs to support a new file system, passing a fully-qualified URL
-      to the <classname>Hfs</classname> constructor may be sufficient - the
-      <classname>Hfs</classname> tap will look up a file system based on the
-      URL scheme via the Hadoop FileSystem API. If not, a new system is
-      commonly constructed by subclassing the
+      <para>Creating custom taps and schemes can be an involved process. If
+      using the Cascading Hadoop mode, requires some knowledge of Hadoop and
+      the Hadoop FileSystem API. If a flow needs to support a new file system,
+      passing a fully-qualified URL to the <classname>Hfs</classname>
+      constructor may be sufficient - the <classname>Hfs</classname> tap will
+      look up a file system based on the URL scheme via the Hadoop FileSystem
+      API. If not, a new system is commonly constructed by subclassing the
       <classname>cascading.tap.Hfs</classname> class.</para>
 
       <para>Delegating to the Hadoop FileSystem API is not a strict
@@ -4271,28 +4268,27 @@
       <title>Custom Types and Serialization</title>
 
       <para>The <classname>Tuple</classname> class is a generic container for
-      all <classname>java.lang.Object</classname> instances. (Cascading 1.0
-      required that all objects be of type
-      <classname>java.lang.Comparable</classname>.) Consequently, any
+      all <classname>java.lang.Object</classname> instances. Consequently, any
       primitive value or custom Class can be stored in a
       <classname>Tuple</classname> instance, that is, returned by a
-      <classname>Function</classname>,<classname>Aggregator</classname>, or
+      <classname>Function</classname>, <classname>Aggregator</classname>, or
       <classname>Buffer</classname> as a result value.</para>
 
-      <para>But for this to work, any Class that isn't a primitive value or a
-      Hadoop <classname>Writable</classname> type requires a corresponding
-      Hadoop serialization class, registered in the Hadoop configuration
-      files, for your cluster. Hadoop <classname>Writable</classname> types
-      work because there is already a generic serialization implementation
-      built into Hadoop. See the Hadoop documentation for information on
-      registering a new serialization helper or creating
-      <classname>Writable</classname> types. Cascading automatically inherits
-      serialization implementations if they are registered.</para>
+      <para>But for this to work, when working with the Cascading Hadoop mode,
+      any Class that isn't a primitive value or a Hadoop
+      <classname>Writable</classname> type requires a corresponding Hadoop
+      serialization class, registered in the Hadoop configuration files, for
+      your cluster. Hadoop <classname>Writable</classname> types work because
+      there is already a generic serialization implementation built into
+      Hadoop. See the Hadoop documentation for information on registering a
+      new serialization helper or creating <classname>Writable</classname>
+      types. Cascading automatically inherits serialization implementations if
+      they are registered.</para>
 
       <para>During serialization and deserialization of
       <classname>Tuple</classname> instances that contain custom types, the
       Cascading <classname>Tuple</classname> serialization framework must
-      store the class name (as a<classname>String</classname>) before
+      store the class name (as a <classname>String</classname>) before
       serializing the custom object. This can be very space inefficient. To
       overcome this, custom types can add the
       <classname>SerializationToken</classname> Java annotation to the custom
@@ -4307,27 +4303,64 @@
       to reduce the amount of storage used.</para>
 
       <para>Serialization tokens may also be stored in the Hadoop config files
-      or set as a property passed to the<classname>FlowConnector</classname>,
-      with the property name<code>cascading.serialization.tokens</code>. The
-      value of this property is a comma -eparated list of
+      or set as a property passed to the <classname>FlowConnector</classname>,
+      with the property name <code>cascading.serialization.tokens</code>. The
+      value of this property is a comma separated list of
       <code>token=classname</code> values.</para>
 
       <para>Note that Cascading natively serializes/deserializes all
-      primitives and byte arrays (<code>byte[]</code>). It uses the token 127
-      for the Hadoop <classname>BytesWritable</classname> class.</para>
-
-      <para>Along with custom serialization, Cascading supports lazy
-      deserialization during Tuple comparison, when Hadoop sorts keys during
-      the "shuffle" phase. This is accomplished by implementing the
-      <classname>StreamComparator</classname> interface. See the Javadoc for
-      detailed instructions on implemention, and the unit tests for
-      examples.</para>
+      primitives and byte arrays (<code>byte[]</code>), if the developer
+      registers the <classname>BytesSerialization</classname> class with
+      <code>TupleSerialization.addSerialization(properties,
+      BytesSerialization.class.getName()</code>. It uses the token 127 for the
+      Hadoop <classname>BytesWritable</classname> class.</para>
 
       <para>By default, Cascading lazily deserializes each element in the
-      Tuple when sorting for comparison. It's also possible to do lazy
-      deserialization of fields when comparing complex or custom Java types;
-      this is supported in the <classname>StreamComparator</classname>
-      interface.</para>
+      Tuple when sorting for comparison when Hadoop sorts keys during the
+      "shuffle" phase. </para>
+
+      <para>Along with custom serialization, Cascading supports lazy
+      deserialization during Tuple comparison for custom types. This is
+      accomplished by implementing the <classname>StreamComparator</classname>
+      interface. See the Javadoc for detailed instructions on implemention,
+      and the unit tests for examples.</para>
+    </section>
+
+    <section>
+      <title>Custom Comparators and Hashing</title>
+
+      <para>Frequently objects in a <classname>Tuple</classname> will be
+      compared to other instances in a second <classname>Tuple</classname>.
+      This is especially true during the "sort" phase in Cascading Hadoop mode
+      when a <classname>GroupBy</classname> or <classname>CoGroup</classname>
+      pipe is being processed. By default Hadoop and Cascading will use the
+      native <classname>Object</classname> methods
+      <methodname>equals()</methodname> and
+      <methodname>hashCode()</methodname> to compare two values and get a
+      consistent hash code for a give value, respectively.</para>
+
+      <para>In order to override this behavior, a custom
+      <classname>java.util.Comparator</classname> class can be created and
+      passed to cascading. This <classname>Comparator</classname> will become
+      responsbile for comparing all the values in a given field in a Tuple.
+      Thus if secondary sorting a collection of custom
+      <classname>Person</classname> objects in a
+      <classname>GroupBy</classname>, the <classname>Fields</classname>
+      instance defining the fields to perform the secondary sort can be given
+      a copy of the <classname>Comparator</classname> via the
+      <code>Fields.setComparator()</code> method.</para>
+
+      <para>Alternatively, a default <classname>Comparator</classname> may be
+      set to be used by a <classname>Flow</classname>, or set on a given
+      <classname>Pipe</classname> instance to be used locally. This can be
+      done by calling <code>Tuples.setDefaultTupleElementComparator()</code>
+      on a <classname>Properties</classname> instance or using the property
+      key <code>cascading.tuple.element.comparator.default</code>. </para>
+
+      <para>If how the hash code must also be customized, the custom
+      Comparator may also imiplement the interface
+      <classname>cascading.tuple.Hasher</classname>. See the
+      <classname>Hasher</classname> Javadoc for more details.</para>
     </section>
   </chapter>
 
