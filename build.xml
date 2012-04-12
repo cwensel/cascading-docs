@@ -11,13 +11,10 @@
   $DateTime: 2008/07/15 14:24:06 $
   $Author: cwensel $
 -->
-<project name="cascading.org" default="build" basedir=".">
+<project name="cascading.docs" default="build" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
+  <property file="${basedir}/../build.properties"/>
   <property file="${basedir}/build.properties"/>
-  <!--<property file="${cascading.home}/version.properties"/>-->
-
-  <property name="cascading.home" location="../cascading"/>
-  <import file="${cascading.home}/build.xml"/>
 
   <property name="website.host" value=""/>
   <property name="website.path" value="site"/>
@@ -27,21 +24,43 @@
   <property name="site.javadoc" location="${basedir}/site/javadoc"/>
   <property name="site.userguide" location="${basedir}/site/userguide"/>
 
-  <path id="all.javadoc.src.path">
-    <pathelement location="${cascading.home}/src/core"/>
-    <pathelement location="${cascading.home}/src/xml"/>
-    <!--<pathelement location="${cascading.groovy.home}/src/java"/>-->
+  <property name="lib.dir" value="${basedir}/lib"/>
+  <property name="libsrc.dir" value="${basedir}/lib/src"/>
+
+  <path id="project.class.path">
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+      <exclude name="*-sources.jar"/>
+    </fileset>
   </path>
 
-  <target name="site-javadoc" depends="init">
+  <property classpathref="project.class.path" resource="cascading/version.properties"/>
+  <!--build.number=wip-dev-->
+  <property classpathref="project.class.path" resource="cascading/build.number.properties"/>
+
+  <property name="cascading.release" value="${cascading.release.major}"/>
+  <property name="cascading.release.full"
+            value="${cascading.release.major}.${cascading.release.minor}-${build.number}"/>
+
+  <target name="site-javadoc" depends="retrieve">
     <echo message="creating cascading javadoc..."/>
+
+    <unjar dest="${libsrc.dir}">
+      <patternset>
+        <include name="**/*.java"/>
+      </patternset>
+      <fileset dir="${lib.dir}">
+        <include name="**/*-sources.jar"/>
+      </fileset>
+    </unjar>
+
     <delete dir="${site.javadoc}"/>
     <mkdir dir="${site.javadoc}"/>
 
-    <javadoc sourcepathref="all.javadoc.src.path"
+    <javadoc sourcepath="${libsrc.dir}"
              destdir="${site.javadoc}"
              packagenames="cascading.*"
-             windowtitle="Cascading ${cascading.release.major}"
+             windowtitle="Cascading ${cascading.release.full}"
              Verbose="true">
 
       <classpath refid="project.class.path"/>
@@ -49,8 +68,8 @@
       <link href="http://dist.codehaus.org/janino/javadoc/"/>
       <link href="http://hadoop.apache.org/common/docs/r0.20.2/api/"/>
       <bottom>
-        <![CDATA[<i>Copyright &#169; 2007-2010 Concurrent, Inc. All Rights Reserved.</i>]]>
-        <![CDATA[<script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-188528-5"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]>
+        <![CDATA[<i>Copyright &#169; 2007-2012 Concurrent, Inc. All Rights Reserved.</i>]]>
+        <![CDATA[<script type="text/javascript">var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-188528-5']); _gaq.push(['_setDomainName', 'cascading.org']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script>]]>
       </bottom>
     </javadoc>
 
@@ -84,7 +103,7 @@
   </target>
 
   <target name="rsync-javadocs" depends="site-javadoc">
-    <echo message="Starting javadoc transfer to ${website.host}:${website.path}/${cascading.release.major}"/>
+    <echo message="Starting javadoc transfer to ${website.host}:${website.path}/${cascading.release}"/>
     <exec dir="." executable="rsync" failonerror="true">
       <arg value="-r"/>
       <arg value="-v"/>
@@ -93,12 +112,12 @@
       <arg value="--rsh=ssh"/>
       <arg value="${site.javadoc}"/>
       <arg
-        value="${website.host}:${website.path}/${cascading.release.major}"/>
+        value="${website.host}:${website.path}/${cascading.release}"/>
     </exec>
   </target>
 
   <target name="rsync-userguide" depends="site-userguide">
-    <echo message="Starting userguide transfer to ${website.host}:${website.path}/${cascading.release.major}"/>
+    <echo message="Starting userguide transfer to ${website.host}:${website.path}/${cascading.release}"/>
     <exec dir="." executable="rsync" failonerror="true">
       <arg value="-r"/>
       <arg value="-v"/>
@@ -107,17 +126,57 @@
       <arg value="--rsh=ssh"/>
       <arg value="${site.userguide}"/>
       <arg
-        value="${website.host}:${website.path}/${cascading.release.major}"/>
+        value="${website.host}:${website.path}/${cascading.release}"/>
     </exec>
   </target>
 
-  <target name="push-dist" depends="package">
-
-  </target>
-
-  <target name="clean" depends="cascading.clean">
+  <target name="clean">
     <delete dir="${site}"/>
     <ant antfile="docbook/build.xml" target="clean" inheritall="false"/>
   </target>
 
+  <target name="s3-userguide" depends="site-userguide" if="publish.bucket">
+
+    <property file="${doc.aws.properties}"/>
+
+    <taskdef name="S3Upload" classname="dak.ant.taskdefs.S3Upload"/>
+
+    <S3Upload verbose="true"
+              accessId="${publish.aws.accessId}"
+              secretKey="${publish.aws.secretKey}"
+              bucket="${publish.bucket}"
+              prefix="cascading/${cascading.release}/userguide/"
+              publicRead="true">
+      <fileset dir="${site.userguide}"/>
+    </S3Upload>
+  </target>
+
+  <target name="s3-javadoc" depends="site-javadoc" if="publish.bucket">
+
+    <property file="${doc.aws.properties}"/>
+
+    <taskdef name="S3Upload" classname="dak.ant.taskdefs.S3Upload"/>
+
+    <S3Upload verbose="true"
+              accessId="${publish.aws.accessId}"
+              secretKey="${publish.aws.secretKey}"
+              bucket="${publish.bucket}"
+              prefix="cascading/${cascading.release}/javadoc/"
+              publicRead="true">
+      <fileset dir="${site.javadoc}"/>
+    </S3Upload>
+  </target>
+
+  <target name="retrieve">
+    <delete dir="${lib.dir}"/>
+    <mkdir dir="${lib.dir}"/>
+
+    <ivy:settings id="ivy.conjars.settings" url="http://conjars.org/repo/ivysettings.xml"/>
+
+    <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="default"
+                  pattern="${lib.dir}/[artifact]-[revision].[ext]" sync="false" type="jar,bundle"/>
+
+    <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="default"
+                  pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="false" type="sources"/>
+  </target>
 </project>

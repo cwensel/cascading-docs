@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import cascading.flow.Flow;
-import cascading.flow.FlowConnector;
 import cascading.flow.FlowDef;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.AssertionLevel;

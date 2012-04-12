@@ -6,7 +6,7 @@
   ~ Project and contact information: http://www.concurrentinc.com/
   -->
 
-<project name="dbf-docbook" default="all" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="dbf-docbook" default="all" basedir=".">
 
   <!-- Load our properties -->
   <property file="../build.properties"/>
@@ -27,7 +27,7 @@
   <property name="build.tools.dir" value="${build.dir}/tools"/>
   <property name="build.examples.dir" value="${build.dir}/examples"/>
 
-  <property name="lib.dir" value="${basedir}/lib"/>
+  <property name="lib.dir" value="${basedir}/../lib"/>
 
   <property name="edit.dir" value="${basedir}/edit"/>
 
@@ -38,7 +38,10 @@
   <path id="cascading.class.path">
     <pathelement location="${build.examples.dir}"/>
 
-    <fileset dir="${lib.dir}"/>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+      <exclude name="*-sources.jar"/>
+    </fileset>
   </path>
 
   <property name="test.showoutput" value="false"/>
@@ -151,7 +154,6 @@
 
   <target name="includes" depends="extract, copy-docbooks"/>
 
-
   <target name="edit" description="--> Make editable copy in edit dir" depends="extract, gen-png">
     <mkdir dir="${edit.dir}"/>
     <mkdir dir="${build.images.dir}"/>
@@ -242,17 +244,4 @@
       <property name="images.src.dir" value="${build.images.dir}"/>
     </ant>
   </target>
-
-  <target name="retrieve">
-    <mkdir dir="${lib.dir}"/>
-
-    <ivy:settings id="ivy.conjars.settings" url="http://conjars.org/repo/ivysettings.xml"/>
-
-    <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="default"
-                  pattern="${lib.dir}/[artifact]-[revision].[ext]" sync="true"/>
-
-    <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="test"
-                  pattern="${lib.dir}/[artifact]-[revision].[ext]" sync="true"/>
-  </target>
-
 </project>
