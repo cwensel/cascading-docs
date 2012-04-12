@@ -16,6 +16,8 @@
   <property file="${basedir}/../build.properties"/>
   <property file="${basedir}/build.properties"/>
 
+  <property file="${doc.aws.properties}"/>
+
   <property name="website.host" value=""/>
   <property name="website.path" value="site"/>
   <property name="website.port" value="22"/>
@@ -75,7 +77,7 @@
 
   </target>
 
-  <target name="site-userguide">
+  <target name="site-userguide" depends="retrieve">
     <echo message="creating cascading userguide..."/>
 
     <delete dir="${site.userguide}"/>
@@ -137,8 +139,6 @@
 
   <target name="s3-userguide" depends="site-userguide" if="publish.bucket">
 
-    <property file="${doc.aws.properties}"/>
-
     <taskdef name="S3Upload" classname="dak.ant.taskdefs.S3Upload"/>
 
     <S3Upload verbose="true"
@@ -152,8 +152,6 @@
   </target>
 
   <target name="s3-javadoc" depends="site-javadoc" if="publish.bucket">
-
-    <property file="${doc.aws.properties}"/>
 
     <taskdef name="S3Upload" classname="dak.ant.taskdefs.S3Upload"/>
 
