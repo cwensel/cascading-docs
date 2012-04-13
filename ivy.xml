@@ -48,6 +48,8 @@
 
     <!--<dependency org="org.apache.hadoop" name="hadoop-test" rev="0.20.2" conf="test->default"/>-->
     <!---->
-    <dependency org="junit" name="junit" rev="4.8.+" conf="default->*"/>
+    <dependency org="junit" name="junit" rev="4.8.+" conf="default->*">
+      <artifact name="junit" type="jar"/>
+    </dependency>
   </dependencies>
 </ivy-module>
