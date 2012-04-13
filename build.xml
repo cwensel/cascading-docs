@@ -39,11 +39,12 @@
 
     <property classpathref="project.class.path" resource="cascading/version.properties"/>
     <!--build.number=wip-dev-->
+
     <property classpathref="project.class.path" resource="cascading/build.number.properties"/>
 
     <property name="cascading.release" value="${cascading.release.major}"/>
     <property name="cascading.release.full"
-              value="${cascading.release.major}.${cascading.release.minor}-${build.number}"/>
+              value="${cascading.release.major}.${cascading.release.minor}-${cascading.build.number}"/>
 
   </target>
 
