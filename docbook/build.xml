@@ -99,7 +99,7 @@
     <mkdir dir="${test.results}"/>
 
     <javac srcdir="${src.examples.dir}" destdir="${build.examples.dir}" verbose="off" debug="true"
-           includeantruntime="false">
+           includeantruntime="false" compiler="javac1.6">
       <classpath refid="cascading.class.path"/>
     </javac>
 
@@ -137,7 +137,7 @@
   <target name="extract" depends="test-examples">
     <mkdir dir="${build.tools.dir}"/>
 
-    <javac srcdir="${src.tools.dir}" destdir="${build.tools.dir}" verbose="off" debug="true"/>
+    <javac srcdir="${src.tools.dir}" destdir="${build.tools.dir}" verbose="off" debug="true" compiler="javac1.6"/>
 
     <mkdir dir="${docbook.src.dir}/${target.doc}"/>
 
