@@ -17,26 +17,26 @@
   </configurations>
 
   <dependencies>
-    <dependency org="cascading" name="cascading-core" rev="2.0.+" conf="default->*">
+    <dependency org="cascading" name="cascading-core" rev="2.0.+" conf="default->*" changing="true">
       <artifact name="cascading-core" type="jar"/>
       <artifact name="cascading-core" type="sources" e:classifier="sources" ext="jar"/>
     </dependency>
-    <dependency org="cascading" name="cascading-hadoop" rev="2.0.+" conf="default->*">
+    <dependency org="cascading" name="cascading-hadoop" rev="2.0.+" conf="default->*" changing="true">
       <artifact name="cascading-hadoop" type="jar"/>
       <artifact name="cascading-hadoop" type="sources" e:classifier="sources" ext="jar"/>
       <exclude org="ant"/>
       <exclude org="junit"/>
     </dependency>
-    <dependency org="cascading" name="cascading-local" rev="2.0.+" conf="default->*">
+    <dependency org="cascading" name="cascading-local" rev="2.0.+" conf="default->*" changing="true">
       <artifact name="cascading-local" type="jar"/>
       <artifact name="cascading-local" type="sources" e:classifier="sources" ext="jar"/>
     </dependency>
-    <dependency org="cascading" name="cascading-xml" rev="2.0.+" conf="default->*">
+    <dependency org="cascading" name="cascading-xml" rev="2.0.+" conf="default->*" changing="true">
       <artifact name="cascading-xml" type="jar"/>
       <artifact name="cascading-xml" type="sources" e:classifier="sources" ext="jar"/>
     </dependency>
 
-    <dependency org="cascading" name="cascading-test" rev="2.0.+" conf="default->*">
+    <dependency org="cascading" name="cascading-test" rev="2.0.+" conf="default->*" changing="true">
       <artifact name="cascading-test" type="jar"/>
       <artifact name="cascading-test" type="sources" e:classifier="sources" ext="jar"/>
       <exclude org="ant"/>

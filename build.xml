@@ -63,11 +63,15 @@
     <delete dir="${site.javadoc}"/>
     <mkdir dir="${site.javadoc}"/>
 
-    <javadoc sourcepath="${libsrc.dir}"
-             destdir="${site.javadoc}"
-             packagenames="cascading.*"
-             windowtitle="Cascading ${cascading.release.full}"
-             Verbose="true">
+    <javadoc
+      destdir="${site.javadoc}"
+      windowtitle="Cascading ${cascading.release.full}"
+      Verbose="true">
+
+      <fileset dir="${libsrc.dir}" defaultexcludes="yes">
+        <exclude name="**/*Test.java"/>
+        <exclude name="cascading/util/**"/>
+      </fileset>
 
       <classpath refid="project.class.path"/>
       <link href="http://java.sun.com/javase/6/docs/api/"/>
