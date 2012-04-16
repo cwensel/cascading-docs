@@ -48,8 +48,7 @@
 
   </target>
 
-  <target name="site-javadoc" depends="init">
-    <echo message="creating cascading javadoc..."/>
+  <target name="unjar-src">
 
     <unjar dest="${libsrc.dir}">
       <patternset>
@@ -60,6 +59,11 @@
       </fileset>
     </unjar>
 
+  </target>
+
+  <target name="site-javadoc" depends="init,unjar-src">
+    <echo message="creating cascading javadoc..."/>
+
     <delete dir="${site.javadoc}"/>
     <mkdir dir="${site.javadoc}"/>
 
@@ -69,8 +73,19 @@
       Verbose="true">
 
       <fileset dir="${libsrc.dir}" defaultexcludes="yes">
+
+        <!-- tests -->
         <exclude name="**/*Test.java"/>
+        <exclude name="**/Test*.java"/>
+        <exclude name="data/**"/>
+        <exclude name="cascading/detail/**"/>
+        <exclude name="cascading/assembly/**"/>
+
+        <!-- internal -->
         <exclude name="cascading/util/**"/>
+        <exclude name="cascading/**/planner/**"/>
+        <exclude name="cascading/**/stream/**"/>
+
       </fileset>
 
       <classpath refid="project.class.path"/>
