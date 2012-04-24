@@ -322,19 +322,20 @@
       <title>Pipe Assemblies</title>
 
       <para>Pipe assemblies define what work should be done against tuple
-      streams, which are read from tap <emphasis role="italic">sources
-      </emphasis> and written to tap <emphasis role="italic">sinks</emphasis>.
-      The work performed on the data stream may include actions such as
-      filtering, transforming, organizing, and calculating. Pipe assemblies
-      may use multiple sources and multiple sinks, and may define splits,
-      merges, and joins to manipulate the tuple streams.</para>
+      streams, which are read from tap <emphasis
+      role="italic">sources</emphasis> and written to tap <emphasis
+      role="italic">sinks</emphasis>. The work performed on the data stream
+      may include actions such as filtering, transforming, organizing, and
+      calculating. Pipe assemblies may use multiple sources and multiple
+      sinks, and may define splits, merges, and joins to manipulate the tuple
+      streams.</para>
 
       <section>
         <title>Pipe Assembly Workflow</title>
 
         <para>Pipe assemblies are created by chaining
         <classname>cascading.pipe.Pipe</classname> classes and subclasses
-        together. Chaining is accomplished by passing the names of previous
+        together. Chaining is accomplished by passing the previous
         <classname>Pipe</classname> instances to the constructor of the next
         <classname>Pipe</classname> instance.</para>
 
@@ -386,10 +387,8 @@
               <para>A split takes a single stream and sends it down multiple
               paths - that is, it feeds a single <classname>Pipe</classname>
               instance into two or more subsequent separate
-              <classname>Pipe</classname> instances. This is done by using the
-              <classname>Each</classname> class, or by using named instances
-              of the <classname>Pipe</classname> class. (The branch names are
-              useful for binding <xref linkend="failure-traps"/>.)</para>
+              <classname>Pipe</classname> instances with unique branch
+              names.</para>
             </listitem>
           </varlistentry>
 
@@ -413,9 +412,9 @@
               different fields, based on common field values (analogous to a
               SQL join.) This is done by passing two or more
               <classname>Pipe</classname> instances to a
-              <classname>Join</classname> or <classname>CoGroup</classname>
-              pipe. The code sequence and diagram above give an
-              example.</para>
+              <classname>HashJoin</classname> or
+              <classname>CoGroup</classname> pipe. The code sequence and
+              diagram above give an example.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -468,11 +467,12 @@
               used either to declare the field names for fields in a Tuple, or
               reference field values in a Tuple. They can either be strings
               (such as "firstname" or "birthdate"), integers (for the field
-              position, starting at<code>0</code>, and using <code>-1</code>
-              for the last position), or one of the predefined "Fields sets"
-              (such as <code>Fields.ALL</code>, which selects all values in
-              the Tuple, like an asterisk in SQL). For more on Fields sets,
-              see <xref linkend="field-algebra"/>).</para>
+              position, starting at <code>0</code> for the first position, or
+              starting at <code>-1</code> for the last position), or one of
+              the predefined "Fields sets" (such as <code>Fields.ALL</code>,
+              which selects all values in the Tuple, like an asterisk in SQL).
+              For more on Fields sets, see <xref
+              linkend="field-algebra"/>).</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -505,15 +505,15 @@
         <title>Types of Pipes</title>
 
         <variablelist>
-          <para><emphasis role="bold">The <classname>Pipe</classname> class
-          </emphasis> is used to instantiate and name a pipe. Pipe names are
-          used by the planner to bind taps to the pipe as sources or sinks. (A
-          third option is to bind a tap to the pipe branch as a <emphasis
-          role="italic">trap</emphasis>, discussed elsewhere as an advanced
-          topic.)</para>
+          <para><emphasis role="bold">The <classname>Pipe</classname>
+          class</emphasis> is used to instantiate and name a pipe. Pipe names
+          are used by the planner to bind taps to the pipe as sources or
+          sinks. (A third option is to bind a tap to the pipe branch as a
+          <emphasis role="italic">trap</emphasis>, discussed elsewhere as an
+          advanced topic.)</para>
 
           <para><emphasis role="bold">The <classname>SubAssembly</classname>
-          subclass </emphasis> is a special type of pipe. It is used to nest
+          subclass</emphasis> is a special type of pipe. It is used to nest
           re-usable pipe assemblies within a <classname>Pipe</classname> class
           for inclusion in a larger pipe assembly. For more information on
           this, see the section on <xref linkend="subassemblies"/>.</para>
@@ -570,8 +570,8 @@
               <classname>GroupBy</classname> (see below) for merging.</para>
 
               <para>To combine streams that have different fields, based on
-              one or more common values, use
-              <classname>Join</classname>.</para>
+              one or more common values, use <classname>CoGroup</classname> or
+              <classname>HashJoin</classname>.</para>
             </listitem>
           </varlistentry>
 
@@ -580,12 +580,12 @@
 
             <listitem>
               <para><classname>GroupBy</classname> groups the tuples of a
-              stream based on common values in a specified field. If passed
-              multiple streams as inputs, it performs a
-              <classname>Merge</classname> before the sort. As with
-              <classname>Merge</classname>, a <classname>GroupBy</classname>
-              requires that multiple input streams share the same field
-              structure.</para>
+              stream based on common values in a specified field. </para>
+
+              <para>If passed multiple streams as inputs, it performs a merge
+              before the grouping. As with <classname>Merge</classname>, a
+              <classname>GroupBy</classname> requires that multiple input
+              streams share the same field structure.</para>
 
               <para>The purpose of grouping is typically to prepare a stream
               for processing by the <classname>Every</classname> pipe, which
@@ -614,10 +614,16 @@
               averaging field values within each group. Thus the
               <classname>Every</classname> class is only for use on the output
               of <classname>GroupBy</classname> or
-              <classname>CoGroup</classname>, and should not be used with the
+              <classname>CoGroup</classname>, and can not be used with the
               output of <classname>Each</classname>,
-              <classname>Merge</classname>, <classname>Every</classname>, or
-              <classname>Join</classname>.</para>
+              <classname>Merge</classname>, or
+              <classname>HashJoin</classname>. </para>
+
+              <para>An <classname>Every</classname> may follow another
+              <classname>Every</classname> instance so that
+              <classname>Aggregator</classname> operations can be chained,
+              this is not true for <classname>Buffer</classname>
+              operations.</para>
             </listitem>
           </varlistentry>
 
@@ -625,38 +631,34 @@
             <term><classname>CoGroup</classname></term>
 
             <listitem>
-              <para><classname>CoGroup</classname> performs a logical join on
-              two or more streams, similar to a SQL join, and groups the
-              single resulting output stream on the value of a specified
-              field. Streams to be joined must have at least one field in
-              common. As with SQL, the join can be inner, outer, left, or
-              right. Self-joins are permitted, as well as mixed joins (for
-              three or more streams) and custom joins. Null fields in the
-              input streams become corresponding null fields in the output
-              stream.</para>
+              <para><classname>CoGroup</classname> performs a join on two or
+              more streams, similar to a SQL join, and groups the single
+              resulting output stream on the value of a specified field. As
+              with SQL, the join can be inner, outer, left, or right.
+              Self-joins are permitted, as well as mixed joins (for three or
+              more streams) and custom joins. Null fields in the input streams
+              become corresponding null fields in the output stream.</para>
 
-              <para>The resulting output stream can contain fields from all
-              the input streams, but as with other pipes, you can specify a
-              list of output fields, thereby stripping out unwanted fields
-              from the stream.</para>
+              <para>The resulting output stream will contain fields from all
+              the input streams. If there are any duplicate field names as a
+              result of the join, they must be renamed.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
-            <term><classname>Join</classname></term>
+            <term><classname>HashJoin</classname></term>
 
             <listitem>
-              <para><classname>Join</classname> performs a logical join on two
-              or more streams, similar to a SQL join, and outputs a single
-              stream in arbitrary order. Streams to be joined must have at
-              least one field in common. As with SQL, the join can be inner,
-              outer, left, or right. Self-joins are permitted, as well as
-              mixed joins (for three or more streams) and custom joins. Null
-              fields in the input streams become corresponding null fields in
-              the output stream.</para>
+              <para><classname>HashJoin</classname> performs a join on two or
+              more streams, similar to a SQL join, and outputs a single stream
+              in arbitrary order. As with SQL, the join can be inner, outer,
+              left, or right. Self-joins are permitted, as well as mixed joins
+              (for three or more streams) and custom joins. Null fields in the
+              input streams become corresponding null fields in the output
+              stream.</para>
 
               <para>For applications that do not require grouping,
-              <classname>Join</classname> provides faster execution than
+              <classname>HashJoin</classname> provides faster execution than
               <classname>CoGroup</classname>, but only within certain
               prescribed cases. It is optimized for joining one or more small
               streams to no more than one large stream. Developers should
@@ -699,7 +701,7 @@
               <row>
                 <entry><classname>Pipe</classname></entry>
 
-                <entry>instantiate a pipe; name a pipe</entry>
+                <entry>instantiate a pipe; create or name a branch</entry>
 
                 <entry>name</entry>
 
@@ -763,24 +765,19 @@
               <row>
                 <entry><classname>CoGroup</classname></entry>
 
-                <entry>join 1 or more streams on a matching field
-                value</entry>
+                <entry>join 1 or more streams on matching field values</entry>
 
-                <entry>one or more tuple streams with at least one common
-                field</entry>
+                <entry>one or more tuple streams</entry>
 
-                <entry>a single tuple stream, joined on key field(s), with
-                optional secondary sort</entry>
+                <entry>a single tuple stream, joined on key field(s)</entry>
               </row>
 
               <row>
-                <entry><classname>Join</classname></entry>
+                <entry><classname>HashJoin</classname></entry>
 
-                <entry>join 1 or more streams on a matching field
-                value</entry>
+                <entry>join 1 or more streams on matching field values</entry>
 
-                <entry>one or more tuple streams with at least one common
-                field</entry>
+                <entry>one or more tuple streams</entry>
 
                 <entry>a tuple stream in arbitrary order</entry>
               </row>
@@ -851,8 +848,7 @@
         <classname>Each</classname> pipe by date, then use an
         <classname>Every</classname> pipe to count the GET requests per date.
         The pipe could then output the operation results as the date and count
-        for each group, appended to each of the tuples in that group, or just
-        output the date and count for each group.</para>
+        for each group.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -1003,7 +999,7 @@
 
         <para><classname>GroupBy</classname> groups the tuples of a stream
         based on common values in a specified field. If passed multiple
-        streams as inputs, it performs a merge before the sort. As with
+        streams as inputs, it performs a merge before the grouping. As with
         <classname>Merge</classname>, a <classname>GroupBy</classname>
         requires that multiple input streams share the same field
         structure.</para>
@@ -1035,8 +1031,8 @@
             <xi:include href="simple-groupby-secondary.xml"/>
           </example>
 
-          <para>If we don't care about the order of<code>value2</code>, we can
-          leave it out of the <code>sortFields</code>
+          <para>If we don't care about the order of <code>value2</code>, we
+          can leave it out of the <code>sortFields</code>
           <classname>Fields</classname> constructor.</para>
 
           <para>In the next example, we reverse the order of
@@ -1077,12 +1073,12 @@
         <para>The <classname>CoGroup</classname> pipe is similar to
         <classname>GroupBy</classname>, but instead of a "merge", performs a
         "join". That is, <classname>CoGroup</classname> accepts two or more
-        input streams that have at least one common field, groups them on a
-        specified key, and performs a logical join operation similar to a SQL
+        input streams and groups them on one or more specified keys, and
+        performs a join operation on equal keys values, similar to a SQL
         join.</para>
 
-        <para>The output stream can contain all the fields from all the input
-        streams, or you can specify a list of output fields.</para>
+        <para>The output stream will contain all the fields from all the input
+        streams.</para>
 
         <para>As with SQL, the join can be inner, outer, left, or right.
         Self-joins are permitted, as well as mixed joins (for three or more
@@ -1164,9 +1160,9 @@
 
           <para>Further, the internal implementation relies on field position,
           not field names, when reading tuples; the field names are a device
-          for the developer. This approach is beneficial in terms of execution
-          speed, readability, and abstraction of subassemblies from specific
-          field names.</para>
+          for the developer. This approach allows the behavior of the
+          <classname>CoGroup</classname> to be deterministic and
+          predictable.</para>
         </section>
 
         <section>
@@ -1189,11 +1185,10 @@
           </mediaobject>
 
           <para>In <classname>CoGroup</classname>, the join is performed after
-          all the input streams are first co-grouped by their common keys. To
-          borrow from Pig terminology, Cascading must create a "bag" of data
-          for every grouping in the input streams, consisting of all the
-          <classname>Tuple</classname> instances associated with that
-          grouping.</para>
+          all the input streams are first co-grouped by their common keys.
+          Cascading must create a "bag" of data for every grouping in the
+          input streams, consisting of all the <classname>Tuple</classname>
+          instances associated with that grouping.</para>
 
           <mediaobject>
             <imageobject role="fo">
@@ -1223,13 +1218,13 @@
           different types of join</para>
 
           <para><programlisting>LHS = [0,a] [1,b] [2,c]
-              RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below,
-          the values are joined on the first position, a numeric value. Note
-          that, when Cascading joins tuples, the resulting
-          <classname>Tuple</classname> contains all the incoming values by
-          default, and does not discard the duplicate key fields. As mentioned
-          above, on outer joins where there is no equivalent key in the
-          alternate stream, <code>null</code> values are used as placeholders.
+RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
+          values are joined on the first position, a numeric value. Note that,
+          when Cascading joins tuples, the resulting
+          <classname>Tuple</classname> contains all the incoming values, and
+          does not discard the duplicate key fields. As mentioned above, on
+          outer joins where there is no equivalent key in the alternate
+          stream, <code>null</code> values are used as placeholders.
           <variablelist>
               <varlistentry>
                 <term>InnerJoin</term>
@@ -1300,13 +1295,14 @@
         <section>
           <title>Scaling</title>
 
-          <para>CoGroup attempts to store the entire current tuple "bag" from
-          the right-hand stream in memory for rapid comparison to the
-          left-hand stream. If the bag is very large, it may exceed a
-          configurable threshold and be spilled to disk, reducing performance
-          and potentially causing a memory error. Thus it's usually best to
-          put the stream with the largest groupings on the left-hand side and,
-          if necessary, adjust the spill threshold as described in the
+          <para><classname>CoGroup</classname> attempts to store the entire
+          current unique keys tuple "bag" from the right-hand stream in memory
+          for rapid joining to the left-hand stream. If the bag is very large,
+          it may exceed a configurable threshold and be spilled to disk,
+          reducing performance and potentially causing a memory error (if the
+          threshold value is too large). Thus it's usually best to put the
+          stream with the largest groupings on the left-hand side and, if
+          necessary, adjust the spill threshold as described in the
           Javadoc.</para>
         </section>
       </section>
@@ -1314,12 +1310,11 @@
       <section>
         <title>HashJoin</title>
 
-        <para><classname>HashJoin</classname> performs a logical join (similar
-        to a SQL join) on two or more streams, and outputs a stream of tuples
-        that may contain fields from all of the input streams. With a join,
-        the tuples in the different input streams do not typically contain the
-        same set of fields, but must have one or more fields in common for
-        matching.</para>
+        <para><classname>HashJoin</classname> performs a join (similar to a
+        SQL join) on two or more streams, and outputs a stream of tuples that
+        will contain fields from all of the input streams. With a join, the
+        tuples in the different input streams do not typically contain the
+        same set of fields.</para>
 
         <para>As with <classname>CoGroup</classname>, the fieldnames must all
         be unique, including the names of the key fields, to avoid duplicate
@@ -1354,20 +1349,22 @@
           limitations. It is optimized for joining one or more small streams
           to no more than one large stream.</para>
 
-          <para>As with <classname>CoGroup</classname>,
-          <classname>HashJoin</classname> attempts to keep the entire current
-          tuple group of the right-hand stream in memory for rapid comparison.
-          Thus a very large tuple group in the right-hand stream may exceed a
-          configurable spill-to-disk threshold, reducing performance and
-          potentially causing a memory error. For this reason, it's advisable
-          to use the stream with smaller tuple groups on the right-hand side.
-          Additionally, it may help to adjust the spill threshold as described
-          in the Javadoc.</para>
+          <para>Unlike <classname>CoGroup</classname>,
+          <classname>HashJoin</classname> attempts to keep the entirety of the
+          right-hand streams in memory for rapid comparison (not just the
+          current grouping, as no grouping is performed for a
+          <classname>HashJoin</classname>). Thus a very large tuple stream in
+          the right-hand stream may exceed a configurable spill-to-disk
+          threshold, reducing performance and potentially causing a memory
+          error. For this reason, it's advisable to use the stream with
+          smaller tuple groups on the right-hand side. Additionally, it may
+          help to adjust the spill threshold as described in the
+          Javadoc.</para>
 
           <para>Due to the potential difficulties of using
-          <classname>HashJoin</classname> (as compared to the slower
-          <classname>CoGroup</classname>), developers should thoroughly
-          understand this class before attempting to use it.</para>
+          <classname>HashJoin</classname> (as compared to the slower but much
+          more reliable <classname>CoGroup</classname>), developers should
+          thoroughly understand this class before attempting to use it.</para>
         </section>
       </section>
 

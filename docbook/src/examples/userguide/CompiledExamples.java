@@ -7,8 +7,6 @@
 package userguide;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import cascading.cascade.Cascade;
@@ -23,7 +21,7 @@ import cascading.pipe.CoGroup;
 import cascading.pipe.Each;
 import cascading.pipe.Every;
 import cascading.pipe.GroupBy;
-import cascading.pipe.Join;
+import cascading.pipe.HashJoin;
 import cascading.pipe.Merge;
 import cascading.pipe.Pipe;
 import cascading.pipe.SubAssembly;
@@ -31,6 +29,7 @@ import cascading.pipe.assembly.AggregateBy;
 import cascading.pipe.assembly.CountBy;
 import cascading.pipe.assembly.SumBy;
 import cascading.pipe.joiner.InnerJoin;
+import cascading.property.AppProps;
 import cascading.scheme.hadoop.TextDelimited;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
@@ -212,12 +211,12 @@ public class CompiledExamples
 
     // pass in the class name of your application
     // this will find the parent jar at runtime
-    FlowConnector.setApplicationJarClass( properties, Main.class );
+    AppProps.setApplicationJarClass( properties, Main.class );
 
     // ALTERNATELY ...
 
     // pass in the path to the parent jar
-    FlowConnector.setApplicationJarPath( properties, pathToJar );
+    AppProps.setApplicationJarPath( properties, pathToJar );
 
 
     // pass properties to the connector
@@ -314,7 +313,7 @@ public class CompiledExamples
     //@extract-start simple-join
     Fields lhsFields = new Fields( "fieldA", "fieldB" );
     Fields rhsFields = new Fields( "fieldC", "fieldD" );
-    Pipe join = new Join( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
+    Pipe join = new HashJoin( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
     //@extract-end
     }
 
@@ -329,7 +328,7 @@ public class CompiledExamples
     //@extract-start duplicate-join
     Fields common = new Fields( "url" );
     Fields declared = new Fields( "url1", "word", "wd_count", "url2", "sentence", "snt_count" );
-    Pipe join = new Join( lhs, common, rhs, common, declared, new InnerJoin() );
+    Pipe join = new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
     //@extract-end
     }
 

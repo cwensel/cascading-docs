@@ -7,8 +7,6 @@
 package userguide;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;

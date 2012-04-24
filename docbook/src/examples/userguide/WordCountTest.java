@@ -20,6 +20,7 @@ import cascading.pipe.Each;
 import cascading.pipe.Every;
 import cascading.pipe.GroupBy;
 import cascading.pipe.Pipe;
+import cascading.property.AppProps;
 import cascading.scheme.Scheme;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
@@ -71,7 +72,7 @@ public class WordCountTest extends ExampleTestCase
 
     // initialize app properties, tell Hadoop which jar file to use
     Properties properties = new Properties();
-    FlowConnector.setApplicationJarClass( properties, Main.class );
+    AppProps.setApplicationJarClass( properties, Main.class );
 
     // plan a new Flow from the assembly using the source and sink Taps
     // with the above properties

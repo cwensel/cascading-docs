@@ -15,7 +15,6 @@ import cascading.operation.OperationCall;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
-import cascading.tuple.Tuples;
 
 //@extract-start efficient-sum-function
 public class EfficientAddValuesFunction extends BaseOperation<Tuple> implements Function<Tuple>

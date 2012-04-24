@@ -6,11 +6,8 @@
 
 package userguide;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
-import cascading.cascade.Cascades;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
 import cascading.flow.FlowDef;
@@ -328,6 +325,4 @@ public class CompiledCookBook
     Flow flow = flowConnector.connect( flowDef );
     //@extract-end
     }
-
-
   }
