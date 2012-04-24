@@ -580,7 +580,7 @@
 
             <listitem>
               <para><classname>GroupBy</classname> groups the tuples of a
-              stream based on common values in a specified field. </para>
+              stream based on common values in a specified field.</para>
 
               <para>If passed multiple streams as inputs, it performs a merge
               before the grouping. As with <classname>Merge</classname>, a
@@ -617,7 +617,7 @@
               <classname>CoGroup</classname>, and can not be used with the
               output of <classname>Each</classname>,
               <classname>Merge</classname>, or
-              <classname>HashJoin</classname>. </para>
+              <classname>HashJoin</classname>.</para>
 
               <para>An <classname>Every</classname> may follow another
               <classname>Every</classname> instance so that
@@ -1418,74 +1418,56 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
     <section>
       <title>Platforms</title>
 
-      <para>Chris - maybe this new section is the place to talk about
-      platforms and modes. If you want to just rough it in, I can polish it
-      later.</para>
+      <para>Cascading supports pluggable planners that allow it to execute on
+      differing platforms. Currently only two planners are provided and are
+      invoked by a particular <classname>FlowConnector</classname>.</para>
 
-      <para>I suspect we just need an overview of how to choose the platform.
-      The details are presented in other sections, but here it might be nice
-      to offer a single overall checklist of what's required for choosing a
-      platform. This stuff is fuzzy to me but it sounds like the three main
-      things to mention are:</para>
+      <para><variablelist>
+          <varlistentry>
+            <term>LocalFlowConnector</term>
 
-      <itemizedlist>
-        <listitem>
-          <para>configuring the flow to use Cascading local or Hadoop
-          (something to do with MapReduce?), discussed in a later section on
-          <xref linkend="flows"/></para>
-        </listitem>
+            <listitem>
+              <para>The
+              <classname>cascading.flow.local.LocalFlowConnector</classname>
+              provdes a "local" mode planner for running Cascading completely
+              in memory on the current computer. This allows for fast
+              execution of Flows against local files or any other compatible
+              custom <classname>Tap</classname> and
+              <classname>Scheme</classname> classes.</para>
 
-        <listitem>
-          <para>the choice of filesystems and tap schemes, detailed in the
-          next section below on <xref linkend="source-sink"/></para>
-        </listitem>
+              <para>The local mode planner and platform was not designed to
+              scale beyond available memory, cpu or disk on the current
+              machine. Thus any memory intensive processes using
+              <classname>GroupBy</classname>, <classname>CoGroup</classname>,
+              or <classname>HashJoin</classname> are likely to fail against
+              reasonably large files.</para>
 
-        <listitem>
-          <para>any issues involving the jar file and Hadoop, discussed in the
-          section on <xref linkend="building"/></para>
-        </listitem>
-      </itemizedlist>
+              <para>This still leaves local mode useful for development,
+              testing, and interactive data exploration against sample
+              sets.</para>
+            </listitem>
+          </varlistentry>
 
-      <para>We may also want a few notes on:</para>
+          <varlistentry>
+            <term>HadoopFlowConnector</term>
 
-      <itemizedlist>
-        <listitem>
-          <para>which platform &amp; mode is appropriate to use in various
-          cases, though this is probably pretty obvious to users</para>
-        </listitem>
-
-        <listitem>
-          <para>if/how the platform affects program flow or any specific
-          classes</para>
-        </listitem>
-
-        <listitem>
-          <para>what happens if processing mode and filesystem are not matched
-          to each other (if this is even possible)</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>This gives us coverage of the local/Hadoop issues in the following
-      places:</para>
-
-      <para><itemizedlist>
-          <listitem>
-            <para>An introductory mention in the document introduction</para>
-          </listitem>
-
-          <listitem>
-            <para>A high-level but comprehensive overview here that refers to
-            details elsewhere</para>
-          </listitem>
-
-          <listitem>
-            <para>The details in the sections on Flows, Source &amp; Sink
-            Taps, and Builds.</para>
-          </listitem>
-        </itemizedlist></para>
-
-      <para>If we also want to do any "best practices", we can put them in
-      Best Practices, perhaps just after the subsection on Testing.</para>
+            <listitem>
+              <para>The
+              <classname>cascading.flow.hadoop.HadoopFlowConnector</classname>
+              provides a planner for running Cascading on an Apache Hadoop
+              cluster. This allows Cascading to execute against extremely
+              large data sets over a cluster of computing nodes.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>Keep in mind the different planners allows a pipe
+      assembly to be executed on an arbitrary platform. But each platform has
+      platform specific Tap and Scheme classes. Tap and Scheme are designed to
+      hide the details of IO for a particular platform. For example, Hadoop
+      uses an <classname>org.apache.hadoop.mapred.InputFormat</classname> to
+      read data, but local mode is happy with a
+      <classname>java.io.FileInputStream</classname>. This detail is hidden
+      from the developer unless they are creating custom Tap and Scheme
+      classes.</para>
     </section>
 
     <section>
@@ -1523,7 +1505,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               platform used. The first field is either the byte offset or line
               number, and the second field is the actual line of text. When
               written to, all Tuple values are converted to Strings delimited
-              with the TAB character (\t).</para>
+              with the TAB character (\t). There is a TextLine scheme for both
+              the local and Hadoop modes.</para>
             </listitem>
           </varlistentry>
 
@@ -1537,8 +1520,9 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               values are converted to Strings and joined with the specified
               character delimiter. This Scheme can optionally handle quoted
               values with custom quote characters. Further, TextDelimited can
-              coerce each value to a primitive type when reading a text
-              file.</para>
+              coerce each value to a primitive type when reading a text file.
+              There is a TextDelimited scheme for both the local and Hadoop
+              modes.</para>
             </listitem>
           </varlistentry>
 
@@ -1591,8 +1575,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
           below.</para>
 
           <table frame="all">
-            <title><?oxy_comment_start author="Jim" timestamp="20120416T232105-0700" comment="Jim - Check all the tables for formatting; they tend to render too wide in PDF.  You need to come up with styles for the table contents that use slightly-smaller fonts to fit more on the page, or some other workaround. "?>Platform-specific
-            tap scheme classes<?oxy_comment_end ?></title>
+            <title>Platform-specific tap scheme classes</title>
 
             <tgroup cols="3">
               <colspec colname="c1" colnum="1" colwidth="1*"/>
@@ -1693,14 +1676,15 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
             <listitem>
               <para>The <classname>cascading.tap.hadoop.Hfs</classname> tap
               uses the current Hadoop default file system, when running on the
-              Hadoop platform. If Hadoop is configured for local mode, its
-              default file system is the local file system. If configured for
-              distributed mode, its default file system is typically the
-              Hadoop distributed file system. (<classname>Lhs</classname> and
-              <classname>Dfs</classname> subclass the
-              <classname>Hfs</classname> tap.) The Hfs tap is convenient when
-              writing Cascading applications that may or may not be run on a
-              cluster. Note that Hadoop can be forced to use an external file
+              Hadoop platform.</para>
+
+              <para>If Hadoop is configured for "Hadoop local mode" (not to be
+              confused with Cascading local mode), its default file system is
+              the local file system. If configured for distributed mode, its
+              default file system is typically the Hadoop distributed file
+              system.</para>
+
+              <para>Note that Hadoop can be forced to use an external file
               system by specifying a prefix to the URL passed into a new Hfs
               tap. For instance, using "s3://somebucket/path" tells Hadoop to
               use the S3 <classname>FileSystem</classname> implementation to
@@ -1714,38 +1698,39 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
 
         <variablelist>
           <varlistentry>
-            <term>MultiSourcetap</term>
+            <term>MultiSourceTap</term>
 
             <listitem>
-              <para>The <classname>cascading.tap.MultiSourcetap</classname> is
+              <para>The <classname>cascading.tap.MultiSourceTap</classname> is
               used to tie multiple tap instances into a single tap for use as
               an input source. The only restriction is that all the tap
-              instances passed to a new MultiSourcetap share the same Scheme
+              instances passed to a new MultiSourceTap share the same Scheme
               classes (not necessarily the same Scheme instance).</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
-            <term>MultiSinktap</term>
+            <term>MultiSinkTap</term>
 
             <listitem>
-              <para>The <classname>cascading.tap.MultiSinktap</classname> is
+              <para>The <classname>cascading.tap.MultiSinkTap</classname> is
               used to tie multiple tap instances into a single tap for use as
               output sinks. At runtime, for every Tuple output by the pipe
-              assembly, each child tap to the MultiSinktap will sink the
+              assembly, each child tap to the MultiSinkTap will sink the
               Tuple.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
-            <term>Templatetap</term>
+            <term>TemplateTap</term>
 
             <listitem>
-              <para>The <classname>cascading.tap.Templatetap</classname> is
-              used to sink tuples into directory paths based on the values in
-              the Tuple. More can be read below in <xref
-              linkend="template-tap"/>. This tap is only available when
-              running on the Hadoop platform.</para>
+              <para>The
+              <classname>cascading.tap.hadoop.TemplateTap</classname> is used
+              to sink tuples into directory paths based on the values in the
+              Tuple. More can be read below in <xref linkend="template-tap"/>.
+              This tap is only available when running on the Hadoop
+              platform.</para>
             </listitem>
           </varlistentry>
 
@@ -1753,11 +1738,11 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
             <term>GlobHfs</term>
 
             <listitem>
-              <para>The <classname>cascading.tap.GlobHfs</classname> tap
-              accepts Hadoop style "file globbing" expression patterns. This
-              allows for multiple paths to be used as a single source, where
-              all paths match the given pattern. This tap is only available
-              when running on the Hadoop platform.</para>
+              <para>The <classname>cascading.tap.hadoop.GlobHfs</classname>
+              tap accepts Hadoop style "file globbing" expression patterns.
+              This allows for multiple paths to be used as a single source,
+              where all paths match the given pattern. This tap is only
+              available when running on the Hadoop platform.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -1771,8 +1756,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
           below.</para>
 
           <table frame="all">
-            <title><?oxy_comment_start author="Jim" timestamp="20120416T235125-0700" comment="Jim - as noted elsewhere, check table formatting before final version."?>Platform-specific
-            details for setting file system<?oxy_comment_end ?></title>
+            <title>Platform-specific details for setting file system</title>
 
             <tgroup cols="4">
               <colspec colname="c1" colwidth="1*"/>
@@ -1867,8 +1851,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       via the various <classname>Tap</classname> classes, where each class
       abstracts different types of back-end systems that store data as files,
       tables, blobs, and so on. But in order to sink data, some systems
-      require that the resource (e.g., a file) not exist before processing -
-      or must be removed (deleted) before the processing can begin. Other
+      require that the resource (e.g., a file) not exist before processing
+      thus must be removed (deleted) before the processing can begin. Other
       systems may allow for appending or updating of a resource (typical with
       database tables).</para>
 
@@ -1886,7 +1870,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
 
           <listitem>
             <para>This is the default behavior. If the resource exists,
-            attempting to write to it will fail.</para>
+            attempting to write over it will fail.</para>
           </listitem>
         </varlistentry>
 
@@ -1922,7 +1906,9 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       is called on a <classname>Flow</classname>, any sink
       <classname>Tap</classname> labeled
       <classname>SinkMode.REPLACE</classname> will have its
-      <methodname>deleteResource()</methodname> method called. If a
+      <methodname>deleteResource()</methodname> method called.</para>
+
+      <para linkend="skipping-flows">Contrarily, if a
       <classname>Flow</classname> is in a <classname>Cascade</classname> and
       the <classname>Tap</classname> is set to
       <classname>SinkMode.KEEP</classname> or
@@ -1930,19 +1916,17 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <methodname>deleteResource()</methodname> will be called if and only if
       the sink is stale (i.e., older than the source). This allows a
       <classname>Cascade</classname> to behave like a "make" or "ant" build
-      file, only running Flows that should be run. <?oxy_comment_start author="Jim" timestamp="20120417T002434-0700" comment="It seems odd to say this after having explained all of this sinkmode info. If it&apos;s really as simple as this, we should probably move this sentence up in front of this paragraph. If it&apos;s more nuanced, it can stay here but should perhaps be rephrased as &quot;should typically be set to...&quot;, leading into the next sentence."?>When
-      a <classname>Flow</classname> is not used in a
-      <classname>Cascade</classname> object, all of its sinks must be set to
-      <classname>SinkMode.REPLACE</classname>.<?oxy_comment_end ?> For more
-      information, see <xref linkend="skipping-flows"/>.</para>
+      file, only running Flows that should be run. For more information, see
+      <xref linkend="skipping-flows"/>.</para>
 
       <para>It's also important to understand how Hadoop deals with
-      directories. Hadoop cannot source data from directories with nested
-      sub-directories, and it cannot write to directories that already exist.
-      However, the good news is that you can simply point the
+      directories. By default, Hadoop cannot source data from directories with
+      nested sub-directories, and it cannot write to directories that already
+      exist. However, the good news is that you can simply point the
       <classname>Hfs</classname> tap to a directory of data files, and they
       are all used as input - there's no need to enumerate each individual
-      file into a <classname>MultiSourcetap</classname>.</para>
+      file into a <classname>MultiSourceTap</classname>. If there are nested
+      directories, use <classname>GlobHfs</classname>.</para>
     </section>
 
     <section>
@@ -1966,6 +1950,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               <para>The <classname>cascading.tuple.Fields.ALL</classname>
               constant is a wildcard that represents all the current available
               fields.</para>
+
+              <xi:include href="algebra-all.xml"/>
             </listitem>
           </varlistentry>
 
@@ -1978,6 +1964,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               operations return values. This Fields set may only be used as an
               output selector on a pipe, causing the pipe to output a tuple
               containing the operation results.</para>
+
+              <xi:include href="algebra-results.xml"/>
             </listitem>
           </varlistentry>
 
@@ -1990,8 +1978,10 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               in the incoming tuple with the results of an operation. This
               convenient Fields set allows operations to overwrite the value
               stored in the specified field. The current operation must either
-              specify the identical field names used by the pipe, or use the
-              <classname>ARGS</classname> Fields set.</para>
+              specify the identical argument selector field names used by the
+              pipe, or use the <classname>ARGS</classname> Fields set.</para>
+
+              <xi:include href="algebra-replace.xml"/>
             </listitem>
           </varlistentry>
 
@@ -2006,6 +1996,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               for when the operation arguments are no longer necessary and the
               result Fields and values should be appended to the remainder of
               the input field names and Tuple.</para>
+
+              <xi:include href="algebra-swap.xml"/>
             </listitem>
           </varlistentry>
 
@@ -2021,6 +2013,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               <classname>REPLACE</classname>. It is specifically used by the
               Identity Function when coercing values from Strings to primitive
               types.</para>
+
+              <xi:include href="algebra-replace.xml"/>
             </listitem>
           </varlistentry>
 
@@ -2033,6 +2027,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               most recent grouping. If no previous grouping exists in the pipe
               assembly, <classname>GROUP</classname> represents all the
               current field names.</para>
+
+              <xi:include href="algebra-group.xml"/>
             </listitem>
           </varlistentry>
 
@@ -2045,6 +2041,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               in a previous Group. That is, if you have fields "a", "b", and
               "c", and group on "a", <classname>Fields.VALUES</classname> will
               resolve to "b" and "c".</para>
+
+              <xi:include href="algebra-values.xml"/>
             </listitem>
           </varlistentry>
 
@@ -2057,6 +2055,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               known how many fields or what their names are. This allows for
               processing tuples of arbitrary length from an input source or
               some operation. Use this Fields set with caution.</para>
+
+              <xi:include href="algebra-unknown.xml"/>
             </listitem>
           </varlistentry>
 
@@ -2068,6 +2068,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               constant is used to specify no fields. Typically used as an
               argument selector for Operations that do not process any Tuples,
               like <classname>cascading.operation.Insert</classname>.</para>
+
+              <xi:include href="algebra-none.xml"/>
             </listitem>
           </varlistentry>
         </variablelist>The chart below shows common ways to merge input and

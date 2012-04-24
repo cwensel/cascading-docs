@@ -17,6 +17,11 @@ import cascading.flow.FlowDef;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.operation.Debug;
 import cascading.operation.DebugLevel;
+import cascading.operation.Identity;
+import cascading.operation.Insert;
+import cascading.operation.expression.ExpressionFunction;
+import cascading.operation.regex.RegexSplitter;
+import cascading.operation.text.FieldJoiner;
 import cascading.pipe.CoGroup;
 import cascading.pipe.Each;
 import cascading.pipe.Every;
@@ -424,5 +429,100 @@ public class CompiledExamples
 
     assembly = new AggregateBy( assembly, groupingFields, sumBy, countBy );
     //@extract-end
+    }
+
+  public void fieldAlgebra()
+    {
+    Pipe assembly = new Pipe( "assembly" );
+
+    {
+    //@extract-start algebra-all
+    // incoming -> first, last, age
+    String expression = "first + \" \" + last";
+    ExpressionFunction full =
+      new ExpressionFunction( new Fields( "full" ), expression, String.class );
+
+    assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.ALL );
+    // outgoing -> first, last, age, full
+    //@extract-end
+    }
+
+    {
+    //@extract-start algebra-results
+    // incoming -> first, last, age
+    String expression = "first + \" \" + last";
+    ExpressionFunction full =
+      new ExpressionFunction( new Fields( "full" ), expression, String.class );
+
+    assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.RESULTS );
+    // outgoing -> full
+    //@extract-end
+    }
+
+    {
+    //@extract-start algebra-replace
+    // incoming -> first, last, age
+    Identity function = new Identity( Fields.ARGS, Integer.class ); // coerce to int
+
+    assembly = new Each( assembly, new Fields( "age" ), function, Fields.REPLACE );
+    // outgoing -> first, last, age
+    //@extract-end
+    }
+
+    {
+    //@extract-start algebra-swap
+    // incoming -> first, last, age
+    String expression = "first + \" \" + last";
+    ExpressionFunction full =
+      new ExpressionFunction( new Fields( "full" ), expression, String.class );
+
+    assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.SWAP );
+    // outgoing -> age, full
+    //@extract-end
+    }
+
+    {
+    //@extract-start algebra-unknown
+    // incoming -> line
+    RegexSplitter function = new RegexSplitter( Fields.UNKNOWN, "\t" );
+
+    assembly = new Each( assembly, new Fields( "line" ), function, Fields.RESULTS );
+    // outgoing -> unknown
+    //@extract-end
+    }
+
+    {
+    //@extract-start algebra-none
+    // incoming -> first, last, age
+    Insert constant = new Insert( new Fields( "zip" ), "77373" );
+
+    assembly = new Each( assembly, Fields.NONE, constant, Fields.ALL );
+    // outgoing -> first, last, age, zip
+    //@extract-end
+    }
+
+    {
+    //@extract-start algebra-group
+    // incoming -> first, last, age
+    assembly = new GroupBy( assembly, new Fields( "first", "last" ) );
+
+    FieldJoiner full = new FieldJoiner( new Fields( "full" ), " " );
+
+    assembly = new Each( assembly, Fields.GROUP, full, Fields.ALL );
+    // outgoing -> first, last, age, full
+    //@extract-end
+    }
+
+    {
+    //@extract-start algebra-values
+    // incoming -> first, last, age
+    assembly = new GroupBy( assembly, new Fields( "age" ) );
+
+    FieldJoiner full = new FieldJoiner( new Fields( "full" ), " " );
+
+    assembly = new Each( assembly, Fields.VALUES, full, Fields.ALL );
+    // outgoing -> first, last, age, full
+    //@extract-end
+    }
     }
   }
