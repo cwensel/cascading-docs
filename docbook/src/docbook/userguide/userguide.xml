@@ -127,7 +127,7 @@
 
         <para><emphasis role="bold">The operation Developer</emphasis> is a
         person who writes individual functions or operations (typically in
-        Java) or reusable sub-assemblies that act on the data that passes
+        Java) or reusable subassemblies that act on the data that passes
         through the data processing workflow. A simple example would be a
         parser that takes a string and converts it to an Integer. Operations
         are equivalent to Java functions in the sense that they take input
@@ -175,12 +175,13 @@
       "cluster" of one computer, useful for testing), and fully-distributed
       mode (on a full cluster, for production purposes). The
       pseudo-distributed mode does not add value for most purposes, and will
-      not be discussed further. Cascading itself supports a local-mode and a
-      Hadoop mode, where the Hadoop mode can be in standalone or distributed.
-      The primary difference is that in local mode, Cascading makes no use of
-      Hadoop API's and performs all of its work in memory, allowing it to be
-      very fast - but consequently is not as robust or scaleable as Cascading
-      in Hadoop mode, which inherits Hadoop's scalability.</para>
+      not be discussed further. Cascading itself can run locally or on the
+      Hadoop platform, where Hadoop itself may be in standalone or distributed
+      mode. The primary difference between these two platforms is that, when
+      Cascading is running locally, it makes no use of Hadoop API's and
+      performs all of its work in memory, allowing it to be very fast - but
+      consequently not as robust or scalable as when it is running on the
+      Hadoop platform.</para>
 
       <para>Apache Hadoop is an Open Source Apache project and is freely
       available. It can be downloaded from the Hadoop website:<link
@@ -388,7 +389,7 @@
               <classname>Pipe</classname> instances. This is done by using the
               <classname>Each</classname> class, or by using named instances
               of the <classname>Pipe</classname> class. (The branch names are
-              useful for binding<xref linkend="failure-traps"/>.)</para>
+              useful for binding <xref linkend="failure-traps"/>.)</para>
             </listitem>
           </varlistentry>
 
@@ -468,10 +469,10 @@
               reference field values in a Tuple. They can either be strings
               (such as "firstname" or "birthdate"), integers (for the field
               position, starting at<code>0</code>, and using <code>-1</code>
-              for the last position), or one of eight predefined Fields "sets"
-              (such as<code>Fields.ALL</code>, which selects all values in the
-              Tuple, like an asterisk in SQL). For more on Fields sets, see
-              <xref linkend="field-algebra"/>).</para>
+              for the last position), or one of the predefined "Fields sets"
+              (such as <code>Fields.ALL</code>, which selects all values in
+              the Tuple, like an asterisk in SQL). For more on Fields sets,
+              see <xref linkend="field-algebra"/>).</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -483,10 +484,10 @@
 
       <para>The code for the sample pipe assembly above, <xref
       linkend="chaining-pipes"/>, consists almost entirely of a series of
-      <classname>Pipe</classname> constructors, which are the subject of this
-      section. The base class <classname>cascading.pipe.Pipe</classname> and
-      its subclasses, the subject of this section, are shown in the diagram
-      below.</para>
+      <classname>Pipe</classname> constructors. This section describes the
+      various <classname>Pipe</classname> classes in detail. The base class
+      <classname>cascading.pipe.Pipe</classname> and its subclasses are shown
+      in the diagram below.</para>
 
       <mediaobject>
         <imageobject role="fo">
@@ -513,89 +514,154 @@
 
           <para><emphasis role="bold">The <classname>SubAssembly</classname>
           subclass </emphasis> is a special type of pipe. It is used to nest
-          reusable pipe assemblies within a <classname>Pipe</classname> class
+          re-usable pipe assemblies within a <classname>Pipe</classname> class
           for inclusion in a larger pipe assembly. For more information on
           this, see the section on <xref linkend="subassemblies"/>.</para>
 
           <para><emphasis role="bold">The other six types of pipes</emphasis>
           are used to perform operations on the tuple streams as they pass
           through the pipe assemblies. This may involve operating on the
-          individual tuples, on groups of related tuples, or on entire
-          streams. These six pipe types are introduced here, then explored in
-          detail further below.</para>
+          individual tuples (e.g., transform or filter), on groups of related
+          tuples (e.g., count or subtotal), or on entire streams (e.g., split,
+          combine, group, or sort). These six pipe types are briefly
+          introduced here, then explored in detail further below.</para>
 
           <varlistentry>
-            <term><classname>Each</classname> and
-            <classname>Every</classname></term>
+            <term><classname>Each</classname></term>
 
             <listitem>
               <para>These pipes perform operations based on the data contents
               of tuples - analyze, transform, or filter. The
               <classname>Each</classname> pipe operates on individual tuples
-              in the stream, applying functions or filters such as search and
-              replace, removing tuples that have values outside a target
-              range, etc. The <classname>Every</classname> pipe operates on
-              groups of tuples that share a common value (such as all the
-              tuples for a particular date, or zipcode), applying aggregator
-              or buffer operations such as counting, totaling, or averaging
-              field values within each group.</para>
+              in the stream, applying functions or filters such as
+              conditionally replacing certain field values, removing tuples
+              that have values outside a target range, etc.</para>
+
+              <para>You can also use <classname>Each</classname> to split or
+              branch a stream, simply by routing the output of an
+              <classname>Each</classname> into a different pipe or
+              sink.</para>
+
+              <para>Note that with <classname>Each</classname>, as with other
+              types of pipe, you can specify a list of fields to output,
+              thereby removing unwanted fields from a stream.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
-            <term><classname>Merge</classname> and
-            <classname>Join</classname></term>
+            <term><classname>Merge</classname></term>
 
             <listitem>
-              <para>These pipes combine two or more tuple streams into
-              one.</para>
+              <para>Just as <classname>Each</classname> can be used to split
+              one stream into two, <classname>Merge</classname> can be used to
+              combine two or more streams into one, as long as they have the
+              same fields.</para>
 
-              <para>A <emphasis role="italic">Merge</emphasis> accepts two or
-              more streams that have identical fields, and outputs a single
-              stream of tuples (in arbitrary order) that contains all the
-              tuples from all the specified input streams. Thus a Merge is
-              just a mingling of all the tuples from the input streams, as if
-              shuffling multiple card decks into one. A sample use case might
-              be to merge the Apache access logs from an entire server farm
-              onto a single directory in the Hadoop file system.</para>
+              <para>A <classname>Merge</classname> accepts two or more streams
+              that have identical fields, and outputs a single stream of
+              tuples (in arbitrary order) that contains all the tuples from
+              all the specified input streams. Thus a Merge is just a mingling
+              of all the tuples from the input streams, as if shuffling
+              multiple card decks into one.</para>
 
-              <para>A <emphasis role="italic">Join</emphasis> is a logical
-              joining of tuples from two or more streams into a stream of
-              hybrid tuples based on matching field values. It is analogous to
-              a SQL join. With a join, the tuples in the different source
-              streams typically do not contain the same field names, but at
-              least one field must be used from each stream for the purpose of
-              joining, regardless of the field name. (By default, the fields
-              must be mutually comparable for matching purposes.) One sample
-              use case would be to combine the values from a customer file, a
-              sales order file, and a shipped orders file into a single tuple
-              stream for analysis.</para>
+              <para>Use <classname>Merge</classname> when no grouping is
+              required (i.e., no aggregator or buffer operations will be
+              performed). <classname>Merge</classname> is much faster than
+              <classname>GroupBy</classname> (see below) for merging.</para>
+
+              <para>To combine streams that have different fields, based on
+              one or more common values, use
+              <classname>Join</classname>.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
-            <term><classname>GroupBy</classname> and
-            <classname>CoGroup</classname></term>
+            <term><classname>GroupBy</classname></term>
 
             <listitem>
-              <para>These pipes extend the functionality of Merge and Join,
-              adding the ability to sort the tuples on field values and
-              express them via the Group interface (described in the Javadoc).
-              This makes the output suitable for the Every pipe, which
-              performs aggregator and buffer operations, such as averaging
-              values in a group of tuples that have the same field
-              value.</para>
+              <para><classname>GroupBy</classname> groups the tuples of a
+              stream based on common values in a specified field. If passed
+              multiple streams as inputs, it performs a
+              <classname>Merge</classname> before the sort. As with
+              <classname>Merge</classname>, a <classname>GroupBy</classname>
+              requires that multiple input streams share the same field
+              structure.</para>
 
-              <para><emphasis role="italic">GroupBy</emphasis> sorts a stream
-              and expresses the results via the Group interface. If passed
-              multiple streams as inputs, it performs a Merge before the sort.
-              (Recall that Merge requires that input streams share the same
-              field structure.)</para>
+              <para>The purpose of grouping is typically to prepare a stream
+              for processing by the <classname>Every</classname> pipe, which
+              performs aggregator and buffer operations on the groups, such as
+              counting, totalling, or averaging values within that
+              group.</para>
 
-              <para><emphasis role="italic">CoGroup</emphasis> performs a Join
-              and sorts the results, expressing the resulting stream via the
-              Group interface. As with a Join, the resulting output tuples
-              will contain fields from all the input streams.</para>
+              <para>It should be clear that "grouping" here essentially means
+              sorting all the tuples into groups based on the value of a
+              particular field. However, within a given group, the tuples are
+              in arbitrary order unless you specify a secondary sort key. For
+              most purposes, a secondary sort is not required and only
+              increases the execution time.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><classname>Every</classname></term>
+
+            <listitem>
+              <para>The <classname>Every</classname> pipe operates on a tuple
+              stream that has been grouped (by <classname>GroupBy</classname>
+              or <classname>CoGroup</classname>) on the values of a particular
+              field, such as timestamp or zipcode. It's used to apply
+              aggregator or buffer operations such as counting, totaling, or
+              averaging field values within each group. Thus the
+              <classname>Every</classname> class is only for use on the output
+              of <classname>GroupBy</classname> or
+              <classname>CoGroup</classname>, and should not be used with the
+              output of <classname>Each</classname>,
+              <classname>Merge</classname>, <classname>Every</classname>, or
+              <classname>Join</classname>.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><classname>CoGroup</classname></term>
+
+            <listitem>
+              <para><classname>CoGroup</classname> performs a logical join on
+              two or more streams, similar to a SQL join, and groups the
+              single resulting output stream on the value of a specified
+              field. Streams to be joined must have at least one field in
+              common. As with SQL, the join can be inner, outer, left, or
+              right. Self-joins are permitted, as well as mixed joins (for
+              three or more streams) and custom joins. Null fields in the
+              input streams become corresponding null fields in the output
+              stream.</para>
+
+              <para>The resulting output stream can contain fields from all
+              the input streams, but as with other pipes, you can specify a
+              list of output fields, thereby stripping out unwanted fields
+              from the stream.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><classname>Join</classname></term>
+
+            <listitem>
+              <para><classname>Join</classname> performs a logical join on two
+              or more streams, similar to a SQL join, and outputs a single
+              stream in arbitrary order. Streams to be joined must have at
+              least one field in common. As with SQL, the join can be inner,
+              outer, left, or right. Self-joins are permitted, as well as
+              mixed joins (for three or more streams) and custom joins. Null
+              fields in the input streams become corresponding null fields in
+              the output stream.</para>
+
+              <para>For applications that do not require grouping,
+              <classname>Join</classname> provides faster execution than
+              <classname>CoGroup</classname>, but only within certain
+              prescribed cases. It is optimized for joining one or more small
+              streams to no more than one large stream. Developers should
+              thoroughly understand the limitations of this class, as
+              described below, before attempting to use it.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -607,9 +673,9 @@
           <title>Comparison of pipe types</title>
 
           <tgroup cols="4">
-            <colspec colname="c1" colnum="1" colwidth="90px"/>
+            <colspec colname="c1" colnum="1" colwidth="124px"/>
 
-            <colspec colname="c2" colnum="2" colwidth="1.08*"/>
+            <colspec colname="c2" colnum="2" colwidth="1.05*"/>
 
             <colspec colname="c3" colnum="3" colwidth="1*"/>
 
@@ -617,17 +683,17 @@
 
             <tbody>
               <row>
-                <entry><emphasis role="bold"> <emphasis role="underline">Pipe
-                type </emphasis> </emphasis></entry>
+                <entry><emphasis role="bold"><emphasis role="underline">Pipe
+                type</emphasis></emphasis></entry>
 
-                <entry><emphasis role="underline"> <emphasis
-                role="bold">Purpose </emphasis> </emphasis></entry>
+                <entry><emphasis role="underline"><emphasis
+                role="bold">Purpose</emphasis></emphasis></entry>
 
-                <entry><emphasis role="underline"> <emphasis role="bold">Input
-                </emphasis> </emphasis></entry>
+                <entry><emphasis role="underline"><emphasis
+                role="bold">Input</emphasis></emphasis></entry>
 
-                <entry><emphasis role="underline"> <emphasis
-                role="bold">Output </emphasis> </emphasis></entry>
+                <entry><emphasis role="underline"><emphasis
+                role="bold">Output</emphasis></emphasis></entry>
               </row>
 
               <row>
@@ -653,65 +719,70 @@
               <row>
                 <entry><classname>Each</classname></entry>
 
-                <entry>apply a filter or function; create a split</entry>
+                <entry>apply a filter or function, or branch a stream</entry>
 
                 <entry>tuple stream (grouped or not)</entry>
 
-                <entry>the tuple stream, filtered or transformed; field list
-                may be altered</entry>
-              </row>
-
-              <row>
-                <entry><classname>Every</classname></entry>
-
-                <entry>apply aggregator or buffer</entry>
-
-                <entry>grouped stream</entry>
-
-                <entry>the tuple stream (field list may be altered) plus new
-                fields with operation results</entry>
+                <entry>a tuple stream, optionally filtered or
+                transformed</entry>
               </row>
 
               <row>
                 <entry><classname>Merge</classname></entry>
 
-                <entry>merge 2 or more streams with identical fields</entry>
+                <entry>merge two or more streams with identical fields</entry>
 
-                <entry>2 or more tuple streams, any order</entry>
+                <entry>two or more tuple streams</entry>
 
-                <entry>tuple stream, unsorted;</entry>
-              </row>
-
-              <row>
-                <entry><classname>Join</classname></entry>
-
-                <entry>join 2 streams on a matching field value</entry>
-
-                <entry>2 or more tuple streams (ordered?)</entry>
-
-                <entry>tuple stream, unsorted; field list may be
-                altered</entry>
+                <entry>a tuple stream, unsorted</entry>
               </row>
 
               <row>
                 <entry><classname>GroupBy</classname></entry>
 
-                <entry>sort/group on field values; optionally merge 2 or more
-                streams with identical fields</entry>
+                <entry>sort/group on field values; optionally merge two or
+                more streams with identical fields</entry>
 
-                <entry>1 or more tuple streams</entry>
+                <entry>two or more tuple streams with identical fields</entry>
 
-                <entry>sorted/grouped tuples; optional secondary sort</entry>
+                <entry>a single tuple stream, grouped on key field(s) with
+                optional secondary sort</entry>
+              </row>
+
+              <row>
+                <entry><classname>Every</classname></entry>
+
+                <entry>apply aggregator or buffer operation</entry>
+
+                <entry>grouped tuple stream</entry>
+
+                <entry>a tuple stream plus new fields with operation
+                results</entry>
               </row>
 
               <row>
                 <entry><classname>CoGroup</classname></entry>
 
-                <entry>join 2 streams on a matching field value</entry>
+                <entry>join 1 or more streams on a matching field
+                value</entry>
 
-                <entry>2 or more tuple streams</entry>
+                <entry>one or more tuple streams with at least one common
+                field</entry>
 
-                <entry>joined, sorted/grouped tuples</entry>
+                <entry>a single tuple stream, joined on key field(s), with
+                optional secondary sort</entry>
+              </row>
+
+              <row>
+                <entry><classname>Join</classname></entry>
+
+                <entry>join 1 or more streams on a matching field
+                value</entry>
+
+                <entry>one or more tuple streams with at least one common
+                field</entry>
+
+                <entry>a tuple stream in arbitrary order</entry>
               </row>
             </tbody>
           </tgroup>
@@ -719,8 +790,8 @@
       </section>
 
       <section>
-        <title xreflabel="Each and Every Pipes" xml:id="each-every">Each and
-        Every Pipes</title>
+        <title xreflabel="Each and Every Pipes" xml:id="each-every">The Each
+        and Every Pipes</title>
 
         <para>The <classname>Each</classname> and <classname>Every</classname>
         pipes perform operations on tuple data - for instance, perform a
@@ -755,32 +826,33 @@
             </listitem>
           </itemizedlist></para>
 
-        <para>The key difference between Each and Every is that one operates
-        on individual tuples, and the other operates on sorted groups of
-        tuples expressed through the Group interface (described in the
-        Javadoc). This affects the kind of operations that these two pipes can
-        perform, and the kind of output they produce as a result.</para>
+        <para>The key difference between <classname>Each</classname> and
+        <classname>Every</classname> is that the <classname>Each</classname>
+        operates on individual tuples, and <classname>Every</classname>
+        operates on groups of tuples output by <classname>GroupBy</classname>
+        or <classname>CoGroup</classname>. This affects the kind of operations
+        that these two pipes can perform, and the kind of output they produce
+        as a result.</para>
 
-        <para>The <emphasis role="italic">Each</emphasis> pipe acts on one
-        tuple at a time, applying operations that are subclasses of
-        <classname>Functions</classname> and <classname>Filters</classname>
-        (described in the Javadoc). For example, using Each pipes you can
-        split a line from a logfile into multiple fields, filter out
-        everything but the HTTP GET requests, convert timestring fields into
-        date and time fields, and keep only the dates. The Each pipe outputs
-        the stream of resulting tuples after the filter or function has been
-        applied.</para>
+        <para>The <classname>Each</classname> pipe applies operations that are
+        subclasses of <classname>Functions</classname> and
+        <classname>Filters</classname> (described in the Javadoc). For
+        example, using <classname>Each</classname> you can parse lines from a
+        logfile into their constituent fields, filter out all lines except the
+        HTTP GET requests, and replace the timestring fields with date
+        fields.</para>
 
-        <para>Similarly, since the <emphasis role="italic">Every</emphasis>
-        pipe works on groups of tuples, it applies operations that are
+        <para>Similarly, since the <classname>Every</classname> pipe works on
+        tuple groups (the output of a <classname>GroupBy</classname> or
+        <classname>CoGroup</classname> pipe), it applies operations that are
         subclasses of <classname>Aggregators</classname> and
-        <classname>Buffers</classname>. These operate on groups of tuples -
-        i.e., the output of a <classname>GroupBy</classname> or
-        <classname>CoGroup</classname> pipe - one group at a time. For
-        example, an Every pipe could accept the output of the above Each pipes
-        and count the page requests by date. In this example, the pipe would
-        output the operation results as the date and the count for each group,
-        appended to each of the input tuples that are in that group.</para>
+        <classname>Buffers</classname>. For example, you could use
+        <classname>GroupBy</classname> to group the output of the above
+        <classname>Each</classname> pipe by date, then use an
+        <classname>Every</classname> pipe to count the GET requests per date.
+        The pipe could then output the operation results as the date and count
+        for each group, appended to each of the tuples in that group, or just
+        output the date and count for each group.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -795,29 +867,32 @@
         </mediaobject>
 
         <para>In the syntax shown at the start of this section, the <emphasis
-        role="italic">argument selector </emphasis> specifies fields from the
-        input Tuple to use as input values. If the argument selector is not
-        specified, the whole input Tuple (<code>Fields.ALL</code>) is passed
-        to the Operation as a set of argument values.</para>
+        role="italic">argument selector</emphasis> specifies fields from the
+        input tuple to use as input values. If the argument selector is not
+        specified, the whole input tuple (<code>Fields.ALL</code>) is passed
+        to the operation as a set of argument values.</para>
 
-        <para>Most Operations declare result fields (shown as "declared
-        fields" in the diagram). The <emphasis role="italic">output
-        selector</emphasis> specifies the fields of the output Tuple from the
-        fields of the input Tuple and the Operation result. This new output
-        Tuple becomes the input Tuple to the next pipe in the pipe assembly.
-        If the output selector is <code>Fields.ALL</code>, the output Tuple is
-        the input Tuple plus the Operation result, merged into a single
-        Tuple.</para>
+        <para>Most <classname>Operation</classname> subclasses declare result
+        fields (shown as "declared fields" in the diagram). The <emphasis
+        role="italic">output selector</emphasis> specifies the fields of the
+        output <classname>Tuple</classname> from the fields of the input
+        <classname>Tuple</classname> and the operation result. This new output
+        <classname>Tuple</classname> becomes the input
+        <classname>Tuple</classname> to the next pipe in the pipe assembly. If
+        the output selector is <code>Fields.ALL</code>, the output is the
+        input <classname>Tuple</classname> plus the operation result, merged
+        into a single <classname>Tuple</classname>.</para>
 
         <para>Note that it's possible for a <classname>Function</classname> or
-        <classname>Aggregator</classname> to return more than one output Tuple
-        per input Tuple. In this case, the input Tuple is duplicated as many
-        times as necessary to create the necessary output Tuples. This is
-        similar to the reiteration of values that happens during a join. If a
-        Function is designed to always emit three result Tuples for every
-        input Tuple, each of the three outgoing Tuples will consist of the
-        selected input Tuple values plus one of the three sets of Function
-        result values.</para>
+        <classname>Aggregator</classname> to return more than one output
+        <classname>Tuple</classname> per input <classname>Tuple</classname>.
+        In this case, the input tuple is duplicated as many times as necessary
+        to create the necessary output tuples. This is similar to the
+        reiteration of values that happens during a join. If a function is
+        designed to always emit three result tuples for every input tuple,
+        each of the three outgoing tuples will consist of the selected input
+        tuple values plus one of the three sets of function result
+        values.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -833,10 +908,10 @@
 
         <para>If the result selector is not specified for an
         <classname>Each</classname> pipe performing a
-        <classname>Functions</classname> operation, the Operation results are
+        <classname>Functions</classname> operation, the operation results are
         returned by default (<code>Fields.RESULTS</code>), discarding the
-        input Tuple values in the tuple stream. (This is not true of
-        <classname>Filters</classname> , which either discard the input Tuple
+        input tuple values in the tuple stream. (This is not true of
+        <classname>Filters</classname> , which either discard the input tuple
         or return it intact, and thus do not use an output selector.)</para>
 
         <mediaobject>
@@ -856,17 +931,20 @@
         default.</para>
 
         <para>Note that the <classname>Every</classname> pipe associates
-        Aggregator results with the current group Tuple (they unique keys
-        currently being grouped on). For example, if you are grouping on the
-        field "department" and counting the number of "names" grouped by that
-        department, the resulting output Fields will be
-        ["department","num_employees"].</para>
+        <classname>Aggregator</classname> results with the current group
+        <classname>Tuple</classname> (the unique keys currently being grouped
+        on). For example, if you are grouping on the field "department" and
+        counting the number of "names" grouped by that department, the
+        resulting output Fields will be ["department","num_employees"].</para>
 
         <para>If you are also adding up the salaries associated with each
         "name" in each "department", the output Fields will be
-        ["department","num_employees","total_salaries"]. This is only true for
-        chains of <classname>Aggregator</classname> Operations - you are not
-        allowed to chain <classname>Buffer</classname> Operations.</para>
+        ["department","num_employees","total_salaries"].</para>
+
+        <para>This is only true for chains of
+        <classname>Aggregator</classname> Operations - you are not allowed to
+        chain <classname>Buffer</classname> operations, as explained
+        below.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -881,332 +959,74 @@
         </mediaobject>
 
         <para>When the <classname>Every</classname> pipe is used with a
-        <classname>Buffer</classname>, instead of an
-        <classname>Aggregator</classname>, the behavior is different.</para>
-
-        <para>Instead of being associated with the current grouping Tuple, the
-        Buffer results are associated with the current values Tuple. This is
+        <classname>Buffer</classname> operation, instead of an
+        <classname>Aggregator</classname>, the behavior is different. Instead
+        of being associated with the current grouping tuple, the operation
+        results are associated with the current values tuple. This is
         analogous to how an <classname>Each</classname> pipe works with a
         <classname>Function</classname>. This approach may seem slightly
         unintuitive, but provides much more flexibility. To put it another
-        way, the results of the Buffer are not appended to the current keys
-        being grouped on. It is up to the buffer to emit them if they are
-        relevant. It is also possible for a Buffer to emit more than one
-        result Tuple per unique grouping. That is, a Buffer may or may not
-        emulate an Aggregator, where an Aggregator is just a special optmized
+        way, the results of the buffer operation are not appended to the
+        current keys being grouped on. It is up to the buffer to emit them if
+        they are relevant. It is also possible for a Buffer to emit more than
+        one result Tuple per unique grouping. That is, a Buffer may or may not
+        emulate an Aggregator, where an Aggregator is just a special optimized
         case of a Buffer.</para>
 
         <para>For more information on how operations process fields, see <xref
-        linkend="field-processing"/>.</para>
+        linkend="field-processing"/> .</para>
       </section>
 
       <section>
-        <title>Merge and Join Pipes</title>
+        <title>Merge</title>
 
-        <para>The <classname>Merge</classname> and <classname>Join</classname>
-        pipes combine two or more tuple streams into one.</para>
+        <para>The <classname>Merge</classname> pipe is very simple. It accepts
+        two or more streams that have the same fields, and outputs a single
+        stream containing all the tuples from all the input streams. Thus a
+        merge is just a mingling of all the tuples from the input streams, as
+        if shuffling multiple card decks into one. Note that the output of
+        <classname>Merge</classname> is in arbitrary order.</para>
 
-        <section>
-          <title>The Merge Pipe</title>
+        <example>
+          <title>Merging Two Tuple Streams</title>
 
-          <para>A <emphasis role="italic">Merge</emphasis> accepts two or more
-          streams that have identical fields, and outputs a single stream of
-          tuples (in arbitrary order) that contains all the tuples from all
-          the specified input streams. Thus a Merge is just a mingling of all
-          the tuples from the input streams, as if shuffling multiple card
-          decks into one. A sample use case might be to merge the Apache
-          access logs from an entire server farm onto a single directory in
-          the Hadoop file system.</para>
+          <xi:include href="simple-merge.xml"/>
+        </example>
 
-          <example>
-            <title>Merging Two Tuple Streams</title>
-
-            <xi:include href="simple-merge.xml"/>
-          </example>
-
-          <para>The example above simply combines all the tuples from two
-          existing streams into a new tuple stream. The resulting stream is in
-          arbitrary sequence.</para>
-        </section>
-
-        <section>
-          <title>The Join Pipe</title>
-
-          <para>A <emphasis role="italic">Join</emphasis> is a logical joining
-          of tuples from two or more streams into a stream of hybrid tuples
-          based on matching field values. It is analogous to a SQL join, and
-          can be an inner, outer, left, or right join. With a join, the tuples
-          in the different source streams do not typically contain the same
-          field lists, but must have at least one field in common (for the
-          purpose of matching). One sample use case would be to combine the
-          values from a customer file, a sales order file, and a shipped
-          orders file into a single tuple stream for analysis; this would be
-          done by joining the customer and sales streams on the unique
-          customer ID, and joining the result with the shipped orders on the
-          order number.</para>
-
-          <example>
-            <title>Joining Two Tuple Streams</title>
-
-            <xi:include href="simple-join.xml"/>
-          </example>
-
-          <para>The example above performs an inner join on two streams ("lhs"
-          and "rhs"), based on common values in two fields. The fieldnames
-          that are specified in <classname>lhsFields</classname> and
-          <classname>rhsFields</classname> are among the field names
-          previously declared for the two input streams.</para>
-
-          <section>
-            <title>Field Names</title>
-
-            <para>Note that all the field names used in any tuple must be
-            unique; duplicates are not allowed. This includes tuples created
-            by the Join operation, which leads to a possible problem, shown in
-            the following diagram.</para>
-
-            <mediaobject>
-              <imageobject role="fo">
-                <imagedata align="center" contentwidth="5in"
-                           fileref="images/cogrouping-fields-fail.svg"/>
-              </imageobject>
-
-              <imageobject role="html">
-                <imagedata align="center" contentwidth="5in"
-                           fileref="images/cogrouping-fields-fail.png"/>
-              </imageobject>
-            </mediaobject>
-
-            <para>In this figure, two streams are to be joined on the "url"
-            field, resulting in a new Tuple that contains fields from the two
-            input tuples. However, the resulting tuple would include two
-            fields with the same name ("url"), which is unworkable. To handle
-            the conflict, developers can use the <classname>Join</classname>
-            pipe's <parameter>declaredFields</parameter> argument (described
-            in the Javadoc) to declare unique field names for the output
-            tuple.</para>
-
-            <example>
-              <title>Joining Two Tuple Streams with Duplicate Field
-              Names</title>
-
-              <xi:include href="duplicate-join.xml"/>
-            </example>
-
-            <mediaobject>
-              <imageobject role="fo">
-                <imagedata align="center" contentwidth="5in"
-                           fileref="images/cogrouping-fields-pass.svg"/>
-              </imageobject>
-
-              <imageobject role="html">
-                <imagedata align="center" contentwidth="5in"
-                           fileref="images/cogrouping-fields-pass.png"/>
-              </imageobject>
-            </mediaobject>
-
-            <para>This revised figure demonstrates the use of declared field
-            names to prevent a planning failure.</para>
-
-            <para>It might seem preferable for Cascading to automatically
-            recognize the duplication and simply merge the identically-named
-            fields, saving effort for the developer. However, during an outer
-            type join, one field (or set of fields used for the join) for a
-            given join side may be <code>null</code>. Discarding one of the
-            duplicate fields would lose this information.</para>
-
-            <para>Further, the internal implementation relies on field
-            position, not field names, when reading tuples; the field names
-            are a device for the developer. This approach is beneficial in
-            terms of execution speed, readability, and abstraction of
-            subassemblies from specific field names.</para>
-          </section>
-
-          <section>
-            <title>The Joiner Class</title>
-
-            <para>In the example above, we explicitly specified a Joiner class
-            to perform a join on our data. The reason the
-            <classname>CoGroup</classname> pipe is named "CoGroup", and not
-            "Join", is because the joining of data is done after all the
-            parallel streams are co-grouped by their common keys. A detailed
-            explanation is beyond the scope of this document. But in brief,
-            before a join can be performed, Cascading must create a "bag" of
-            data (borrowing from Pig terminology) for every input tuple
-            stream, consisting of all the Tuple instances associated with a
-            given grouping.</para>
-
-            <mediaobject>
-              <imageobject role="fo">
-                <imagedata align="center" contentwidth="5in"
-                           fileref="images/cogrouped-values.svg"/>
-              </imageobject>
-
-              <imageobject role="html">
-                <imagedata align="center" contentwidth="5in"
-                           fileref="images/cogrouped-values.png"/>
-              </imageobject>
-            </mediaobject>
-
-            <para>The most commonly-used type of join is the inner join, which
-            tries to match <emphasis role="italic">each</emphasis> Tuple on
-            the "lhs" with <emphasis role="italic">every</emphasis> Tuple on
-            the "rhs", based on field values. This is the default behavior for
-            a join in SQL. With an inner join, if one of the bags is empty, no
-            tuples are joined. An outer join, conversely, allows for either
-            bag to be empty and simply substitutes a Tuple containing
-            <code>null</code> values for the non-existent tuple.</para>
-
-            <mediaobject>
-              <imageobject role="fo">
-                <imagedata align="center" contentwidth="3.5in"
-                           fileref="images/joins.svg"/>
-              </imageobject>
-
-              <imageobject role="html">
-                <imagedata align="center" contentwidth="3.5in"
-                           fileref="images/joins.png"/>
-              </imageobject>
-            </mediaobject>
-
-            <para>The diagram above shows all the supported Joiner
-            types.</para>
-
-            <para><programlisting>LHS = [0,a] [1,b] [2,c]
-              RHS = [0,A] [2,C] [3,D]</programlisting>Using the above simple
-            data sets, we define each join type below, where the values are
-            joined on the first position, a numeric value. Note that, when
-            Cascading joins tuples, the resulting Tuple contains all the
-            incoming values. The duplicate common key(s) is not discarded if
-            given. And on outer joins, where there is no equivalent key in the
-            alternate stream, <code>null</code> values are used as
-            placeholders. <variablelist>
-                <varlistentry>
-                  <term>InnerJoin</term>
-
-                  <listitem>
-                    <para>An inner join only returns a joined Tuple if neither
-                    bag is empty. <programlisting>[0,a,0,A] [2,c,2,C] </programlisting></para>
-                  </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                  <term>OuterJoin</term>
-
-                  <listitem>
-                    <para>An outer join performs a join if one bag (left or
-                    right) is empty, or if neither bag is empty.
-                    <programlisting>[0,a,0,A] [1,b,null,null] [2,c,2,C] [null,null,3,D] </programlisting></para>
-                  </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                  <term>LeftJoin</term>
-
-                  <listitem>
-                    <para>A left join can also be stated as a left inner and
-                    right outer join, where it is acceptable for the right bag
-                    to be empty (but not the left).</para>
-
-                    <programlisting>[0,a,0,A] [1,b,null,null] [2,c,2,C]</programlisting>
-                  </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                  <term>RightJoin</term>
-
-                  <listitem>
-                    <para>A right join can also be stated as a left outer and
-                    right inner join, where it is acceptable for the left bag
-                    to be empty (but not the right). <programlisting>[0,a,0,A] [2,c,2,C] [null,null,3,D] </programlisting></para>
-                  </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                  <term>MixedJoin</term>
-
-                  <listitem>
-                    <para>A mixed join is where 3 or more tuple streams are
-                    joined, using a small Boolean array to specify each of the
-                    join types to use. For more information, see the
-                    <classname>cascading.pipe.cogroup.MixedJoin</classname>
-                    class in the Javadoc.</para>
-                  </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                  <term><emphasis>Custom</emphasis></term>
-
-                  <listitem>
-                    <para>Developers can subclass the
-                    <classname>cascading.pipe.cogroup.Joiner</classname> class
-                    to create custom join operations.</para>
-                  </listitem>
-                </varlistentry>
-              </variablelist></para>
-          </section>
-
-          <section>
-            <title><?oxy_comment_start author="Jim" timestamp="20120402T014844-0700" comment="Chris - not sure I've got this quite right..."?>Memory
-            considerations<?oxy_comment_end ?></title>
-
-            <para>During a join of two streams, the entire current tuple group
-            of the right-hand stream is stored in memory for rapid comparison.
-            If the group is very large, it may exceed a configurable spill
-            threshold and be spilled to disk, reducing performance. For this
-            reason, alway use the shorter stream or the stream with shorter
-            groups on the right-hand side. If necessary, adjust the spill
-            threshold as described in the Javadoc.</para>
-          </section>
-        </section>
+        <para>The example above simply combines all the tuples from two
+        existing streams ("lhs" and "rhs") into a new tuple stream
+        ("merge").</para>
       </section>
 
       <section>
-        <title>GroupBy and CoGroup Pipes</title>
+        <title>GroupBy</title>
+
+        <para><classname>GroupBy</classname> groups the tuples of a stream
+        based on common values in a specified field. If passed multiple
+        streams as inputs, it performs a merge before the sort. As with
+        <classname>Merge</classname>, a <classname>GroupBy</classname>
+        requires that multiple input streams share the same field
+        structure.</para>
+
+        <para>The output of <classname>GroupBy</classname> is suitable for the
+        <classname>Every</classname> pipe, which performs
+        <classname>Aggregator</classname> and <classname>Buffer</classname>
+        operations, such as counting, totalling, or averaging groups of tuples
+        that have a common value (e.g., the same date). By default,
+        <classname>GroupBy</classname> performs no secondary sort, so within
+        each group the tuples are in arbitrary order. For instance, when
+        grouping on "lastname", the tuples <code>[doe, john]</code> and
+        <code>[doe, jane]</code> end up in the same group, but in arbitrary
+        sequence.</para>
 
         <section>
-          <title>Basic Operation</title>
-
-          <para>The <classname>GroupBy</classname> and
-          <classname>CoGroup</classname> pipes extend the functionality of
-          <classname>Merge</classname> and<classname>Join</classname>, adding
-          the ability to logically group the tuples on field values and
-          express them via the Group interface (described in the Javadoc).
-          This makes the output suitable for the <classname>Every</classname>
-          pipe, which performs <classname>Aggregator</classname> and
-          <classname>Buffer</classname> operations, such as averaging values
-          in a group of tuples that have the same field value.</para>
-
-          <para><emphasis role="italic">GroupBy</emphasis> sorts an input
-          stream and expresses the results via the Group interface. If passed
-          multiple input streams, it performs a Merge before the sort. (Recall
-          that Merge requires that input streams share the same field
-          structure.)</para>
-
-          <para><emphasis role="italic">CoGroup</emphasis> performs a Join and
-          sorts the results, expressing the resulting stream via the Group
-          interface. As with a Join, the resulting output tuples will contain
-          fields from all the input streams</para>
-
-          <para>At the end of a <classname>GroupBy</classname> or
-          <classname>CoGroup</classname> operation, the resulting groups of
-          tuples are sorted by the designated grouping values, and then are
-          passed to an <classname>Aggregator</classname> or
-          <classname>Buffer</classname> operation in that sequence. However,
-          by default there is no secondary sort, so within each group the
-          tuples are in arbitrary order. For instance, when grouping on
-          "lastname", the tuples <code>[doe, john]</code> and <code>[doe,
-          jane] </code> end up in the same group, but in arbitrary sequence
-          (e.g., not necessarily sorted by the "firstname" values).</para>
-        </section>
-
-        <section>
-          <title>Secondary Sorting</title>
+          <title xml:id="secondary-sorting">Secondary sorting</title>
 
           <para>If multi-level sorting is desired, the names of the sort
-          fields on must be specified to the GroupBy instance, as seen below.
-          In this example, <code>value1</code> and <code>value2</code> will
-          arrive in their natural sort order (assuming they are
+          fields on must be specified to the <classname>GroupBy</classname>
+          instance, as seen below. In this example, <code>value1</code> and
+          <code>value2</code> will arrive in their natural sort order
+          (assuming they are
           <classname>java.lang.Comparable</classname>).</para>
 
           <example>
@@ -1232,13 +1052,12 @@
           <para>Whenever there is an implied sort during grouping or secondary
           sorting, a custom <classname>java.util.Comparator</classname> can
           optionally be supplied to the grouping <classname>Fields</classname>
-          or secondary sort <classname>Fields</classname>, in order to
-          influence the sorting through the
-          <code>Fields.setComparator()</code> call.</para>
+          or secondary sort <classname>Fields</classname>. This allows the
+          developer to use the <code>Fields.setComparator()</code> call to
+          control the sort.</para>
 
-          <para>To sort or group on non- <classname>Comparable</classname>
-          classes, consider creating a custom
-          <classname>Comparator</classname>.</para>
+          <para>To sort or group on non-Java-comparable classes, consider
+          creating a custom <classname>Comparator</classname>.</para>
 
           <para>Below is a more practical example, where we group by the "day
           of the year", but want to reverse the order of the tuples within
@@ -1249,6 +1068,306 @@
 
             <xi:include href="simple-groupby-secondary-time.xml"/>
           </example>
+        </section>
+      </section>
+
+      <section>
+        <title>CoGroup</title>
+
+        <para>The <classname>CoGroup</classname> pipe is similar to
+        <classname>GroupBy</classname>, but instead of a "merge", performs a
+        "join". That is, <classname>CoGroup</classname> accepts two or more
+        input streams that have at least one common field, groups them on a
+        specified key, and performs a logical join operation similar to a SQL
+        join.</para>
+
+        <para>The output stream can contain all the fields from all the input
+        streams, or you can specify a list of output fields.</para>
+
+        <para>As with SQL, the join can be inner, outer, left, or right.
+        Self-joins are permitted, as well as mixed joins (for three or more
+        streams) and custom joins. Null fields in the input streams become
+        corresponding null fields in the output stream.</para>
+
+        <para>Since the output is grouped, it is suitable for the
+        <classname>Every</classname> pipe, which performs
+        <classname>Aggregator</classname> and <classname>Buffer</classname>
+        operations - such as counting, totalling, or averaging groups of
+        tuples that have a common value (e.g., the same date).</para>
+
+        <para>The output stream is sorted by the natural order of the grouping
+        fields. To control this order, at least the first
+        <classname>groupingFields</classname> value given should be an
+        instance of <classname>Fields</classname> containing
+        <classname>Comparator</classname> instances for the appropriate
+        fields. This allows fine-grained control of the sort grouping
+        order.</para>
+
+        <section>
+          <title>Field names</title>
+
+          <para>In a join operation, all the field names used in any of the
+          input tuples must be unique; duplicate field names are not allowed.
+          If the names overlap there is a collision, as shown in the following
+          diagram.</para>
+
+          <mediaobject>
+            <imageobject role="fo">
+              <imagedata align="center" contentwidth="5in"
+                         fileref="images/cogrouping-fields-fail.svg"/>
+            </imageobject>
+
+            <imageobject role="html">
+              <imagedata align="center" contentwidth="5in"
+                         fileref="images/cogrouping-fields-fail.png"/>
+            </imageobject>
+          </mediaobject>
+
+          <para>In this figure, two streams are to be joined on the "url"
+          field, resulting in a new Tuple that contains fields from the two
+          input tuples. However, the resulting tuple would include two fields
+          with the same name ("url"), which is unworkable. To handle the
+          conflict, developers can use the
+          <parameter>declaredFields</parameter> argument (described in the
+          Javadoc) to declare unique field names for the output tuple, as in
+          the following example.</para>
+
+          <example>
+            <title>Joining Two Tuple Streams with Duplicate Field
+            Names</title>
+
+            <xi:include href="duplicate-join.xml"/>
+          </example>
+
+          <mediaobject>
+            <imageobject role="fo">
+              <imagedata align="center" contentwidth="5in"
+                         fileref="images/cogrouping-fields-pass.svg"/>
+            </imageobject>
+
+            <imageobject role="html">
+              <imagedata align="center" contentwidth="5in"
+                         fileref="images/cogrouping-fields-pass.png"/>
+            </imageobject>
+          </mediaobject>
+
+          <para>This revised figure demonstrates the use of declared field
+          names to prevent a planning failure.</para>
+
+          <para>It might seem preferable for Cascading to automatically
+          recognize the duplication and simply merge the identically-named
+          fields, saving effort for the developer. However, consider the case
+          of an outer type join in which one field (or set of fields used for
+          the join) for a given join side happens to be <code>null</code>.
+          Discarding one of the duplicate fields would lose this
+          information.</para>
+
+          <para>Further, the internal implementation relies on field position,
+          not field names, when reading tuples; the field names are a device
+          for the developer. This approach is beneficial in terms of execution
+          speed, readability, and abstraction of subassemblies from specific
+          field names.</para>
+        </section>
+
+        <section>
+          <title xml:id="joiner-class">The Joiner class</title>
+
+          <para>In the example above, we explicitly specified a Joiner class
+          (InnerJoin) to perform a join on our data. There are five Joiner
+          subclasses, as shown in this diagram.</para>
+
+          <mediaobject>
+            <imageobject role="fo">
+              <imagedata align="center" contentwidth="3.5in"
+                         fileref="images/joins.svg"/>
+            </imageobject>
+
+            <imageobject role="html">
+              <imagedata align="center" contentwidth="3.5in"
+                         fileref="images/joins.png"/>
+            </imageobject>
+          </mediaobject>
+
+          <para>In <classname>CoGroup</classname>, the join is performed after
+          all the input streams are first co-grouped by their common keys. To
+          borrow from Pig terminology, Cascading must create a "bag" of data
+          for every grouping in the input streams, consisting of all the
+          <classname>Tuple</classname> instances associated with that
+          grouping.</para>
+
+          <mediaobject>
+            <imageobject role="fo">
+              <imagedata align="center" contentwidth="5in"
+                         fileref="images/cogrouped-values.svg"/>
+            </imageobject>
+
+            <imageobject role="html">
+              <imagedata align="center" contentwidth="5in"
+                         fileref="images/cogrouped-values.png"/>
+            </imageobject>
+          </mediaobject>
+
+          <para>It's already been mentioned that joins in Cascading are
+          analogous to joins in SQL. The most commonly-used type of join is
+          the inner join, the default in <classname>CoGroup</classname>. An
+          inner join tries to match <emphasis role="italic">each</emphasis>
+          Tuple on the "lhs" with <emphasis role="italic">every</emphasis>
+          Tuple on the "rhs", based on matching field values. With an inner
+          join, if either side has no tuples for a given value, no tuples are
+          joined. An outer join, conversely, allows for either side to be
+          empty and simply substitutes a <classname>Tuple</classname>
+          containing <code>null</code> values for the non-existent
+          tuple.</para>
+
+          <para>The following sample data will help explain and compare the
+          different types of join</para>
+
+          <para><programlisting>LHS = [0,a] [1,b] [2,c]
+              RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below,
+          the values are joined on the first position, a numeric value. Note
+          that, when Cascading joins tuples, the resulting
+          <classname>Tuple</classname> contains all the incoming values by
+          default, and does not discard the duplicate key fields. As mentioned
+          above, on outer joins where there is no equivalent key in the
+          alternate stream, <code>null</code> values are used as placeholders.
+          <variablelist>
+              <varlistentry>
+                <term>InnerJoin</term>
+
+                <listitem>
+                  <para>An inner join only returns a joined
+                  <classname>Tuple</classname> if neither bag is empty.
+                  <programlisting>[0,a,0,A] [2,c,2,C] </programlisting></para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>OuterJoin</term>
+
+                <listitem>
+                  <para>An outer join performs a join if one bag (left or
+                  right) is empty, or if neither bag is empty.
+                  <programlisting>[0,a,0,A] [1,b,null,null] [2,c,2,C] [null,null,3,D] </programlisting></para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>LeftJoin</term>
+
+                <listitem>
+                  <para>A left join can also be stated as a left inner and
+                  right outer join, where it is acceptable for the right bag
+                  to be empty (but not the left).</para>
+
+                  <programlisting>[0,a,0,A] [1,b,null,null] [2,c,2,C]</programlisting>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>RightJoin</term>
+
+                <listitem>
+                  <para>A right join can also be stated as a left outer and
+                  right inner join, where it is acceptable for the left bag to
+                  be empty (but not the right). <programlisting>[0,a,0,A] [2,c,2,C] [null,null,3,D] </programlisting></para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term>MixedJoin</term>
+
+                <listitem>
+                  <para>A mixed join is where 3 or more tuple streams are
+                  joined, using a small Boolean array to specify each of the
+                  join types to use. For more information, see the
+                  <classname>cascading.pipe.cogroup.MixedJoin</classname>
+                  class in the Javadoc.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term><emphasis>Custom</emphasis></term>
+
+                <listitem>
+                  <para>Developers can subclass the
+                  <classname>cascading.pipe.cogroup.Joiner</classname> class
+                  to create custom join operations.</para>
+                </listitem>
+              </varlistentry>
+            </variablelist></para>
+        </section>
+
+        <section>
+          <title>Scaling</title>
+
+          <para>CoGroup attempts to store the entire current tuple "bag" from
+          the right-hand stream in memory for rapid comparison to the
+          left-hand stream. If the bag is very large, it may exceed a
+          configurable threshold and be spilled to disk, reducing performance
+          and potentially causing a memory error. Thus it's usually best to
+          put the stream with the largest groupings on the left-hand side and,
+          if necessary, adjust the spill threshold as described in the
+          Javadoc.</para>
+        </section>
+      </section>
+
+      <section>
+        <title>HashJoin</title>
+
+        <para><classname>HashJoin</classname> performs a logical join (similar
+        to a SQL join) on two or more streams, and outputs a stream of tuples
+        that may contain fields from all of the input streams. With a join,
+        the tuples in the different input streams do not typically contain the
+        same set of fields, but must have one or more fields in common for
+        matching.</para>
+
+        <para>As with <classname>CoGroup</classname>, the fieldnames must all
+        be unique, including the names of the key fields, to avoid duplicate
+        field names in the output <classname>Tuple</classname>. If necessary,
+        use the <parameter>declaredFields</parameter> argument to specify
+        unique field names for the output.</para>
+
+        <para>An inner join is performed by default, but you can choose inner,
+        outer, left, right, or mixed (three or more streams). Self-joins are
+        permitted. Developers can also create custom Joiners if desired. For
+        more information on types of joins, refer to <xref
+        linkend="joiner-class"/> or the Javadoc.</para>
+
+        <example>
+          <title>Joining Two Tuple Streams</title>
+
+          <xi:include href="simple-join.xml"/>
+        </example>
+
+        <para>The example above performs an inner join on two streams ("lhs"
+        and "rhs"), based on common values in two fields. The fieldnames that
+        are specified in <classname>lhsFields</classname> and
+        <classname>rhsFields</classname> are among the field names previously
+        declared for the two input streams.</para>
+
+        <section>
+          <title>Scaling</title>
+
+          <para>For joins that do not require grouping,
+          <classname>HashJoin</classname> provides faster execution than
+          <classname>CoGroup</classname>, but it operates within stricter
+          limitations. It is optimized for joining one or more small streams
+          to no more than one large stream.</para>
+
+          <para>As with <classname>CoGroup</classname>,
+          <classname>HashJoin</classname> attempts to keep the entire current
+          tuple group of the right-hand stream in memory for rapid comparison.
+          Thus a very large tuple group in the right-hand stream may exceed a
+          configurable spill-to-disk threshold, reducing performance and
+          potentially causing a memory error. For this reason, it's advisable
+          to use the stream with smaller tuple groups on the right-hand side.
+          Additionally, it may help to adjust the spill threshold as described
+          in the Javadoc.</para>
+
+          <para>Due to the potential difficulties of using
+          <classname>HashJoin</classname> (as compared to the slower
+          <classname>CoGroup</classname>), developers should thoroughly
+          understand this class before attempting to use it.</para>
         </section>
       </section>
 
@@ -1300,7 +1419,81 @@
     </section>
 
     <section>
-      <title>Source and Sink taps</title>
+      <title>Platforms</title>
+
+      <para>Chris - maybe this new section is the place to talk about
+      platforms and modes. If you want to just rough it in, I can polish it
+      later.</para>
+
+      <para>I suspect we just need an overview of how to choose the platform.
+      The details are presented in other sections, but here it might be nice
+      to offer a single overall checklist of what's required for choosing a
+      platform. This stuff is fuzzy to me but it sounds like the three main
+      things to mention are:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>configuring the flow to use Cascading local or Hadoop
+          (something to do with MapReduce?), discussed in a later section on
+          <xref linkend="flows"/></para>
+        </listitem>
+
+        <listitem>
+          <para>the choice of filesystems and tap schemes, detailed in the
+          next section below on <xref linkend="source-sink"/></para>
+        </listitem>
+
+        <listitem>
+          <para>any issues involving the jar file and Hadoop, discussed in the
+          section on <xref linkend="building"/></para>
+        </listitem>
+      </itemizedlist>
+
+      <para>We may also want a few notes on:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>which platform &amp; mode is appropriate to use in various
+          cases, though this is probably pretty obvious to users</para>
+        </listitem>
+
+        <listitem>
+          <para>if/how the platform affects program flow or any specific
+          classes</para>
+        </listitem>
+
+        <listitem>
+          <para>what happens if processing mode and filesystem are not matched
+          to each other (if this is even possible)</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>This gives us coverage of the local/Hadoop issues in the following
+      places:</para>
+
+      <para><itemizedlist>
+          <listitem>
+            <para>An introductory mention in the document introduction</para>
+          </listitem>
+
+          <listitem>
+            <para>A high-level but comprehensive overview here that refers to
+            details elsewhere</para>
+          </listitem>
+
+          <listitem>
+            <para>The details in the sections on Flows, Source &amp; Sink
+            Taps, and Builds.</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para>If we also want to do any "best practices", we can put them in
+      Best Practices, perhaps just after the subsection on Testing.</para>
+    </section>
+
+    <section>
+      <title xreflabel="Source and Sink Taps" xml:id="source-sink">Source and
+      Sink Taps</title>
 
       <para>All input data comes in from, and all output data goes out to,
       some instance of <classname>cascading.tap.tap</classname>. A tap
@@ -1309,11 +1502,11 @@
       from, which makes it a <emphasis role="italic">source</emphasis>, or
       written to, which makes it a <emphasis role="italic">sink</emphasis>.
       Or, more commonly, taps act as both sinks and sources when shared
-      between Flows.</para>
+      between flows.</para>
 
-      <para>Depending on your operating mode (Cascading local mode or Hadoop
-      mode), the specific classes you use may vary. Details are provided in
-      the sections below.</para>
+      <para>The platform on which your application is running (Cascading local
+      or Hadoop) determines which specific classes you can use. Details are
+      provided in the sections below.</para>
 
       <section>
         <title>Schemes</title>
@@ -1329,10 +1522,11 @@
 
             <listitem>
               <para>TextLine reads and writes raw text files and returns
-              tuples with two field names by default, specfic to the platform
-              used. Either the bytes offset or line number, and the actual
-              line of text. When written to, all Tuple values are converted to
-              Strings delimited with the TAB character (\t).</para>
+              tuples which, by default, contain two fields specfic to the
+              platform used. The first field is either the byte offset or line
+              number, and the second field is the actual line of text. When
+              written to, all Tuple values are converted to Strings delimited
+              with the TAB character (\t).</para>
             </listitem>
           </varlistentry>
 
@@ -1359,8 +1553,8 @@
               is a binary format. When written to or read from, all Tuple
               values are saved in their native binary form. This is the most
               efficient file format - but be aware that the resulting files
-              are binary and can only be read by Hadoop applications in Hadoop
-              mode.</para>
+              are binary and can only be read by Hadoop applications running
+              on the Hadoop platform.</para>
             </listitem>
           </varlistentry>
 
@@ -1368,16 +1562,16 @@
             <term>WritableSequenceFile</term>
 
             <listitem>
-              <para>WritableSequenceFile is based on the Hadoop Sequence file,
-              like the SequenceFile Scheme, but was designed to read and write
-              key and/or value Hadoop <classname>Writable</classname> objects
-              directly. This is very useful if you have sequence files created
-              by other applications. During writing (sinking), specified key
-              and/or value fields are serialized directly into the sequence
-              file. During reading (sourcing), the key and/or value objects
-              are deserialized and wrapped in a Cascading Tuple object and
-              passed to the downstream pipe assembly. This class is only
-              available in Hadoop mode.</para>
+              <para>Like the SequenceFile Scheme, WritableSequenceFile is
+              based on the Hadoop Sequence file but was designed to read and
+              write key and/or value Hadoop <classname>Writable</classname>
+              objects directly. This is very useful if you have sequence files
+              created by other applications. During writing (sinking),
+              specified key and/or value fields are serialized directly into
+              the sequence file. During reading (sourcing), the key and/or
+              value objects are deserialized and wrapped in a Cascading Tuple
+              object and passed to the downstream pipe assembly. This class is
+              only available when running on the Hadoop platform.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -1392,30 +1586,33 @@
         performance hit.</para>
 
         <section>
-          <title>Mode-specific implementation details</title>
+          <title>Platform-specific implementation details</title>
 
-          <para>Depending on your operating mode (Cascading local mode or
-          Hadoop mode), the classes you use to specify schemes will vary.
-          Mode-specific details for each standard scheme are shown
+          <para>Depending on which platform you use (Cascading local or
+          Hadoop), the classes you use to specify schemes will vary.
+          Platform-specific details for each standard scheme are shown
           below.</para>
 
           <table frame="all">
-            <title>Mode-specific tap scheme classes</title>
+            <title><?oxy_comment_start author="Jim" timestamp="20120416T232105-0700" comment="Jim - Check all the tables for formatting; they tend to render too wide in PDF.  You need to come up with styles for the table contents that use slightly-smaller fonts to fit more on the page, or some other workaround. "?>Platform-specific
+            tap scheme classes<?oxy_comment_end ?></title>
 
             <tgroup cols="3">
-              <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+              <colspec colname="c1" colnum="1" colwidth="1*"/>
 
-              <colspec colname="c2" colnum="2" colwidth="1.0*"/>
+              <colspec colname="c2" colnum="2" colwidth="1.04*"/>
 
-              <colspec colname="c3" colnum="3" colwidth="1.0*"/>
+              <colspec colname="c3" colnum="3" colwidth="1.48*"/>
 
               <tbody>
                 <row>
                   <entry><emphasis role="bold">Description</emphasis></entry>
 
-                  <entry><emphasis role="bold">Local mode </emphasis></entry>
+                  <entry><emphasis role="bold">Cascading local
+                  platform</emphasis></entry>
 
-                  <entry><emphasis role="bold">Hadoop mode</emphasis></entry>
+                  <entry><emphasis role="bold">Hadoop
+                  platform</emphasis></entry>
                 </row>
 
                 <row>
@@ -1458,10 +1655,11 @@
         <section>
           <title>Sequence File Compression</title>
 
-          <para>For best performance when operating in Hadoop mode, enable
-          Sequence File Compression in the Hadoop property settings - either
-          block or record-based compression. Refer to the Hadoop documentation
-          for the available properties and compression types.</para>
+          <para>For best performance when running on the Hadoop platform,
+          enable Sequence File Compression in the Hadoop property settings -
+          either block or record-based compression. Refer to the Hadoop
+          documentation for the available properties and compression
+          types.</para>
         </section>
       </section>
 
@@ -1487,8 +1685,8 @@
 
             <listitem>
               <para>The <classname>cascading.tap.local.FileTap</classname> tap
-              is used with Cascading local mode to access files on the local
-              filesystem.</para>
+              is used with the Cascading local platform to access files on the
+              local file system.</para>
             </listitem>
           </varlistentry>
 
@@ -1497,18 +1695,20 @@
 
             <listitem>
               <para>The <classname>cascading.tap.hadoop.Hfs</classname> tap
-              uses the current Hadoop default file system, in Hadoop mode. If
-              Hadoop is configured for "local mode" its default file system is
-              the local file system. If configured for distributed mode, the
-              default file system is typically the Hadoop distributed file
-              system. The Hfs is convenient when writing Cascading
-              applications that may or may not be run on a cluster.
-              <classname>Lhs</classname> and <classname>Dfs</classname>
-              subclass the <classname>Hfs</classname> tap. Note, specifing a
-              prefix to the URL passed into a new Hfs tap, like
-              "s3://somebucket/path" will force Hadoop to use the S3
-              <classname>FileSystem</classname> implementation to access files
-              in an Amazon S3 bucket.</para>
+              uses the current Hadoop default file system, when running on the
+              Hadoop platform. If Hadoop is configured for local mode, its
+              default file system is the local file system. If configured for
+              distributed mode, its default file system is typically the
+              Hadoop distributed file system. (<classname>Lhs</classname> and
+              <classname>Dfs</classname> subclass the
+              <classname>Hfs</classname> tap.) The Hfs tap is convenient when
+              writing Cascading applications that may or may not be run on a
+              cluster. Note that Hadoop can be forced to use an external file
+              system by specifying a prefix to the URL passed into a new Hfs
+              tap. For instance, using "s3://somebucket/path" tells Hadoop to
+              use the S3 <classname>FileSystem</classname> implementation to
+              access files in an Amazon S3 bucket. More information on this
+              can be found in the Javadoc.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -1547,7 +1747,8 @@
               <para>The <classname>cascading.tap.Templatetap</classname> is
               used to sink tuples into directory paths based on the values in
               the Tuple. More can be read below in <xref
-              linkend="template-tap"/>. Only available in Hadoop mode.</para>
+              linkend="template-tap"/>. This tap is only available when
+              running on the Hadoop platform.</para>
             </listitem>
           </varlistentry>
 
@@ -1558,38 +1759,45 @@
               <para>The <classname>cascading.tap.GlobHfs</classname> tap
               accepts Hadoop style "file globbing" expression patterns. This
               allows for multiple paths to be used as a single source, where
-              all paths match the given pattern. Only available in Hadoop
-              mode.</para>
+              all paths match the given pattern. This tap is only available
+              when running on the Hadoop platform.</para>
             </listitem>
           </varlistentry>
         </variablelist>
 
         <section>
-          <title>Mode-specific implementation details</title>
+          <title>Platform-specific implementation details</title>
 
-          <para>Depending on your operating mode, local or Hadoop mode, the
-          classes you use to specify file systems will vary. Mode-specifric
-          details for each tap type are shown below.</para>
+          <para>Depending on which platform you use (Cascading local or
+          Hadoop), the classes you use to specify file systems will vary.
+          Platform-specific details for each standard tap type are shown
+          below.</para>
 
           <table frame="all">
-            <title>Mode-specific details for setting file system</title>
+            <title><?oxy_comment_start author="Jim" timestamp="20120416T235125-0700" comment="Jim - as noted elsewhere, check table formatting before final version."?>Platform-specific
+            details for setting file system<?oxy_comment_end ?></title>
 
             <tgroup cols="4">
               <colspec colname="c1" colwidth="1*"/>
 
-              <colspec/>
+              <colspec colname="c2" colwidth="3.31*"/>
 
-              <colspec colname="c2" colwidth="3.4*"/>
+              <colspec colname="c3" colnum="3" colwidth="3.2*"/>
+
+              <colspec colname="c4" colnum="4" colwidth="3.77*"/>
 
               <tbody>
                 <row>
                   <entry><emphasis role="bold">Description</emphasis></entry>
 
-                  <entry><emphasis role="bold">Either mode</emphasis></entry>
+                  <entry><emphasis role="bold">Either
+                  platform</emphasis></entry>
 
-                  <entry><emphasis role="bold">Local mode</emphasis></entry>
+                  <entry><emphasis role="bold">Cascading local
+                  platform</emphasis></entry>
 
-                  <entry><emphasis role="bold">Hadoop Mode</emphasis></entry>
+                  <entry><emphasis role="bold">Hadoop
+                  platform</emphasis></entry>
                 </row>
 
                 <row>
@@ -1661,17 +1869,17 @@
       sources, process it, then write data to one or more sinks. This is done
       via the various <classname>Tap</classname> classes, where each class
       abstracts different types of back-end systems that store data as files,
-      tables, blobs, or whatever. But to sink data, some systems require that
-      the resource (a file for example) not exist before processing. That is,
-      it must be removed (deleted) before the processing can begin. Other
-      systems my allow for appending or updating of a resource (typical with
+      tables, blobs, and so on. But in order to sink data, some systems
+      require that the resource (e.g., a file) not exist before processing -
+      or must be removed (deleted) before the processing can begin. Other
+      systems may allow for appending or updating of a resource (typical with
       database tables).</para>
 
       <para>When creating a new <classname>Tap</classname> instance, a
       <classname>SinkMode</classname> may be provided so that the Tap will
-      know how to handle any existing resources. Note not all Taps support all
-      <classname>SinkMode</classname> values, for example Hadoop does not
-      support appends (update) from a MapReduce job.</para>
+      know how to handle any existing resources. Note that not all Taps
+      support all <classname>SinkMode</classname> values - for example, Hadoop
+      does not support appends (updates) from a MapReduce job.</para>
 
       <para>The available SinkModes are:</para>
 
@@ -1707,8 +1915,8 @@
         </varlistentry>
       </variablelist>
 
-      <para>Note that Cascading itself only uses these labels internally to
-      know when to automatically call
+      <para linkend="skipping-flows">Note that Cascading itself only uses
+      these labels internally to know when to automatically call
       <methodname>deleteResource()</methodname> on the
       <classname>Tap</classname> or to leave the Tap alone. It is up the the
       <classname>Tap</classname> implementation to actually perform a write or
@@ -1718,25 +1926,26 @@
       <classname>Tap</classname> labeled
       <classname>SinkMode.REPLACE</classname> will have its
       <methodname>deleteResource()</methodname> method called. If a
-      <classname>Flow</classname> is in a <classname>Cascade</classname>,
-      <methodname>deleteResource()</methodname> will be called if the
-      <classname>Tap</classname> is set to
+      <classname>Flow</classname> is in a <classname>Cascade</classname> and
+      the <classname>Tap</classname> is set to
       <classname>SinkMode.KEEP</classname> or
-      <classname>SinkMode.REPLACE</classname> if and only if the sink is stale
-      (older) than the source (newer). This allows a
+      <classname>SinkMode.REPLACE</classname>,
+      <methodname>deleteResource()</methodname> will be called if and only if
+      the sink is stale (i.e., older than the source). This allows a
       <classname>Cascade</classname> to behave like a "make" or "ant" build
-      file, only running Flows that should be run.</para>
+      file, only running Flows that should be run. <?oxy_comment_start author="Jim" timestamp="20120417T002434-0700" comment="It seems odd to say this after having explained all of this sinkmode info. If it&apos;s really as simple as this, we should probably move this sentence up in front of this paragraph. If it&apos;s more nuanced, it can stay here but should perhaps be rephrased as &quot;should typically be set to...&quot;, leading into the next sentence."?>When
+      a <classname>Flow</classname> is not used in a
+      <classname>Cascade</classname> object, all of its sinks must be set to
+      <classname>SinkMode.REPLACE</classname>.<?oxy_comment_end ?> For more
+      information, see <xref linkend="skipping-flows"/>.</para>
 
-      <para>It's important to understand how Hadoop deals with directories.
-      Hadoop cannot source data from directories with nested sub-directories,
-      and it cannot write to directories that already exist. However, the good
-      news is that you can simply point the <classname>Hfs</classname> tap to
-      a directory of data files, and they are all used as input - there's no
-      need to enumerate each individual file into a
-      <classname>MultiSourcetap</classname>. But for a
-      <classname>Flow</classname> to execute (when not used in a
-      <classname>Cascade</classname> object), all of its sinks must be set to
-      <classname>SinkMode.REPLACE</classname>.</para>
+      <para>It's also important to understand how Hadoop deals with
+      directories. Hadoop cannot source data from directories with nested
+      sub-directories, and it cannot write to directories that already exist.
+      However, the good news is that you can simply point the
+      <classname>Hfs</classname> tap to a directory of data files, and they
+      are all used as input - there's no need to enumerate each individual
+      file into a <classname>MultiSourcetap</classname>.</para>
     </section>
 
     <section>
@@ -1744,12 +1953,12 @@
       Sets</title>
 
       <para>Cascading applications can perform complex manipulation or "field
-      algebra" on the fields stored in tuples, using<emphasis
+      algebra" on the fields stored in tuples, using <emphasis
       role="italic">Fields sets</emphasis>, a feature of the
       <classname>Fields</classname> class that provides a sort of wildcard
       tool for referencing sets of field values.</para>
 
-      <para>The eight predefined Fields sets are constant values on the
+      <para>These predefined Fields sets are constant values on the
       <classname>Fields</classname> class. They can be used in many places
       where the <classname>Fields</classname> class is expected. They are:
       <variablelist>
@@ -1835,9 +2044,9 @@
 
             <listitem>
               <para>The <classname>cascading.tuple.Fields.VALUES</classname>
-              constant represent all the fields not used as grouping fields in
-              a previous Group. That is, if you have fields "a", "b", and "c",
-              and group on "a", <classname>Fields.VALUES</classname> will
+              constant represents all the fields not used as grouping fields
+              in a previous Group. That is, if you have fields "a", "b", and
+              "c", and group on "a", <classname>Fields.VALUES</classname> will
               resolve to "b" and "c".</para>
             </listitem>
           </varlistentry>
@@ -1867,15 +2076,15 @@
         </variablelist>The chart below shows common ways to merge input and
       result fields for the desired output fields. A few minutes with this
       chart may help clarify the discussion of fields, tuples, and pipes. Also
-      see the section on <xref linkend="each-every"/> for details on the
-      different columns and their relationships to the
-      <classname>Each</classname> and <classname>Every</classname> pipes and
-      Functions, Aggregators, and Buffers.</para>
+      see <xref linkend="each-every"/> for details on the different columns
+      and their relationships to the <classname>Each</classname> and
+      <classname>Every</classname> pipes and Functions, Aggregators, and
+      Buffers.</para>
 
-      <para xml:id="field-processing"><emphasis role="bold">Operations and
-      Field-processing</emphasis></para>
+      <mediaobject xreflabel="Operations and Field-processing"
+                   xml:id="field-processing">
+        <para>Operations and Field-processing</para>
 
-      <mediaobject>
         <imageobject role="fo">
           <imagedata align="center" contentwidth="7in"
                      fileref="images/field-algebra.svg"/>
@@ -1889,27 +2098,27 @@
     </section>
 
     <section>
-      <title>Flows</title>
+      <title xreflabel="Flows" xml:id="flows">Flows</title>
 
       <para>When pipe assemblies are bound to source and sink taps, a
       <classname>Flow</classname> is created. Flows are executable in the
       sense that, once they are created, they can be started and will execute
-      on the configured platform. In the case of Hadoop mode, the Flow will
-      execute on a Hadoop cluster.</para>
+      on the configured platform. If configured for the Hadoop platform, the
+      Flow will execute on a Hadoop cluster.</para>
 
       <para>A Flow is essentially a data processing pipeline that reads data
       from sources, processes the data as defined by the pipe assembly, and
       writes data to the sinks. Input source data does not need to exist at
       the time the Flow is created, but it must exist by the time the Flow is
       executed (unless it is executed as part of a Cascade - see <xref
-      linkend="cascades"/>).</para>
+      linkend="cascades"/> for more on this).</para>
 
       <para>The most common pattern is to create a Flow from an existing pipe
-      assembly. But there are cases where a MapReduce job (for Hadoop mode)
-      has already been created and it makes sense to encapsulate it in a Flow
-      class, so that it may participate in a <classname>Cascade</classname>
-      and be scheduled with other <classname>Flow</classname> instances.
-      Alternatively, via the <link
+      assembly. But there are cases where a MapReduce job (if running on
+      Hadoop) has already been created, and it makes sense to encapsulate it
+      in a Flow class so that it may participate in a
+      <classname>Cascade</classname> and be scheduled with other
+      <classname>Flow</classname> instances. Alternatively, via the <link
       xlink:href="http://github.com/cwensel/riffle">Riffle </link>
       annotations, third-party applications can participate in a
       <classname>Cascade</classname>, and complex algorithms that result in
@@ -1926,11 +2135,11 @@
         </example>
 
         <para>To create a Flow, it must be planned though one of the
-        FlowConnector sub-class objects. Each platform mode, local mode and
-        Hadoop mode, have their own connectors. The <code>connect()</code>
+        FlowConnector subclass objects. In Cascading, each platform (i.e.,
+        local and Hadoop) has its own connectors. The <code>connect()</code>
         method is used to create new Flow instances based on a set of sink
-        taps, source taps, and a pipe assembly. The example above is quite
-        trivial and is using the Hadoop mode connector.</para>
+        taps, source taps, and a pipe assembly. Above is a trivial example
+        that uses the Hadoop mode connector.</para>
 
         <example>
           <title>Binding taps in a Flow</title>
@@ -1953,16 +2162,17 @@
 
         <para>The FlowConnector constructor accepts the
         <classname>java.util.Property</classname> object so that default
-        Cascading and any platform specific properties can be passed down
-        through the planner to the platform runtime. In the case of Hadoop,
+        Cascading and any platform-specific properties can be passed down
+        through the planner to the platform at runtime. In the case of Hadoop,
         any relevant Hadoop <code>hadoop-default.xml</code> properties may be
         added. For instance, it's very common to add
         <code>mapred.map.tasks.speculative.execution</code>,
         <code>mapred.reduce.tasks.speculative.execution</code>, or
         <code>mapred.child.java.opts</code>.</para>
 
-        <para>One property that must be set for production applications is the
-        application Jar class or Jar path.</para>
+        <para><?oxy_comment_start author="Jim" timestamp="20120421T033110-0700" comment="Is this saying that this is the only property that must be set, or that this is one of the properties that must be set?"?>One
+        property<?oxy_comment_end ?> that must be set for production
+        applications is the application Jar class or Jar path.</para>
 
         <example>
           <title>Configuring the Application Jar</title>
@@ -1975,8 +2185,8 @@
 
         <para>Note the pattern of using a static property-setter method
         (<classname>cascading.flow.FlowConnector.setApplicationJarPath</classname>).
-        See <classname>cascading.flow.Flow</classname> for other
-        properties..</para>
+        See <classname>cascading.flow.Flow</classname> for other properties
+        that can be set.</para>
 
         <para>Since the <classname>FlowConnector</classname> can be reused,
         any properties passed on the constructor will be handed to all the
@@ -2059,8 +2269,8 @@
 
         <para>Any custom Class can be treated as a Flow if given the correct
         <link xlink:href="http://github.com/cwensel/riffle">Riffle</link>
-        annotations. Riffle is a set of Java Annotations that identify
-        specific methods on a Class as providing specific life-cycle and
+        annotations. Riffle is a set of Java annotations that identify
+        specific methods on a class as providing specific life-cycle and
         dependency functionality. For more information, see the Riffle
         documentation and examples. To use with Cascading, a Riffle-annotated
         instance must be passed to the
@@ -2092,8 +2302,8 @@
       <para>A Cascade allows multiple Flow instances to be executed as a
       single logical unit. If there are dependencies between the Flows, they
       are executed in the correct order. Further, Cascades act like Ant builds
-      or Unix make files, that is, a Cascade only executes Flows that have
-      stale sinks - i.e., output data that is older than the input data. For
+      or Unix make files - that is, a Cascade only executes Flows that have
+      stale sinks (i.e., output data that is older than the input data). For
       more on this, see <xref linkend="skipping-flows"/>.</para>
 
       <example>
@@ -2109,7 +2319,7 @@
       instances have no interdependencies, they are submitted together so that
       they can execute in parallel.</para>
 
-      <para>For more information, see the section on<xref
+      <para>For more information, see the section on <xref
       linkend="cascade-scheduler"/>.</para>
 
       <para>If an instance of
@@ -2131,16 +2341,19 @@
     <section>
       <title>Introduction</title>
 
-      <para>Cascading requires Apache Hadoop to be installed and correctly
-      configured when using the <classname>HadoopFlowConnector</classname>.
-      Hadoop is an Open Source Apache project, freely available for download
-      from the Hadoop website,<link
+      <para>This section covers some of the operational mechanics of running
+      an application that uses Cascading, including building the application
+      jar file and configuring the operating mode.</para>
+
+      <para>To use the <classname>HadoopFlowConnector</classname> (i.e., to
+      run in Hadoop mode), Cascading requires that Apache Hadoop be installed
+      and correctly configured. Hadoop is an Open Source Apache project,
+      freely available for download from the Hadoop website, <link
       xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
     </section>
 
     <section>
-      <title xreflabel="Building Cascading Applications"
-      xml:id="building-processes">Building</title>
+      <title xreflabel="Building" xml:id="building">Building</title>
 
       <para>Cascading ships with several jars, including the following:</para>
 
@@ -2150,7 +2363,7 @@
 
           <listitem>
             <para>This jar contains the Cascading Core class files. It should
-            be packaged with<filename> lib/*.jar</filename> when using
+            be packaged with <filename>lib/*.jar</filename> when using
             Hadoop.</para>
           </listitem>
         </varlistentry>
@@ -2159,8 +2372,8 @@
           <term>cascading-local-2.0.x.jar</term>
 
           <listitem>
-            <para>This jar contains the Cascading local mode class files. Not
-            used with Hadoop.</para>
+            <para>This jar contains the Cascading local mode class files. It
+            is not needed when using Hadoop.</para>
           </listitem>
         </varlistentry>
 
@@ -2169,7 +2382,7 @@
 
           <listitem>
             <para>This jar contains the Cascading Hadoop specific
-            dependencies.It should be packaged with
+            dependencies. It should be packaged with
             <filename>lib/*.jar</filename> when using Hadoop.</para>
           </listitem>
         </varlistentry>
@@ -2189,19 +2402,19 @@
 
           <listitem>
             <para>This jar contains Cascading unit tests. If writing custom
-            modules for cascading, it may be helpful to sub-class
+            modules for cascading, it may be helpful to subclass
             <classname>cascading.CascadingTestCase</classname>.</para>
           </listitem>
         </varlistentry>
       </variablelist>
 
       <para>Cascading works with either of the Hadoop processing modes - the
-      default local stand-alone mode and the distributed cluster mode. As
+      default local standalone mode and the distributed cluster mode. As
       specified in the Hadoop documentation, running in cluster mode requires
       the creation of a Hadoop job jar that includes the Cascading jars, plus
-      any dependent third-party jars, in its <filename>lib</filename>
-      directory. This is true regardless of whether they are Cascading Hadoop
-      mode applications or raw Hadoop MapReduce applications.</para>
+      any needed third-party jars, in its <filename>lib</filename> directory.
+      This is true regardless of whether they are Cascading Hadoop-mode
+      applications or raw Hadoop MapReduce applications.</para>
 
       <para>The following Ant snippets can be used in your project to create a
       Hadoop jar for submission on your cluster.</para>
@@ -2237,10 +2450,8 @@
 
       <para>Above we see two ways to set the same property - via the
       <methodname>setApplicationJarClass()</methodname> method, and via the
-      <methodname>setApplicationJarPath()</methodname> method.
-      <?oxy_comment_start author="Jim" timestamp="20120402T205343-0700" comment="Chris, I added two sentences here because it felt odd to only mention the first of the two approaches shown.  I&apos;m not sure I get this part; hopefully this statement is true."?>One
-      is based on a Class name, and the other is based on a literal
-      path.<?oxy_comment_end ?></para>
+      <methodname>setApplicationJarPath()</methodname> method. One is based on
+      a Class name, and the other is based on a literal path.</para>
 
       <para>The first method takes a Class object that owns the "main"
       function for this application. The assumption here is that
@@ -2249,46 +2460,11 @@
       that Jar is pushed to the cluster, not the parent application
       jar.</para>
 
-      <para><?oxy_comment_start author="Jim" timestamp="20120402T205332-0700" comment="Chris, not sure I get this part; hopefully this statemet is true."?>The
-      second method simply sets the path to the parent Class as a
-      property.<?oxy_comment_end ?></para>
+      <para>The second method simply sets the path to the parent Class as a
+      property.</para>
 
       <para>In your application, only one of these methods needs to be called,
       but one of them must be called to properly configure Hadoop.</para>
-    </section>
-
-    <section>
-      <title xml:id="operating-modes"><?oxy_comment_start author="Jim" timestamp="20120402T042700-0700" comment="Chris, you&apos;ll need to either plug in some information here or brief me so I can do it. For now, I just threw in this dummy text to get you started."?>Operating
-      Modes<?oxy_comment_end ?></title>
-
-      <para>Although applications that use Cascading are typically run in
-      distributed mode on a computer cluster, for development and testing it's
-      often more practical to run on in local mode. Cascading provides several
-      options for controlling the operating mode:</para>
-
-      <variablelist>
-        <varlistentry>
-          <term>Cascading local mode</term>
-
-          <listitem>
-            <para>This mode causes the application to bypass Hadoop and run
-            entirely on the local machine using the local file system.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>MapReduce mode</term>
-
-          <listitem>
-            <para>This mode causes the application to run in the mode that
-            Hadoop is currently configured for, and use the Hadoop file
-            system.</para>
-          </listitem>
-        </varlistentry>
-      </variablelist>
-
-      <para><?oxy_comment_start author="Jim" timestamp="20120402T205646-0700" comment="One question I have, from what I&apos;ve read so far, is that I think I see how to set the file mode, but how do you tell the MapReduce whether to divide the work up among multiple CPU&apos;s or not...?"?>To
-      select a mode for your application... <?oxy_comment_end ?></para>
     </section>
 
     <section>
@@ -2296,7 +2472,7 @@
 
       <para>Running a Cascading application is the same as running any Hadoop
       application. After packaging your application into a single jar (see
-      <xref linkend="building-processes"/>), you must use
+      <xref linkend="building"/>), you must use
       <filename>bin/hadoop</filename> to submit the application to the
       cluster.</para>
 
@@ -2342,14 +2518,14 @@
       Pipe framework, Operations are used to act upon the data - alter it,
       filter it, analyze it, and so on. You can use the standard Operations in
       the Cascading library to create powerful and robust applications, and
-      you can combine them in chains (much like Unix operations such
-      as<command> sed</command>, <command>grep</command>,
+      you can combine them in chains (much like Unix operations such as
+      <command>sed</command>, <command>grep</command>,
       <command>sort</command>, <command>uniq</command>, and
       <command>awk</command>). And if you want to go further, it's also very
       simple to develop custom Operations in Cascading.</para>
 
       <para>There are four kinds of Operations:
-      <classname>Function</classname>,<classname>Filter</classname>,
+      <classname>Function</classname>, <classname>Filter</classname>,
       <classname>Aggregator</classname>, and
       <classname>Buffer</classname>.</para>
 
@@ -2481,18 +2657,16 @@
         <xi:include href="efficient-sum-function.xml"/>
       </example>
 
-      <para>This example is a minor variation on the previous and introduces
-      the notion of a "context" object and the
-      <methodname>prepare()</methodname> and
+      <para>This example, a minor variation on the previous one, introduces
+      the use of a "context" object and <methodname>prepare()</methodname> and
       <methodname>cleanup()</methodname> methods.</para>
 
-      <para>All Operations allow for a context object, simply a user defined
-      object that holds state between calls of the
+      <para>All Operations allow for a context object, simply a user-defined
+      object that holds state between calls to the
       <methodname>operate()</methodname> method. This allows for a given
-      instance of the Operation to be multi-thread safe on a platform that may
-      use multiple threads of execution versus multiple processes. It also
-      allows deferring complex resources until the Operation will be
-      engaged.</para>
+      instance of the Operation to be ahread safe on a platform that may use
+      multiple threads of execution versus multiple processes. It also allows
+      deferring complex resources until the Operation will be engaged.</para>
 
       <para>The <methodname>prepare()</methodname> and
       <methodname>cleanup()</methodname> methods are invoked once per thread
@@ -2500,27 +2674,27 @@
       cluster side, never on the client.</para>
 
       <para>In the above example, a <classname>Tuple</classname> is used as
-      the context a more complex type isn't necessary. Also note the Tuple
-      isn't storing state but it is re-used to reduce the number of new Object
-      instances created. In Cascading, it is perfectly safe to output the same
-      Tuple instance from the <methodname>operate()</methodname>. The method
-      <code>functionCall.getOutputCollector().add( result )</code> will not
-      return until the result <classname>Tuple</classname> has been processed
-      or persisted downstream.</para>
+      the context; a more complex type isn't necessary. Also note that the
+      Tuple isn't storing state, but is re-used to reduce the number of new
+      Object instances created. In Cascading, it is perfectly safe to output
+      the same Tuple instance from <methodname>operate()</methodname>. The
+      method <code>functionCall.getOutputCollector().add( result )</code> will
+      not return until the result <classname>Tuple</classname> has been
+      processed or persisted downstream.</para>
     </section>
 
     <section>
       <title>Filter</title>
 
       <para>A <classname>Filter</classname> expects a stream of individual
-      argument Tuples and returns a Boolean value for each, stating whether it
-      should be discarded. Like a <classname>Function</classname>, a
-      <classname>Filter</classname> is used with an
+      argument Tuples and returns a Boolean value for each one, stating
+      whether it should be discarded. Like a <classname>Function</classname>,
+      a <classname>Filter</classname> is used with an
       <classname>Each</classname> pipe, which may follow any pipe type.</para>
 
       <para>To create a custom <classname>Filter</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Filter</code>. Because
+      interface <code>cascading.operation.Filter</code>. Because
       <code>BaseOperation</code> has been subclassed, the
       <code>isRemove</code> method, as defined on the <code>Filter</code>
       interface, is the only method that must be implemented.</para>
@@ -2746,7 +2920,7 @@
       methods.</para>
 
       <para>Note that if a "context" object is used, its type should be
-      declared in the sub-class class declaration using the Java Generics
+      declared in the subclass class declaration using the Java Generics
       notation.</para>
     </section>
   </chapter>
@@ -2887,8 +3061,8 @@
       <para>To configure the planner to remove some or all assertions, a
       property can be set via the
       <classname>FlowConnector.setAssertionLevel()</classname> method or
-      directly on the <classname>FlowDef</classname> instance, as can be seen
-      above. Setting <classname>AssertionLevel.NONE</classname> removes all
+      directly on the <classname>FlowDef</classname> instance, as shown above.
+      Setting <classname>AssertionLevel.NONE</classname> removes all
       assertions. <classname>AssertionLevel.VALID</classname> keeps
       <code>VALID</code> assertions but removes <code>STRICT</code> ones. And
       <classname>AssertionLevel.STRICT</classname> keeps all assertions - the
@@ -2914,12 +3088,13 @@
           </imageobject>
         </inlinemediaobject></para>
 
-      <para>Failure Traps are very similar to tap sinks (as opposed to tap
-      sources) in that they allow data to be stored. Except that Tap sinks are
-      bound to a particular tail pipe in a pipe assembly and are the primary
-      outlet of a branch in a pipe assembly. Tap traps can be bound to
-      intermediate pipe assembly branches - just like Stream Assertions - yet
-      they only capture data that causes and Operation to fail (throw an
+      <para>Failure Traps are similar to tap sinks (as opposed to tap sources)
+      in that they allow data to be stored. The difference is that Tap sinks
+      are bound to a particular <?oxy_comment_start author="Jim" timestamp="20120417T133527-0700" comment="Should this just say &quot;tail&quot;?  This expression isn&apos;t used anywhere else in this document."?>tail
+      pipe<?oxy_comment_end ?> in a pipe assembly and are the primary outlet
+      of a branch in a pipe assembly. Tap traps can be bound to intermediate
+      pipe assembly branches - just like Stream Assertions - yet they only
+      capture data that causes an Operation to fail (throw an
       Exception).</para>
 
       <para>Whenever an operation fails and throws an exception, if there is
@@ -2931,11 +3106,11 @@
       the cluster continues working. But fault tolerance for software is a
       little different. Failure Traps provide a means for the processing to
       continue without losing track of the data that caused the fault. For
-      high fidelity applications, this may not be very important, you likely
-      will want any errors during processing to cause the application to stop.
-      But for low fidelity applications (like webpage indexing) this can
-      dramatically improve processing reliability, skipping a page out of a
-      few million won't wreck things.</para>
+      high fidelity applications, this may not be very useful, since you
+      likely will want any errors during processing to cause the application
+      to stop. But for low fidelity applications such as webpage indexing,
+      where skipping a page or two out of a few million is acceptable, this
+      can dramatically improve processing reliability.</para>
 
       <example>
         <title>Setting Traps</title>
@@ -2952,7 +3127,7 @@
       Exception handling is. Traps are not intended for application flow
       control, and not a means to filter some data into other locations.
       Applications that need to filter out bad data should do so explicitly,
-      using filters. For more on this, see<xref
+      using filters. For more on this, see <xref
       linkend="handling-bad-data"/>.</para>
     </section>
 
@@ -2961,8 +3136,9 @@
 
       <para>Each Flow has the ability to execute callbacks via an event
       listener. This ability is useful when an external application needs to
-      be notified that a Flow has started, halted, completed, or has thrown an
-      exception.</para>
+      be notified that a Flow has started, halted, completed, or
+      <?oxy_comment_start author="Jim" timestamp="20120417T134904-0700" comment="Chris - you added the word &quot;has&quot; before &quot;thrown an exception, but I&apos;m deleting it because all of the terms in this list - &quot;started&quot;, &quot;halted&quot;, &quot;completed&quot;, and &quot;thrown an exception&quot; - are within the scope of the &quot;has&quot; at the start of the list."?>thrown
+      an exception<?oxy_comment_end ?>.</para>
 
       <para>For instance, at the completion of a flow that runs on an Amazon
       EC2 Hadoop cluster, an Amazon SQS message can be sent to notify another
@@ -3023,11 +3199,12 @@
 
       <para>The <classname>Templatetap</classname> <classname>tap</classname>
       class provides a simple means to break large datasets into smaller sets
-      based on data item values. This is commonly called partioning or
+      based on data item values. This is commonly called partitioning or
       "binning" the data, where each "bin" of data is named after some data
-      value(s) shared by the members of that bin. For example, organizing log
-      files by month and year. The <classname>TemplateTap</classname> is only
-      available in Hadoop mode.</para>
+      value(s) shared by the members of that bin. For example, this is a
+      simple way to organize log files by month and year. The
+      <classname>TemplateTap</classname> is only available in Hadoop
+      mode.</para>
 
       <xi:include href="template-tap.xml"/>
 
@@ -3054,7 +3231,7 @@
     <section>
       <title>Partial Aggregation instead of Combiners</title>
 
-      <para>In Hdoop mode, Cascading does not support MapReduce "Combiners".
+      <para>In Hadoop mode, Cascading does not support MapReduce "Combiners".
       Combiners are a simple optimization allowing some Reduce functions to
       run on the Map side of MapReduce. Combiners are very powerful in that
       they reduce the I/O between the Mappers and Reducers - why send all of
@@ -3076,8 +3253,8 @@
 
       <para>Cascading supports a few built-in partial aggregate operations,
       including AverageBy, CountBy, and SumBy. These are actually
-      SubAssemblies, not operations, and are sub-classes of the AggregateBy
-      SubAssembly. For more on this, see the section on<xref
+      SubAssemblies, not operations, and are subclasses of the AggregateBy
+      SubAssembly. For more on this, see the section on <xref
       linkend="aggregate-by"/>.</para>
 
       <para>Using partial aggregate operations is quite easy. They are
@@ -3118,9 +3295,10 @@
 
       <para>The <classname>cascading.operation.Identity</classname> function
       is used to "shape" a tuple stream. Here are some common patterns that
-      should help illustrate how the Cascading "field algebra" works even
-      though there are helper sub-assemblies for many of these examples, like
-      <classname>Rename</classname> and <classname>Discard</classname>.</para>
+      illustrate how Cascading "field algebra" works. (Note that, in actual
+      practice, some of these example tasks might be better performed with
+      helper subassemblies such as <classname>Rename</classname> and
+      <classname>Discard</classname>.)</para>
 
       <para><variablelist>
           <varlistentry>
@@ -3225,8 +3403,9 @@
 
       <para>Note that if the above Flow is run on a cluster, the
       <code>stdout</code> on the cluster nodes will be used. Nothing from the
-      debug output will display client side. Debug is only useful when testing
-      things in an IDE or if the remote logs are readily available.</para>
+      debug output will display on the client side. Debug is only useful when
+      testing things in an IDE or if the remote logs are readily
+      available.</para>
     </section>
 
     <section>
@@ -3279,7 +3458,7 @@
 
       <para><variablelist>
           <varlistentry>
-            <term> DateFormatter</term>
+            <term>DateFormatter</term>
 
             <listitem>
               <para>The
@@ -3495,10 +3674,10 @@
             <term>ExpressionFunction</term>
 
             <listitem>
-              <para>The
+              <para>The function
               <classname>cascading.operation.expression.ExpressionFunction</classname>
-              function dynamically composes a string expression when executed
-              assigns argument Tuple values to the variables in the
+              dynamically composes a string expression when executed,
+              assigning argument Tuple values to variables in the
               expression.</para>
 
               <xi:include href="expression-function.xml"/>
@@ -3515,10 +3694,10 @@
             <term>ExpressionFilter</term>
 
             <listitem>
-              <para>The
+              <para>The filter
               <classname>cascading.operation.expression.ExpressionFilter</classname>
-              filter evaluates a Boolean expression, assigning argument Tuple
-              values to variables in the expression. If the expression returns
+              evaluates a Boolean expression, assigning argument Tuple values
+              to variables in the expression. If the expression returns
               <code>true</code>, the Tuple is removed from the stream.</para>
 
               <xi:include href="expression-filter.xml"/>
@@ -3545,7 +3724,7 @@
 
       <para><variablelist>
           <varlistentry>
-            <term> XPathParser</term>
+            <term>XPathParser</term>
 
             <listitem>
               <para>The
@@ -3583,9 +3762,9 @@
             <term>XPathFilter</term>
 
             <listitem>
-              <para>The
+              <para>The filter
               <classname>cascading.operation.xml.XPathFilter</classname>
-              filter removes a Tuple if the specified XPath expression returns
+              removes a Tuple if the specified XPath expression returns
               <code>false</code>. Set the removeMatch parameter to
               <code>true</code> if the filter should be reversed, i.e., to
               keep only those Tuples where the XPath expression returns
@@ -3613,7 +3792,7 @@
 
       <para>Cascading Stream Assertions are used to build robust reusable pipe
       assemblies. If desired, they can be planned out of a Flow instance at
-      runtime. For more information, see the section on<xref
+      runtime. For more information, see the section on <xref
       linkend="stream-assertions"/>. Below we describe the Assertions
       available in the core library.</para>
 
@@ -3949,7 +4128,7 @@
 
   <chapter>
     <info>
-      <title> Best Practices</title>
+      <title>Best Practices</title>
     </info>
 
     <section>
@@ -3973,19 +4152,19 @@
       Tuple size, and check to see whether the values match a given regular
       expression pattern.</para>
 
-      <para>New to Cascading 2, it is possible to write tests that are
-      independent of the underlying platform or mode. Any unit-test should
-      sub-class <classname>cascading.PlatformTestCase</classname> and apply
-      the <classname>PlatformRunner.Platform</classname> annotion. </para>
+      <para>As of Cascading 2, it is possible to write tests that are
+      independent of the underlying platform or mode. Any unit test should
+      subclass <classname>cascading.PlatformTestCase</classname> and apply the
+      <classname>PlatformRunner.Platform</classname> annotation.</para>
 
-      <para>For example, the following annotation,
+      <para>For example, the annotation
       <code>@PlatformRunner.Platform({LocalPlatform.class,
-      HadoopPlatform.class})</code>, will convince the PlatformTestCase to run
-      all the unit tests defined on the sub-class with the
+      HadoopPlatform.class})</code> causes the PlatformTestCase to run all the
+      unit tests defined on the subclass with the
       <classname>LocalPlatform</classname> and
-      <classname>HadoopPlatform</classname> platform instances. </para>
+      <classname>HadoopPlatform</classname> platform instances.</para>
 
-      <para>See the existing Cascading unit tests for examples.</para>
+      <para>See the Cascading unit tests for examples.</para>
 
       <para>To use any of these helper classes, make sure that
       <filename>cascading-test-x.y.z.jar</filename> is in your testing class
@@ -3993,25 +4172,16 @@
     </section>
 
     <section>
-      <title>Local versus Distributed Mode</title>
-
-      <para><?oxy_comment_start author="Jim" timestamp="20120326T232235-0700" comment="local v. distributed modes here?"?>
-      Chris, we can probably cover the how-to of local v. distributed mode in
-      Chapter 4, and put any tips, fine points, or best practices
-      here.<?oxy_comment_end ?></para>
-    </section>
-
-    <section>
       <title>Flow Granularity</title>
 
       <para>Although using one large <classname>Flow</classname> may result in
       slightly more efficient performance, it's advisable to use a more
-      modular and flexible approach, creating medium to small Flows with
+      modular and flexible approach, creating medium or small Flows with
       well-defined responsibilities, and passing all the resulting
       interdependent Flows to a <classname>Cascade</classname> to sequence and
       execute as a single unit. Similarly, using the
       <classname>TextDelimited</classname> <classname>Scheme</classname> (or
-      any custom format for long term archival) between
+      any custom format for long-term archival) between
       <classname>Flow</classname> instances allows you to hand off
       intermediate data to other systems for reporting or QA purposes,
       incurring a minimal performance penalty while remaining compatible with
@@ -4022,14 +4192,15 @@
       <title>SubAssemblies, not Factories</title>
 
       <para>When developing your applications, use
-      <classname>SubAssembly</classname> sub-classes, not "factory" methods.
+      <classname>SubAssembly</classname> subclasses, not "factory" methods.
       The resulting code is much easier to read and test.</para>
 
       <para>It's worth noting that the <classname>Object</classname>
       constructors are "factories", so there isn't much reason to build
       frameworks to duplicate what a constructor already does. Of course there
-      are exceptions, but in practice they are rare when you have the option
-      to use a <classname>SubAssembly</classname>.</para>
+      are exceptional cases in which you don't have the option to use a
+      <classname>SubAssembly</classname>, but in practice they are
+      rare.</para>
     </section>
 
     <section>
@@ -4100,7 +4271,7 @@
       <title>Debugging Streams</title>
 
       <para>When creating complex assemblies, it's safe to embed
-      <classname>Debug</classname> operations (see<xref
+      <classname>Debug</classname> operations (see <xref
       linkend="debug-function"/>) at appropriate debug levels as needed. Use
       the planner to remove them at runtime for production and staging runs,
       to avoid wasting resources.</para>
@@ -4141,35 +4312,36 @@
       a custom "counter" <classname>Aggregator</classname>, do not create a
       field named "count" and increment it on every
       <methodname>Aggregator.aggregate()</methodname> call. There is no
-      guarantee your Operation will be called from a single thread in a JVM,
-      future version of Hadoop or Cascading local mode could execute the same
-      operation from multiple threads.</para>
+      guarantee that your Operation will be called from a single thread in a
+      JVM - and future versions of Hadoop or Cascading local mode might
+      execute the same operation from multiple threads.</para>
     </section>
 
     <section>
       <title>Custom Types</title>
 
-      <para>It is generally frowned upon to pass a custom class through a
-      Tuple stream. One one hand this increases coupling of custom Operations
-      to a particular type, and it removes opportunities for reducing the
-      amount of data that passes over the network.</para>
+      <para>Passing a custom class through a Tuple stream is generally frowned
+      upon. It leads to the coupling of custom Operations to particular types,
+      and it removes opportunities for reducing the amount of data that passes
+      over the network.</para>
 
-      <para>To overcome the first objection, with every custom type with
-      multiple instance fields, attempt to provide Functions that can promote
-      a value from the custom object to a position in a Tuple or demote the
-      Tuple value to a particular field back into the custom type. This allows
-      existing operations (like <classname>ExpressionFunction</classname> or
-      <classname>RegexFilter</classname>) to operate on values owned by a
-      custom type. </para>
+      <para>The first objection can be overcome with a little work. When using
+      a custom type that has multiple instance fields, try to provide
+      Functions that can promote a value from the custom object to a position
+      in a Tuple, or demote the Tuple value for a particular field back into
+      the custom type. This lets you use existing operations like
+      <classname>ExpressionFunction</classname> or
+      <classname>RegexFilter</classname> to operate on values owned by a
+      custom type.</para>
 
       <para>For example, if you have a <classname>Person</classname> object,
-      have a Function named <classname>GetPersonAge</classname> that takes
-      Person as an argument and only returns the age as the result. The next
-      operation can then Filter all Persons based on their age. This may seem
-      like more work and less effiicient, but it keeps your application
-      flexible and reduces the amount of duplicate code (the only alternative
-      here is to create a <classname>PersonAgeFilter</classname> which results
-      in one more thing to test).</para>
+      create a Function named <classname>GetPersonAge</classname> that takes
+      Person as an argument and returns just the age. The next operation can
+      then Filter all Persons based on their age. This may seem more difficult
+      and less effiicient, but it keeps your application flexible and avoids
+      duplicating existing operations. (The only alternative here is to create
+      a <classname>PersonAgeFilter</classname>, which becomes one more thing
+      to test.)</para>
     </section>
 
     <section>
@@ -4230,7 +4402,7 @@
       external systems.</para>
 
       <para>A Tap represents something physical, like a file or a database
-      table. Consequently, Tap implementations are responsible for life-cycle
+      table. Accordingly, Tap implementations are responsible for life-cycle
       issues around the resource they represent, such as tests for existence,
       or eventual deletion.</para>
 
@@ -4240,9 +4412,9 @@
       <classname>cascading.tuple.Tuple</classname> instance.</para>
 
       <para>Creating custom taps and schemes can be an involved process. If
-      using the Cascading Hadoop mode, requires some knowledge of Hadoop and
-      the Hadoop FileSystem API. If a flow needs to support a new file system,
-      passing a fully-qualified URL to the <classname>Hfs</classname>
+      using the Cascading Hadoop mode, it requires some knowledge of Hadoop
+      and the Hadoop FileSystem API. If a flow needs to support a new file
+      system, passing a fully-qualified URL to the <classname>Hfs</classname>
       constructor may be sufficient - the <classname>Hfs</classname> tap will
       look up a file system based on the URL scheme via the Hadoop FileSystem
       API. If not, a new system is commonly constructed by subclassing the
@@ -4268,28 +4440,28 @@
       <title>Custom Types and Serialization</title>
 
       <para>The <classname>Tuple</classname> class is a generic container for
-      all <classname>java.lang.Object</classname> instances. Consequently, any
+      all <classname>java.lang.Object</classname> instances. Thus any
       primitive value or custom Class can be stored in a
-      <classname>Tuple</classname> instance, that is, returned by a
+      <classname>Tuple</classname> instance - that is, returned by a
       <classname>Function</classname>, <classname>Aggregator</classname>, or
       <classname>Buffer</classname> as a result value.</para>
 
-      <para>But for this to work, when working with the Cascading Hadoop mode,
-      any Class that isn't a primitive value or a Hadoop
+      <para>But for this to work when using the Cascading Hadoop mode, any
+      Class that isn't a primitive type or a Hadoop
       <classname>Writable</classname> type requires a corresponding Hadoop
       serialization class, registered in the Hadoop configuration files, for
       your cluster. Hadoop <classname>Writable</classname> types work because
       there is already a generic serialization implementation built into
       Hadoop. See the Hadoop documentation for information on registering a
       new serialization helper or creating <classname>Writable</classname>
-      types. Cascading automatically inherits serialization implementations if
-      they are registered.</para>
+      types. Registered serialization implementations are automatically
+      inherited by Cascading.</para>
 
       <para>During serialization and deserialization of
       <classname>Tuple</classname> instances that contain custom types, the
       Cascading <classname>Tuple</classname> serialization framework must
       store the class name (as a <classname>String</classname>) before
-      serializing the custom object. This can be very space inefficient. To
+      serializing the custom object. This can be very space-inefficient. To
       overcome this, custom types can add the
       <classname>SerializationToken</classname> Java annotation to the custom
       type class. The <classname>SerializationToken</classname> annotation
@@ -4310,17 +4482,17 @@
 
       <para>Note that Cascading natively serializes/deserializes all
       primitives and byte arrays (<code>byte[]</code>), if the developer
-      registers the <classname>BytesSerialization</classname> class with
+      registers the <classname>BytesSerialization</classname> class by using
       <code>TupleSerialization.addSerialization(properties,
-      BytesSerialization.class.getName()</code>. It uses the token 127 for the
+      BytesSerialization.class.getName()</code>. The token 127 is used for the
       Hadoop <classname>BytesWritable</classname> class.</para>
 
-      <para>By default, Cascading lazily deserializes each element in the
-      Tuple when sorting for comparison when Hadoop sorts keys during the
-      "shuffle" phase. </para>
+      <para>By default, Cascading uses <?oxy_comment_start author="Jim" timestamp="20120417T174627-0700" comment="As previously worded, this sentence may have been taken to mean that Cascading always deserializes all fields of a Tuple, but I think &quot;lazy&quot; means that it doesn&apos;t, so I changed it. Please change it back if I got this wrong."?>lazy
+      deserialization<?oxy_comment_end ?> on Tuple elements during comparisons
+      when Hadoop sorts keys during the "shuffle" phase.</para>
 
-      <para>Along with custom serialization, Cascading supports lazy
-      deserialization during Tuple comparison for custom types. This is
+      <para>Cascading supports custom serialization for custom types, as well
+      as lazy deserialization of custom types during comparisons. This is
       accomplished by implementing the <classname>StreamComparator</classname>
       interface. See the Javadoc for detailed instructions on implemention,
       and the unit tests for examples.</para>
@@ -4329,38 +4501,36 @@
     <section>
       <title>Custom Comparators and Hashing</title>
 
-      <para>Frequently objects in a <classname>Tuple</classname> will be
-      compared to other instances in a second <classname>Tuple</classname>.
-      This is especially true during the "sort" phase in Cascading Hadoop mode
-      when a <classname>GroupBy</classname> or <classname>CoGroup</classname>
-      pipe is being processed. By default Hadoop and Cascading will use the
-      native <classname>Object</classname> methods
-      <methodname>equals()</methodname> and
-      <methodname>hashCode()</methodname> to compare two values and get a
+      <para>Frequently, objects in one <classname>Tuple</classname> are
+      compared to objects in a second <classname>Tuple</classname>. This is
+      especially true during the sort phase of <classname>GroupBy</classname>
+      and <classname>CoGroup</classname> in Cascading Hadoop mode . By
+      default, Hadoop and Cascading use the native
+      <classname>Object</classname> methods <methodname>equals()</methodname>
+      and <methodname>hashCode()</methodname> to compare two values and get a
       consistent hash code for a give value, respectively.</para>
 
-      <para>In order to override this behavior, a custom
-      <classname>java.util.Comparator</classname> class can be created and
-      passed to cascading. This <classname>Comparator</classname> will become
-      responsbile for comparing all the values in a given field in a Tuple.
-      Thus if secondary sorting a collection of custom
-      <classname>Person</classname> objects in a
-      <classname>GroupBy</classname>, the <classname>Fields</classname>
-      instance defining the fields to perform the secondary sort can be given
-      a copy of the <classname>Comparator</classname> via the
-      <code>Fields.setComparator()</code> method.</para>
+      <para>To override this default behavior, you can create a custom
+      <classname>java.util.Comparator</classname> class to perform comparisons
+      on a given field in a Tuple. For instance, to secondary-sort a
+      collection of custom <classname>Person</classname> objects in a
+      <classname>GroupBy</classname>, use the
+      <code>Fields.setComparator()</code> method to designate the custom
+      <classname>Comparator</classname> to the <classname>Fields</classname>
+      instance that specifies the sort fields.</para>
 
-      <para>Alternatively, a default <classname>Comparator</classname> may be
-      set to be used by a <classname>Flow</classname>, or set on a given
-      <classname>Pipe</classname> instance to be used locally. This can be
-      done by calling <code>Tuples.setDefaultTupleElementComparator()</code>
-      on a <classname>Properties</classname> instance or using the property
-      key <code>cascading.tuple.element.comparator.default</code>. </para>
+      <para>Alternatively, you can set a default
+      <classname>Comparator</classname> to be used by a
+      <classname>Flow</classname>, or used locally on a given
+      <classname>Pipe</classname> instance. There are two ways to do this.
+      Call <code>Tuples.setDefaultTupleElementComparator()</code> on a
+      <classname>Properties</classname> instance, or use the property key
+      <code>cascading.tuple.element.comparator.default</code>.</para>
 
-      <para>If how the hash code must also be customized, the custom
-      Comparator may also imiplement the interface
-      <classname>cascading.tuple.Hasher</classname>. See the
-      <classname>Hasher</classname> Javadoc for more details.</para>
+      <para>If the hash code must also be customized, the custom Comparator
+      can implement the interface
+      <classname>cascading.tuple.Hasher</classname>. For more information, see
+      the Javadoc.</para>
     </section>
   </chapter>
 
@@ -4369,7 +4539,7 @@
       <title>CookBook</title>
     </info>
 
-    <para>This chapter discusses some common idioms used in Cascading
+    <para>This chapter demonstrates some common idioms used in Cascading
     applications.</para>
 
     <section>
@@ -4491,37 +4661,37 @@
               <xi:include href="cookbook-formatdate.xml"/>
             </listitem>
           </varlistentry>
-        </variablelist>Stream Ordering</para>
+        </variablelist></para>
     </section>
 
     <section>
-      <para>
-        <variablelist>
-          <varlistentry>
-            <term>Remove duplicate tuples in a stream</term>
+      <title>Stream Ordering</title>
 
-            <listitem>
-              <xi:include href="cookbook-distinctgroup.xml"/>
-            </listitem>
-          </varlistentry>
+      <variablelist>
+        <varlistentry>
+          <term>Remove duplicate tuples in a stream</term>
 
-          <varlistentry>
-            <term>Create a list of unique values</term>
+          <listitem>
+            <xi:include href="cookbook-distinctgroup.xml"/>
+          </listitem>
+        </varlistentry>
 
-            <listitem>
-              <xi:include href="cookbook-distinctvalue.xml"/>
-            </listitem>
-          </varlistentry>
+        <varlistentry>
+          <term>Create a list of unique values</term>
 
-          <varlistentry>
-            <term>Find first occurrence in time of a unique value</term>
+          <listitem>
+            <xi:include href="cookbook-distinctvalue.xml"/>
+          </listitem>
+        </varlistentry>
 
-            <listitem>
-              <xi:include href="cookbook-distinctorder.xml"/>
-            </listitem>
-          </varlistentry>
-        </variablelist>
-      </para>
+        <varlistentry>
+          <term>Find first occurrence in time of a unique value</term>
+
+          <listitem>
+            <xi:include href="cookbook-distinctorder.xml"/>
+          </listitem>
+        </varlistentry>
+      </variablelist>
     </section>
 
     <section>
@@ -4643,17 +4813,6 @@
       interdependencies between them, that needs to be executed as a logical
       unit. Just pass them to the CascadeConnector and let it sort them all
       out.</para>
-    </section>
-
-    <section>
-      <title><?oxy_comment_start author="Jim" timestamp="20120403T002605-0700" comment="Chris - another place you could talk about Operating Mode if you want to.  Otherwise let&apos;s delete this section."?>Operating
-      Mode<?oxy_comment_end ?></title>
-
-      <para>This section is probably unnecessary but I'm throwing it in just
-      in case you want to talk about how this works. Local v. distributed mode
-      are or can be mentioned in the Hadoop section of the introduction,
-      described in some detail in the Execution section, and discussed pro/con
-      in the Best Practices section, just after Testing.</para>
     </section>
   </chapter>
 </book>
