@@ -35,6 +35,7 @@ import cascading.pipe.assembly.CountBy;
 import cascading.pipe.assembly.SumBy;
 import cascading.pipe.joiner.InnerJoin;
 import cascading.property.AppProps;
+import cascading.property.ConfigDef;
 import cascading.scheme.hadoop.TextDelimited;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
@@ -42,6 +43,7 @@ import cascading.tap.Tap;
 import cascading.tap.hadoop.Hfs;
 import cascading.tap.hadoop.TemplateTap;
 import cascading.tuple.Fields;
+import cascading.tuple.collect.SpillableProps;
 
 /**
  *
@@ -522,6 +524,42 @@ public class CompiledExamples
 
     assembly = new Each( assembly, Fields.VALUES, full, Fields.ALL );
     // outgoing -> first, last, age, full
+    //@extract-end
+    }
+    }
+
+  public void compileProperties()
+    {
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    Fields common = new Fields( "url" );
+    Fields declared = new Fields( "url1", "word", "wd_count", "url2", "sentence", "snt_count" );
+
+    {
+    //@extract-start properties-pipe
+    Pipe join = new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
+
+    SpillableProps props = SpillableProps.spillableProps()
+      .setCompressSpill( true )
+      .setMapSpillThreshold( 50 * 1000 );
+
+    props.setProperties( join.getConfigDef(), ConfigDef.Mode.REPLACE );
+    //@extract-end
+    }
+
+    {
+    //@extract-start properties-step
+    Pipe join = new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
+
+    SpillableProps props = SpillableProps.spillableProps()
+      .setCompressSpill( true )
+      .setMapSpillThreshold( 50 * 1000 );
+
+    props.setProperties( join.getProcessConfigDef(), ConfigDef.Mode.DEFAULT );
     //@extract-end
     }
     }

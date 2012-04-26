@@ -14,7 +14,7 @@
   <info>
     <title>Cascading 2 - User Guide</title>
 
-    <pubdate>March, 2012</pubdate>
+    <pubdate>April, 2012</pubdate>
 
     <copyright>
       <year>2007-2012</year>
@@ -22,7 +22,7 @@
       <holder>Concurrent, Inc.</holder>
     </copyright>
 
-    <releaseinfo>V 2.01</releaseinfo>
+    <releaseinfo>2</releaseinfo>
 
     <productname>Cascading</productname>
 
@@ -1371,47 +1371,40 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <section>
         <title>Setting Custom Pipe Properties</title>
 
-        <para>The Cascading planner assigns the same properties to all pipes
-        in a flow, based on the defaults for that flow. However, it's possible
-        to override the default properties by using
-        <classname>xxx</classname>.</para>
+        <para>By default, the properties passed to a FlowConnector subclass
+        become the defaults for every Flow instance created by the
+        FlowConnector. In the past, if different Flow instances need different
+        properties a new FlowConnector would need to be created. It is now
+        possible to set properties at the Pipe scope and at the process
+        FlowStep scope.</para>
 
-        <para>The following code sample demonstrates the basic form.</para>
+        <para>The Pipe scope lets a developer set a property only visible to a
+        given Pipe instance (and its child Operation). This allows Operations,
+        like custom Functions, to be dynamically configured.</para>
 
-        <para/>
+        <para>More importantly, the process FlowStep scope allows properties
+        to be set on a Pipe that are inherited by the underlying process
+        during runtime. For Apache Hadoop, using the HadoopFlowConnector, a
+        FlowStep is the current MapReduce job. That is, a Hadoop specific
+        property can be set on a Pipe, like a CoGroup. During runtime, the
+        FlowStep (MapReduce job) that CoGroup executes in will be configured
+        with the given property. For example, a spill threshold, or the number
+        of reducer tasks for Hadoop to deploy.</para>
 
-        <para>Below are some examples of properties that you might wish to
-        override. For complete lists of flow and pipe properties, consult the
-        Javadoc.</para>
+        <para>The following code samples demonstrates the basic form for both
+        Pipe and FlowStep scope.</para>
 
-        <para><variablelist>
-            <varlistentry>
-              <term/>
+        <example>
+          <title>Pipe Scope</title>
 
-              <listitem>
-                <para/>
-              </listitem>
-            </varlistentry>
-          </variablelist> <variablelist>
-            <varlistentry>
-              <term/>
+          <xi:include href="properties-pipe.xml"/>
+        </example>
 
-              <listitem>
-                <para/>
-              </listitem>
-            </varlistentry>
-          </variablelist> <variablelist>
-            <varlistentry>
-              <term/>
+        <example>
+          <title>Step Scope</title>
 
-              <listitem>
-                <para/>
-              </listitem>
-            </varlistentry>
-          </variablelist></para>
-
-        <para>A final cautionary or encouraging note about using this
-        feature... For more information, see...</para>
+          <xi:include href="properties-step.xml"/>
+        </example>
       </section>
     </section>
 
@@ -1420,7 +1413,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
 
       <para>Cascading supports pluggable planners that allow it to execute on
       differing platforms. Currently only two planners are provided and are
-      invoked by a particular <classname>FlowConnector</classname>.</para>
+      invoked by an associated <classname>FlowConnector</classname>
+      subclass.</para>
 
       <para><variablelist>
           <varlistentry>
@@ -2102,7 +2096,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <para>When pipe assemblies are bound to source and sink taps, a
       <classname>Flow</classname> is created. Flows are executable in the
       sense that, once they are created, they can be started and will execute
-      on the configured platform. If configured for the Hadoop platform, the
+      on the specified platform. If specified for the Hadoop platform, the
       Flow will execute on a Hadoop cluster.</para>
 
       <para>A Flow is essentially a data processing pipeline that reads data
@@ -2169,8 +2163,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
         <code>mapred.reduce.tasks.speculative.execution</code>, or
         <code>mapred.child.java.opts</code>.</para>
 
-        <para><?oxy_comment_start author="Jim" timestamp="20120421T033110-0700" comment="Is this saying that this is the only property that must be set, or that this is one of the properties that must be set?"?>One
-        property<?oxy_comment_end ?> that must be set for production
+        <para>One of two properties that must be set for production
         applications is the application Jar class or Jar path.</para>
 
         <example>
@@ -2183,29 +2176,31 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
         found in <xref linkend="executing-processes"/>.</para>
 
         <para>Note the pattern of using a static property-setter method
-        (<classname>cascading.flow.FlowConnector.setApplicationJarPath</classname>).
-        See <classname>cascading.flow.Flow</classname> for other properties
-        that can be set.</para>
+        (<classname>cascading.property.AppProps.setApplicationJarPath</classname>).</para>
 
         <para>Since the <classname>FlowConnector</classname> can be reused,
         any properties passed on the constructor will be handed to all the
         Flows it is used to create. If Flows need to be created with different
         default properties, a new FlowConnector will need to be instantiated
         with those properties, or properties will need to be set on a given
-        <classname>Pipe</classname> instance directly.</para>
+        <classname>Pipe</classname> or <classname>Tap</classname> instance
+        directly via the <methodname>getConfigDef()</methodname> or
+        <methodname>getStepConfigDef()</methodname> methods.</para>
       </section>
 
       <section>
         <title xreflabel="Skipping Flows" xml:id="skipping-flows">Skipping
         Flows</title>
 
-        <para>When a Flow participates in a Cascade, the
-        <classname>Flow.isSkip()</classname> method is consulted before
+        <para>When a <classname>Flow</classname> participates in a
+        <classname>Cascade</classname>, the
+        <classname>Flow.isSkipFlow()</classname> method is consulted before
         calling <classname>Flow.start()</classname> on the flow. The result is
         based on the Flow's "skip strategy". By default,
-        <methodname>isSkip()</methodname> returns true if any of the sinks are
-        stale - i.e., the sinks don't exist or the resources are older than
-        the sources. However, the strategy can be changed via the
+        <methodname>isSkipFlow()</methodname> returns true if any of the sinks
+        are stale - i.e., the sinks don't exist or the resources are older
+        than the sources. However, the strategy can be changed via the
+        <classname>Flow.setFlowSkipStrategy()</classname> and
         <classname>Cascade.setFlowSkipStrategy()</classname> method, which can
         be called before or after a particular <classname>Flow</classname>
         instance has been created.</para>
@@ -2215,14 +2210,14 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
 
         <variablelist>
           <varlistentry>
-            <term>FlowSkipIfSinkStale</term>
+            <term>FlowSkipIfSinkNotStale</term>
 
             <listitem>
               <para>This strategy -
-              <classname>cascading.flow.FlowSkipIfNotSinkStale</classname> -
+              <classname>cascading.flow.FlowSkipIfSinkNotStale</classname> -
               is the default. Sinks are treated as stale if they don't exist
-              or the resources are older than the sources. If the SinkMode for
-              the sink tap is REPLACE, then the tap is treated as
+              or the sink resources are older than the sources. If the
+              SinkMode for the sink tap is REPLACE, then the tap is treated as
               stale.</para>
             </listitem>
           </varlistentry>
@@ -2245,18 +2240,19 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
         <classname>cascading.flow.FlowSkipStrategy</classname>.</para>
 
         <para>Note that <classname>Flow.start()</classname> does not consult
-        the <methodname>isSkip()</methodname> method, and consequently always
-        tries to start the Flow if called. It is up to the user code to call
-        <classname>isSkip()</classname> to determine whether the current
-        strategy indicates that the Flow should be skipped.</para>
+        the <methodname>isSkipFlow()</methodname> method, and consequently
+        always tries to start the Flow if called. It is up to the user code to
+        call <classname>isSkipFlow()</classname> to determine whether the
+        current strategy indicates that the Flow should be skipped.</para>
       </section>
 
       <section>
         <title>Creating Flows from a JobConf</title>
 
         <para>If a MapReduce job already exists and needs to be managed by a
-        Cascade, then the <classname>cascading.flow.MapReduceFlow</classname>
-        class should be used. To do this, after creating a Hadoop
+        Cascade, then the
+        <classname>cascading.flow.hadoop.MapReduceFlow</classname> class
+        should be used. To do this, after creating a Hadoop
         <classname>JobConf</classname> instance simply pass it into the
         <classname>MapReduceFlow</classname> constructor. The resulting
         <classname>Flow</classname> instance can be used like any other
@@ -2273,9 +2269,9 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
         dependency functionality. For more information, see the Riffle
         documentation and examples. To use with Cascading, a Riffle-annotated
         instance must be passed to the
-        <classname>cascading.flow.ProcessFlow</classname> constructor method.
-        The resulting <classname>ProcessFlow</classname> instance can be used
-        like any other Flow instance.</para>
+        <classname>cascading.flow.hadoop.ProcessFlow</classname> constructor
+        method. The resulting <classname>ProcessFlow</classname> instance can
+        be used like any other Flow instance.</para>
 
         <para>Since many algorithms need to perform multiple passes over a
         given data set, a Riffle-annotated Class can be written that
@@ -2334,7 +2330,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
   <chapter>
     <info>
       <title xreflabel="Executing Processes"
-      xml:id="executing-processes">Executing Processes</title>
+      xml:id="executing-processes">Executing Processes on Hadoop</title>
     </info>
 
     <section>
@@ -2354,7 +2350,14 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
     <section>
       <title xreflabel="Building" xml:id="building">Building</title>
 
-      <para>Cascading ships with several jars, including the following:</para>
+      <para>Cascading ships with several jars and dependencies in the download
+      archive. Alternately, Cascading is available over Maven and Ivy through
+      the Conjars repsitory along with a number of other Cascading related
+      projects. See <link
+      xlink:href="http://conjars.org/">http://conjars.org</link> for more
+      information.</para>
+
+      <para>The core Cascading artifacts including the following:</para>
 
       <variablelist>
         <varlistentry>
@@ -2414,25 +2417,6 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       any needed third-party jars, in its <filename>lib</filename> directory.
       This is true regardless of whether they are Cascading Hadoop-mode
       applications or raw Hadoop MapReduce applications.</para>
-
-      <para>The following Ant snippets can be used in your project to create a
-      Hadoop jar for submission on your cluster.</para>
-
-      <example>
-        <title>Sample Ant Build - Properties</title>
-
-        <xi:include href="sample-build-properties.xml"/>
-      </example>
-
-      <example>
-        <title>Sample Ant Build - Target</title>
-
-        <xi:include href="sample-build-target.xml"/>
-      </example>
-
-      <para>Note that these Ant snippets are only intended to show how to
-      include Cascading libraries. You are still required to compile your
-      project into the <property>build.classes</property> path.</para>
     </section>
 
     <section>
@@ -2490,12 +2474,12 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       execution.</para>
 
       <para>Cascading does not rely on any environment variables like
-      <envar>$HADOOP_HOME</envar> or<envar>$HADOOP_CONF_DIR</envar>, only
+      <envar>$HADOOP_HOME</envar> or <envar>$HADOOP_CONF_DIR</envar>, only
       <filename>bin/hadoop</filename> does.</para>
 
       <para>It should be noted that even though
       <filename>your-application.jar</filename> is passed on the command line
-      to<filename>bin/hadoop</filename>, this in no way configures Hadoop to
+      to <filename>bin/hadoop</filename>, this in no way configures Hadoop to
       push this jar into the cluster. You must still call one of the property
       setters mentioned above to set the proper path to the application jar.
       If misconfigured, it's likely that one of the internal libraries (found
