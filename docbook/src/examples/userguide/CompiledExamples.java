@@ -440,11 +440,13 @@ public class CompiledExamples
     {
     //@extract-start algebra-all
     // incoming -> first, last, age
+
     String expression = "first + \" \" + last";
     ExpressionFunction full =
       new ExpressionFunction( new Fields( "full" ), expression, String.class );
 
     assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.ALL );
+
     // outgoing -> first, last, age, full
     //@extract-end
     }
@@ -452,11 +454,13 @@ public class CompiledExamples
     {
     //@extract-start algebra-results
     // incoming -> first, last, age
+
     String expression = "first + \" \" + last";
     ExpressionFunction full =
       new ExpressionFunction( new Fields( "full" ), expression, String.class );
 
     assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.RESULTS );
+
     // outgoing -> full
     //@extract-end
     }
@@ -464,9 +468,11 @@ public class CompiledExamples
     {
     //@extract-start algebra-replace
     // incoming -> first, last, age
+
     Identity function = new Identity( Fields.ARGS, Integer.class ); // coerce to int
 
     assembly = new Each( assembly, new Fields( "age" ), function, Fields.REPLACE );
+
     // outgoing -> first, last, age
     //@extract-end
     }
@@ -474,11 +480,13 @@ public class CompiledExamples
     {
     //@extract-start algebra-swap
     // incoming -> first, last, age
+
     String expression = "first + \" \" + last";
     ExpressionFunction full =
       new ExpressionFunction( new Fields( "full" ), expression, String.class );
 
     assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.SWAP );
+
     // outgoing -> age, full
     //@extract-end
     }
@@ -486,9 +494,11 @@ public class CompiledExamples
     {
     //@extract-start algebra-unknown
     // incoming -> line
+
     RegexSplitter function = new RegexSplitter( Fields.UNKNOWN, "\t" );
 
     assembly = new Each( assembly, new Fields( "line" ), function, Fields.RESULTS );
+
     // outgoing -> unknown
     //@extract-end
     }
@@ -496,9 +506,11 @@ public class CompiledExamples
     {
     //@extract-start algebra-none
     // incoming -> first, last, age
+
     Insert constant = new Insert( new Fields( "zip" ), "77373" );
 
     assembly = new Each( assembly, Fields.NONE, constant, Fields.ALL );
+
     // outgoing -> first, last, age, zip
     //@extract-end
     }
@@ -506,11 +518,13 @@ public class CompiledExamples
     {
     //@extract-start algebra-group
     // incoming -> first, last, age
+
     assembly = new GroupBy( assembly, new Fields( "first", "last" ) );
 
     FieldJoiner full = new FieldJoiner( new Fields( "full" ), " " );
 
     assembly = new Each( assembly, Fields.GROUP, full, Fields.ALL );
+
     // outgoing -> first, last, age, full
     //@extract-end
     }
@@ -518,11 +532,13 @@ public class CompiledExamples
     {
     //@extract-start algebra-values
     // incoming -> first, last, age
+
     assembly = new GroupBy( assembly, new Fields( "age" ) );
 
     FieldJoiner full = new FieldJoiner( new Fields( "full" ), " " );
 
     assembly = new Each( assembly, Fields.VALUES, full, Fields.ALL );
+
     // outgoing -> first, last, age, full
     //@extract-end
     }
@@ -559,7 +575,7 @@ public class CompiledExamples
       .setCompressSpill( true )
       .setMapSpillThreshold( 50 * 1000 );
 
-    props.setProperties( join.getProcessConfigDef(), ConfigDef.Mode.DEFAULT );
+    props.setProperties( join.getStepConfigDef(), ConfigDef.Mode.DEFAULT );
     //@extract-end
     }
     }

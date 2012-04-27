@@ -2500,8 +2500,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       the data streams, referencing the data fields, and so on. Within this
       Pipe framework, Operations are used to act upon the data - alter it,
       filter it, analyze it, and so on. You can use the standard Operations in
-      the Cascading library to create powerful and robust applications, and
-      you can combine them in chains (much like Unix operations such as
+      the Cascading library to create powerful and robust applications by
+      combining them in chains (much like Unix operations such as
       <command>sed</command>, <command>grep</command>,
       <command>sort</command>, <command>uniq</command>, and
       <command>awk</command>). And if you want to go further, it's also very
@@ -2524,8 +2524,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
         </imageobject>
       </mediaobject>
 
-      <para>Operations may require an input argument Tuple to act on. And all
-      Operations can return zero or more Tuple object results - except
+      <para>Operations typically require an input argument Tuple to act on.
+      And all Operations can return zero or more Tuple object results - except
       <classname>Filter</classname>, which simply returns a Boolean indicating
       whether to discard the current Tuple. A <classname>Function</classname>,
       for instance, can parse a string passed by an argument Tuple and return
@@ -2535,17 +2535,18 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       "last-name" fields).</para>
 
       <para>In theory, a <classname>Function</classname> can be used as a
-      <classname>Filter</classname>. However, the
-      <classname>Filter</classname> type is optimized for filtering, and can
-      be combined with logical Operations such as <classname>Not</classname>,
-      <classname>And</classname>, <classname>Or</classname>, etc.</para>
+      <classname>Filter</classname> by not emitting a Tuple result. However,
+      the <classname>Filter</classname> type is optimized for filtering, and
+      can be combined with logical Operations such as
+      <classname>Not</classname>, <classname>And</classname>,
+      <classname>Or</classname>, etc.</para>
 
       <para>During runtime, Operations actually receive arguments as one or
       more instances of the <classname>TupleEntry</classname> object. The
       TupleEntry object holds both an instance of
       <classname>Fields</classname> and the current
       <classname>Tuple</classname> for which the <classname>Fields</classname>
-      object defines fields.</para>
+      object defines field names for positions in the Tuple.</para>
 
       <para>Except for <classname>Filter</classname>, all Operations must
       declare result Fields, and if the actual output does not match the
@@ -2613,10 +2614,10 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - input argument and output fields - must be
-      done on the constructor, either by passing default values to the
-      <code>super</code> constructor, or by accepting the values from the user
-      via a constructor implementation.</para>
+      <para>Both declarations - the number of input argument and declared
+      result fields - must be done on the constructor, either by passing
+      default values to the <code>super</code> constructor, or by accepting
+      the values from the user via a constructor implementation.</para>
 
       <example>
         <title>Add Values Function</title>
@@ -2634,6 +2635,11 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       names, allowing them to prevent possible field name collisions that
       might cause the planner to fail.</para>
 
+      <para>This line is especially important: <programlisting>int sum = arguments.getInteger( 0 ) + arguments.getInteger( 1 );</programlisting>Note
+      that ordinal numbers were used to get argument values instead of using
+      field names. If field names had been used, the AddValuesFunction would
+      have been coupled to the incoming stream.</para>
+
       <example>
         <title>Add Values Function and Context</title>
 
@@ -2647,9 +2653,10 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <para>All Operations allow for a context object, simply a user-defined
       object that holds state between calls to the
       <methodname>operate()</methodname> method. This allows for a given
-      instance of the Operation to be ahread safe on a platform that may use
+      instance of the Operation to be thread safe on a platform that may use
       multiple threads of execution versus multiple processes. It also allows
-      deferring complex resources until the Operation will be engaged.</para>
+      deferring initialization of complex resources until the Operation will
+      be engaged.</para>
 
       <para>The <methodname>prepare()</methodname> and
       <methodname>cleanup()</methodname> methods are invoked once per thread
@@ -2716,16 +2723,17 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <title>Aggregator</title>
 
       <para>An <classname>Aggregator</classname> expects a stream of tuple
-      groups (the output of a GroupBy or CoGroup pipe), and returns zero or
-      more result tuples for every group. An <classname>Aggregator</classname>
-      may only be used with an <classname>Every</classname> pipe, which may
-      follow a<classname>GroupBy</classname>, a
-      <classname>CoGroup</classname>, or another <classname>Every</classname>
-      pipe, but not an<classname>Each</classname>.</para>
+      groups (the output of a <classname>GroupBy</classname> or
+      <classname>CoGroup</classname> pipe), and returns zero or more result
+      tuples for every group. An <classname>Aggregator</classname> may only be
+      used with an <classname>Every</classname> pipe, which may follow a
+      <classname>GroupBy</classname>, a <classname>CoGroup</classname>, or
+      another <classname>Every</classname> pipe, but not an
+      <classname>Each</classname>.</para>
 
-      <para>To create a custom<classname>Aggregator</classname>, subclass the
+      <para>To create a custom <classname>Aggregator</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Aggregator</code>. Because
+      interface <code>cascading.operation.Aggregator</code>. Because
       <code>BaseOperation</code> has been subclassed, the <code>start</code>,
       <code>aggregate</code>, and <code>complete</code> methods, as defined on
       the <code>Aggregator</code> interface, are the only methods that must be
@@ -2753,10 +2761,10 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - input argument and output fields - must be
-      done on the constructor, either by passing default values to the
-      <code>super</code> constructor, or by accepting the values from the user
-      via a constructor implementation.</para>
+      <para>Both declarations - the number of input argument and declared
+      result fields - must be done on the constructor, either by passing
+      default values to the <code>super</code> constructor, or by accepting
+      the values from the user via a constructor implementation.</para>
 
       <example>
         <title>Add Tuples Aggregator</title>
@@ -2789,9 +2797,9 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       Grouping Tuple, and an iterator of all the arguments it expects, for
       every value Tuple in the current grouping - all on the same method call.
       This is very similar to the typical Reducer interface in MapReduce, and
-      is best used for operations that need high visibility to the previous
-      and next elements in the stream - such as smoothing a series of
-      time-stamps where there are missing values.</para>
+      is best used for operations that need visibility to the previous and
+      next elements in the stream - such as smoothing a series of time-stamps
+      where there are missing values.</para>
 
       <para>A <classname>Buffer</classname> may only be used with an
       <classname>Every</classname> pipe, and it may only follow a
@@ -2825,10 +2833,10 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - input argument and output fields - must be
-      done on the constructor, either by passing default values to the
-      <code>super</code> constructor, or by accepting the values from the user
-      via a constructor implementation.</para>
+      <para>Both declarations - the number of input argument and declared
+      result fields - must be done on the constructor, either by passing
+      default values to the <code>super</code> constructor, or by accepting
+      the values from the user via a constructor implementation.</para>
 
       <example>
         <title>Average Buffer</title>
@@ -2919,7 +2927,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
 
       <para>In Cascading, SubAssemblies are reusable pipe assemblies that are
       linked into larger pipe assemblies. They function much like subroutines
-      in a larger program. Subassemblies are a good way to organize complex
+      in a larger program. SubAssemblies are a good way to organize complex
       pipe assemblies, and they allow for commonly-used pipe assemblies to be
       packaged into libraries for inclusion in other projects by other
       users.</para>
@@ -3043,7 +3051,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
 
       <para>To configure the planner to remove some or all assertions, a
       property can be set via the
-      <classname>FlowConnector.setAssertionLevel()</classname> method or
+      <classname>FlowConnectorProps.setAssertionLevel()</classname> method or
       directly on the <classname>FlowDef</classname> instance, as shown above.
       Setting <classname>AssertionLevel.NONE</classname> removes all
       assertions. <classname>AssertionLevel.VALID</classname> keeps
@@ -3073,11 +3081,10 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
 
       <para>Failure Traps are similar to tap sinks (as opposed to tap sources)
       in that they allow data to be stored. The difference is that Tap sinks
-      are bound to a particular <?oxy_comment_start author="Jim" timestamp="20120417T133527-0700" comment="Should this just say &quot;tail&quot;?  This expression isn&apos;t used anywhere else in this document."?>tail
-      pipe<?oxy_comment_end ?> in a pipe assembly and are the primary outlet
-      of a branch in a pipe assembly. Tap traps can be bound to intermediate
-      pipe assembly branches - just like Stream Assertions - yet they only
-      capture data that causes an Operation to fail (throw an
+      are bound to a particular tail pipe in a pipe assembly and are the
+      primary outlet of a branch in a pipe assembly. Traps can be bound to
+      intermediate pipe assembly branches - just like Stream Assertions - yet
+      they only capture data that causes an Operation to fail (throw an
       Exception).</para>
 
       <para>Whenever an operation fails and throws an exception, if there is
@@ -3119,9 +3126,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
 
       <para>Each Flow has the ability to execute callbacks via an event
       listener. This ability is useful when an external application needs to
-      be notified that a Flow has started, halted, completed, or
-      <?oxy_comment_start author="Jim" timestamp="20120417T134904-0700" comment="Chris - you added the word &quot;has&quot; before &quot;thrown an exception, but I&apos;m deleting it because all of the terms in this list - &quot;started&quot;, &quot;halted&quot;, &quot;completed&quot;, and &quot;thrown an exception&quot; - are within the scope of the &quot;has&quot; at the start of the list."?>thrown
-      an exception<?oxy_comment_end ?>.</para>
+      be notified that a Flow has started, halted, completed, or the Flow has
+      thrown an exception.</para>
 
       <para>For instance, at the completion of a flow that runs on an Amazon
       EC2 Hadoop cluster, an Amazon SQS message can be sent to notify another
@@ -3200,7 +3206,8 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       the <classname>Templatetap</classname>.</para>
 
       <para>Note that you can only create sub-directories to bin data into.
-      Hadoop must still write "part" files into each bin directory.</para>
+      Hadoop must still write "part" files into each bin directory, and there
+      is no safe mechanism for manipulating part file names.</para>
 
       <para>One last thing to keep in mind is whether "binning" happens during
       the Map phase or the Reduce phase. By doing a
@@ -3280,8 +3287,10 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       is used to "shape" a tuple stream. Here are some common patterns that
       illustrate how Cascading "field algebra" works. (Note that, in actual
       practice, some of these example tasks might be better performed with
-      helper subassemblies such as <classname>Rename</classname> and
-      <classname>Discard</classname>.)</para>
+      helper subassemblies such as
+      <classname>cascading.pipe.assembly.Rename</classname>,
+      <classname>cascading.pipe.assembly.Retain</classname>, and
+      <classname>cascading.pipe.assemblyDiscard</classname>.)</para>
 
       <para><variablelist>
           <varlistentry>
@@ -3355,7 +3364,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               <xi:include href="identity-coerce.xml"/>
 
               <para>Or we can replace just the Tuple String value "status"
-              with an<classname>int</classname>, while keeping all the other
+              with an <classname>int</classname>, while keeping all the other
               values in the output Tuple.</para>
 
               <xi:include href="identity-coerce-single.xml"/>
@@ -3528,7 +3537,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               emerge from this function, it can declare field names. In this
               case, if the splitter encounters more split values than field
               names, the remaining values are discarded. For more information,
-              see<classname>java.util.regex.Pattern.split( input, limit
+              see <classname>java.util.regex.Pattern.split( input, limit
               )</classname>.</para>
             </listitem>
           </varlistentry>
@@ -3583,10 +3592,10 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               function filters a Tuple stream based on a specified regex
               value. By default, tuples that match the given pattern are kept,
               and tuples that do not match are filtered out. This can be
-              reversed by setting "removeMatch" to<code>true</code>. Also, by
+              reversed by setting "removeMatch" to <code>true</code>. Also, by
               default, the whole Tuple is matched against the given regex
               String (in tab-delimited sections). If "matchEachElement" is set
-              to<code>true</code>, the pattern is applied to each Tuple value
+              to <code>true</code>, the pattern is applied to each Tuple value
               individually. For more information, see the
               <classname>java.util.regex.Matcher.find()</classname>
               method.</para>
@@ -3623,11 +3632,13 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
               <classname>cascading.operation.regex.RegexSplitGenerator</classname>
               function emits a new Tuple for every split on the incoming
               argument value delimited by the given pattern String. The
-              behavior is similar to the RegexSplitter function, except that
-              (assuming multiple matches) RegexSplitter outputs a single tuple
-              that may contain multiple values, and RegexSplitGenerator
-              outputs multiple tuples that each contain only one value, as
-              does <classname>RegexGenerator</classname>.</para>
+              behavior is similar to the <classname>RegexSplitter</classname>
+              function, except that (assuming multiple matches)
+              <classname>RegexSplitter</classname> outputs a single tuple that
+              may contain multiple values, and
+              <classname>RegexSplitGenerator</classname> outputs multiple
+              tuples that each contain only one value, as does
+              <classname>RegexGenerator</classname>.</para>
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -3646,7 +3657,7 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       xlink:href="http://www.janino.net/">http://www.janino.net/</link>.</para>
 
       <para>This capability allows an Operation to evaluate a suitable
-      one-line Java expression, such as <code>a + 3 * 2</code> or<code>a &lt;
+      one-line Java expression, such as <code>a + 3 * 2</code> or <code>a &lt;
       7</code>, where the variable values (<code>a</code> and <code>b</code>)
       are passed in as Tuple fields. The result of the Operation thus depends
       on the evaluated result of the expression - in the first example, some
@@ -4052,12 +4063,28 @@ RHS = [0,A]       [2,C] [3,D]</programlisting>In each join type below, the
       <title>Built-in Assemblies</title>
     </info>
 
-    <para>Introductory text here, explaining about built-in assemblies.</para>
+    <para>There are a number of helper SubAssemblies providec by the core
+    cascading library. </para>
 
     <section>
       <title xreflabel="AggregateBy" xml:id="aggregate-by">AggregateBy</title>
 
-      <para>text here</para>
+      <para>The cascading.pipe.assembly.AggregateBy SubAssembly is an
+      implementation of the Partial Aggregation pattern, and is the base class
+      for built-in and custom partial aggregation implementations. </para>
+
+      <para>Generally the AggregateBy class is used to compose multiple
+      AggregateBy subclasses into a single Pipe.</para>
+
+      <example>
+        <title>Composing partials with AggregateBy</title>
+
+        <xi:include href="partials-compose.xml"/>
+      </example>
+
+      <para>To create a custom partial aggregation, subclass the AggregateBy
+      class and implement the appropriate internal interfaces. See the Javadoc
+      for details.</para>
 
       <section>
         <title xml:id="AverageBy">AverageBy</title>
