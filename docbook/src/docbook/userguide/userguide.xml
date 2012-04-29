@@ -145,8 +145,8 @@
     <section>
       <title>What is Apache Hadoop?</title>
 
-      <para>From the Hadoop website, it <quote>is a software platform that lets
-      one easily write and run applications that process vast amounts of
+      <para>From the Hadoop website, it <quote>is a software platform that
+      lets one easily write and run applications that process vast amounts of
       data</quote>. Hadoop does this by providing a storage layer that holds
       vast amounts of data, and an execution layer that runs an application in
       parallel across the cluster, using coordinated subsets of the stored
@@ -299,9 +299,9 @@
 
       <para>In Cascading, we call a data record a <emphasis
       role="italic">tuple</emphasis>, a simple chain of pipes without forks or
-      merges a <emphasis role="italic">branch</emphasis>, an interconnected set
-      of pipe branches a <emphasis>pipe assembly</emphasis>, and a series of
-      tuples passing through a pipe branch or assembly a <emphasis
+      merges a <emphasis role="italic">branch</emphasis>, an interconnected
+      set of pipe branches a <emphasis>pipe assembly</emphasis>, and a series
+      of tuples passing through a pipe branch or assembly a <emphasis
       role="italic">tuple stream</emphasis>.</para>
 
       <para>Pipe assemblies are specified independently of the data source
@@ -874,19 +874,20 @@
         <classname>Tuple</classname> and the operation result. This new output
         <classname>Tuple</classname> becomes the input
         <classname>Tuple</classname> to the next pipe in the pipe assembly. If
-        the output selector is <code>Fields.ALL</code>, the output is the input
-        <classname>Tuple</classname> plus the operation result, merged into a
-        single <classname>Tuple</classname>.</para>
+        the output selector is <code>Fields.ALL</code>, the output is the
+        input <classname>Tuple</classname> plus the operation result, merged
+        into a single <classname>Tuple</classname>.</para>
 
         <para>Note that it's possible for a <classname>Function</classname> or
         <classname>Aggregator</classname> to return more than one output
-        <classname>Tuple</classname> per input <classname>Tuple</classname>. In
-        this case, the input tuple is duplicated as many times as necessary to
-        create the necessary output tuples. This is similar to the reiteration
-        of values that happens during a join. If a function is designed to
-        always emit three result tuples for every input tuple, each of the
-        three outgoing tuples will consist of the selected input tuple values
-        plus one of the three sets of function result values.</para>
+        <classname>Tuple</classname> per input <classname>Tuple</classname>.
+        In this case, the input tuple is duplicated as many times as necessary
+        to create the necessary output tuples. This is similar to the
+        reiteration of values that happens during a join. If a function is
+        designed to always emit three result tuples for every input tuple,
+        each of the three outgoing tuples will consist of the selected input
+        tuple values plus one of the three sets of function result
+        values.</para>
 
         <mediaobject>
           <imageobject role="fo">
@@ -1029,8 +1030,8 @@
             <xi:include href="simple-groupby-secondary.xml"/>
           </example>
 
-          <para>If we don't care about the order of <code>value2</code>, we can
-          leave it out of the <code>sortFields</code>
+          <para>If we don't care about the order of <code>value2</code>, we
+          can leave it out of the <code>sortFields</code>
           <classname>Fields</classname> constructor.</para>
 
           <para>In the next example, we reverse the order of
@@ -1467,13 +1468,13 @@
       Sink Taps</title>
 
       <para>All input data comes in from, and all output data goes out to,
-      some instance of  <classname>cascading.tap.tap</classname>. A tap
+      some instance of <classname>cascading.tap.tap</classname>. A tap
       represents a data resource - such as a file on the local file system, on
       a Hadoop distributed file system, or on Amazon S3. A tap can be read
       from, which makes it a <emphasis role="italic">source</emphasis>, or
-      written to, which makes it a <emphasis role="italic">sink</emphasis>. Or,
-      more commonly, taps act as both sinks and sources when shared between
-      flows.</para>
+      written to, which makes it a <emphasis role="italic">sink</emphasis>.
+      Or, more commonly, taps act as both sinks and sources when shared
+      between flows.</para>
 
       <para>The platform on which your application is running (Cascading local
       or Hadoop) determines which specific classes you can use. Details are
@@ -2072,20 +2073,22 @@
       <classname>Every</classname> pipes and Functions, Aggregators, and
       Buffers.</para>
 
-      <mediaobject xreflabel="Operations and Field-processing"
-                   xml:id="field-processing">
-        <para>Operations and Field-processing</para>
+      <figure>
+        <title>Operations and Field-processing</title>
 
-        <imageobject role="fo">
-          <imagedata align="center" contentwidth="7in"
-                     fileref="images/field-algebra.svg"/>
-        </imageobject>
+        <mediaobject xreflabel="Operations and Field-processing"
+                     xml:id="field-processing">
+          <imageobject role="fo">
+            <imagedata align="center" contentwidth="7in"
+                       fileref="images/field-algebra.svg"/>
+          </imageobject>
 
-        <imageobject role="html">
-          <imagedata align="center" contentwidth="7in"
-                     fileref="images/field-algebra.png"/>
-        </imageobject>
-      </mediaobject>
+          <imageobject role="html">
+            <imagedata align="center" contentwidth="7in"
+                       fileref="images/field-algebra.png"/>
+          </imageobject>
+        </mediaobject>
+      </figure>
     </section>
 
     <section>
@@ -2676,8 +2679,8 @@
 
       <para>A <classname>Filter</classname> expects a stream of individual
       argument Tuples and returns a Boolean value for each one, stating
-      whether it should be discarded. Like a <classname>Function</classname>, a
-      <classname>Filter</classname> is used with an
+      whether it should be discarded. Like a <classname>Function</classname>,
+      a <classname>Filter</classname> is used with an
       <classname>Each</classname> pipe, which may follow any pipe type.</para>
 
       <para>To create a custom <classname>Filter</classname>, subclass the
@@ -3732,8 +3735,8 @@
               are required, search on the <code>text()</code> nodes, or
               consider using XPathGenerator to handle multiple
               <classname>NodeList</classname> values. If the returned result
-              of an XPath expression is a <classname>NodeList</classname>, only
-              the first <classname>Node</classname> is used for the field
+              of an XPath expression is a <classname>NodeList</classname>,
+              only the first <classname>Node</classname> is used for the field
               value and the rest are ignored.</para>
             </listitem>
           </varlistentry>
@@ -4394,7 +4397,7 @@
       <para>When creating custom Operations (<classname>Function</classname>,
       <classname>Filter</classname>, <classname>Aggregator</classname>, or
       <classname>Buffer</classname>) do not store operation state in class
-      fields. </para>
+      fields.</para>
 
       <para>For example, if implementing a custom "counter"
       <classname>Aggregator</classname>, do not create a field named "count"
