@@ -31,8 +31,14 @@ import cascading.pipe.Merge;
 import cascading.pipe.Pipe;
 import cascading.pipe.SubAssembly;
 import cascading.pipe.assembly.AggregateBy;
+import cascading.pipe.assembly.AverageBy;
+import cascading.pipe.assembly.Coerce;
 import cascading.pipe.assembly.CountBy;
+import cascading.pipe.assembly.Discard;
+import cascading.pipe.assembly.Rename;
+import cascading.pipe.assembly.Retain;
 import cascading.pipe.assembly.SumBy;
+import cascading.pipe.assembly.Unique;
 import cascading.pipe.joiner.InnerJoin;
 import cascading.property.AppProps;
 import cascading.property.ConfigDef;
@@ -413,6 +419,31 @@ public class CompiledExamples
     //@extract-end
     }
 
+  public void partialAverageBy()
+    {
+    //@extract-start partials-averageby
+    Pipe assembly = new Pipe( "assembly" );
+
+    // ...
+    Fields groupingFields = new Fields( "date" );
+    Fields valueField = new Fields( "size" );
+    Fields avgField = new Fields( "avg-size" );
+    assembly = new AverageBy( assembly, groupingFields, valueField, avgField );
+    //@extract-end
+    }
+
+  public void partialCountBy()
+    {
+    //@extract-start partials-countby
+    Pipe assembly = new Pipe( "assembly" );
+
+    // ...
+    Fields groupingFields = new Fields( "date" );
+    Fields countField = new Fields( "count" );
+    assembly = new CountBy( assembly, groupingFields, countField );
+    //@extract-end
+    }
+
   public void partialCompose()
     {
     //@extract-start partials-compose
@@ -579,4 +610,60 @@ public class CompiledExamples
     //@extract-end
     }
     }
+
+  public void fieldSubAssemblies()
+    {
+    Pipe assembly = new Pipe( "assembly" );
+
+    {
+    //@extract-start subassembly-coerce
+    // incoming -> first, last, age
+
+    assembly = new Coerce( assembly, new Fields( "age" ), Integer.class );
+
+    // outgoing -> first, last, age
+    //@extract-end
+    }
+
+    {
+    //@extract-start subassembly-discard
+    // incoming -> first, last, age
+
+    assembly = new Discard( assembly, new Fields( "age" ) );
+
+    // outgoing -> first, last
+    //@extract-end
+    }
+
+    {
+    //@extract-start subassembly-rename
+    // incoming -> first, last, age
+
+    assembly = new Rename( assembly, new Fields( "age" ), new Fields( "years" ) );
+
+    // outgoing -> first, last, years
+    //@extract-end
+    }
+
+    {
+    //@extract-start subassembly-retain
+    // incoming -> first, last, age
+
+    assembly = new Retain( assembly, new Fields( "first", "last" ) );
+
+    // outgoing -> first, last
+    //@extract-end
+    }
+
+    {
+    //@extract-start subassembly-unique
+    // incoming -> first, last
+
+    assembly = new Unique( assembly, new Fields( "first", "last" ) );
+
+    // outgoing -> first, last
+    //@extract-end
+    }
+    }
+
   }
