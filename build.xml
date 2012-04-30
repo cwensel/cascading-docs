@@ -169,6 +169,7 @@
               secretKey="${publish.aws.secretKey}"
               bucket="${publish.bucket}"
               prefix="cascading/${cascading.release}/userguide/"
+              mimeTypesFile="${basedir}/etc/mime.types.txt"
               publicRead="true">
       <fileset dir="${site.userguide}"/>
     </S3Upload>
@@ -183,6 +184,7 @@
               secretKey="${publish.aws.secretKey}"
               bucket="${publish.bucket}"
               prefix="cascading/${cascading.release}/javadoc/"
+              mimeTypesFile="${basedir}/etc/mime.types.txt"
               publicRead="true">
       <fileset dir="${site.javadoc}"/>
     </S3Upload>
