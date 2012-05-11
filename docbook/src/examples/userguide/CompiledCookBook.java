@@ -304,7 +304,7 @@ public class CompiledCookBook
     // ALTERNATELY ...
 
     // add named source Taps
-    // the head pipe name to bind too
+    // the head pipe name to bind to
     flowDef
       .addSource( "headLeft", sourceLeft )    // headLeft.getName()
       .addSource( "headRight", sourceRight ); // headRight.getName()

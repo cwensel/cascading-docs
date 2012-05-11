@@ -64,8 +64,9 @@ public class TrapTest extends ExampleTestCase
     assembly = new Each( assembly, AssertionLevel.STRICT, equals );
 
     AssertMatchesAll matchesAll = new AssertMatchesAll( "(GET|HEAD|POST)" );
+    Fields method = new Fields( "method" );
     assembly =
-      new Each( assembly, new Fields( "method" ), AssertionLevel.STRICT, matchesAll );
+      new Each( assembly, method, AssertionLevel.STRICT, matchesAll );
 
     // ...some more useful pipes here
 
@@ -91,7 +92,7 @@ public class TrapTest extends ExampleTestCase
 
     TupleEntryIterator iterator = flow.openSink();
 
-    assertEquals( "75.185.76.245\t01/Sep/2007:00:01:03 +0000\tPOST\t/mt-tb.cgi/235\t403\t174", iterator.next().get( 1 ) );
+    assertEquals( "75.185.76.245\t01/Sep/2007:00:01:03 +0000\tPOST\t/mt-tb.cgi/235\t403\t174", iterator.next().getObject( 1 ) );
 
     iterator.close();
     }

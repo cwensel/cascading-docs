@@ -130,7 +130,8 @@ public class CompiledExamples
     String path = "some/path";
 
     //@extract-start simple-replace-tap
-    Tap tap = new Hfs( new TextLine( new Fields( "line" ) ), path, SinkMode.REPLACE );
+    Tap tap =
+      new Hfs( new TextLine( new Fields( "line" ) ), path, SinkMode.REPLACE );
     //@extract-end
     }
 
@@ -139,7 +140,8 @@ public class CompiledExamples
     String path = "some/path";
 
     //@extract-start template-tap
-    TextDelimited scheme = new TextDelimited( new Fields( "year", "month", "entry" ), "\t" );
+    TextDelimited scheme =
+      new TextDelimited( new Fields( "year", "month", "entry" ), "\t" );
     Hfs tap = new Hfs( scheme, path );
 
     String template = "%s-%s"; // dirs named "year-month"
@@ -154,7 +156,10 @@ public class CompiledExamples
     Pipe pipe = null;
 
     //@extract-start simple-flow
-    Flow flow = new HadoopFlowConnector().connect( "flow-name", source, sink, pipe );
+    HadoopFlowConnector flowConnector = new HadoopFlowConnector();
+
+    Flow flow =
+      flowConnector.connect( "flow-name", source, sink, pipe );
     //@extract-end
     }
 
@@ -234,7 +239,8 @@ public class CompiledExamples
     Tap sink = new Hfs( new TextLine(), "output" );
 
     // write all data as a tab delimited file, with headers
-    Tap checkpointTap = new Hfs( new TextDelimited( true, "\t" ), "checkpoint" );
+    Tap checkpointTap =
+      new Hfs( new TextDelimited( true, "\t" ), "checkpoint" );
 
     FlowDef flowDef = new FlowDef()
       .setName( "flow-name" )
@@ -375,7 +381,8 @@ public class CompiledExamples
     //@extract-start simple-join
     Fields lhsFields = new Fields( "fieldA", "fieldB" );
     Fields rhsFields = new Fields( "fieldC", "fieldD" );
-    Pipe join = new HashJoin( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
+    Pipe join =
+      new HashJoin( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
     //@extract-end
     }
 
@@ -389,8 +396,11 @@ public class CompiledExamples
 
     //@extract-start duplicate-join
     Fields common = new Fields( "url" );
-    Fields declared = new Fields( "url1", "word", "wd_count", "url2", "sentence", "snt_count" );
-    Pipe join = new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
+    Fields declared = new Fields(
+      "url1", "word", "wd_count", "url2", "sentence", "snt_count"
+    );
+    Pipe join =
+      new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
     //@extract-end
     }
 
@@ -405,7 +415,8 @@ public class CompiledExamples
     //@extract-start simple-cogroup
     Fields lhsFields = new Fields( "fieldA", "fieldB" );
     Fields rhsFields = new Fields( "fieldC", "fieldD" );
-    Pipe join = new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
+    Pipe join =
+      new CoGroup( lhs, lhsFields, rhs, rhsFields, new InnerJoin() );
     //@extract-end
     }
 
@@ -419,8 +430,11 @@ public class CompiledExamples
 
     //@extract-start duplicate-cogroup
     Fields common = new Fields( "url" );
-    Fields declared = new Fields( "url1", "word", "wd_count", "url2", "sentence", "snt_count" );
-    Pipe join = new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
+    Fields declared = new Fields(
+      "url1", "word", "wd_count", "url2", "sentence", "snt_count"
+    );
+    Pipe join =
+      new CoGroup( lhs, common, rhs, common, declared, new InnerJoin() );
     //@extract-end
     }
 
@@ -464,7 +478,8 @@ public class CompiledExamples
     Fields groupingFields = new Fields( "date" );
     Fields valueField = new Fields( "size" );
     Fields sumField = new Fields( "total-size" );
-    assembly = new SumBy( assembly, groupingFields, valueField, sumField, long.class );
+    assembly =
+      new SumBy( assembly, groupingFields, valueField, sumField, long.class );
     //@extract-end
     }
 
@@ -522,10 +537,12 @@ public class CompiledExamples
     // incoming -> first, last, age
 
     String expression = "first + \" \" + last";
+    Fields fields = new Fields( "full" );
     ExpressionFunction full =
-      new ExpressionFunction( new Fields( "full" ), expression, String.class );
+      new ExpressionFunction( fields, expression, String.class );
 
-    assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.ALL );
+    assembly =
+      new Each( assembly, new Fields( "first", "last" ), full, Fields.ALL );
 
     // outgoing -> first, last, age, full
     //@extract-end
@@ -536,10 +553,13 @@ public class CompiledExamples
     // incoming -> first, last, age
 
     String expression = "first + \" \" + last";
+    Fields fields = new Fields( "full" );
     ExpressionFunction full =
-      new ExpressionFunction( new Fields( "full" ), expression, String.class );
+      new ExpressionFunction( fields, expression, String.class );
 
-    assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.RESULTS );
+    Fields firstLast = new Fields( "first", "last" );
+    assembly =
+      new Each( assembly, firstLast, full, Fields.RESULTS );
 
     // outgoing -> full
     //@extract-end
@@ -549,9 +569,11 @@ public class CompiledExamples
     //@extract-start algebra-replace
     // incoming -> first, last, age
 
-    Identity function = new Identity( Fields.ARGS, Integer.class ); // coerce to int
+    // coerce to int
+    Identity function = new Identity( Fields.ARGS, Integer.class );
 
-    assembly = new Each( assembly, new Fields( "age" ), function, Fields.REPLACE );
+    Fields age = new Fields( "age" );
+    assembly = new Each( assembly, age, function, Fields.REPLACE );
 
     // outgoing -> first, last, age
     //@extract-end
@@ -562,10 +584,12 @@ public class CompiledExamples
     // incoming -> first, last, age
 
     String expression = "first + \" \" + last";
+    Fields fields = new Fields( "full" );
     ExpressionFunction full =
-      new ExpressionFunction( new Fields( "full" ), expression, String.class );
+      new ExpressionFunction( fields, expression, String.class );
 
-    assembly = new Each( assembly, new Fields( "first", "last" ), full, Fields.SWAP );
+    Fields firstLast = new Fields( "first", "last" );
+    assembly = new Each( assembly, firstLast, full, Fields.SWAP );
 
     // outgoing -> age, full
     //@extract-end
@@ -577,7 +601,9 @@ public class CompiledExamples
 
     RegexSplitter function = new RegexSplitter( Fields.UNKNOWN, "\t" );
 
-    assembly = new Each( assembly, new Fields( "line" ), function, Fields.RESULTS );
+    Fields fields = new Fields( "line" );
+    assembly =
+      new Each( assembly, fields, function, Fields.RESULTS );
 
     // outgoing -> unknown
     //@extract-end
@@ -633,11 +659,14 @@ public class CompiledExamples
     Pipe rhs = new Pipe( "rhs" );
 
     Fields common = new Fields( "url" );
-    Fields declared = new Fields( "url1", "word", "wd_count", "url2", "sentence", "snt_count" );
+    Fields declared = new Fields(
+      "url1", "word", "wd_count", "url2", "sentence", "snt_count"
+    );
 
     {
     //@extract-start properties-pipe
-    Pipe join = new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
+    Pipe join =
+      new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
 
     SpillableProps props = SpillableProps.spillableProps()
       .setCompressSpill( true )
@@ -649,7 +678,8 @@ public class CompiledExamples
 
     {
     //@extract-start properties-step
-    Pipe join = new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
+    Pipe join =
+      new HashJoin( lhs, common, rhs, common, declared, new InnerJoin() );
 
     SpillableProps props = SpillableProps.spillableProps()
       .setCompressSpill( true )
@@ -668,7 +698,8 @@ public class CompiledExamples
     //@extract-start subassembly-coerce
     // incoming -> first, last, age
 
-    assembly = new Coerce( assembly, new Fields( "age" ), Integer.class );
+    assembly =
+      new Coerce( assembly, new Fields( "age" ), Integer.class );
 
     // outgoing -> first, last, age
     //@extract-end
@@ -688,7 +719,8 @@ public class CompiledExamples
     //@extract-start subassembly-rename
     // incoming -> first, last, age
 
-    assembly = new Rename( assembly, new Fields( "age" ), new Fields( "years" ) );
+    assembly =
+      new Rename( assembly, new Fields( "age" ), new Fields( "years" ) );
 
     // outgoing -> first, last, years
     //@extract-end

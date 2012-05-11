@@ -17,7 +17,8 @@ import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 
 //@extract-start efficient-sum-function
-public class EfficientAddValuesFunction extends BaseOperation<Tuple> implements Function<Tuple>
+public class EfficientAddValuesFunction
+  extends BaseOperation<Tuple> implements Function<Tuple>
   {
   public EfficientAddValuesFunction()
     {
@@ -32,19 +33,19 @@ public class EfficientAddValuesFunction extends BaseOperation<Tuple> implements 
     }
 
   @Override
-  public void prepare( FlowProcess flowProcess, OperationCall<Tuple> functionCall )
+  public void prepare( FlowProcess flowProcess, OperationCall<Tuple> call )
     {
     // create a reusable Tuple of size 1
-    functionCall.setContext( Tuple.size( 1 ) );
+    call.setContext( Tuple.size( 1 ) );
     }
 
-  public void operate( FlowProcess flowProcess, FunctionCall<Tuple> functionCall )
+  public void operate( FlowProcess flowProcess, FunctionCall<Tuple> call )
     {
     // get the arguments TupleEntry
-    TupleEntry arguments = functionCall.getArguments();
+    TupleEntry arguments = call.getArguments();
 
     // get our previously created Tuple
-    Tuple result = functionCall.getContext();
+    Tuple result = call.getContext();
 
     // sum the two arguments
     int sum = arguments.getInteger( 0 ) + arguments.getInteger( 1 );
@@ -53,13 +54,13 @@ public class EfficientAddValuesFunction extends BaseOperation<Tuple> implements 
     result.set( 0, sum );
 
     // return the result Tuple
-    functionCall.getOutputCollector().add( result );
+    call.getOutputCollector().add( result );
     }
 
   @Override
-  public void cleanup( FlowProcess flowProcess, OperationCall<Tuple> functionCall )
+  public void cleanup( FlowProcess flowProcess, OperationCall<Tuple> call )
     {
-    functionCall.setContext( null );
+    call.setContext( null );
     }
   }
 //@extract-end
