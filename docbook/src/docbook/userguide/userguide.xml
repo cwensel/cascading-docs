@@ -12,9 +12,11 @@
       xmlns:ns3="http://www.w3.org/2000/svg"
       xmlns:ns="http://docbook.org/ns/docbook">
   <info>
-    <title>Cascading 2 - User Guide</title>
+    <title>Cascading 2 User Guide</title>
 
-    <pubdate>April, 2012</pubdate>
+    <releaseinfo/>
+
+    <pubdate>May 2012</pubdate>
 
     <copyright>
       <year>2007-2012</year>
@@ -22,13 +24,11 @@
       <holder>Concurrent, Inc.</holder>
     </copyright>
 
-    <releaseinfo>2</releaseinfo>
-
     <productname>Cascading</productname>
 
     <authorgroup>
       <author>
-        <orgname>Concurrent, Inc.</orgname>
+        <personname>Concurrent, Inc.</personname>
       </author>
     </authorgroup>
 
@@ -468,10 +468,10 @@
               (such as "firstname" or "birthdate"), integers (for the field
               position, starting at <code>0</code> for the first position, or
               starting at <code>-1</code> for the last position), or one of
-              the predefined "Fields sets" (such as <code>Fields.ALL</code>,
-              which selects all values in the Tuple, like an asterisk in SQL).
-              For more on Fields sets, see <xref
-              linkend="field-algebra"/>).</para>
+              the predefined <emphasis role="italic">Fields sets</emphasis>
+              (such as <code>Fields.ALL</code>, which selects all values in
+              the Tuple, like an asterisk in SQL). For more on Fields sets,
+              see <xref linkend="field-algebra"/>).</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -557,11 +557,11 @@
               same fields.</para>
 
               <para>A <classname>Merge</classname> accepts two or more streams
-              that have identical fields, and outputs a single stream of
-              tuples (in arbitrary order) that contains all the tuples from
-              all the specified input streams. Thus a Merge is just a mingling
-              of all the tuples from the input streams, as if shuffling
-              multiple card decks into one.</para>
+              that have identical fields, and emits a single stream of tuples
+              (in arbitrary order) that contains all the tuples from all the
+              specified input streams. Thus a Merge is just a mingling of all
+              the tuples from the input streams, as if shuffling multiple card
+              decks into one.</para>
 
               <para>Use <classname>Merge</classname> when no grouping is
               required (i.e., no aggregator or buffer operations will be
@@ -613,15 +613,15 @@
               averaging field values within each group. Thus the
               <classname>Every</classname> class is only for use on the output
               of <classname>GroupBy</classname> or
-              <classname>CoGroup</classname>, and can not be used with the
+              <classname>CoGroup</classname>, and cannot be used with the
               output of <classname>Each</classname>,
               <classname>Merge</classname>, or
               <classname>HashJoin</classname>.</para>
 
-              <para>An <classname>Every</classname> may follow another
-              <classname>Every</classname> instance so that
-              <classname>Aggregator</classname> operations can be chained,
-              this is not true for <classname>Buffer</classname>
+              <para>An <classname>Every</classname> instance may follow
+              another <classname>Every</classname> instance, so
+              <classname>Aggregator</classname> operations can be chained.
+              This is not true for <classname>Buffer</classname>
               operations.</para>
             </listitem>
           </varlistentry>
@@ -638,9 +638,10 @@
               more streams) and custom joins. Null fields in the input streams
               become corresponding null fields in the output stream.</para>
 
-              <para>The resulting output stream will contain fields from all
-              the input streams. If there are any duplicate field names as a
-              result of the join, they must be renamed.</para>
+              <para>The resulting output stream contains fields from all the
+              input streams. If the streams contain any field names in common,
+              they must be renamed to avoid duplicate field names in the
+              resulting tuples.</para>
             </listitem>
           </varlistentry>
 
@@ -649,7 +650,7 @@
 
             <listitem>
               <para><classname>HashJoin</classname> performs a join on two or
-              more streams, similar to a SQL join, and outputs a single stream
+              more streams, similar to a SQL join, and emits a single stream
               in arbitrary order. As with SQL, the join can be inner, outer,
               left, or right. Self-joins are permitted, as well as mixed joins
               (for three or more streams) and custom joins. Null fields in the
@@ -674,13 +675,13 @@
           <title>Comparison of pipe types</title>
 
           <tgroup cols="4">
-            <colspec colname="c1" colnum="1" colwidth="124px"/>
+            <colspec colname="c1" colnum="1" colwidth="100px"/>
 
-            <colspec colname="c2" colnum="2" colwidth="1.05*"/>
+            <colspec colname="c2" colnum="2"/>
 
-            <colspec colname="c3" colnum="3" colwidth="1*"/>
+            <colspec colname="c3" colnum="3"/>
 
-            <colspec colname="c4" colnum="4" colwidth="2.36*"/>
+            <colspec colname="c4" colnum="4"/>
 
             <tbody>
               <row>
@@ -825,7 +826,7 @@
         <para>The key difference between <classname>Each</classname> and
         <classname>Every</classname> is that the <classname>Each</classname>
         operates on individual tuples, and <classname>Every</classname>
-        operates on groups of tuples output by <classname>GroupBy</classname>
+        operates on groups of tuples emitted by <classname>GroupBy</classname>
         or <classname>CoGroup</classname>. This affects the kind of operations
         that these two pipes can perform, and the kind of output they produce
         as a result.</para>
@@ -846,7 +847,7 @@
         <classname>GroupBy</classname> to group the output of the above
         <classname>Each</classname> pipe by date, then use an
         <classname>Every</classname> pipe to count the GET requests per date.
-        The pipe could then output the operation results as the date and count
+        The pipe would then emit the operation results as the date and count
         for each group.</para>
 
         <mediaobject>
@@ -862,7 +863,7 @@
         </mediaobject>
 
         <para>In the syntax shown at the start of this section, the <emphasis
-        role="italic">argument selector </emphasis> specifies fields from the
+        role="italic">argument selector</emphasis> specifies fields from the
         input tuple to use as input values. If the argument selector is not
         specified, the whole input tuple (<code>Fields.ALL</code>) is passed
         to the operation as a set of argument values.</para>
@@ -976,7 +977,7 @@
         <title>Merge</title>
 
         <para>The <classname>Merge</classname> pipe is very simple. It accepts
-        two or more streams that have the same fields, and outputs a single
+        two or more streams that have the same fields, and emits a single
         stream containing all the tuples from all the input streams. Thus a
         merge is just a mingling of all the tuples from the input streams, as
         if shuffling multiple card decks into one. Note that the output of
@@ -1070,13 +1071,13 @@
         <title>CoGroup</title>
 
         <para>The <classname>CoGroup</classname> pipe is similar to
-        <classname>GroupBy</classname>, but instead of a "merge", performs a
-        "join". That is, <classname>CoGroup</classname> accepts two or more
+        <classname>GroupBy</classname>, but instead of a merge, performs a
+        join. That is, <classname>CoGroup</classname> accepts two or more
         input streams and groups them on one or more specified keys, and
-        performs a join operation on equal keys values, similar to a SQL
+        performs a join operation on equal key values, similar to a SQL
         join.</para>
 
-        <para>The output stream will contain all the fields from all the input
+        <para>The output stream contains all the fields from all the input
         streams.</para>
 
         <para>As with SQL, the join can be inner, outer, left, or right.
@@ -1213,8 +1214,8 @@
           containing <code>null</code> values for the non-existent
           tuple.</para>
 
-          <para>The following sample data will help explain and compare the
-          different types of join</para>
+          <para>This sample data is used in the discussion below to explain
+          and compare the different types of join:</para>
 
           <para><programlisting>LHS = [0,a] [1,b] [2,c]
             RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below,
@@ -1310,14 +1311,14 @@
         <title>HashJoin</title>
 
         <para><classname>HashJoin</classname> performs a join (similar to a
-        SQL join) on two or more streams, and outputs a stream of tuples that
-        will contain fields from all of the input streams. With a join, the
-        tuples in the different input streams do not typically contain the
-        same set of fields.</para>
+        SQL join) on two or more streams, and emits a stream of tuples that
+        contain fields from all of the input streams. With a join, the tuples
+        in the different input streams do not typically contain the same set
+        of fields.</para>
 
         <para>As with <classname>CoGroup</classname>, the fieldnames must all
         be unique, including the names of the key fields, to avoid duplicate
-        field names in the output <classname>Tuple</classname>. If necessary,
+        field names in the emitted <classname>Tuple</classname>. If necessary,
         use the <parameter>declaredFields</parameter> argument to specify
         unique field names for the output.</para>
 
@@ -1349,16 +1350,15 @@
           to no more than one large stream.</para>
 
           <para>Unlike <classname>CoGroup</classname>,
-          <classname>HashJoin</classname> attempts to keep the entirety of the
-          right-hand streams in memory for rapid comparison (not just the
+          <classname>HashJoin</classname> attempts to keep the entire
+          right-hand stream in memory for rapid comparison (not just the
           current grouping, as no grouping is performed for a
           <classname>HashJoin</classname>). Thus a very large tuple stream in
           the right-hand stream may exceed a configurable spill-to-disk
           threshold, reducing performance and potentially causing a memory
-          error. For this reason, it's advisable to use the stream with
-          smaller tuple groups on the right-hand side. Additionally, it may
-          help to adjust the spill threshold as described in the
-          Javadoc.</para>
+          error. For this reason, it's advisable to use the smaller stream on
+          the right-hand side. Additionally, it may be helpful to adjust the
+          spill threshold as described in the Javadoc.</para>
 
           <para>Due to the potential difficulties of using
           <classname>HashJoin</classname> (as compared to the slower but much
@@ -1371,27 +1371,30 @@
         <title>Setting Custom Pipe Properties</title>
 
         <para>By default, the properties passed to a FlowConnector subclass
-        become the defaults for every Flow instance created by the
-        FlowConnector. In the past, if different Flow instances need different
-        properties a new FlowConnector would need to be created. It is now
-        possible to set properties at the Pipe scope and at the process
-        FlowStep scope.</para>
+        become the defaults for every Flow instance created by that
+        FlowConnector. In the past, if some of the Flow instances needed
+        different properties, it was necessary to create additional
+        FlowConnectors to set those properties. However, it is now possible to
+        set properties at the Pipe scope and at the process FlowStep
+        scope.</para>
 
-        <para>The Pipe scope lets a developer set a property only visible to a
-        given Pipe instance (and its child Operation). This allows Operations,
-        like custom Functions, to be dynamically configured.</para>
+        <para>Setting properties at the Pipe scope lets you set a property
+        that is only visible to a given Pipe instance (and its child
+        Operation). This allows Operations such as custom Functions to be
+        dynamically configured.</para>
 
-        <para>More importantly, the process FlowStep scope allows properties
-        to be set on a Pipe that are inherited by the underlying process
-        during runtime. For Apache Hadoop, using the HadoopFlowConnector, a
-        FlowStep is the current MapReduce job. That is, a Hadoop specific
-        property can be set on a Pipe, like a CoGroup. During runtime, the
-        FlowStep (MapReduce job) that CoGroup executes in will be configured
-        with the given property. For example, a spill threshold, or the number
-        of reducer tasks for Hadoop to deploy.</para>
+        <para>More importantly, setting properties at the process FlowStep
+        scope allows you to set properties on a Pipe that are inherited by the
+        underlying process during runtime. When running on the Apache Hadoop
+        platform (i.e., when using the HadoopFlowConnector), a FlowStep is the
+        current MapReduce job. Thus a Hadoop-specific property can be set on a
+        Pipe, such as a CoGroup. During runtime, the FlowStep (MapReduce job)
+        that the CoGroup executes in is configured with the given property -
+        for example, a spill threshold, or the number of reducer tasks for
+        Hadoop to deploy.</para>
 
         <para>The following code samples demonstrates the basic form for both
-        Pipe and FlowStep scope.</para>
+        the Pipe scope and the process FlowStep scope.</para>
 
         <example>
           <title>Pipe Scope</title>
@@ -1408,12 +1411,12 @@
     </section>
 
     <section>
-      <title>Platforms</title>
+      <title xreflabel="Platforms" xml:id="platforms">Platforms</title>
 
-      <para>Cascading supports pluggable planners that allow it to execute on
-      differing platforms. Currently only two planners are provided and are
-      invoked by an associated <classname>FlowConnector</classname>
-      subclass.</para>
+      <para linkend="platforms">Cascading supports pluggable planners that
+      allow it to execute on differing platforms. Planners are invoked by an
+      associated <classname>FlowConnector</classname> subclass. Currently,
+      only two planners are provided, as described below:</para>
 
       <para><variablelist>
           <varlistentry>
@@ -1428,16 +1431,15 @@
               custom <classname>Tap</classname> and
               <classname>Scheme</classname> classes.</para>
 
-              <para>The local mode planner and platform was not designed to
-              scale beyond available memory, cpu or disk on the current
-              machine. Thus any memory intensive processes using
+              <para>The local mode planner and platform were not designed to
+              scale beyond available memory, CPU, or disk on the current
+              machine. Thus any memory-intensive processes that use
               <classname>GroupBy</classname>, <classname>CoGroup</classname>,
               or <classname>HashJoin</classname> are likely to fail against
-              reasonably large files.</para>
+              moderately large files.</para>
 
-              <para>This still leaves local mode useful for development,
-              testing, and interactive data exploration against sample
-              sets.</para>
+              <para>Local mode is useful for development, testing, and
+              interactive data exploration against sample sets.</para>
             </listitem>
           </varlistentry>
 
@@ -1452,14 +1454,14 @@
               large data sets over a cluster of computing nodes.</para>
             </listitem>
           </varlistentry>
-        </variablelist> Keep in mind the different planners allows a pipe
-      assembly to be executed on an arbitrary platform. But each platform has
-      platform specific Tap and Scheme classes. Tap and Scheme are designed to
-      hide the details of IO for a particular platform. For example, Hadoop
-      uses an <classname>org.apache.hadoop.mapred.InputFormat</classname> to
-      read data, but local mode is happy with a
+        </variablelist>Cascading's support for pluggable planners allows a
+      pipe assembly to be executed on an arbitrary platform, using
+      platform-specific Tap and Scheme classes that hide the platform-related
+      I/O details from the developer. For example, Hadoop uses
+      <classname>org.apache.hadoop.mapred.InputFormat</classname> to read
+      data, but local mode is happy with a
       <classname>java.io.FileInputStream</classname>. This detail is hidden
-      from the developer unless they are creating custom Tap and Scheme
+      from developers unless they are creating custom Tap and Scheme
       classes.</para>
     </section>
 
@@ -1498,8 +1500,8 @@
               platform used. The first field is either the byte offset or line
               number, and the second field is the actual line of text. When
               written to, all Tuple values are converted to Strings delimited
-              with the TAB character (\t). There is a TextLine scheme for both
-              the local and Hadoop modes.</para>
+              with the TAB character (\t). A TextLine scheme is provided for
+              both the local and Hadoop modes.</para>
             </listitem>
           </varlistentry>
 
@@ -1514,7 +1516,7 @@
               character delimiter. This Scheme can optionally handle quoted
               values with custom quote characters. Further, TextDelimited can
               coerce each value to a primitive type when reading a text file.
-              There is a TextDelimited scheme for both the local and Hadoop
+              A TextDelimited scheme is provided for both the local and Hadoop
               modes.</para>
             </listitem>
           </varlistentry>
@@ -1537,15 +1539,16 @@
 
             <listitem>
               <para>Like the SequenceFile Scheme, WritableSequenceFile is
-              based on the Hadoop Sequence file but was designed to read and
-              write key and/or value Hadoop <classname>Writable</classname>
-              objects directly. This is very useful if you have sequence files
-              created by other applications. During writing (sinking),
-              specified key and/or value fields are serialized directly into
-              the sequence file. During reading (sourcing), the key and/or
-              value objects are deserialized and wrapped in a Cascading Tuple
-              object and passed to the downstream pipe assembly. This class is
-              only available when running on the Hadoop platform.</para>
+              based on the Hadoop Sequence file, but it was designed to read
+              and write key and/or value Hadoop
+              <classname>Writable</classname> objects directly. This is very
+              useful if you have sequence files created by other applications.
+              During writing (sinking), specified key and/or value fields are
+              serialized directly into the sequence file. During reading
+              (sourcing), the key and/or value objects are deserialized and
+              wrapped in a Cascading Tuple object and passed to the downstream
+              pipe assembly. This class is only available when running on the
+              Hadoop platform.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -1571,11 +1574,11 @@
             <title>Platform-specific tap scheme classes</title>
 
             <tgroup cols="3">
-              <colspec colname="c1" colnum="1" colwidth="1*"/>
+              <colspec colname="c1" colnum="1"/>
 
-              <colspec colname="c2" colnum="2" colwidth="1.04*"/>
+              <colspec colname="c2" colnum="2"/>
 
-              <colspec colname="c3" colnum="3" colwidth="1.48*"/>
+              <colspec colname="c3" colnum="3"/>
 
               <tbody>
                 <row>
@@ -1591,34 +1594,40 @@
                 <row>
                   <entry>Read lines of text</entry>
 
-                  <entry><classname>cascading.scheme.local.TextLine</classname></entry>
+                  <entry><classname>cascading.scheme.
+                  local.TextLine</classname></entry>
 
-                  <entry><classname>cascading.scheme.hadoop.TextLine</classname></entry>
+                  <entry><classname>cascading.scheme.
+                  hadoop.TextLine</classname></entry>
                 </row>
 
                 <row>
                   <entry>Read delimited text (CSV, TSV, etc)</entry>
 
-                  <entry><classname>cascading.scheme.local.TextDelimited</classname></entry>
+                  <entry><classname>cascading.scheme.
+                  local.TextDelimited</classname></entry>
 
-                  <entry><classname>cascading.scheme.hadoop.TextDelimited</classname></entry>
+                  <entry><classname>cascading.scheme.
+                  hadoop.TextDelimited</classname></entry>
                 </row>
 
                 <row>
                   <entry>Cascading proprietary efficient binary</entry>
 
-                  <entry><classname/></entry>
+                  <entry/>
 
-                  <entry><classname>cascading.scheme.hadoop.SequenceFile</classname></entry>
+                  <entry><classname>cascading.scheme.
+                  hadoop.SequenceFile</classname></entry>
                 </row>
 
                 <row>
                   <entry>External Hadoop application binary (custom
                   <classname>Writable</classname> type)</entry>
 
-                  <entry><classname/></entry>
+                  <entry/>
 
-                  <entry><classname>cascading.scheme.hadoop.WritableSequenceFile</classname></entry>
+                  <entry><classname>cascading.scheme.hadoop.
+                  WritableSequenceFile</classname></entry>
                 </row>
               </tbody>
             </tgroup>
@@ -1752,13 +1761,13 @@
             <title>Platform-specific details for setting file system</title>
 
             <tgroup cols="4">
-              <colspec colname="c1" colwidth="1*"/>
+              <colspec colname="c1" colnum="1"/>
 
-              <colspec colname="c2" colwidth="3.31*"/>
+              <colspec colname="c2" colnum="2"/>
 
-              <colspec colname="c3" colnum="3" colwidth="3.2*"/>
+              <colspec colname="c3" colnum="3"/>
 
-              <colspec colname="c4" colnum="4" colwidth="3.77*"/>
+              <colspec colname="c4" colnum="4"/>
 
               <tbody>
                 <row>
@@ -1779,15 +1788,18 @@
 
                   <entry/>
 
-                  <entry><classname>cascading.tap.local.FileTap</classname></entry>
+                  <entry><classname>cascading.tap.
+                  local.FileTap</classname></entry>
 
-                  <entry><classname>cascading.tap.hadoop.Hfs</classname></entry>
+                  <entry><classname>cascading.tap.
+                  hadoop.Hfs</classname></entry>
                 </row>
 
                 <row>
                   <entry>Multiple Taps as single source</entry>
 
-                  <entry><classname>cascading.tap.MultiSourceTap</classname></entry>
+                  <entry><classname>cascading.tap.
+                  MultiSourceTap</classname></entry>
 
                   <entry/>
 
@@ -1797,7 +1809,8 @@
                 <row>
                   <entry>Multiple Taps as single sink</entry>
 
-                  <entry><classname>cascading.tap.MultiSinkTap</classname></entry>
+                  <entry><classname>cascading.tap.
+                  MultiSinkTap</classname></entry>
 
                   <entry/>
 
@@ -1811,17 +1824,19 @@
 
                   <entry/>
 
-                  <entry><classname>cascading.tap.hadoop.TemplateTap</classname></entry>
+                  <entry><classname>cascading.tap.
+                  hadoop.TemplateTap</classname></entry>
                 </row>
 
                 <row>
-                  <entry>Pattern match mulitiple files/dirs</entry>
+                  <entry>Pattern match multiple files/dirs</entry>
 
                   <entry/>
 
                   <entry/>
 
-                  <entry><classname>cascading.tap.hadoop.GlobHfs</classname></entry>
+                  <entry><classname>cascading.tap.
+                  hadoop.GlobHfs</classname></entry>
                 </row>
               </tbody>
             </tgroup>
@@ -1901,7 +1916,7 @@
       <classname>SinkMode.REPLACE</classname> will have its
       <methodname>deleteResource()</methodname> method called.</para>
 
-      <para linkend="skipping-flows">Contrarily, if a
+      <para linkend="skipping-flows">Conversely, if a
       <classname>Flow</classname> is in a <classname>Cascade</classname> and
       the <classname>Tap</classname> is set to
       <classname>SinkMode.KEEP</classname> or
@@ -2073,22 +2088,18 @@
       <classname>Every</classname> pipes and Functions, Aggregators, and
       Buffers.</para>
 
-      <figure>
-        <title>Operations and Field-processing</title>
+      <mediaobject xreflabel="Operations and Field-processing"
+                   xml:id="field-processing">
+        <imageobject role="fo">
+          <imagedata align="center" contentwidth="7in"
+                     fileref="images/field-algebra.svg"/>
+        </imageobject>
 
-        <mediaobject xreflabel="Operations and Field-processing"
-                     xml:id="field-processing">
-          <imageobject role="fo">
-            <imagedata align="center" contentwidth="7in"
-                       fileref="images/field-algebra.svg"/>
-          </imageobject>
-
-          <imageobject role="html">
-            <imagedata align="center" contentwidth="7in"
-                       fileref="images/field-algebra.png"/>
-          </imageobject>
-        </mediaobject>
-      </figure>
+        <imageobject role="html">
+          <imagedata align="center" contentwidth="7in"
+                     fileref="images/field-algebra.png"/>
+        </imageobject>
+      </mediaobject>
     </section>
 
     <section>
@@ -2097,8 +2108,8 @@
       <para>When pipe assemblies are bound to source and sink taps, a
       <classname>Flow</classname> is created. Flows are executable in the
       sense that, once they are created, they can be started and will execute
-      on the specified platform. If specified for the Hadoop platform, the
-      Flow will execute on a Hadoop cluster.</para>
+      on the specified platform. If the Hadoop platform is specified, the Flow
+      will execute on a Hadoop cluster.</para>
 
       <para>A Flow is essentially a data processing pipeline that reads data
       from sources, processes the data as defined by the pipe assembly, and
@@ -2164,7 +2175,7 @@
         <code>mapred.reduce.tasks.speculative.execution</code>, or
         <code>mapred.child.java.opts</code>.</para>
 
-        <para>One of two properties that must be set for production
+        <para>One of the two properties that must always be set for production
         applications is the application Jar class or Jar path.</para>
 
         <example>
@@ -2185,7 +2196,7 @@
         default properties, a new FlowConnector will need to be instantiated
         with those properties, or properties will need to be set on a given
         <classname>Pipe</classname> or <classname>Tap</classname> instance
-        directly via the <methodname>getConfigDef()</methodname> or
+        directly - via the <methodname>getConfigDef()</methodname> or
         <methodname>getStepConfigDef()</methodname> methods.</para>
       </section>
 
@@ -2197,11 +2208,11 @@
         <classname>Cascade</classname>, the
         <classname>Flow.isSkipFlow()</classname> method is consulted before
         calling <classname>Flow.start()</classname> on the flow. The result is
-        based on the Flow's "skip strategy". By default,
-        <methodname>isSkipFlow()</methodname> returns true if any of the sinks
-        are stale - i.e., the sinks don't exist or the resources are older
-        than the sources. However, the strategy can be changed via the
-        <classname>Flow.setFlowSkipStrategy()</classname> and
+        based on the Flow's <emphasis role="italic">skip strategy</emphasis>.
+        By default, <methodname>isSkipFlow()</methodname> returns true if any
+        of the sinks are stale - i.e., the sinks don't exist or the resources
+        are older than the sources. However, the strategy can be changed via
+        the <classname>Flow.setFlowSkipStrategy()</classname> and
         <classname>Cascade.setFlowSkipStrategy()</classname> method, which can
         be called before or after a particular <classname>Flow</classname>
         instance has been created.</para>
@@ -2338,8 +2349,9 @@
       <title>Introduction</title>
 
       <para>This section covers some of the operational mechanics of running
-      an application that uses Cascading, including building the application
-      jar file and configuring the operating mode.</para>
+      an application that uses Cascading with the Hadoop platform, including
+      building the application jar file and configuring the operating
+      mode.</para>
 
       <para>To use the <classname>HadoopFlowConnector</classname> (i.e., to
       run in Hadoop mode), Cascading requires that Apache Hadoop be installed
@@ -2352,12 +2364,13 @@
       <title xreflabel="Building" xml:id="building">Building</title>
 
       <para>Cascading ships with several jars and dependencies in the download
-      archive. Alternately, Cascading is available over Maven and Ivy through
-      the Conjars repsitory along with a number of other Cascading related
-      projects. See <link xlink:href="http://conjars.org/">http://conjars.org
-      </link> for more information.</para>
+      archive. Alternatively, Cascading is available over Maven and Ivy
+      through the Conjars repository, along with a number of other
+      Cascading-related projects. See <link
+      xlink:href="http://conjars.org/">http://conjars.org </link> for more
+      information.</para>
 
-      <para>The core Cascading artifacts including the following:</para>
+      <para>The core Cascading artifacts include the following:</para>
 
       <variablelist>
         <varlistentry>
@@ -2498,11 +2511,11 @@
 
       <para>So far we've talked about setting up sources and sinks, shaping
       the data streams, referencing the data fields, and so on. Within this
-      Pipe framework, Operations are used to act upon the data - alter it,
-      filter it, analyze it, and so on. You can use the standard Operations in
-      the Cascading library to create powerful and robust applications by
-      combining them in chains (much like Unix operations such as
-      <command>sed</command>, <command>grep</command>,
+      Pipe framework, Operations are used to act upon the data - e.g., alter
+      it, filter it, analyze it, or transform it. You can use the standard
+      Operations in the Cascading library to create powerful and robust
+      applications by combining them in chains (much like Unix operations such
+      as <command>sed</command>, <command>grep</command>,
       <command>sort</command>, <command>uniq</command>, and
       <command>awk</command>). And if you want to go further, it's also very
       simple to develop custom Operations in Cascading.</para>
@@ -2543,10 +2556,9 @@
 
       <para>During runtime, Operations actually receive arguments as one or
       more instances of the <classname>TupleEntry</classname> object. The
-      TupleEntry object holds both an instance of
-      <classname>Fields</classname> and the current
-      <classname>Tuple</classname> for which the <classname>Fields</classname>
-      object defines field names for positions in the Tuple.</para>
+      TupleEntry object holds the current <classname>Tuple</classname> and a
+      <classname>Fields</classname> object that defines field names for
+      positions within the Tuple.</para>
 
       <para>Except for <classname>Filter</classname>, all Operations must
       declare result Fields, and if the actual output does not match the
@@ -2614,7 +2626,7 @@
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - the number of input argument and declared
+      <para>Both declarations - the number of input arguments and declared
       result fields - must be done on the constructor, either by passing
       default values to the <code>super</code> constructor, or by accepting
       the values from the user via a constructor implementation.</para>
@@ -2636,9 +2648,9 @@
       might cause the planner to fail.</para>
 
       <para>This line is especially important: <programlisting>int sum = arguments.getInteger( 0 ) + arguments.getInteger( 1 );</programlisting>Note
-      that ordinal numbers were used to get argument values instead of using
-      field names. If field names had been used, the AddValuesFunction would
-      have been coupled to the incoming stream.</para>
+      that ordinal numbers, not field names, are used here to get argument
+      values. If field names had been used, the AddValuesFunction would have
+      been coupled to the incoming stream.</para>
 
       <example>
         <title>Add Values Function and Context</title>
@@ -2655,8 +2667,8 @@
       <methodname>operate()</methodname> method. This allows for a given
       instance of the Operation to be thread safe on a platform that may use
       multiple threads of execution versus multiple processes. It also allows
-      deferring initialization of complex resources until the Operation will
-      be engaged.</para>
+      deferring initialization of complex resources until the Operation is
+      engaged.</para>
 
       <para>The <methodname>prepare()</methodname> and
       <methodname>cleanup()</methodname> methods are invoked once per thread
@@ -2726,7 +2738,7 @@
       groups (the output of a <classname>GroupBy</classname> or
       <classname>CoGroup</classname> pipe), and returns zero or more result
       tuples for every group. An <classname>Aggregator</classname> may only be
-      used with an <classname>Every</classname> pipe, which may follow a
+      used with an <classname>Every</classname> pipe - which may follow a
       <classname>GroupBy</classname>, a <classname>CoGroup</classname>, or
       another <classname>Every</classname> pipe, but not an
       <classname>Each</classname>.</para>
@@ -2761,7 +2773,7 @@
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - the number of input argument and declared
+      <para>Both declarations - the number of input arguments and declared
       result fields - must be done on the constructor, either by passing
       default values to the <code>super</code> constructor, or by accepting
       the values from the user via a constructor implementation.</para>
@@ -2833,7 +2845,7 @@
       <code>Fields.UNKNOWN</code>, meaning that an unknown number of fields
       are returned in each Tuple.</para>
 
-      <para>Both declarations - the number of input argument and declared
+      <para>Both declarations - the number of input arguments and declared
       result fields - must be done on the constructor, either by passing
       default values to the <code>super</code> constructor, or by accepting
       the values from the user via a constructor implementation.</para>
@@ -2942,7 +2954,7 @@
       convert between the source data's native format and a
       <classname>cascading.tuple.Tuple</classname> instance.</para>
 
-      <para>Creating custom taps and schemes can be an involved process. If
+      <para>Creating custom taps and schemes can be an involved process. When
       using the Cascading Hadoop mode, it requires some knowledge of Hadoop
       and the Hadoop FileSystem API. If a flow needs to support a new file
       system, passing a fully-qualified URL to the <classname>Hfs</classname>
@@ -2976,55 +2988,54 @@
       the required methods. The method
       <methodname>getIdentifier()</methodname> must return a
       <classname>String</classname> that uniquely identifies the resource the
-      Tap instance is managing. Any two Tap instances with the same fully
-      qualified identifier value will be considered equal.</para>
+      Tap instance is managing. Any two Tap instances with the same
+      fully-qualified identifier value will be considered equal.</para>
 
       <para>Every Tap is presented an opportunity to set any custom properties
-      the underlying platform requires via the
-      <methodname>sourceConfInit()</methodname> and
-      <methodname>sinkConfInit()</methodname> methods. The former called when
-      a Tap is being used as a Tuple source, and the later when a Tap is a
-      Tuple sink. These methods may be called more than once with new
-      configuration objects and should be idempotent. </para>
+      the underlying platform requires, via the methods
+      <methodname>sourceConfInit()</methodname> (for a Tuple source tap) and
+      <methodname>sinkConfInit()</methodname> (for a Tuple sink tap). These
+      two methods may be called more than once with new configuration objects,
+      and should be idempotent.</para>
 
       <para>A Tap is always sourced from the
       <methodname>openForRead()</methodname> method via a
-      <classname>TupleEntryIterator</classname>. That is,
-      <methodname>openForRead()</methodname> is always called in the process
-      in which data will be read in. It is up to the Tap to return a
+      <classname>TupleEntryIterator</classname> - i.e.,
+      <methodname>openForRead()</methodname> is always called in the same
+      process that will read the data. It is up to the Tap to return a
       <classname>TupleEntryIterator</classname> that will iterate across the
-      resource returning a <classname>TupleEntry</classname> (and
-      <classname>Tuple</classname>) instance for each "record" in the
+      resource, returning a <classname>TupleEntry</classname> instance (and
+      <classname>Tuple</classname> instance) for each "record" in the
       resource. <methodname>TupleEntryIterator.close()</methodname> is always
-      called when no more entries will be read. See the
-      <classname>TupleEntrySchemeIterator</classname> Javadoc.</para>
+      called when no more entries will be read. For more on this topic, see
+      <classname>TupleEntrySchemeIterator</classname> in the Javadoc.</para>
 
-      <para>On some platforms, <methodname>openForRead()</methodname> will be
+      <para>On some platforms, <methodname>openForRead()</methodname> is
       called with a pre-instantiated Input type. Typically this Input type
       should be used instead of instantiating a new instance of the
-      appropriate type. </para>
+      appropriate type.</para>
 
       <para>In the case of the Hadoop platform, a
       <classname>RecordReader</classname> is created by Hadoop and passed to
       the Tap. This <classname>RecordReader</classname> is already configured
-      to read data from the current <classname>InputSplit</classname>. </para>
+      to read data from the current <classname>InputSplit</classname>.</para>
 
       <para>Similiarly, a Tap is always used to sink data from the
       <methodname>openForWrite()</methodname> method via the
-      <classname>TupleEntryCollector</classname>. That is,
+      <classname>TupleEntryCollector</classname>. Here again,
       <methodname>openForWrite()</methodname> is always called in the process
-      in which dat will be written in. It is up to the Tap to return a
+      in which data will be written. It is up to the Tap to return a
       <classname>TupleEntryCollector</classname> that will accept and store
       any number of <classname>TupleEntry</classname> or
-      <classname>Tuple</classname> instances for each record processed and
-      created by a given Flow.
+      <classname>Tuple</classname> instances for each record that is processed
+      or created by a given Flow.
       <methodname>TupleEntryCollector.close()</methodname> is always called
-      when no more entries will be written. See the
-      <classname>TupleEntrySchemeCollector</classname> Javadoc.</para>
+      when no more entries will be written. See
+      <classname>TupleEntrySchemeCollector</classname> in the Javadoc.</para>
 
       <para>Again, on some platforms, <methodname>openForWrite()</methodname>
       will be called with a pre-instantiated Output type. Typically this
-      Output type should be sued instead of instantiating a new instance of
+      Output type should be used instead of instantiating a new instance of
       the appropriate type.</para>
 
       <para>In the case of the Hadoop platform, an
@@ -3032,7 +3043,7 @@
       to the Tap. This <classname>OutputCollector</classname> is already
       configured to to write data to the current resource.</para>
 
-      <para>Both the <classname>TupleEntrySchemeInterator</classname> and
+      <para>Both the <classname>TupleEntrySchemeIterator</classname> and
       <classname>TupleEntrySchemeCollector</classname> should be used to hold
       any state or resources necessary to communicate with any remote
       services. For example, when connecting to a SQL database, any JDBC
@@ -3040,12 +3051,11 @@
       <methodname>close()</methodname>.</para>
 
       <para>Note that the Tap is not responsible for reading or writing data
-      to the Input or Output type. This is delegeated to the
+      to the Input or Output type. This is delegated to the
       <classname>Scheme</classname> passed on the constructor of the
-      <classname>Tap</classname>. Subsequently the
-      <classname>Scheme</classname> is responsible for configuring the
-      appropriate Input and Output types it will be readind and writing too.
-      </para>
+      <classname>Tap</classname>. Consequently, the
+      <classname>Scheme</classname> is responsible for configuring the Input
+      and Output types it will be reading and writing.</para>
     </section>
 
     <section>
@@ -3056,50 +3066,46 @@
       implement the required methods.</para>
 
       <para>A <classname>Scheme</classname> is ultimately responsible for
-      sourcing and sinking Tuples of data, subsequently it must know what
+      sourcing and sinking Tuples of data. Consequently it must know what
       <classname>Fields</classname> it presents during sourcing, and what
-      <classname>Fields</classname> it accepts during sinking. The
+      <classname>Fields</classname> it accepts during sinking. Thus the
       constructors on the base <classname>Scheme</classname> type must be set
-      with the source and sink Fields. </para>
+      with the source and sink Fields.</para>
 
-      <para>It is appropriate for a Scheme to source different Fields than
-      those it sinks. The <classname>TextLine</classname>
-      <classname>Scheme</classname> does just this. Alternately the
-      <classname>TextDelimited</classname> <classname>Scheme</classname>
-      forces the source and sink <classname>Fields</classname> to be the
-      same.</para>
+      <para>A Scheme is allowed to source different Fields than it sinks. The
+      <classname>TextLine</classname> <classname>Scheme</classname> does just
+      this. (The <classname>TextDelimited</classname>
+      <classname>Scheme</classname>, on the other hand, forces the source and
+      sink <classname>Fields</classname> to be the same.)</para>
 
       <para>The <methodname>retrieveSourceFields()</methodname> and
-      <methodname>retrieveSinkFields()</methodname> allow a custom
-      <classname>Scheme</classname> to fetch their soruce and sink
+      <methodname>retrieveSinkFields()</methodname> methods allow a custom
+      <classname>Scheme</classname> to fetch its source and sink
       <classname>Fields</classname> immediately before the planner is invoked
-      (for example, from the header of a file as is the case with
-      <classname>TextDelimited</classname>). Also the
+      - for example, from the header of a file, as is the case with
+      <classname>TextDelimited</classname>. Also the
       <methodname>presentSourceFields()</methodname> and
-      <methodname>presentSinkFields()</methodname> notify the
-      <classname>Scheme</classname> of the <classname>Fields</classname> the
-      planner is expecting the Scheme to handle (for example, to write the
-      field names as a header as is the case with
-      <classname>TextDelimited</classname>).</para>
+      <methodname>presentSinkFields()</methodname> methods notify the
+      <classname>Scheme</classname> of the <classname>Fields</classname> that
+      the planner expects the Scheme to handle - for example, to write the
+      field names as a header, as is the case with
+      <classname>TextDelimited</classname>.</para>
 
       <para>Every <classname>Scheme</classname> is presented the opportunity
-      to set any custom properties the underlying platform requires via the
-      <methodname>sourceConfInit()</methodname> and
-      <methodname>sinkConfInit()</methodname> methods.The former called when a
-      <classname>Scheme</classname> is being used as a
-      <classname>Tuple</classname> source, and the later when a
-      <classname>Scheme</classname> is a <classname>Tuple</classname> sink.
+      to set any custom properties the underlying platform requires, via the
+      methods <methodname>sourceConfInit()</methodname>(for a Tuple source
+      tap) and <methodname>sinkConfInit()</methodname> (for a Tuple sink tap).
       These methods may be called more than once with new configuration
-      objects and should be idempotent. </para>
+      objects, and should be idempotent.</para>
 
-      <para>On the Hadoop platform these methods should be used to configure
+      <para>On the Hadoop platform, these methods should be used to configure
       the appropriate
       <classname>org.apache.hadoop.mapred.InputFormat</classname> and
       <classname>org.apache.hadoop.mapred.OutputFormat</classname>.</para>
 
-      <para>A Scheme is always sourced from the
-      <methodname>source()</methodname> method, and is always sunk to from the
-      <methodname>sink()</methodname> method. </para>
+      <para>A Scheme is always sourced via the
+      <methodname>source()</methodname> method, and is always sunk to via the
+      <methodname>sink()</methodname> method.</para>
 
       <para>Prior to a <methodname>source()</methodname> or
       <methodname>sink()</methodname> call, the
@@ -3107,20 +3113,20 @@
       <methodname>sinkPrepare()</methodname> methods are called. After all
       values have been read or written, the
       s<methodname>ourceCleanup()</methodname> and
-      <methodname>sinkCleanup()</methodname> methods are called. </para>
+      <methodname>sinkCleanup()</methodname> methods are called.</para>
 
       <para>The <methodname>*Prepare()</methodname> methods allow a Scheme to
-      initialize any state necessary (for example, create a new
-      java.util.regex.Matcher instance for use against all record reads).
-      Conversely, the <methodname>*Cleanup()</methodname> methods allow for
-      clearing up any resources.</para>
+      initialize any state necessary - for example, to create a new
+      <classname>java.util.regex.Matcher</classname> instance for use against
+      all record reads). Conversely, the <methodname>*Cleanup()</methodname>
+      methods allow for clearing up any resources.</para>
 
       <para>These methods are always called in the same process space as their
       associated <methodname>source()</methodname> and
       <methodname>sink()</methodname> calls. In the case of the Hadoop
-      platform, this will likely be cluster side, unlike calls to
-      <methodname>*ConfInit()</methodname> which will likely be client side.
-      </para>
+      platform, this will likely be on the cluster side, unlike calls to
+      <methodname>*ConfInit()</methodname> which will likely be on the client
+      side.</para>
     </section>
   </chapter>
 
@@ -3397,11 +3403,11 @@
       <para>The <classname>Templatetap</classname> <classname>tap</classname>
       class provides a simple means to break large datasets into smaller sets
       based on data item values. This is commonly called partitioning or
-      "binning" the data, where each "bin" of data is named after some data
-      value(s) shared by the members of that bin. For example, this is a
-      simple way to organize log files by month and year. The
-      <classname>TemplateTap</classname> is only available in Hadoop
-      mode.</para>
+      <emphasis role="italic">binning</emphasis> the data, where each "bin" of
+      data is named after some data value(s) shared by the members of that
+      bin. For example, this is a simple way to organize log files by month
+      and year. The <classname>TemplateTap</classname> is only available in
+      Hadoop mode.</para>
 
       <xi:include href="template-tap.xml"/>
 
@@ -3417,7 +3423,7 @@
       Hadoop must still write "part" files into each bin directory, and there
       is no safe mechanism for manipulating part file names.</para>
 
-      <para>One last thing to keep in mind is whether "binning" happens during
+      <para>One last thing to keep in mind is whether binning happens during
       the Map phase or the Reduce phase. By doing a
       <classname>GroupBy</classname> on the values used to populate the
       template, binning will happen during the Reduce phase, and will likely
@@ -3436,7 +3442,7 @@
       your Mapper data to Reducers when you can compute some values on the Map
       side and combine them in the Reducer? But Combiners are limited to
       Associative and Commutative functions only, such as "sum" and "max". And
-      the process requires that the values output by the Map task must be
+      the process requires that the values emitted by the Map task must be
       serialized, sorted (which involves deserialization and comparison),
       deserialized again, and operated on - after which the results are again
       serialized and sorted. Combiners trade CPU for gains in I/O.</para>
@@ -3451,7 +3457,7 @@
 
       <para>Cascading supports a few built-in partial aggregate operations,
       including AverageBy, CountBy, and SumBy. These are actually
-      SubAssemblies, not operations, and are subclasses of the AggregateBy
+      SubAssemblies, not Operations, and are subclasses of the AggregateBy
       SubAssembly. For more on this, see the section on <xref
       linkend="aggregate-by"/>.</para>
 
@@ -3842,10 +3848,10 @@
               argument value delimited by the given pattern String. The
               behavior is similar to the <classname>RegexSplitter</classname>
               function, except that (assuming multiple matches)
-              <classname>RegexSplitter</classname> outputs a single tuple that
+              <classname>RegexSplitter</classname> emits a single tuple that
               may contain multiple values, and
-              <classname>RegexSplitGenerator</classname> outputs multiple
-              tuples that each contain only one value, as does
+              <classname>RegexSplitGenerator</classname> emits multiple tuples
+              that each contain only one value, as does
               <classname>RegexGenerator</classname>.</para>
             </listitem>
           </varlistentry>
@@ -3954,7 +3960,7 @@
             <listitem>
               <para>Similar to XPathParser, the
               <classname>cascading.operation.xml.XPathGenerator</classname>
-              function outputs a new <classname>Tuple</classname> for every
+              function emits a new <classname>Tuple</classname> for every
               <classname>Node</classname> returned by the given XPath
               expression from the XML in the current Tuple.</para>
             </listitem>
@@ -4283,7 +4289,7 @@
       implementations like <classname>AverageBy</classname> or
       <classname>CountBy</classname>.</para>
 
-      <para>Generally the AggregateBy class is used to compose multiple
+      <para>Generally the AggregateBy class is used to combine multiple
       AggregateBy subclasses into a single Pipe.</para>
 
       <example>
@@ -4301,9 +4307,9 @@
 
         <para>The <classname>cascading.pipe.assembly.AverageBy</classname>
         SubAssembly performs an average over the given
-        <code>valueFields</code> and is returned in the
-        <code>averageField</code> field. AverageBy may be composed with other
-        AggregatBy subclasses so they may be executed simultaneously over the
+        <code>valueFields</code> and returns the result in the
+        <code>averageField</code> field. AverageBy may be combined with other
+        AggregateBy subclasses so they may be executed simultaneously over the
         same grouping.</para>
 
         <example>
@@ -4318,9 +4324,9 @@
 
         <para>The <classname>cascading.pipe.assembly.CountBy</classname>
         SubAssembly performs a count over the given
-        <code>groupingFields</code> and is returned in the
-        <code>countField</code> field. CountBy may be composed with other
-        AggregatBy subclasses so they may be executed simultaneously over the
+        <code>groupingFields</code> and returns the result in the
+        <code>countField</code> field. CountBy may be combined with other
+        AggregateBy subclasses so they may be executed simultaneously over the
         same grouping.</para>
 
         <example>
@@ -4334,9 +4340,9 @@
         <title xml:id="SumBy">SumBy</title>
 
         <para>The <classname>cascading.pipe.assembly.SumBy</classname>
-        SubAssembly performs an sum over the given <code>valueFields</code>
-        and is returned in the <code>sumField</code> field. SumBy may be
-        composed with other AggregatBy subclasses so they may be executed
+        SubAssembly performs a sum over the given <code>valueFields</code> and
+        returns the result in the <code>sumField</code> field. SumBy may be
+        combined with other AggregateBy subclasses so they may be executed
         simultaneously over the same grouping.</para>
 
         <example>
@@ -4352,7 +4358,7 @@
 
       <para>The <classname>cascading.pipe.assembly.SumBy</classname>
       SubAssembly is used to coerce a set of values from one type to another
-      type. For example, to convert the field <code>age</code> from a
+      type - for example, to convert the field <code>age</code> from a
       <classname>String</classname> to an
       <classname>Integer</classname>.</para>
 
@@ -4368,7 +4374,7 @@
 
       <para>The <classname>cascading.pipe.assembly.Discard</classname>
       SubAssembly is used to shape the Tuple stream by discarding all fields
-      given on the constructor. All fields not listed will be retained.</para>
+      given on the constructor. All fields not listed are retained.</para>
 
       <example>
         <title>Using Discard</title>
@@ -4381,7 +4387,7 @@
       <title>Rename</title>
 
       <para>The <classname>cascading.pipe.assembly.Rename</classname>
-      SubAssembly is used to rename a given field to another value.</para>
+      SubAssembly is used to rename a field.</para>
 
       <example>
         <title>Using Rename</title>
@@ -4395,8 +4401,7 @@
 
       <para>The <classname>cascading.pipe.assembly.Retain</classname>
       SubAssembly is used to shape the Tuple stream by retaining all fields
-      given on the constructor. All fields not listed will be
-      discarded.</para>
+      given on the constructor. All fields not listed are discarded.</para>
 
       <example>
         <title>Using Retain</title>
@@ -4409,10 +4414,11 @@
       <title>Unique</title>
 
       <para>The <classname>cascading.pipe.assembly.Unique</classname>
-      SubAssembly is used to remove duplicate values in a Tuple stream. The
-      values compared are from the <code>uniqueFields</code>, thus to find all
-      distinct Tuples in a Tuple stream, use <classname>Fields.ALL
-      </classname> as the <code>uniqueFields</code>.</para>
+      SubAssembly is used to remove duplicate values in a Tuple stream.
+      Uniqueness is determined by the values of all fields listed in
+      <code>uniqueFields</code>. Thus to find all distinct Tuples in a Tuple
+      stream, use <classname>Fields.ALL</classname> as the
+      <code>uniqueFields</code> argument.</para>
 
       <example>
         <title>Using Unique</title>
@@ -4523,7 +4529,7 @@
     <section>
       <title>Java Operators in Field Names</title>
 
-      <para>There are a few of Operations in Cascading (e.g.,
+      <para>There are a few Operations in Cascading (e.g.,
       <classname>ExpressionFunction</classname> and
       <classname>ExpressionFilter</classname>) that compile and apply Java
       expressions on the fly. In these expressions, Operation argument field
@@ -4760,7 +4766,7 @@
       default, Hadoop and Cascading use the native
       <classname>Object</classname> methods <methodname>equals()</methodname>
       and <methodname>hashCode()</methodname> to compare two values and get a
-      consistent hash code for a give value, respectively.</para>
+      consistent hash code for a given value, respectively.</para>
 
       <para>To override this default behavior, you can create a custom
       <classname>java.util.Comparator</classname> class to perform comparisons
@@ -4788,7 +4794,7 @@
 
   <chapter>
     <info>
-      <title>CookBook</title>
+      <title>Cookbook</title>
     </info>
 
     <para>This chapter demonstrates some common idioms used in Cascading
@@ -4991,8 +4997,8 @@
       can be executed on a Hadoop cluster.</para>
 
       <para>All this happens behind the scenes - as does the scheduling of the
-      individual MapReduce jobs, as well as the cleanup of intermediate data
-      sets that bind the jobs together.</para>
+      individual MapReduce jobs, and the cleanup of intermediate data sets
+      that bind the jobs together.</para>
 
       <para><inlinemediaobject>
           <imageobject role="fo">
