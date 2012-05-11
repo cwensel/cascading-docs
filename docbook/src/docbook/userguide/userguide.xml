@@ -1218,14 +1218,13 @@
           and compare the different types of join:</para>
 
           <para><programlisting>LHS = [0,a] [1,b] [2,c]
-            RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below,
-          the values are joined on the first position, a numeric value. Note
-          that, when Cascading joins tuples, the resulting
-          <classname>Tuple</classname> contains all the incoming values, and
-          does not discard the duplicate key fields. As mentioned above, on
-          outer joins where there is no equivalent key in the alternate
-          stream, <code>null</code> values are used as placeholders.
-          <variablelist>
+RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
+          are joined on the first position, a numeric value. Note that, when
+          Cascading joins tuples, the resulting <classname>Tuple</classname>
+          contains all the incoming values, and does not discard the duplicate
+          key fields. As mentioned above, on outer joins where there is no
+          equivalent key in the alternate stream, <code>null</code> values are
+          used as placeholders. <variablelist>
               <varlistentry>
                 <term>InnerJoin</term>
 
@@ -1605,21 +1604,17 @@
                 <row>
                   <entry>Read lines of text</entry>
 
-                  <entry><classname>cascading.scheme.
-                  local.TextLine</classname></entry>
+                  <entry><classname>cascading.scheme.local.TextLine</classname></entry>
 
-                  <entry><classname>cascading.scheme.
-                  hadoop.TextLine</classname></entry>
+                  <entry><classname>cascading.scheme.hadoop.TextLine</classname></entry>
                 </row>
 
                 <row>
                   <entry>Read delimited text (CSV, TSV, etc)</entry>
 
-                  <entry><classname>cascading.scheme.
-                  local.TextDelimited</classname></entry>
+                  <entry><classname>cascading.scheme.local.TextDelimited</classname></entry>
 
-                  <entry><classname>cascading.scheme.
-                  hadoop.TextDelimited</classname></entry>
+                  <entry><classname>cascading.scheme.hadoop.TextDelimited</classname></entry>
                 </row>
 
                 <row>
@@ -1627,8 +1622,7 @@
 
                   <entry/>
 
-                  <entry><classname>cascading.scheme.
-                  hadoop.SequenceFile</classname></entry>
+                  <entry><classname>cascading.scheme.hadoop.SequenceFile</classname></entry>
                 </row>
 
                 <row>
@@ -1637,8 +1631,7 @@
 
                   <entry/>
 
-                  <entry><classname>cascading.scheme.hadoop.
-                  WritableSequenceFile</classname></entry>
+                  <entry><classname>cascading.scheme.hadoop.WritableSequenceFile</classname></entry>
                 </row>
               </tbody>
             </tgroup>
@@ -3378,7 +3371,7 @@
       header file on the <classname>TextDelimited</classname> constructor.
       Finally the <classname>Tap</classname> is bound to the
       <classname>Checkpoint</classname> <classname>Pipe</classname> using the
-      <classname>FlowDef</classname>. </para>
+      <classname>FlowDef</classname>.</para>
     </section>
 
     <section>
