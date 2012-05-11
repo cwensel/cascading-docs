@@ -1364,6 +1364,17 @@
           <classname>HashJoin</classname> (as compared to the slower but much
           more reliable <classname>CoGroup</classname>), developers should
           thoroughly understand this class before attempting to use it.</para>
+
+          <para>Frequently the <classname>HashJoin</classname> is fed a
+          filtered down stream of Tuples from what was originally a very large
+          file. To prevent the large file from being replicated throughout a
+          cluster, when running in Hadoop mode, use a
+          <classname>Checkpoint</classname> pipe at the point where the data
+          has been filtered down to its smallest before it is streamed into a
+          <classname>HashJoin</classname>. This will force the Tuple stream to
+          be persisted to disk and new <classname>FlowStep</classname>
+          (MapReduce job) to be created to read the smaller data size more
+          efficiently.</para>
         </section>
       </section>
 
@@ -1730,9 +1741,8 @@
               <para>The
               <classname>cascading.tap.hadoop.TemplateTap</classname> is used
               to sink tuples into directory paths based on the values in the
-              Tuple. More can be read below in <xref linkend="template-tap"/>.
-              This tap is only available when running on the Hadoop
-              platform.</para>
+              Tuple. More can be read below in <xref
+              linkend="template-tap"/>.</para>
             </listitem>
           </varlistentry>
 
@@ -1788,18 +1798,15 @@
 
                   <entry/>
 
-                  <entry><classname>cascading.tap.
-                  local.FileTap</classname></entry>
+                  <entry><classname>cascading.tap.local.FileTap</classname></entry>
 
-                  <entry><classname>cascading.tap.
-                  hadoop.Hfs</classname></entry>
+                  <entry><classname>cascading.tap.hadoop.Hfs</classname></entry>
                 </row>
 
                 <row>
                   <entry>Multiple Taps as single source</entry>
 
-                  <entry><classname>cascading.tap.
-                  MultiSourceTap</classname></entry>
+                  <entry><classname>cascading.tap.MultiSourceTap</classname></entry>
 
                   <entry/>
 
@@ -1809,8 +1816,7 @@
                 <row>
                   <entry>Multiple Taps as single sink</entry>
 
-                  <entry><classname>cascading.tap.
-                  MultiSinkTap</classname></entry>
+                  <entry><classname>cascading.tap.MultiSinkTap</classname></entry>
 
                   <entry/>
 
@@ -1822,10 +1828,9 @@
 
                   <entry/>
 
-                  <entry/>
+                  <entry><classname>cascading.tap.local.TemplateTap</classname></entry>
 
-                  <entry><classname>cascading.tap.
-                  hadoop.TemplateTap</classname></entry>
+                  <entry><classname>cascading.tap.hadoop.TemplateTap</classname></entry>
                 </row>
 
                 <row>
@@ -1835,8 +1840,7 @@
 
                   <entry/>
 
-                  <entry><classname>cascading.tap.
-                  hadoop.GlobHfs</classname></entry>
+                  <entry><classname>cascading.tap.hadoop.GlobHfs</classname></entry>
                 </row>
               </tbody>
             </tgroup>
@@ -3336,6 +3340,48 @@
     </section>
 
     <section>
+      <title>Checkpointing</title>
+
+      <para>New to Cascading 2, and only supported by the Hadoop planner, is
+      the ability to "checkpoint" data within a Flow by using the
+      <classname>cascading.pipe.Checkpoing</classname>
+      <classname>Pipe</classname>. That is, a Tuple stream can be persisted to
+      disk at most any arbitrary point. Doing so forces a new FlowStep
+      (MapReduce job when using Hadoop) after the checkpoint position.</para>
+
+      <para>By default the checkpoint is anonymous and is cleaned up
+      immediately after the Flow completes. This feature is useful when used
+      in conjunction with a HashJoin where the small side of the join starts
+      out extremely large but if filtered down to fit into memory before being
+      read into the HashJoin. By forcing a checkpoint before the HashJoin,
+      only the small filtered version of the data is replicated over the
+      cluster. Without the checkpoint, it is likely the full unfiltered file
+      will be replicated to every node the FlowStep is executing.</para>
+
+      <para>Alternately, checkpointing is useful for debugging when used with
+      a checkpoint Tap. Where the Tap has specified a TextDelimited Scheme
+      without any declared Fields.</para>
+
+      <example>
+        <title>Adding a Checkpoint</title>
+
+        <xi:include href="checkpoint-flow.xml"/>
+      </example>
+
+      <para>As can be seen above, we instantiate a new
+      <classname>Checkpoint</classname> tap by passing it the previous
+      <classname>Every</classname> <classname>Pipe</classname>. This will be
+      the point at which data is persisted. Since we wish to keep the data
+      after the <classname>Flow</classname> has completed, we create a
+      <code>checkpointTap</code> that saves the data as a TAB delimited text
+      file. We also specify that field names should be written out into a
+      header file on the <classname>TextDelimited</classname> constructor.
+      Finally the <classname>Tap</classname> is bound to the
+      <classname>Checkpoint</classname> <classname>Pipe</classname> using the
+      <classname>FlowDef</classname>. </para>
+    </section>
+
+    <section>
       <title>Event Handling</title>
 
       <para>Each Flow has the ability to execute callbacks via an event
@@ -3400,14 +3446,13 @@
       <title xreflabel="Template Taps" xml:id="template-tap">Template
       taps</title>
 
-      <para>The <classname>Templatetap</classname> <classname>tap</classname>
+      <para>The <classname>TemplateTap</classname> <classname>Tap</classname>
       class provides a simple means to break large datasets into smaller sets
       based on data item values. This is commonly called partitioning or
       <emphasis role="italic">binning</emphasis> the data, where each "bin" of
       data is named after some data value(s) shared by the members of that
       bin. For example, this is a simple way to organize log files by month
-      and year. The <classname>TemplateTap</classname> is only available in
-      Hadoop mode.</para>
+      and year.</para>
 
       <xi:include href="template-tap.xml"/>
 

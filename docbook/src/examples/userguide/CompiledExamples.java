@@ -22,6 +22,7 @@ import cascading.operation.Insert;
 import cascading.operation.expression.ExpressionFunction;
 import cascading.operation.regex.RegexSplitter;
 import cascading.operation.text.FieldJoiner;
+import cascading.pipe.Checkpoint;
 import cascading.pipe.CoGroup;
 import cascading.pipe.Each;
 import cascading.pipe.Every;
@@ -193,6 +194,54 @@ public class CompiledExamples
       .addSource( rhs, rhsSource )
       .addSource( lhs, lhsSource )
       .addTailSink( groupBy, sink );
+
+    Flow flow = new HadoopFlowConnector().connect( flowDef );
+    //@extract-end
+    }
+
+  public void compileCheckpointFlow()
+    {
+    //@extract-start checkpoint-flow
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    lhs = new Each( lhs, new SomeFunction() );
+    lhs = new Each( lhs, new SomeFilter() );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    rhs = new Each( rhs, new SomeFunction() );
+
+    // joins the lhs and rhs
+    Pipe join = new CoGroup( lhs, rhs );
+
+    join = new Every( join, new SomeAggregator() );
+
+    // we want to see the data passing through this point
+    Checkpoint checkpoint = new Checkpoint( "checkpoint", join );
+
+    Pipe groupBy = new GroupBy( checkpoint );
+
+    groupBy = new Every( groupBy, new SomeAggregator() );
+
+    // the tail of the assembly
+    groupBy = new Each( groupBy, new SomeFunction() );
+
+    Tap lhsSource = new Hfs( new TextLine(), "lhs.txt" );
+    Tap rhsSource = new Hfs( new TextLine(), "rhs.txt" );
+
+    Tap sink = new Hfs( new TextLine(), "output" );
+
+    // write all data as a tab delimited file, with headers
+    Tap checkpointTap = new Hfs( new TextDelimited( true, "\t" ), "checkpoint" );
+
+    FlowDef flowDef = new FlowDef()
+      .setName( "flow-name" )
+      .addSource( rhs, rhsSource )
+      .addSource( lhs, lhsSource )
+      .addTailSink( groupBy, sink )
+      .addCheckpoint( checkpoint, checkpointTap ); // bind the checkpoint tap
 
     Flow flow = new HadoopFlowConnector().connect( flowDef );
     //@extract-end
