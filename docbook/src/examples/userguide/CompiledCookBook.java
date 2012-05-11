@@ -46,8 +46,8 @@ public class CompiledCookBook
     // call copy constructor
     Tuple copy = new Tuple( original );
 
-    assert copy.get( 0 ).equals( "john" );
-    assert copy.get( 1 ).equals( "doe" );
+    assert copy.getObject( 0 ).equals( "john" );
+    assert copy.getObject( 1 ).equals( "doe" );
     //@extract-end
     }
 
@@ -57,8 +57,8 @@ public class CompiledCookBook
     Tuple parent = new Tuple();
     parent.add( new Tuple( "john", "doe" ) );
 
-    assert ( (Tuple) parent.get( 0 ) ).get( 0 ).equals( "john" );
-    assert ( (Tuple) parent.get( 1 ) ).get( 1 ).equals( "doe" );
+    assert ( (Tuple) parent.getObject( 0 ) ).getObject( 0 ).equals( "john" );
+    assert ( (Tuple) parent.getObject( 1 ) ).getObject( 1 ).equals( "doe" );
     //@extract-end
     }
 

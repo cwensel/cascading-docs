@@ -95,5 +95,4 @@ public class TrapTest extends ExampleTestCase
 
     iterator.close();
     }
-
   }

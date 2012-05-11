@@ -75,5 +75,4 @@ public class TextTest extends ExampleTestCase
 
     iterator.close();
     }
-
   }

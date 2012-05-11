@@ -90,7 +90,7 @@ public class RegexTest extends ExampleTestCase
     Tap source = new Hfs( sourceScheme, inputPath );
 
     Scheme sinkScheme = new TextLine( new Fields( "word", "count" ) );
-    Tap sink = new Hfs( sinkScheme, outputPath, true );
+    Tap sink = new Hfs( sinkScheme, outputPath, SinkMode.REPLACE );
 
     // the 'head' of the pipe assembly
     Pipe assembly = new Pipe( "wordcount" );

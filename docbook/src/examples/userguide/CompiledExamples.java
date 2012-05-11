@@ -665,5 +665,4 @@ public class CompiledExamples
     //@extract-end
     }
     }
-
   }

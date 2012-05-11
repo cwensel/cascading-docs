@@ -85,5 +85,4 @@ public class WordCountTest extends ExampleTestCase
 
     validateLength( flow, 197 );
     }
-
   }
