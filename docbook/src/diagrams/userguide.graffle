@@ -26,7 +26,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2012-04-26 20:21:01 +0000</string>
+	<string>2012-05-12 00:43:09 +0000</string>
 	<key>Modifier</key>
 	<string>Chris K Wensel</string>
 	<key>NotesVisible</key>
@@ -13161,7 +13161,7 @@ filter}</string>
 					<key>Points</key>
 					<array>
 						<string>{149.23834, 275.09601}</string>
-						<string>{149.23833, 292.91901}</string>
+						<string>{149.23834, 292.91901}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -13203,7 +13203,7 @@ filter}</string>
 					<key>Points</key>
 					<array>
 						<string>{149.23834, 171.82401}</string>
-						<string>{149.23833, 154.00101}</string>
+						<string>{149.23834, 154.00101}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -13303,7 +13303,7 @@ filter}</string>
 					<key>Points</key>
 					<array>
 						<string>{208.08534, 460.04199}</string>
-						<string>{208.08533, 442.21802}</string>
+						<string>{208.08534, 442.21802}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -14125,7 +14125,7 @@ filter}</string>
 					<key>Points</key>
 					<array>
 						<string>{214.21434, 232.37198}</string>
-						<string>{214.21432, 214.548}</string>
+						<string>{214.21434, 214.548}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -17766,7 +17766,7 @@ filter}</string>
 			<key>BackgroundGraphic</key>
 			<dict>
 				<key>Bounds</key>
-				<string>{{0, 0}, {1431, 854}}</string>
+				<string>{{0, 0}, {1431, 870}}</string>
 				<key>Class</key>
 				<string>SolidGraphic</string>
 				<key>FontInfo</key>
@@ -17795,7 +17795,7 @@ filter}</string>
 			<key>CanvasOrigin</key>
 			<string>{0, 0}</string>
 			<key>CanvasSize</key>
-			<string>{1431, 854}</string>
+			<string>{1431, 870}</string>
 			<key>ColumnAlign</key>
 			<integer>1</integer>
 			<key>ColumnSpacing</key>
@@ -35837,8 +35837,8 @@ filter}</string>
 					<integer>1</integer>
 					<key>Points</key>
 					<array>
-						<string>{76.559975, 319.34299}</string>
-						<string>{202.29184, 261.311}</string>
+						<string>{76.559959, 319.34299}</string>
+						<string>{202.29185, 261.311}</string>
 					</array>
 					<key>Style</key>
 					<dict>
@@ -36168,7 +36168,7 @@ filter}</string>
 					<key>Print</key>
 					<string>YES</string>
 					<key>View</key>
-					<string>YES</string>
+					<string>NO</string>
 				</dict>
 				<dict>
 					<key>Lock</key>
@@ -36223,7 +36223,7 @@ filter}</string>
 	<key>WindowInfo</key>
 	<dict>
 		<key>CurrentSheet</key>
-		<integer>8</integer>
+		<integer>10</integer>
 		<key>ExpandedCanvases</key>
 		<array>
 			<dict>
@@ -36232,15 +36232,11 @@ filter}</string>
 			</dict>
 			<dict>
 				<key>name</key>
-				<string>pipe operation relationship</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>Relationships 2</string>
-			</dict>
-			<dict>
-				<key>name</key>
 				<string>Canvas 7</string>
+			</dict>
+			<dict>
+				<key>name</key>
+				<string>Presenation 1</string>
 			</dict>
 		</array>
 		<key>Frame</key>
@@ -36258,7 +36254,7 @@ filter}</string>
 		<key>SidebarWidth</key>
 		<integer>137</integer>
 		<key>VisibleRegion</key>
-		<string>{{0, 0}, {1430, 854}}</string>
+		<string>{{-349, -147}, {1430, 870}}</string>
 		<key>Zoom</key>
 		<real>1</real>
 		<key>ZoomValues</key>
