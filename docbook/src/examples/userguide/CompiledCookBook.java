@@ -27,7 +27,8 @@ import cascading.pipe.assembly.Discard;
 import cascading.pipe.assembly.Rename;
 import cascading.pipe.assembly.Retain;
 import cascading.pipe.assembly.Unique;
-import cascading.scheme.hadoop.SequenceFile;
+import cascading.scheme.Scheme;
+import cascading.scheme.hadoop.TextDelimited;
 import cascading.tap.Tap;
 import cascading.tap.hadoop.Hfs;
 import cascading.tuple.Fields;
@@ -280,13 +281,22 @@ public class CompiledCookBook
     tailRight = new Each( tailRight, new SomeFilter() );
 
     // source taps
-    Tap sourceLeft = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
-    Tap sourceRight = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
+    Scheme inLeftScheme =
+      new TextDelimited( new Fields( "some-fields" ) );
+    Tap sourceLeft = new Hfs( inLeftScheme, "some/path" );
+
+    Scheme inRightScheme =
+      new TextDelimited( new Fields( "some-fields" ) );
+    Tap sourceRight = new Hfs( inRightScheme, "some/path" );
 
     // sink taps
-    Tap sinkLeft = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
-    Tap sinkRight = new Hfs( new SequenceFile( new Fields( "some-fields" ) ), "some/path" );
+    Scheme outLeftScheme =
+      new TextDelimited( new Fields( "some-fields" ) );
+    Tap sinkLeft = new Hfs( outLeftScheme, "some/path" );
 
+    Scheme outRightScheme =
+      new TextDelimited( new Fields( "some-fields" ) );
+    Tap sinkRight = new Hfs( outRightScheme, "some/path" );
 
     FlowDef flowDef = new FlowDef()
       .setName( "flow-name" );
