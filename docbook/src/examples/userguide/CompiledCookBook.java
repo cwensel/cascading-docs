@@ -311,7 +311,7 @@ public class CompiledCookBook
       .addSink( tailLeft, sinkLeft )
       .addTailSink( tailRight, sinkRight );
 
-    // ALTERNATELY ...
+    // ALTERNATIVELY ...
 
     // add named source Taps
     // the head pipe name to bind to

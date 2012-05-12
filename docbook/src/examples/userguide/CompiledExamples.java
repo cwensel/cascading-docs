@@ -281,7 +281,7 @@ public class CompiledExamples
     // this will find the parent jar at runtime
     AppProps.setApplicationJarClass( properties, Main.class );
 
-    // ALTERNATELY ...
+    // ALTERNATIVELY ...
 
     // pass in the path to the parent jar
     AppProps.setApplicationJarPath( properties, pathToJar );
