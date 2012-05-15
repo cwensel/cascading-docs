@@ -1435,7 +1435,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
             <listitem>
               <para>The
               <classname>cascading.flow.local.LocalFlowConnector</classname>
-              provdes a "local" mode planner for running Cascading completely
+              provides a "local" mode planner for running Cascading completely
               in memory on the current computer. This allows for fast
               execution of Flows against local files or any other compatible
               custom <classname>Tap</classname> and
@@ -1584,11 +1584,11 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
             <title>Platform-specific tap scheme classes</title>
 
             <tgroup cols="3">
-              <colspec colname="c1" colnum="1"/>
+              <colspec align="left" colname="c1" colnum="1"/>
 
-              <colspec colname="c2" colnum="2"/>
+              <colspec align="left" colname="c2" colnum="2"/>
 
-              <colspec colname="c3" colnum="3"/>
+              <colspec align="left" colname="c3" colnum="3"/>
 
               <tbody>
                 <row>
@@ -1602,19 +1602,27 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
                 </row>
 
                 <row>
+                  <entry><emphasis role="bold">Package Name</emphasis></entry>
+
+                  <entry><classname>cascading.scheme.local</classname></entry>
+
+                  <entry><classname>cascading.scheme.hadoop</classname></entry>
+                </row>
+
+                <row>
                   <entry>Read lines of text</entry>
 
-                  <entry><classname>cascading.scheme.local.TextLine</classname></entry>
+                  <entry><classname>TextLine</classname></entry>
 
-                  <entry><classname>cascading.scheme.hadoop.TextLine</classname></entry>
+                  <entry><classname>TextLine</classname></entry>
                 </row>
 
                 <row>
                   <entry>Read delimited text (CSV, TSV, etc)</entry>
 
-                  <entry><classname>cascading.scheme.local.TextDelimited</classname></entry>
+                  <entry><classname>TextDelimited</classname></entry>
 
-                  <entry><classname>cascading.scheme.hadoop.TextDelimited</classname></entry>
+                  <entry><classname>TextDelimited</classname></entry>
                 </row>
 
                 <row>
@@ -1622,7 +1630,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
 
                   <entry/>
 
-                  <entry><classname>cascading.scheme.hadoop.SequenceFile</classname></entry>
+                  <entry><classname>SequenceFile</classname></entry>
                 </row>
 
                 <row>
@@ -1631,7 +1639,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
 
                   <entry/>
 
-                  <entry><classname>cascading.scheme.hadoop.WritableSequenceFile</classname></entry>
+                  <entry><classname>WritableSequenceFile</classname></entry>
                 </row>
               </tbody>
             </tgroup>
@@ -1764,13 +1772,13 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
             <title>Platform-specific details for setting file system</title>
 
             <tgroup cols="4">
-              <colspec colname="c1" colnum="1"/>
+              <colspec align="left" colname="c1" colnum="1" colwidth="2*"/>
 
-              <colspec colname="c2" colnum="2"/>
+              <colspec align="left" colname="c2" colnum="2" colwidth="3*"/>
 
-              <colspec colname="c3" colnum="3"/>
+              <colspec align="left" colname="c3" colnum="3" colwidth="3*"/>
 
-              <colspec colname="c4" colnum="4"/>
+              <colspec align="left" colname="c4" colnum="4" colwidth="3*"/>
 
               <tbody>
                 <row>
@@ -1787,19 +1795,29 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
                 </row>
 
                 <row>
+                  <entry><emphasis role="bold">Package Name</emphasis></entry>
+
+                  <entry><classname>cascading.tap</classname></entry>
+
+                  <entry><classname>cascading.tap.local</classname></entry>
+
+                  <entry><classname>cascading.tap.hadoop</classname></entry>
+                </row>
+
+                <row>
                   <entry>File access</entry>
 
                   <entry/>
 
-                  <entry><classname>cascading.tap.local.FileTap</classname></entry>
+                  <entry><classname>FileTap</classname></entry>
 
-                  <entry><classname>cascading.tap.hadoop.Hfs</classname></entry>
+                  <entry><classname>Hfs</classname></entry>
                 </row>
 
                 <row>
                   <entry>Multiple Taps as single source</entry>
 
-                  <entry><classname>cascading.tap.MultiSourceTap</classname></entry>
+                  <entry><classname>MultiSourceTap</classname></entry>
 
                   <entry/>
 
@@ -1809,7 +1827,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
                 <row>
                   <entry>Multiple Taps as single sink</entry>
 
-                  <entry><classname>cascading.tap.MultiSinkTap</classname></entry>
+                  <entry><classname>MultiSinkTap</classname></entry>
 
                   <entry/>
 
@@ -1821,9 +1839,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
 
                   <entry/>
 
-                  <entry><classname>cascading.tap.local.TemplateTap</classname></entry>
+                  <entry><classname>TemplateTap</classname></entry>
 
-                  <entry><classname>cascading.tap.hadoop.TemplateTap</classname></entry>
+                  <entry><classname>TemplateTap</classname></entry>
                 </row>
 
                 <row>
@@ -1833,7 +1851,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting> In each join type below, the values
 
                   <entry/>
 
-                  <entry><classname>cascading.tap.hadoop.GlobHfs</classname></entry>
+                  <entry><classname>GlobHfs</classname></entry>
                 </row>
               </tbody>
             </tgroup>
