@@ -145,7 +145,7 @@
     <section>
       <title>What is Apache Hadoop?</title>
 
-      <para>From the Hadoop website, it<quote>is a software platform that lets
+      <para>From the Hadoop website, it <quote>is a software platform that lets
       one easily write and run applications that process vast amounts of
       data</quote>. Hadoop does this by providing a storage layer that holds
       vast amounts of data, and an execution layer that runs an application in
@@ -184,7 +184,7 @@
       Hadoop platform.</para>
 
       <para>Apache Hadoop is an Open Source Apache project and is freely
-      available. It can be downloaded from the Hadoop website:<link
+      available. It can be downloaded from the Hadoop website: <link
       xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
     </section>
   </chapter>
@@ -227,7 +227,7 @@
     planner to "fail fast" if an expected dependency between elements isn't
     satisfied - for instance, if a needed field name is missing or incorrect.
     (If more information is desired on the planner, see <xref
-    linkend="job-planner"/> .)</para>
+    linkend="job-planner"/>.)</para>
 
     <para>Also notice that pipe assemblies are assembled through constructor
     chaining. This may seem odd, but it is done for two reasons. First, it
@@ -241,7 +241,7 @@
     <para>Finally, notice that the very first <code>Pipe</code> instance has a
     name. That instance is the <emphasis role="italic">head</emphasis> of this
     particular pipe assembly. Pipe assemblies can have any number of heads,
-    and any number of<emphasis role="italic">tails</emphasis>. Although the
+    and any number of <emphasis role="italic">tails</emphasis>. Although the
     tail in this example does not have a name, in a more complex assembly it
     would. In general, heads and tails of pipe assemblies are assigned names
     to disambiguate them. One reason is that names are used to bind sources
@@ -297,24 +297,24 @@
       group, or join streams of data while applying operations to each data
       record or groups of records.</para>
 
-      <para>In Cascading, we call a data record a<emphasis
+      <para>In Cascading, we call a data record a <emphasis
       role="italic">tuple</emphasis>, a simple chain of pipes without forks or
-      merges a<emphasis role="italic">branch</emphasis>, an interconnected set
-      of pipe branches a<emphasis>pipe assembly</emphasis>, and a series of
-      tuples passing through a pipe branch or assembly a<emphasis
+      merges a <emphasis role="italic">branch</emphasis>, an interconnected set
+      of pipe branches a <emphasis>pipe assembly</emphasis>, and a series of
+      tuples passing through a pipe branch or assembly a <emphasis
       role="italic">tuple stream</emphasis>.</para>
 
       <para>Pipe assemblies are specified independently of the data source
       they are to process. So before a pipe assembly can be executed, it must
-      be bound to<emphasis role="italic">taps</emphasis>, i.e., data sources
+      be bound to <emphasis role="italic">taps</emphasis>, i.e., data sources
       and sinks. The result of binding one or more pipe assemblies to taps is
-      a<emphasis role="italic">flow</emphasis>, which is executed on a
+      a <emphasis role="italic">flow</emphasis>, which is executed on a
       computer or cluster using the Hadoop framework.</para>
 
       <para>Multiple flows can be grouped together and executed as a single
       process. In this context, if one flow depends on the output of another,
       it is not executed until all of its data dependencies are satisfied.
-      Such a collection of flows is called a<emphasis
+      Such a collection of flows is called a <emphasis
       role="italic">cascade</emphasis>.</para>
     </section>
 
@@ -323,7 +323,7 @@
 
       <para>Pipe assemblies define what work should be done against tuple
       streams, which are read from tap <emphasis role="italic">sources
-      </emphasis> and written to tap<emphasis role="italic">sinks</emphasis>.
+      </emphasis> and written to tap <emphasis role="italic">sinks</emphasis>.
       The work performed on the data stream may include actions such as
       filtering, transforming, organizing, and calculating. Pipe assemblies
       may use multiple sources and multiple sinks, and may define splits,
@@ -454,7 +454,7 @@
               is effectively an array of (field) values, where each value can
               be any <classname>java.lang.Object</classname> Java type (or
               <code>byte[]</code> array). For information on supporting
-              non-primitive types, see<xref linkend="custom-types"/>.</para>
+              non-primitive types, see <xref linkend="custom-types"/>.</para>
             </listitem>
           </varlistentry>
 
@@ -469,9 +469,9 @@
               position, starting at <code>0</code> for the first position, or
               starting at <code>-1</code> for the last position), or one of
               the predefined <emphasis role="italic">Fields sets</emphasis>
-              (such as<code>Fields.ALL</code>, which selects all values in the
+              (such as <code>Fields.ALL</code>, which selects all values in the
               Tuple, like an asterisk in SQL). For more on Fields sets,
-              see<xref linkend="field-algebra"/>).</para>
+              see <xref linkend="field-algebra"/>).</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -481,7 +481,7 @@
     <section>
       <title>Pipes</title>
 
-      <para>The code for the sample pipe assembly above,<xref
+      <para>The code for the sample pipe assembly above, <xref
       linkend="chaining-pipes"/>, consists almost entirely of a series of
       <classname>Pipe</classname> constructors. This section describes the
       various <classname>Pipe</classname> classes in detail. The base class
@@ -507,7 +507,7 @@
           <para><emphasis role="bold">The <classname>Pipe</classname> class
           </emphasis> is used to instantiate and name a pipe. Pipe names are
           used by the planner to bind taps to the pipe as sources or sinks. (A
-          third option is to bind a tap to the pipe branch as a<emphasis
+          third option is to bind a tap to the pipe branch as a <emphasis
           role="italic">trap</emphasis>, discussed elsewhere as an advanced
           topic.)</para>
 
@@ -515,7 +515,7 @@
           subclass </emphasis> is a special type of pipe. It is used to nest
           re-usable pipe assemblies within a <classname>Pipe</classname> class
           for inclusion in a larger pipe assembly. For more information on
-          this, see the section on<xref linkend="subassemblies"/>.</para>
+          this, see the section on <xref linkend="subassemblies"/>.</para>
 
           <para><emphasis role="bold">The other six types of pipes</emphasis>
           are used to perform operations on the tuple streams as they pass
@@ -541,7 +541,7 @@
               <classname>Each</classname> into a different pipe or
               sink.</para>
 
-              <para>Note that with<classname>Each</classname>, as with other
+              <para>Note that with <classname>Each</classname>, as with other
               types of pipe, you can specify a list of fields to output,
               thereby removing unwanted fields from a stream.</para>
             </listitem>
@@ -582,7 +582,7 @@
               stream based on common values in a specified field.</para>
 
               <para>If passed multiple streams as inputs, it performs a merge
-              before the grouping. As with<classname>Merge</classname>, a
+              before the grouping. As with <classname>Merge</classname>, a
               <classname>GroupBy</classname> requires that multiple input
               streams share the same field structure.</para>
 
@@ -607,14 +607,14 @@
             <listitem>
               <para>The <classname>Every</classname> pipe operates on a tuple
               stream that has been grouped (by <classname>GroupBy</classname>
-              or<classname>CoGroup</classname>) on the values of a particular
+              or <classname>CoGroup</classname>) on the values of a particular
               field, such as timestamp or zipcode. It's used to apply
               aggregator or buffer operations such as counting, totaling, or
               averaging field values within each group. Thus the
               <classname>Every</classname> class is only for use on the output
               of <classname>GroupBy</classname> or
               <classname>CoGroup</classname>, and cannot be used with the
-              output of<classname>Each</classname>,
+              output of <classname>Each</classname>,
               <classname>Merge</classname>, or
               <classname>HashJoin</classname>.</para>
 
@@ -827,7 +827,7 @@
         <classname>Every</classname> is that the <classname>Each</classname>
         operates on individual tuples, and <classname>Every</classname>
         operates on groups of tuples emitted by <classname>GroupBy</classname>
-        or<classname>CoGroup</classname>. This affects the kind of operations
+        or <classname>CoGroup</classname>. This affects the kind of operations
         that these two pipes can perform, and the kind of output they produce
         as a result.</para>
 
@@ -875,13 +875,13 @@
         <classname>Tuple</classname> and the operation result. This new output
         <classname>Tuple</classname> becomes the input
         <classname>Tuple</classname> to the next pipe in the pipe assembly. If
-        the output selector is<code>Fields.ALL</code>, the output is the input
+        the output selector is <code>Fields.ALL</code>, the output is the input
         <classname>Tuple</classname> plus the operation result, merged into a
-        single<classname>Tuple</classname>.</para>
+        single <classname>Tuple</classname>.</para>
 
         <para>Note that it's possible for a <classname>Function</classname> or
         <classname>Aggregator</classname> to return more than one output
-        <classname>Tuple</classname> per input<classname>Tuple</classname>. In
+        <classname>Tuple</classname> per input <classname>Tuple</classname>. In
         this case, the input tuple is duplicated as many times as necessary to
         create the necessary output tuples. This is similar to the reiteration
         of values that happens during a join. If a function is designed to
@@ -1030,7 +1030,7 @@
             <xi:include href="simple-groupby-secondary.xml"/>
           </example>
 
-          <para>If we don't care about the order of<code>value2</code>, we can
+          <para>If we don't care about the order of <code>value2</code>, we can
           leave it out of the <code>sortFields</code>
           <classname>Fields</classname> constructor.</para>
 
@@ -1047,12 +1047,12 @@
           <para>Whenever there is an implied sort during grouping or secondary
           sorting, a custom <classname>java.util.Comparator</classname> can
           optionally be supplied to the grouping <classname>Fields</classname>
-          or secondary sort<classname>Fields</classname>. This allows the
+          or secondary sort <classname>Fields</classname>. This allows the
           developer to use the <code>Fields.setComparator()</code> call to
           control the sort.</para>
 
           <para>To sort or group on non-Java-comparable classes, consider
-          creating a custom<classname>Comparator</classname>.</para>
+          creating a custom <classname>Comparator</classname>.</para>
 
           <para>Below is a more practical example, where we group by the "day
           of the year", but want to reverse the order of the tuples within
@@ -1153,7 +1153,7 @@
           recognize the duplication and simply merge the identically-named
           fields, saving effort for the developer. However, consider the case
           of an outer type join in which one field (or set of fields used for
-          the join) for a given join side happens to be<code>null</code>.
+          the join) for a given join side happens to be <code>null</code>.
           Discarding one of the duplicate fields would lose this
           information.</para>
 
@@ -1342,7 +1342,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
         </example>
 
         <para>The example above performs an inner join on two streams ("lhs"
-        and "rhs"), based on common values in two fields. The fieldnames that
+        and "rhs"), based on common values in two fields. The field names that
         are specified in <classname>lhsFields</classname> and
         <classname>rhsFields</classname> are among the field names previously
         declared for the two input streams.</para>
@@ -1356,7 +1356,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
           limitations. It is optimized for joining one or more small streams
           to no more than one large stream.</para>
 
-          <para>Unlike<classname>CoGroup</classname>,
+          <para>Unlike <classname>CoGroup</classname>,
           <classname>HashJoin</classname> attempts to keep the entire
           right-hand stream in memory for rapid comparison (not just the
           current grouping, as no grouping is performed for a
@@ -1369,7 +1369,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
 
           <para>Due to the potential difficulties of using
           <classname>HashJoin</classname> (as compared to the slower but much
-          more reliable<classname>CoGroup</classname>), developers should
+          more reliable <classname>CoGroup</classname>), developers should
           thoroughly understand this class before attempting to use it.</para>
 
           <para>Frequently the <classname>HashJoin</classname> is fed a
@@ -1452,7 +1452,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <para>The local mode planner and platform were not designed to
               scale beyond available memory, CPU, or disk on the current
               machine. Thus any memory-intensive processes that use
-              <classname>GroupBy</classname>,<classname>CoGroup</classname>,
+              <classname>GroupBy</classname>, <classname>CoGroup</classname>,
               or <classname>HashJoin</classname> are likely to fail against
               moderately large files.</para>
 
@@ -1488,11 +1488,11 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       Sink Taps</title>
 
       <para>All input data comes in from, and all output data goes out to,
-      some instance of<classname>cascading.tap.tap</classname>. A tap
+      some instance of <classname>cascading.tap.tap</classname>. A tap
       represents a data resource - such as a file on the local file system, on
       a Hadoop distributed file system, or on Amazon S3. A tap can be read
-      from, which makes it a<emphasis role="italic">source</emphasis>, or
-      written to, which makes it a<emphasis role="italic">sink</emphasis>. Or,
+      from, which makes it a <emphasis role="italic">source</emphasis>, or
+      written to, which makes it a <emphasis role="italic">sink</emphasis>. Or,
       more commonly, taps act as both sinks and sources when shared between
       flows.</para>
 
@@ -1750,7 +1750,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <para>The
               <classname>cascading.tap.hadoop.TemplateTap</classname> is used
               to sink tuples into directory paths based on the values in the
-              Tuple. More can be read below in<xref
+              Tuple. More can be read below in <xref
               linkend="template-tap"/>.</para>
             </listitem>
           </varlistentry>
@@ -1934,7 +1934,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <classname>Tap</classname> implementation to actually perform a write or
       update when processing starts. Thus, when
       <methodname>start()</methodname> or <methodname>complete()</methodname>
-      is called on a<classname>Flow</classname>, any sink
+      is called on a <classname>Flow</classname>, any sink
       <classname>Tap</classname> labeled
       <classname>SinkMode.REPLACE</classname> will have its
       <methodname>deleteResource()</methodname> method called.</para>
@@ -1956,8 +1956,8 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       exist. However, the good news is that you can simply point the
       <classname>Hfs</classname> tap to a directory of data files, and they
       are all used as input - there's no need to enumerate each individual
-      file into a<classname>MultiSourceTap</classname>. If there are nested
-      directories, use<classname>GlobHfs</classname>.</para>
+      file into a <classname>MultiSourceTap</classname>. If there are nested
+      directories, use <classname>GlobHfs</classname>.</para>
     </section>
 
     <section>
@@ -1965,7 +1965,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       Sets</title>
 
       <para>Cascading applications can perform complex manipulation or "field
-      algebra" on the fields stored in tuples, using<emphasis
+      algebra" on the fields stored in tuples, using <emphasis
       role="italic">Fields sets</emphasis>, a feature of the
       <classname>Fields</classname> class that provides a sort of wildcard
       tool for referencing sets of field values.</para>
@@ -2098,7 +2098,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <para>The <classname>cascading.tuple.Fields.NONE</classname>
               constant is used to specify no fields. Typically used as an
               argument selector for Operations that do not process any Tuples,
-              like<classname>cascading.operation.Insert</classname>.</para>
+              like <classname>cascading.operation.Insert</classname>.</para>
 
               <xi:include href="algebra-none.xml"/>
             </listitem>
@@ -2208,7 +2208,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
         </example>
 
         <para>More information on packaging production applications can be
-        found in<xref linkend="executing-processes"/>.</para>
+        found in <xref linkend="executing-processes"/>.</para>
 
         <para>Note the pattern of using a static property-setter method
         (<classname>cascading.property.AppProps.setApplicationJarPath</classname>).</para>
@@ -2231,7 +2231,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
         <classname>Cascade</classname>, the
         <classname>Flow.isSkipFlow()</classname> method is consulted before
         calling <classname>Flow.start()</classname> on the flow. The result is
-        based on the Flow's<emphasis role="italic">skip strategy</emphasis>.
+        based on the Flow's <emphasis role="italic">skip strategy</emphasis>.
         By default, <methodname>isSkipFlow()</methodname> returns true if any
         of the sinks are stale - i.e., the sinks don't exist or the resources
         are older than the sources. However, the strategy can be changed via
@@ -2334,7 +2334,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       are executed in the correct order. Further, Cascades act like Ant builds
       or Unix make files - that is, a Cascade only executes Flows that have
       stale sinks (i.e., output data that is older than the input data). For
-      more on this, see<xref linkend="skipping-flows"/>.</para>
+      more on this, see <xref linkend="skipping-flows"/>.</para>
 
       <example>
         <title>Creating a new Cascade</title>
@@ -2349,7 +2349,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       instances have no interdependencies, they are submitted together so that
       they can execute in parallel.</para>
 
-      <para>For more information, see the section on<xref
+      <para>For more information, see the section on <xref
       linkend="cascade-scheduler"/>.</para>
 
       <para>If an instance of
@@ -2358,7 +2358,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <classname>Cascade.setFlowSkipStrategy()</classname> method), it is
       consulted for every Flow instance managed by that Cascade, and all skip
       strategies on those Flow instances are ignored. For more information on
-      skip strategies, see<xref linkend="skipping-flows"/>.</para>
+      skip strategies, see <xref linkend="skipping-flows"/>.</para>
     </section>
   </chapter>
 
@@ -2379,7 +2379,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <para>To use the <classname>HadoopFlowConnector</classname> (i.e., to
       run in Hadoop mode), Cascading requires that Apache Hadoop be installed
       and correctly configured. Hadoop is an Open Source Apache project,
-      freely available for download from the Hadoop website,<link
+      freely available for download from the Hadoop website, <link
       xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
     </section>
 
@@ -2510,12 +2510,12 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       execution.</para>
 
       <para>Cascading does not rely on any environment variables like
-      <envar>$HADOOP_HOME</envar> or<envar>$HADOOP_CONF_DIR</envar>, only
+      <envar>$HADOOP_HOME</envar> or <envar>$HADOOP_CONF_DIR</envar>, only
       <filename>bin/hadoop</filename> does.</para>
 
       <para>It should be noted that even though
       <filename>your-application.jar</filename> is passed on the command line
-      to<filename>bin/hadoop</filename>, this in no way configures Hadoop to
+      to <filename>bin/hadoop</filename>, this in no way configures Hadoop to
       push this jar into the cluster. You must still call one of the property
       setters mentioned above to set the proper path to the application jar.
       If misconfigured, it's likely that one of the internal libraries (found
@@ -2538,13 +2538,13 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       it, filter it, analyze it, or transform it. You can use the standard
       Operations in the Cascading library to create powerful and robust
       applications by combining them in chains (much like Unix operations such
-      as<command>sed</command>,<command>grep</command>,
-      <command>sort</command>,<command>uniq</command>, and
+      as <command>sed</command>, <command>grep</command>,
+      <command>sort</command>, <command>uniq</command>, and
       <command>awk</command>). And if you want to go further, it's also very
       simple to develop custom Operations in Cascading.</para>
 
       <para>There are four kinds of Operations:
-      <classname>Function</classname>,<classname>Filter</classname>,
+      <classname>Function</classname>, <classname>Filter</classname>,
       <classname>Aggregator</classname>, and
       <classname>Buffer</classname>.</para>
 
@@ -2563,7 +2563,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <para>Operations typically require an input argument Tuple to act on.
       And all Operations can return zero or more Tuple object results - except
       <classname>Filter</classname>, which simply returns a Boolean indicating
-      whether to discard the current Tuple. A<classname>Function</classname>,
+      whether to discard the current Tuple. A <classname>Function</classname>,
       for instance, can parse a string passed by an argument Tuple and return
       a new Tuple for every value parsed (i.e., one Tuple for each "word"), or
       it may create a single Tuple with every parsed value included as an
@@ -2574,7 +2574,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <classname>Filter</classname> by not emitting a Tuple result. However,
       the <classname>Filter</classname> type is optimized for filtering, and
       can be combined with logical Operations such as
-      <classname>Not</classname>,<classname>And</classname>,
+      <classname>Not</classname>, <classname>And</classname>,
       <classname>Or</classname>, etc.</para>
 
       <para>During runtime, Operations actually receive arguments as one or
@@ -2583,7 +2583,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <classname>Fields</classname> object that defines field names for
       positions within the Tuple.</para>
 
-      <para>Except for<classname>Filter</classname>, all Operations must
+      <para>Except for <classname>Filter</classname>, all Operations must
       declare result Fields, and if the actual output does not match the
       declaration, the process will fail. For example, consider a
       <classname>Function</classname> written to parse words out of a String
@@ -2591,7 +2591,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       output is a Tuple with a single field named "word", and then returns
       more values in the Tuple beyond that single "word", processing will
       halt. However, Operations designed to return arbitrary numbers of values
-      in a result Tuple may declare<code>Fields.UNKNOWN</code>.</para>
+      in a result Tuple may declare <code>Fields.UNKNOWN</code>.</para>
 
       <para>The Cascading planner always attempts to "fail fast" where
       possible by checking the field name dependencies between Pipes and
@@ -2607,7 +2607,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       "safe". A safe Operation is idempotent; it can safely execute multiple
       times on the exact same record or Tuple; it has no side-effects. If a
       custom Operation is not idempotent, the method <code>isSafe()</code>
-      must return<code>false</code>. This value influences how the Cascading
+      must return <code>false</code>. This value influences how the Cascading
       planner renders the Flow under certain circumstances.</para>
     </section>
 
@@ -2616,13 +2616,13 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
 
       <para>A <classname>Function</classname> expects a stream of individual
       argument Tuples, and returns zero or more result Tuples for each of
-      them. Like a<classname>Filter</classname>, a
+      them. Like a <classname>Filter</classname>, a
       <classname>Function</classname> is used with an
       <classname>Each</classname> pipe, which may follow any pipe type.</para>
 
-      <para>To create a custom<classname>Function</classname>, subclass the
+      <para>To create a custom <classname>Function</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Function</code>. Since the
+      interface <code>cascading.operation.Function</code>. Since the
       <code>BaseOperation</code> has been subclassed, the <code>operate</code>
       method, as defined on the <code>Function</code> interface, is the only
       method that must be implemented.</para>
@@ -2670,8 +2670,8 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       names, allowing them to prevent possible field name collisions that
       might cause the planner to fail.</para>
 
-      <para>This line is especially important:<programlisting>int sum = arguments.getInteger( 0 ) +
-        arguments.getInteger( 1 );</programlisting>Note that ordinal numbers,
+      <para>This line is especially important: <programlisting>int sum = arguments.getInteger( 0 ) +
+        arguments.getInteger( 1 );</programlisting> Note that ordinal numbers,
       not field names, are used here to get argument values. If field names
       had been used, the AddValuesFunction would have been coupled to the
       incoming stream.</para>
@@ -2703,7 +2703,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       the context; a more complex type isn't necessary. Also note that the
       Tuple isn't storing state, but is re-used to reduce the number of new
       Object instances created. In Cascading, it is perfectly safe to output
-      the same Tuple instance from<methodname>operate()</methodname>. The
+      the same Tuple instance from <methodname>operate()</methodname>. The
       method <code>functionCall.getOutputCollector().add( result )</code> will
       not return until the result <classname>Tuple</classname> has been
       processed or persisted downstream.</para>
@@ -2714,13 +2714,13 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
 
       <para>A <classname>Filter</classname> expects a stream of individual
       argument Tuples and returns a Boolean value for each one, stating
-      whether it should be discarded. Like a<classname>Function</classname>, a
+      whether it should be discarded. Like a <classname>Function</classname>, a
       <classname>Filter</classname> is used with an
       <classname>Each</classname> pipe, which may follow any pipe type.</para>
 
-      <para>To create a custom<classname>Filter</classname>, subclass the
+      <para>To create a custom <classname>Filter</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Filter</code>. Because
+      interface <code>cascading.operation.Filter</code>. Because
       <code>BaseOperation</code> has been subclassed, the
       <code>isRemove</code> method, as defined on the <code>Filter</code>
       interface, is the only method that must be implemented.</para>
@@ -2763,14 +2763,14 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <classname>CoGroup</classname> pipe), and returns zero or more result
       tuples for every group. An <classname>Aggregator</classname> may only be
       used with an <classname>Every</classname> pipe - which may follow a
-      <classname>GroupBy</classname>, a<classname>CoGroup</classname>, or
+      <classname>GroupBy</classname>, a <classname>CoGroup</classname>, or
       another <classname>Every</classname> pipe, but not an
       <classname>Each</classname>.</para>
 
-      <para>To create a custom<classname>Aggregator</classname>, subclass the
+      <para>To create a custom <classname>Aggregator</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Aggregator</code>. Because
-      <code>BaseOperation</code> has been subclassed, the<code>start</code>,
+      interface <code>cascading.operation.Aggregator</code>. Because
+      <code>BaseOperation</code> has been subclassed, the <code>start</code>,
       <code>aggregate</code>, and <code>complete</code> methods, as defined on
       the <code>Aggregator</code> interface, are the only methods that must be
       implemented.</para>
@@ -2842,9 +2842,9 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <classname>GroupBy</classname> or <classname>CoGroup</classname> pipe
       type.</para>
 
-      <para>To create a custom<classname>Buffer</classname>, subclass the
+      <para>To create a custom <classname>Buffer</classname>, subclass the
       class <code>cascading.operation.BaseOperation</code> and implement the
-      interface<code>cascading.operation.Buffer</code>. Because
+      interface <code>cascading.operation.Buffer</code>. Because
       <code>BaseOperation</code> has been subclassed, the <code>operate</code>
       method, as defined on the <code>Buffer</code> interface, is the only
       method that must be implemented.</para>
@@ -3042,7 +3042,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <para>In the case of the Hadoop platform, a
       <classname>RecordReader</classname> is created by Hadoop and passed to
       the Tap. This <classname>RecordReader</classname> is already configured
-      to read data from the current<classname>InputSplit</classname>.</para>
+      to read data from the current <classname>InputSplit</classname>.</para>
 
       <para>Similiarly, a Tap is always used to sink data from the
       <methodname>openForWrite()</methodname> method via the
@@ -3117,7 +3117,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
 
       <para>Every <classname>Scheme</classname> is presented the opportunity
       to set any custom properties the underlying platform requires, via the
-      methods<methodname>sourceConfInit()</methodname>(for a Tuple source tap)
+      methods <methodname>sourceConfInit()</methodname> (for a Tuple source tap)
       and <methodname>sinkConfInit()</methodname> (for a Tuple sink tap).
       These methods may be called more than once with new configuration
       objects, and should be idempotent.</para>
@@ -3355,7 +3355,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       Exception handling is. Traps are not intended for application flow
       control, and not a means to filter some data into other locations.
       Applications that need to filter out bad data should do so explicitly,
-      using filters. For more on this, see<xref
+      using filters. For more on this, see <xref
       linkend="handling-bad-data"/>.</para>
     </section>
 
@@ -3482,7 +3482,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       a String format "template". This format template is populated in the
       order in which values are declared via the <classname>Scheme</classname>
       class. If more complex path formatting is necessary, you may subclass
-      the<classname>Templatetap</classname>.</para>
+      the <classname>Templatetap</classname>.</para>
 
       <para>Note that you can only create sub-directories to bin data into.
       Hadoop must still write "part" files into each bin directory, and there
@@ -3523,7 +3523,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <para>Cascading supports a few built-in partial aggregate operations,
       including AverageBy, CountBy, and SumBy. These are actually
       SubAssemblies, not Operations, and are subclasses of the AggregateBy
-      SubAssembly. For more on this, see the section on<xref
+      SubAssembly. For more on this, see the section on <xref
       linkend="aggregate-by"/>.</para>
 
       <para>Using partial aggregate operations is quite easy. They are
@@ -3643,7 +3643,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <xi:include href="identity-coerce.xml"/>
 
               <para>Or we can replace just the Tuple String value "status"
-              with an<classname>int</classname>, while keeping all the other
+              with an <classname>int</classname>, while keeping all the other
               values in the output Tuple.</para>
 
               <xi:include href="identity-coerce-single.xml"/>
@@ -3657,11 +3657,11 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       Function</title>
 
       <para>The <classname>cascading.operation.Debug</classname> function is a
-      utility function (actually, it's a<classname>Filter</classname>) that
+      utility function (actually, it's a <classname>Filter</classname>) that
       prints the current argument Tuple to either <code>stdout</code> or
       <code>stderr</code>. Used with one of the
       <classname>DebugLevel</classname> enum values
-      (<classname>NONE</classname>,<classname>DEFAULT</classname>, or
+      (<classname>NONE</classname>, <classname>DEFAULT</classname>, or
       <classname>VERBOSE</classname>), different debug levels can be embedded
       in a pipe assembly.</para>
 
@@ -3816,7 +3816,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               emerge from this function, it can declare field names. In this
               case, if the splitter encounters more split values than field
               names, the remaining values are discarded. For more information,
-              see<classname>java.util.regex.Pattern.split( input, limit
+              see <classname>java.util.regex.Pattern.split( input, limit
               )</classname>.</para>
             </listitem>
           </varlistentry>
@@ -3871,10 +3871,10 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               function filters a Tuple stream based on a specified regex
               value. By default, tuples that match the given pattern are kept,
               and tuples that do not match are filtered out. This can be
-              reversed by setting "removeMatch" to<code>true</code>. Also, by
+              reversed by setting "removeMatch" to <code>true</code>. Also, by
               default, the whole Tuple is matched against the given regex
               String (in tab-delimited sections). If "matchEachElement" is set
-              to<code>true</code>, the pattern is applied to each Tuple value
+              to <code>true</code>, the pattern is applied to each Tuple value
               individually. For more information, see the
               <classname>java.util.regex.Matcher.find()</classname>
               method.</para>
@@ -3932,12 +3932,12 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <classname>Filters</classname>. This capability is provided by the
       Janino embedded Java compiler, which compiles the expressions into byte
       code for optimal processing speed. Janino is documented in detail on its
-      website,<link
+      website, <link
       xlink:href="http://www.janino.net/">http://www.janino.net/</link>.</para>
 
       <para>This capability allows an Operation to evaluate a suitable
-      one-line Java expression, such as <code>a + 3 * 2</code> or<code>a &lt;
-      7</code>, where the variable values ( <code>a</code> and<code>b</code>)
+      one-line Java expression, such as <code>a + 3 * 2</code> or <code>a &lt;
+      7</code>, where the variable values (<code>a</code> and <code>b</code>)
       are passed in as Tuple fields. The result of the Operation thus depends
       on the evaluated result of the expression - in the first example, some
       number, and in the second, a Boolean value.</para>
@@ -3979,7 +3979,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               not have a status of "200" is filtered out. ExpressionFilter
               coerces the value into the specified type if necessary to make
               the comparison - in this case, coercing the status String into
-              an<classname>int</classname>.</para>
+              an <classname>int</classname>.</para>
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -3992,7 +3992,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <filename>cascading-xml-x.y.z.jar</filename> in the project. When using
       the <classname>TagSoupParser</classname> operation, this module requires
       the TagSoup library, which provides support for HTML and XML "tidying".
-      More information is available at the TagSoup website,<link
+      More information is available at the TagSoup website, <link
       xlink:href="http://home.ccil.org/~cowan/XML/tagsoup/">http://home.ccil.org/~cowan/XML/tagsoup/</link>.</para>
 
       <para><variablelist>
@@ -4013,7 +4013,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               are required, search on the <code>text()</code> nodes, or
               consider using XPathGenerator to handle multiple
               <classname>NodeList</classname> values. If the returned result
-              of an XPath expression is a<classname>NodeList</classname>, only
+              of an XPath expression is a <classname>NodeList</classname>, only
               the first <classname>Node</classname> is used for the field
               value and the rest are ignored.</para>
             </listitem>
@@ -4065,7 +4065,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
 
       <para>Cascading Stream Assertions are used to build robust reusable pipe
       assemblies. If desired, they can be planned out of a Flow instance at
-      runtime. For more information, see the section on<xref
+      runtime. For more information, see the section on <xref
       linkend="stream-assertions"/>. Below we describe the Assertions
       available in the core library.</para>
 
@@ -4153,7 +4153,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <para>The
               <classname>cascading.operation.assertion.AssertNotNull</classname>
               Assertion asserts that every position/field in the argument
-              Tuple is not<code>null</code>.</para>
+              Tuple is not <code>null</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -4164,7 +4164,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <para>The
               <classname>cascading.operation.assertion.AssertNull</classname>
               Assertion asserts that every position/field in the argument
-              Tuple is<code>null</code>.</para>
+              Tuple is <code>null</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -4176,8 +4176,8 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <classname>cascading.operation.assertion.AssertSizeEquals</classname>
               Assertion asserts that the current Tuple in the tuple stream is
               exactly the given size. Size, here, is the number of fields in
-              the Tuple, as returned by<code>Tuple.size()</code>. Note that
-              some or all fields may be<code>null</code>.</para>
+              the Tuple, as returned by <code>Tuple.size()</code>. Note that
+              some or all fields may be <code>null</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -4271,7 +4271,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <classname>Filter</classname> instances. That is, if
               <methodname>Filter#isRemove()</methodname> returns
               <code>true</code> for all of the given instances, this filter
-              returns<code>true</code>.</para>
+              returns <code>true</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -4285,7 +4285,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <classname>Filter</classname> instances. That is, if
               <methodname>Filter#isRemove()</methodname> returns
               <code>true</code> for any of the given instances, this filter
-              returns<code>true</code>.</para>
+              returns <code>true</code>.</para>
             </listitem>
           </varlistentry>
 
@@ -4319,8 +4319,8 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               <code>false</code> if they have the same truth value. That is,
               if <methodname>Filter.isRemove()</methodname> returns
               <code>true</code> for both, or returns <code>false</code> for
-              both, this filter returns<code>false</code>; otherwise it
-              returns<code>true</code>.</para>
+              both, this filter returns <code>false</code>; otherwise it
+              returns <code>true</code>.</para>
             </listitem>
           </varlistentry>
         </variablelist></para>
@@ -4602,7 +4602,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       take care to create field names that don't contain characters which will
       cause compilation errors if they are used in an expression. For example,
       "first-name" is a valid field name for use with Cascading, but might
-      result in the expression<code>first-name.trim()</code>, which will cause
+      result in the expression <code>first-name.trim()</code>, which will cause
       a compilation error.</para>
     </section>
 
@@ -4610,7 +4610,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <title>Debugging Planner Failures</title>
 
       <para>The <classname>FlowConnector</classname> will sometimes fail when
-      attempting to plan a<classname>Flow</classname>. If the error message
+      attempting to plan a <classname>Flow</classname>. If the error message
       given by <classname>PlannerException</classname> is vague, use the
       method <code>PlannerException.writeDOT()</code> to export a
       representation of the internal pipe assembly. DOT files can be opened by
@@ -4627,7 +4627,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
 
       <para>When joining two streams via a <classname>CoGroup</classname>
       <classname>Pipe</classname>, try to put the largest of the streams in
-      the leftmost argument to the<classname>CoGroup</classname>. The reason
+      the leftmost argument to the <classname>CoGroup</classname>. The reason
       for this is that joining multiple streams requires some accumulation of
       values before the join operator can begin, but the leftmost stream is
       not accumulated, so this technique should improve the performance of
@@ -4638,7 +4638,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <title>Debugging Streams</title>
 
       <para>When creating complex assemblies, it's safe to embed
-      <classname>Debug</classname> operations (see<xref
+      <classname>Debug</classname> operations (see <xref
       linkend="debug-function"/>) at appropriate debug levels as needed. Use
       the planner to remove them at runtime for production and staging runs,
       to avoid wasting resources.</para>
@@ -4657,7 +4657,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       records.</para>
 
       <para>It is tempting to simply throw an exception and have a Trap
-      capture the offending<classname>Tuple</classname>, but Traps were not
+      capture the offending <classname>Tuple</classname>, but Traps were not
       designed as a filtering mechanism, and consequently much valuable
       information would be lost.</para>
 
@@ -4673,7 +4673,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <title>Maintaining State in Operations</title>
 
       <para>When creating custom Operations (<classname>Function</classname>,
-      <classname>Filter</classname>,<classname>Aggregator</classname>, or
+      <classname>Filter</classname>, <classname>Aggregator</classname>, or
       <classname>Buffer</classname>) do not store operation state in class
       fields.</para>
 
@@ -4709,7 +4709,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       then Filter all Persons based on their age. This may seem more difficult
       and less effiicient, but it keeps your application flexible and avoids
       duplicating existing operations. (The only alternative here is to create
-      a<classname>PersonAgeFilter</classname>, which becomes one more thing to
+      a <classname>PersonAgeFilter</classname>, which becomes one more thing to
       test.)</para>
     </section>
 
@@ -4766,7 +4766,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       all <classname>java.lang.Object</classname> instances. Thus any
       primitive value or custom Class can be stored in a
       <classname>Tuple</classname> instance - that is, returned by a
-      <classname>Function</classname>,<classname>Aggregator</classname>, or
+      <classname>Function</classname>, <classname>Aggregator</classname>, or
       <classname>Buffer</classname> as a result value.</para>
 
       <para>But for this to work when using the Cascading Hadoop mode, any
@@ -4783,7 +4783,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <para>During serialization and deserialization of
       <classname>Tuple</classname> instances that contain custom types, the
       Cascading <classname>Tuple</classname> serialization framework must
-      store the class name (as a<classname>String</classname>) before
+      store the class name (as a <classname>String</classname>) before
       serializing the custom object. This can be very space-inefficient. To
       overcome this, custom types can add the
       <classname>SerializationToken</classname> Java annotation to the custom
@@ -4798,8 +4798,8 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       to reduce the amount of storage used.</para>
 
       <para>Serialization tokens may also be stored in the Hadoop config files
-      or set as a property passed to the<classname>FlowConnector</classname>,
-      with the property name<code>cascading.serialization.tokens</code>. The
+      or set as a property passed to the <classname>FlowConnector</classname>,
+      with the property name <code>cascading.serialization.tokens</code>. The
       value of this property is a comma separated list of
       <code>token=classname</code> values.</para>
 
@@ -4825,7 +4825,7 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       <title>Custom Comparators and Hashing</title>
 
       <para>Frequently, objects in one <classname>Tuple</classname> are
-      compared to objects in a second<classname>Tuple</classname>. This is
+      compared to objects in a second <classname>Tuple</classname>. This is
       especially true during the sort phase of <classname>GroupBy</classname>
       and <classname>CoGroup</classname> in Cascading Hadoop mode . By
       default, Hadoop and Cascading use the native
