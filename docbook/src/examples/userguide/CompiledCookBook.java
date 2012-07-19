@@ -59,7 +59,7 @@ public class CompiledCookBook
     parent.add( new Tuple( "john", "doe" ) );
 
     assert ( (Tuple) parent.getObject( 0 ) ).getObject( 0 ).equals( "john" );
-    assert ( (Tuple) parent.getObject( 1 ) ).getObject( 1 ).equals( "doe" );
+    assert ( (Tuple) parent.getObject( 0 ) ).getObject( 1 ).equals( "doe" );
     //@extract-end
     }
 
