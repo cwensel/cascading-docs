@@ -53,6 +53,7 @@ import cascading.tap.hadoop.Hfs;
 import cascading.tap.hadoop.TemplateTap;
 import cascading.tuple.Fields;
 import cascading.tuple.collect.SpillableProps;
+import org.apache.hadoop.mapred.JobConf;
 
 /**
  *
@@ -288,6 +289,33 @@ public class CompiledExamples
     // pass in the path to the parent jar
     AppProps.setApplicationJarPath( properties, pathToJar );
 
+
+    // pass properties to the connector
+    FlowConnector flowConnector = new HadoopFlowConnector( properties );
+    //@extract-end
+    }
+
+  public void compileFlowConnectorAppProps()
+    {
+    String pathToJar = null;
+
+    //@extract-start flow-jobconf
+    JobConf jobConf = new JobConf();
+
+    // pass in the class name of your application
+    // this will find the parent jar at runtime
+    jobConf.setJarByClass( Main.class );
+
+    // ALTERNATIVELY ...
+
+    // pass in the path to the parent jar
+    jobConf.setJar( pathToJar );
+
+    // build the properties object using jobConf as defaults
+    Properties properties = AppProps.appProps()
+      .setName( "sample-app" )
+      .setVersion( "1.2.3" )
+      .buildProperties( jobConf );
 
     // pass properties to the connector
     FlowConnector flowConnector = new HadoopFlowConnector( properties );

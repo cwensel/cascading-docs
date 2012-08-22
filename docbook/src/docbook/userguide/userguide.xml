@@ -2486,6 +2486,16 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
 
       <para>In your application, only one of these methods needs to be called,
       but one of them must be called to properly configure Hadoop.</para>
+
+      <example>
+        <title>Configuring the Application Jar with a JobConf</title>
+
+        <xi:include href="flow-jobconf.xml"/>
+      </example>
+
+      <para>Above we are starting with an existing Hadoop <classname>JobConf</classname> instance
+        and building a Properties object with it as the default.</para>
+
     </section>
 
     <section>
