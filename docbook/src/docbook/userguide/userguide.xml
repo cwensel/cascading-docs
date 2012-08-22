@@ -3520,11 +3520,10 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       aggregate function to be implemented - not just Associative and
       Commutative functions.</para>
 
-      <para>Cascading supports a few built-in partial aggregate operations,
-      including AverageBy, CountBy, and SumBy. These are actually
-      SubAssemblies, not Operations, and are subclasses of the AggregateBy
-      SubAssembly. For more on this, see the section on <xref
-      linkend="aggregate-by"/>.</para>
+      <para>Cascading supports a few built-in partial aggregate operations, including AverageBy,
+        CountBy,  SumBy, and FirstBy. These are actually SubAssemblies, not Operations, and are
+        subclasses of the AggregateBy SubAssembly. For more on this, see the section on <xref
+          linkend="aggregate-by"/>.</para>
 
       <para>Using partial aggregate operations is quite easy. They are
       actually less verbose than a standard Aggregate operation.</para>
@@ -4415,6 +4414,24 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
 
           <xi:include href="partials-sumby.xml"/>
         </example>
+      </section>
+
+      <section>
+        <title>FirstBy</title>
+        <para>The <classname>cascading.pipe.assembly.FirstBy</classname> SubAssembly is used to
+          return the first encountered value in the given <code>valueFields</code>. FirstBy may be combined
+          with other AggregateBy subclasses so they may be executed simultaneously over the same
+          grouping. </para>
+
+        <example>
+          <title>Using FirstBy</title>
+
+          <xi:include href="partials-firstby.xml"/>
+        </example>
+
+        <para>Note if the <code>valueFields</code> Fields instance has field comparators, they will
+          be used to sort the argument values to influence what values are seen first. Otherwise the
+          fields will not be sorted in any deterministic order.</para>
       </section>
     </section>
 

@@ -7,6 +7,7 @@
 package userguide;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Properties;
 
 import cascading.cascade.Cascade;
@@ -36,6 +37,7 @@ import cascading.pipe.assembly.AverageBy;
 import cascading.pipe.assembly.Coerce;
 import cascading.pipe.assembly.CountBy;
 import cascading.pipe.assembly.Discard;
+import cascading.pipe.assembly.FirstBy;
 import cascading.pipe.assembly.Rename;
 import cascading.pipe.assembly.Retain;
 import cascading.pipe.assembly.SumBy;
@@ -480,6 +482,32 @@ public class CompiledExamples
     Fields sumField = new Fields( "total-size" );
     assembly =
       new SumBy( assembly, groupingFields, valueField, sumField, long.class );
+    //@extract-end
+    }
+
+  public static class LongComparator implements Comparator
+    {
+    @Override
+    public int compare( Object o1, Object o2 )
+      {
+      return 0;
+      }
+    }
+
+  public void partialFirstBy()
+    {
+    //@extract-start partials-firstby
+    Pipe assembly = new Pipe( "assembly" );
+
+    // ...
+    Fields groupingFields = new Fields( "date" );
+    Fields valueField = new Fields( "size" );
+
+    // we want the largest size in this grouping
+    valueField.setComparator( "size", new LongComparator() );
+
+    assembly =
+      new FirstBy( assembly, groupingFields, valueField );
     //@extract-end
     }
 
