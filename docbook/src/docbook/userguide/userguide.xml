@@ -1513,13 +1513,13 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
             <term>TextLine</term>
 
             <listitem>
-              <para>TextLine reads and writes raw text files and returns
-              tuples which, by default, contain two fields specfic to the
-              platform used. The first field is either the byte offset or line
-              number, and the second field is the actual line of text. When
-              written to, all Tuple values are converted to Strings delimited
-              with the TAB character (\t). A TextLine scheme is provided for
-              both the local and Hadoop modes.</para>
+              <para>TextLine reads and writes raw text files and returns tuples which, by default,
+                contain two fields specfic to the platform used. The first field is either the byte
+                offset or line number, and the second field is the actual line of text. When written
+                to, all Tuple values are converted to Strings delimited with the TAB character (\t).
+                A TextLine scheme is provided for both the local and Hadoop modes. </para>
+              <para>By default TextLine uses the UTF-8 character set. This can be overriden on the
+                appropriate TextLine constuctor.</para>
             </listitem>
           </varlistentry>
 
@@ -1536,6 +1536,8 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
               coerce each value to a primitive type when reading a text file.
               A TextDelimited scheme is provided for both the local and Hadoop
               modes.</para>
+              <para>By default TextDelimited uses the UTF-8 character set. This can be overriden on
+                appropriate the TextDelimited constuctor.</para>
             </listitem>
           </varlistentry>
 
