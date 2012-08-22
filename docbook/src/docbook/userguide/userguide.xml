@@ -3404,12 +3404,11 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
     </section>
 
     <section>
-      <title>Event Handling</title>
+      <title>Flow and Cascade Event Handling</title>
 
-      <para>Each Flow has the ability to execute callbacks via an event
-      listener. This ability is useful when an external application needs to
-      be notified that a Flow has started, halted, completed, or the Flow has
-      thrown an exception.</para>
+      <para>Each Flow and Cascade has the ability to execute callbacks via an event listener. This
+        ability is useful when an external application needs to be notified that either a Flow or
+        Cascade has started, halted, completed, or either has thrown an exception.</para>
 
       <para>For instance, at the completion of a flow that runs on an Amazon
       EC2 Hadoop cluster, an Amazon SQS message can be sent to notify another
@@ -3417,16 +3416,17 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
       the cluster.</para>
 
       <para>Flows support event listeners through the
-      <classname>cascading.flow.FlowListener</classname> interface, which
-      supports four events:</para>
+          <classname>cascading.flow.FlowListener</classname> interface and Cascades support event
+        listeners through the <classname>cascading.cascade.CascadeListener</classname>, which
+        supports four events:</para>
 
       <variablelist>
         <varlistentry>
           <term>onStarting</term>
 
           <listitem>
-            <para>The onStarting event is fired when a Flow instance receives
-            the <code>start()</code> message.</para>
+            <para>The onStarting event is fired when a Flow or Cascade instance receives the
+                <code>start()</code> message.</para>
           </listitem>
         </varlistentry>
 
@@ -3434,8 +3434,8 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
           <term>onStopping</term>
 
           <listitem>
-            <para>The onStopping event is fired when a Flow instance receives
-            the <code>stop()</code> message.</para>
+            <para>The onStopping event is fired when a Flow or Cascade instance receives the
+                <code>stop()</code> message.</para>
           </listitem>
         </varlistentry>
 
@@ -3443,10 +3443,9 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
           <term>onCompleted</term>
 
           <listitem>
-            <para>The onCompleted event is fired when a Flow instance has
-            completed all work, regardless of success or failure. If an
-            exception was thrown, onThrowable will be fired before this
-            event.</para>
+            <para>The onCompleted event is fired when a Flow or Cascade instance has completed all
+              work, regardless of success or failure. If an exception was thrown, onThrowable will
+              be fired before this event.</para>
           </listitem>
         </varlistentry>
 
@@ -3454,11 +3453,10 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
           <term>onThrowable</term>
 
           <listitem>
-            <para>The onThrowable event is fired if any internal job client
-            throws a Throwable type. This throwable is passed as an argument
-            to the event. onThrowable should return true if the given
-            throwable was handled, and should not be rethrown from the
-            <code>Flow.complete()</code> method.</para>
+            <para>The onThrowable event is fired if any internal job client throws a Throwable type.
+              This throwable is passed as an argument to the event. onThrowable should return true
+              if the given throwable was handled, and should not be rethrown from the
+                <code>Flow.complete()</code> or <code>Cascade.complete()</code> methods.</para>
           </listitem>
         </varlistentry>
       </variablelist>
