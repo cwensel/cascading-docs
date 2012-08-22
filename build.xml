@@ -201,5 +201,8 @@
 
     <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="default"
                   pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="false" type="sources"/>
+
+    <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="default"
+                  pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="false" type="test"/>
   </target>
 </project>
