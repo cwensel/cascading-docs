@@ -256,6 +256,56 @@ public class CompiledExamples
     //@extract-end
     }
 
+  public void compileCheckpointFlowRestart()
+    {
+    // the "left hand side" assembly head
+    Pipe lhs = new Pipe( "lhs" );
+
+    lhs = new Each( lhs, new SomeFunction() );
+    lhs = new Each( lhs, new SomeFilter() );
+
+    // the "right hand side" assembly head
+    Pipe rhs = new Pipe( "rhs" );
+
+    rhs = new Each( rhs, new SomeFunction() );
+
+    // joins the lhs and rhs
+    Pipe join = new CoGroup( lhs, rhs );
+
+    join = new Every( join, new SomeAggregator() );
+
+    // we want to see the data passing through this point
+    Checkpoint checkpoint = new Checkpoint( "checkpoint", join );
+
+    Pipe groupBy = new GroupBy( checkpoint );
+
+    groupBy = new Every( groupBy, new SomeAggregator() );
+
+    // the tail of the assembly
+    groupBy = new Each( groupBy, new SomeFunction() );
+
+    Tap lhsSource = new Hfs( new TextLine(), "lhs.txt" );
+    Tap rhsSource = new Hfs( new TextLine(), "rhs.txt" );
+
+    Tap sink = new Hfs( new TextLine(), "output" );
+
+    // write all data as a tab delimited file, with headers
+    Tap checkpointTap =
+      new Hfs( new TextDelimited( true, "\t" ), "checkpoint" );
+
+    //@extract-start checkpoint-restart-flow
+    FlowDef flowDef = new FlowDef()
+      .setName( "flow-name" )
+      .addSource( rhs, rhsSource )
+      .addSource( lhs, lhsSource )
+      .addTailSink( groupBy, sink )
+      .addCheckpoint( checkpoint, checkpointTap )
+      .setRunID( "some-unique-value" ); // re-use this id to restart this flow
+
+    Flow flow = new HadoopFlowConnector().connect( flowDef );
+    //@extract-end
+    }
+
   public void compileCascade()
     {
     Flow flowFirst = null;

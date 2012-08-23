@@ -3414,6 +3414,34 @@ RHS = [0,A]       [2,C] [3,D]            </programlisting>In each join type
     </section>
 
     <section>
+      <title>Restarting a Checkpointed Flow</title>
+      <para>When using Checkpoint pipes in a Flow and the Flow fails, a future execution of the Flow
+        can be restarted after the last successful FlowStep writing to a checkpoint file. That is, a Flow
+      will only restart from the last Checkpoint Pipe location.</para>
+
+      <para>This feature requires that the failed Flow be planned with a <code>runID</code> set on
+        the FlowDef, and the retry Flow use the same <code>runID</code> value. It goes without
+        saying, the retry Flow should be (roughly) equivant to the previous failed attempt. </para>
+
+      <example>
+        <title>Setting runID</title>
+
+        <xi:include href="checkpoint-restart-flow.xml"/>
+      </example>
+
+      <para>Caution should be used when using restarted checkpoint Flows. If the input data has
+        changed, or the pipe assembly has significantly been altered, the Flow may fail or there may
+        be undetectable errors.</para>
+
+      <para>Note that when using a <code>runID</code>, all Flow instances must use a unique value
+        unless they are intended as a retry attempt. The runID value is used to scope the
+        directories for the temporary checkpoint files to prevent file name collisions.</para>
+
+      <para>On successful completion of a Flow with a runID, all temporary checkpoint files will be
+        removed, if any.</para>
+    </section>
+
+    <section>
       <title>Flow and Cascade Event Handling</title>
 
       <para>Each Flow and Cascade has the ability to execute callbacks via an event listener. This
