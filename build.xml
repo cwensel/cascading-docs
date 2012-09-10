@@ -83,15 +83,17 @@
 
         <!-- internal -->
         <exclude name="cascading/util/**"/>
+        <exclude name="cascading/**/util/**"/>
         <exclude name="cascading/**/planner/**"/>
         <exclude name="cascading/**/stream/**"/>
 
       </fileset>
 
       <classpath refid="project.class.path"/>
-      <link href="http://java.sun.com/javase/6/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <link href="http://dist.codehaus.org/janino/javadoc/"/>
-      <link href="http://hadoop.apache.org/common/docs/r0.20.2/api/"/>
+      <link href="http://hadoop.apache.org/common/docs/r1.0.3/api/"/>
+      <link href="http://junit.sourceforge.net/javadoc/"/>
       <bottom>
         <![CDATA[<i>Copyright &#169; 2007-2012 Concurrent, Inc. All Rights Reserved.</i>]]>
         <![CDATA[<script type="text/javascript">var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-188528-5']); _gaq.push(['_setDomainName', 'cascading.org']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script>]]>
@@ -203,6 +205,6 @@
                   pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="false" type="sources"/>
 
     <ivy:retrieve file="${basedir}/ivy.xml" settingsRef="ivy.conjars.settings" conf="default"
-                  pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="false" type="test"/>
+                  pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]" sync="false" type="tests"/>
   </target>
 </project>
