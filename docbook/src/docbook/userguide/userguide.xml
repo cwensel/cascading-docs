@@ -99,12 +99,12 @@
         </para>
 
         <para>Since Cascading's creation, a number of Domain Specific
-          Languages (DSL's) have emerged as query languages that wrap the
-          Cascading API's, allowing developers and analysts to create ad-hoc
-          queries for data mining and exploration. These DSL's coupled with
+          Languages (DSLs) have emerged as query languages that wrap the
+          Cascading APIs, allowing developers and analysts to create ad-hoc
+          queries for data mining and exploration. These DSLs coupled with
           Cascading local-mode allow users to rapidly query and analyze
           reasonably large datasets on their local systems before executing them
-          at scale in a production environment. See the section on DSL's for
+          at scale in a production environment. See the section on DSLs for
           references.
         </para>
       </section>
@@ -134,7 +134,7 @@
           chaining together operations to act on one or more input data sets,
           producing one or more output data sets. This can be done with the raw
           Java Cascading API, or with a scripting language such as Scale,
-          Clojure, Groovy, JRuby, or Jython (or by one of the DSL's implemented
+          Clojure, Groovy, JRuby, or Jython (or by one of the DSLs implemented
           in these languages).
         </para>
 
@@ -198,7 +198,7 @@
         not be discussed further. Cascading itself can run locally or on the
         Hadoop platform, where Hadoop itself may be in standalone or distributed
         mode. The primary difference between these two platforms is that, when
-        Cascading is running locally, it makes no use of Hadoop API's and
+        Cascading is running locally, it makes no use of Hadoop APIs and
         performs all of its work in memory, allowing it to be very fast - but
         consequently not as robust or scalable as when it is running on the
         Hadoop platform.
@@ -6283,7 +6283,7 @@
         Java-compatible scripting language can import and instantiate Cascading
         classes, create pipe assemblies and flows, and execute those flows. And
         if the scripting language in question supports Domain Specific Language
-        (DSL) creation, users can create their own DSL's to handle common
+        (DSL) creation, users can create their own DSLs to handle common
         idioms.
       </para>
 
