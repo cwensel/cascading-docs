@@ -17,30 +17,30 @@
   </configurations>
 
   <dependencies>
-    <dependency org="cascading" name="cascading-core" rev="2.1.+" conf="default->*" changing="true">
+    <dependency org="cascading" name="cascading-core" rev="2.2.+" conf="default->*" changing="true">
       <artifact name="cascading-core" type="jar"/>
       <artifact name="cascading-core" type="sources" e:classifier="sources" ext="jar"/>
       <artifact name="cascading-core" type="tests" e:classifier="tests" ext="jar"/>
     </dependency>
-    <dependency org="cascading" name="cascading-hadoop" rev="2.1.+" conf="default->*" changing="true">
+    <dependency org="cascading" name="cascading-hadoop" rev="2.2.+" conf="default->*" changing="true">
       <artifact name="cascading-hadoop" type="jar"/>
       <artifact name="cascading-hadoop" type="sources" e:classifier="sources" ext="jar"/>
       <artifact name="cascading-hadoop" type="tests" e:classifier="tests" ext="jar"/>
       <exclude org="ant"/>
       <exclude org="junit"/>
     </dependency>
-    <dependency org="cascading" name="cascading-local" rev="2.1.+" conf="default->*" changing="true">
+    <dependency org="cascading" name="cascading-local" rev="2.2.+" conf="default->*" changing="true">
       <artifact name="cascading-local" type="jar"/>
       <artifact name="cascading-local" type="sources" e:classifier="sources" ext="jar"/>
       <artifact name="cascading-local" type="tests" e:classifier="tests" ext="jar"/>
     </dependency>
-    <dependency org="cascading" name="cascading-xml" rev="2.1.+" conf="default->*" changing="true">
+    <dependency org="cascading" name="cascading-xml" rev="2.2.+" conf="default->*" changing="true">
       <artifact name="cascading-xml" type="jar"/>
       <artifact name="cascading-xml" type="sources" e:classifier="sources" ext="jar"/>
       <artifact name="cascading-xml" type="tests" e:classifier="tests" ext="jar"/>
     </dependency>
 
-    <dependency org="cascading" name="cascading-platform" rev="2.1.+" conf="default->*" changing="true">
+    <dependency org="cascading" name="cascading-platform" rev="2.2.+" conf="default->*" changing="true">
       <!--<artifact name="cascading-platform" type="jar"/>-->
       <artifact name="cascading-platform" type="sources" e:classifier="sources" ext="jar"/>
       <artifact name="cascading-platform" type="tests" e:classifier="tests" ext="jar"/>
