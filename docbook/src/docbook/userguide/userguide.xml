@@ -145,8 +145,8 @@
     <section>
       <title>What is Apache Hadoop?</title>
 
-      <para>From the Hadoop website, it <quote>is a software platform that lets
-      one easily write and run applications that process vast amounts of
+      <para>From the Hadoop website, it <quote>is a software platform that
+      lets one easily write and run applications that process vast amounts of
       data</quote>. Hadoop does this by providing a storage layer that holds
       vast amounts of data, and an execution layer that runs an application in
       parallel across the cluster, using coordinated subsets of the stored
@@ -299,9 +299,9 @@
 
       <para>In Cascading, we call a data record a <emphasis
       role="italic">tuple</emphasis>, a simple chain of pipes without forks or
-      merges a <emphasis role="italic">branch</emphasis>, an interconnected set
-      of pipe branches a <emphasis>pipe assembly</emphasis>, and a series of
-      tuples passing through a pipe branch or assembly a <emphasis
+      merges a <emphasis role="italic">branch</emphasis>, an interconnected
+      set of pipe branches a <emphasis>pipe assembly</emphasis>, and a series
+      of tuples passing through a pipe branch or assembly a <emphasis
       role="italic">tuple stream</emphasis>.</para>
 
       <para>Pipe assemblies are specified independently of the data source
@@ -469,8 +469,8 @@
               position, starting at <code>0</code> for the first position, or
               starting at <code>-1</code> for the last position), or one of
               the predefined <emphasis role="italic">Fields sets</emphasis>
-              (such as <code>Fields.ALL</code>, which selects all values in the
-              Tuple, like an asterisk in SQL). For more on Fields sets,
+              (such as <code>Fields.ALL</code>, which selects all values in
+              the Tuple, like an asterisk in SQL). For more on Fields sets,
               see <xref linkend="field-algebra"/>).</para>
             </listitem>
           </varlistentry>
@@ -1324,11 +1324,11 @@
         in the different input streams do not typically contain the same set
         of fields.</para>
 
-        <para>As with <classname> CoGroup</classname>, the field names must all
-        be unique, including the names of the key fields, to avoid duplicate
-        field names in the emitted <classname>Tuple</classname>. If necessary,
-        use the <parameter>declaredFields</parameter> argument to specify
-        unique field names for the output.</para>
+        <para>As with <classname> CoGroup</classname>, the field names must
+        all be unique, including the names of the key fields, to avoid
+        duplicate field names in the emitted <classname>Tuple</classname>. If
+        necessary, use the <parameter>declaredFields</parameter> argument to
+        specify unique field names for the output.</para>
 
         <para>An inner join is performed by default, but you can choose inner,
         outer, left, right, or mixed (three or more streams). Self-joins are
@@ -2732,8 +2732,8 @@
 
       <para>A <classname>Filter</classname> expects a stream of individual
       argument Tuples and returns a Boolean value for each one, stating
-      whether it should be discarded. Like a <classname>Function</classname>, a
-      <classname>Filter</classname> is used with an
+      whether it should be discarded. Like a <classname>Function</classname>,
+      a <classname>Filter</classname> is used with an
       <classname>Each</classname> pipe, which may follow any pipe type.</para>
 
       <para>To create a custom <classname>Filter</classname>, subclass the
@@ -3466,9 +3466,9 @@
 
       <para>Flows support event listeners through the
       <classname>cascading.flow.FlowListener</classname> interface and
-      Cascades support event listeners through
-      the <classname>cascading.cascade.CascadeListener</classname>, which
-      supports four events:</para>
+      Cascades support event listeners through the
+      <classname>cascading.cascade.CascadeListener</classname>, which supports
+      four events:</para>
 
       <variablelist>
         <varlistentry>
@@ -4066,8 +4066,8 @@
               are required, search on the <code>text()</code> nodes, or
               consider using XPathGenerator to handle multiple
               <classname>NodeList</classname> values. If the returned result
-              of an XPath expression is a <classname>NodeList</classname>, only
-              the first <classname>Node</classname> is used for the field
+              of an XPath expression is a <classname>NodeList</classname>,
+              only the first <classname>Node</classname> is used for the field
               value and the rest are ignored.</para>
             </listitem>
           </varlistentry>
@@ -4474,8 +4474,8 @@
         <title>FirstBy</title>
 
         <para>The <classname>cascading.pipe.assembly.FirstBy</classname>
-        SubAssembly is used to return the first encountered value in the
-        given <code>valueFields</code>. FirstBy may be combined with other
+        SubAssembly is used to return the first encountered value in the given
+        <code>valueFields</code>. FirstBy may be combined with other
         AggregateBy subclasses so they may be executed simultaneously over the
         same grouping.</para>
 
@@ -4602,13 +4602,6 @@
       all available platforms and run each test on the subclass against each
       platform found.</para>
 
-      <para>You can exclude any platforms you don't want to have the tests run
-      against by omitting from a system property named
-      <code>platform.includes</code>. For example, to only run the local mode
-      tests when both local and Hadoop platforms are in the classpath, call
-      <code>System.setProperty( "platform.includes", "local );</code> or use
-      an appropriate -D switch to the JVM.</para>
-
       <para>See the Cascading platform unit tests for examples.</para>
 
       <para>For Maven users, be sure to add the <code>tests</code> classifier
@@ -4681,8 +4674,8 @@
       take care to create field names that don't contain characters which will
       cause compilation errors if they are used in an expression. For example,
       "first-name" is a valid field name for use with Cascading, but might
-      result in the expression <code>first-name.trim()</code>, which will cause
-      a compilation error.</para>
+      result in the expression <code>first-name.trim()</code>, which will
+      cause a compilation error.</para>
     </section>
 
     <section>
@@ -4788,8 +4781,8 @@
       then Filter all Persons based on their age. This may seem more difficult
       and less effiicient, but it keeps your application flexible and avoids
       duplicating existing operations. (The only alternative here is to create
-      a <classname>PersonAgeFilter</classname>, which becomes one more thing to
-      test.)</para>
+      a <classname>PersonAgeFilter</classname>, which becomes one more thing
+      to test.)</para>
     </section>
 
     <section>
