@@ -745,7 +745,7 @@
                 <entry>sort/group on field values; optionally merge two or
                 more streams with identical fields</entry>
 
-                <entry>two or more tuple streams with identical fields</entry>
+                <entry>one or more tuple streams with identical fields</entry>
 
                 <entry>a single tuple stream, grouped on key field(s) with
                 optional secondary sort</entry>
