@@ -6,9 +6,12 @@
 
 package userguide;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import cascading.cascade.Cascade;
 import cascading.cascade.CascadeConnector;
@@ -52,7 +55,11 @@ import cascading.tap.Tap;
 import cascading.tap.hadoop.Hfs;
 import cascading.tap.hadoop.TemplateTap;
 import cascading.tuple.Fields;
+import cascading.tuple.Tuple;
+import cascading.tuple.TupleEntry;
 import cascading.tuple.collect.SpillableProps;
+import cascading.tuple.type.CoercibleType;
+import cascading.tuple.type.DateType;
 import org.apache.hadoop.mapred.JobConf;
 
 /**
@@ -624,8 +631,8 @@ public class CompiledExamples
 
     // note we do not pass the parent assembly Pipe in
     Fields valueField = new Fields( "size" );
-    Fields sumField = new Fields( "total-size" );
-    SumBy sumBy = new SumBy( valueField, sumField, long.class );
+    Fields sumField = new Fields( "total-size", long.class );
+    SumBy sumBy = new SumBy( valueField, sumField );
 
     Fields countField = new Fields( "num-events" );
     CountBy countBy = new CountBy( countField );
@@ -849,6 +856,21 @@ public class CompiledExamples
     assembly = new Unique( assembly, new Fields( "first", "last" ) );
 
     // outgoing -> first, last
+    //@extract-end
+    }
+    }
+
+  public void compileFieldsTypes()
+    {
+    {
+    //@extract-start fields-type-constructor
+    Fields resultFields = new Fields( "count", Long.class ); // null is ok
+    //@extract-end
+    }
+
+    {
+    //@extract-start fields-type-fluent
+    Fields resultFields = new Fields( "count" ).applyTypes( long.class ); // null becomes 0
     //@extract-end
     }
     }

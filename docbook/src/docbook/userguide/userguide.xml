@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
+  ~ Copyright (c) 2007-2013 Concurrent, Inc. All Rights Reserved.
   ~
   ~ Project and contact information: http://www.concurrentinc.com/
   -->
@@ -12,11 +12,11 @@
       xmlns:ns3="http://www.w3.org/1999/xhtml"
       xmlns:ns="http://docbook.org/ns/docbook">
   <info>
-    <title>Cascading 2.1 User Guide</title>
+    <title>Cascading 2.2 User Guide</title>
 
     <releaseinfo/>
 
-    <pubdate>January 2013</pubdate>
+    <pubdate>August 2013</pubdate>
 
     <copyright>
       <year>2007-2013</year>
@@ -110,8 +110,8 @@
         <para><emphasis role="bold">The application Executor</emphasis> is a
         person (e.g., a developer or analyst) or process (e.g., a cron job)
         that runs a data processing application on a given cluster. This is
-        typically done via the command line, using a pre-packaged Java Jar
-        file compiled against the Apache Hadoop and Cascading libraries. The
+        typically done via the command line, using a prepackaged Java Jar file
+        compiled against the Apache Hadoop and Cascading libraries. The
         application may accept command-line parameters to customize it for a
         given execution, and generally outputs a data set to be exported from
         the Hadoop file system for some specific purpose.</para>
@@ -121,7 +121,7 @@
         applications. This work is generally a development task that involves
         chaining together operations to act on one or more input data sets,
         producing one or more output data sets. This can be done with the raw
-        Java Cascading API, or with a scripting language such as Scale,
+        Java Cascading API, or with a scripting language such as Scala,
         Clojure, Groovy, JRuby, or Jython (or by one of the DSLs implemented
         in these languages).</para>
 
@@ -1218,9 +1218,9 @@
           and compare the different types of join:</para>
 
           <para><programlisting>LHS = [0,a] [1,b] [2,c]
-            RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below,
-          the values are joined on the first tuple position (the join key), a
-          numeric value. Note that, when Cascading joins tuples, the resulting
+RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
+          are joined on the first tuple position (the join key), a numeric
+          value. Note that, when Cascading joins tuples, the resulting
           <classname>Tuple</classname> contains all the incoming values from
           in incoming tuple streams, and does not discard the duplicate key
           fields. As mentioned above, on outer joins where there is no
@@ -1426,6 +1426,9 @@
 
           <xi:include href="properties-step.xml"/>
         </example>
+
+        <para>As of Cascading 2.2, SubAssemblies can now be configured via the
+        ConfigDef method.</para>
       </section>
     </section>
 
@@ -3169,6 +3172,132 @@
       platform, this will likely be on the cluster side, unlike calls to
       <methodname>*ConfInit()</methodname> which will likely be on the client
       side.</para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <info>
+      <title>Field Typing and Type Coercion</title>
+    </info>
+
+    <section>
+      <title xreflabel="Field Typing" xml:id="field-typing">Field
+      Typing</title>
+
+      <para>As of Cascading 2.2, the Fields class can hold type information
+      for each field, and the Cascading planner can propagate that information
+      from source Tap instances to downstream Operations through to sink Tap
+      instances. </para>
+
+      <para>This allows for Taps to read and store type information for
+      external systems and applications, error detection during joins
+      (detecting non-comparable types), to enforce canonical representations
+      within the Tuple (prevent a field from switching arbitrarily between
+      String and Integer types), and to allow for pluggable coercion from one
+      type to another type, even if either isn't a Java primitive.</para>
+
+      <para>To declare types, simply pass type information to the Fields
+      instance either through the constructor or via a fluent API.</para>
+
+      <example>
+        <title>Constructor</title>
+
+        <xi:include href="fields-type-constructor.xml"/>
+      </example>
+
+      <example>
+        <title>Fluent</title>
+
+        <xi:include href="fields-type-fluent.xml"/>
+      </example>
+
+      <para>Note the first example uses <classname>Long.class</classname>, and
+      the second <classname>long.class</classname>. Since
+      <classname>Long</classname> is an object, we are letting Cascading know
+      that the null value can be set. If declared <classname>long</classname>
+      (a primitive) then null becomes zero.</para>
+
+      <para>In practice, typed fields can only be used when they declare the
+      results of an operation, for example:</para>
+
+      <example>
+        <title>Declaring Typed Results</title>
+
+        <xi:include href="partials-compose.xml"/>
+      </example>
+
+      <para>Here the type information serves two roles. First, it allows a
+      downstream consumer of the field value to know the type maintained in
+      the tuple. Second, the SumBy sub-assembly now has a simpler API and can
+      get the type information it needs internally to perform the aggregation
+      directly from the Fields instance.</para>
+
+      <para>Note that the <classname>TextDelimited</classname> and other
+      <classname>Scheme</classname> classes should have any type information
+      declared so it can be maintained by the Cascading planner. Custom
+      <classname>Scheme</classname> types also have the opportunity to read
+      type information from any field or data sources they represent so it can
+      be handed to the planner during runtime.</para>
+    </section>
+
+    <section>
+      <title xreflabel="Type Coercion" xml:id="field-coercion">Type
+      Coercion</title>
+
+      <para>Type coercion is a means to convert one data type to another. For
+      example, parsing the Java <classname>String</classname> "42" to the
+      <classname>Integer</classname> 42 would be coercion. Or more simply,
+      converting a <classname>Long</classname> 42 to a
+      <classname>Double</classname> 42.0. Cascading supports primitive type
+      coercions natively through the
+      <classname>cascading.tuple.coerce.Coercions</classname> class.</para>
+
+      <para>In practice, developers implicitly invoke coercions via the
+      <classname>cascading.tuple.TupleEntry</classname> interface by
+      requesting a <classname>Long</classname> or
+      <classname>String</classname> representation of a field, via
+      <code>TupleEntry.getLong()</code> or
+      <code>TupleEntry.getString()</code>, respectively.</para>
+
+      <para>Or when data is set on a <classname>Tuple</classname> via
+      <code>TupleEntry.setLong()</code> or
+      <code>TupleEntry.setString()</code>, for example. If the field was
+      declared as an <classname>Integer</classname>, and
+      <code>TupleEntry.setString( "someField", "42" )</code> was called, the
+      value of "someFields" will be coerced into its canonical form,
+      42.</para>
+
+      <para>To create custom coercions, the
+      <classname>cascading.tuple.type.CoercibleType</classname> interface must
+      be implemented, and instances of <classname>CoercibleType</classname>
+      can be used as the Type accepted by the Fields API as
+      <classname>CoercibleType</classname> extends
+      <classname>java.lang.reflect.Type</classname>.</para>
+
+      <para>Cascading provided a
+      <classname>cascading.tuple.type.DateType</classname> implementation to
+      allow for coercions between date strings and the
+      <classname>Long</classname> canonical type. For example:</para>
+
+      <example>
+        <title>Date Type</title>
+
+        <xi:include href="fields-date-type.xml"/>
+      </example>
+
+      <para>In this example we declare the "dateString" field to be a
+      <classname>DateType</classname>. <classname>DateType</classname>
+      maintains the value of the field as a <classname>long</classname>
+      internally, but if a <classname>String</classname> is set or requested,
+      it will be converted using the given
+      <classname>SimpleDateFormat</classname> <classname>String</classname>
+      against the given <classname>TimeZone</classname>. In the case of a
+      <classname>TextDelimited</classname> CSV file, where one column is a
+      date value, <classname>DateType</classname> can be used to declare its
+      format allowing <classname>TextDelimited</classname> to read and write
+      the value as a <classname>String</classname>, but use the value
+      internally (in the Tuple) as a <classname>long</classname>, which is
+      much more efficient.</para>
     </section>
   </chapter>
 
