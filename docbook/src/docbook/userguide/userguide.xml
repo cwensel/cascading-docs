@@ -1759,7 +1759,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
 
             <listitem>
               <para>The
-              <classname>cascading.tap.hadoop.TemplateTap</classname> is used
+              <classname>cascading.tap.hadoop.TemplateTap</classname> and
+              <classname>cascading.tap.local.TemplateTap</classname> are used
               to sink tuples into directory paths based on the values in the
               Tuple. More can be read below in <xref
               linkend="template-tap"/>.</para>
@@ -2408,7 +2409,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
 
       <variablelist>
         <varlistentry>
-          <term>cascading-core-2.0.x.jar</term>
+          <term>cascading-core-2.2.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading Core class files. It should
@@ -2418,7 +2419,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-local-2.0.x.jar</term>
+          <term>cascading-local-2.2.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading local mode class files. It
@@ -2427,7 +2428,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-hadoop-2.0.x.jar</term>
+          <term>cascading-hadoop-2.2.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading Hadoop specific
@@ -2437,22 +2438,12 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-xml-1.2.x.jar</term>
+          <term>cascading-xml-2.2.x.jar</term>
 
           <listitem>
             <para>This jar contains Cascading XML module class files and is
             optional. It should be packaged with
             <filename>lib/xml/*.jar</filename> when using Hadoop.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>cascading-test-1.2.x.jar</term>
-
-          <listitem>
-            <para>This jar contains Cascading unit tests. If writing custom
-            modules for cascading, it may be helpful to subclass
-            <classname>cascading.CascadingTestCase</classname>.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -3187,7 +3178,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       <para>As of Cascading 2.2, the Fields class can hold type information
       for each field, and the Cascading planner can propagate that information
       from source Tap instances to downstream Operations through to sink Tap
-      instances. </para>
+      instances.</para>
 
       <para>This allows for Taps to read and store type information for
       external systems and applications, error detection during joins
@@ -3327,8 +3318,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       </example>
 
       <para>In the example above, we pass in (as parameters via the
-      constructor) the pipes that we wish to continue assembling against, and
-      in the last line we register the "join" pipe as a tail. This allows
+      constructor) the pipes that we wish to continue assembling against, in
+      the first line we register the incoming "previous" pipes, and in the
+      last line we register the outgoing "join" pipe as a tail. This allows
       SubAssemblies to be nested within larger pipe assemblies or other
       SubAssemblies.</para>
 
@@ -4165,6 +4157,15 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
             </listitem>
           </varlistentry>
         </variablelist></para>
+
+      <para>As of Cascading 2.2, along with
+      <classname>cascading.operation.expression.ExpressionFilter</classname>
+      and
+      <classname>cascading.operation.expression.ExpressionFunction</classname>,
+      two new operations have been added to support multi-line Java code,
+      <classname>cascading.operation.expression.ScriptFilter</classname> and
+      <classname>cascading.operation.expression.ScriptFunction</classname>.
+      See the relevant Javadoc for details on usage.</para>
     </section>
 
     <section>
@@ -4517,6 +4518,34 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       Both must be satisfied for the data to pass through this one
       Pipe.</para>
     </section>
+
+    <section>
+      <title>Buffers</title>
+
+      <para>As of Cascading 2.2, the FirstNBuffer Buffer is provided as an
+      optimized means to determine the top N elements in a grouping.</para>
+
+      <para><variablelist>
+          <varlistentry>
+            <term>FirstNBuffer</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.operation.buffer.FirstNBuffer</classname>
+              <classname>Buffer</classname> returns the first N tuples seen in
+              a given grouping. Unlike the
+              <classname>cascading.pipe.assembly.FirstBy</classname>
+              <classname>AggregateBy</classname> and
+              <classname>cascading.operation.aggregator.First</classname>
+              <classname>Aggregator</classname>,
+              <classname>FirstNBuffer</classname> will stop iterating the
+              available tuples when the top N condition is met.
+              <classname>FirstNBuffer</classname> is used by
+              <classname>cascading.pipe.assembly.Unique</classname>.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist></para>
+    </section>
   </chapter>
 
   <chapter>
@@ -4526,6 +4555,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
 
     <para>There are a number of helper SubAssemblies provided by the core
     cascading library.</para>
+
+    <para>As of Cascading 2.2, many of the below assemblies can optionally
+    ignore null values. This allows for an optional but closer resemblance to
+    how similar functions in SQL perform.</para>
 
     <section>
       <title xreflabel="AggregateBy" xml:id="aggregate-by">AggregateBy</title>
@@ -4693,6 +4726,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
 
         <xi:include href="subassembly-unique.xml"/>
       </example>
+
+      <para>As of Cascading 2.2, <classname>Unique</classname> uses the
+      <classname>FirstNBuffer</classname> to more efficiently determine unique
+      values.</para>
     </section>
   </chapter>
 

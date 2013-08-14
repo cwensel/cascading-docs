@@ -15,6 +15,9 @@ public class SplitSubAssembly extends SubAssembly
   {
   public SplitSubAssembly( Pipe pipe )
     {
+    // must register incoming pipe
+    setPrevious( pipe );
+
     // continue assembling against pipe
     pipe = new Each( pipe, new SomeFunction() );
 

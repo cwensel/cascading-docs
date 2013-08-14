@@ -18,6 +18,9 @@ public class SomeSubAssembly extends SubAssembly
   {
   public SomeSubAssembly( Pipe lhs, Pipe rhs )
     {
+    // must register incoming pipes
+    setPrevious( lhs, rhs );
+
     // continue assembling against lhs
     lhs = new Each( lhs, new SomeFunction() );
     lhs = new Each( lhs, new SomeFilter() );
