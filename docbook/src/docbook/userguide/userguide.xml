@@ -4744,7 +4744,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       <para>Discrete testing of all Operations, pipe assemblies, and
       applications is a must. The
       <classname>cascading.CascadingTestCase</classname> provides a number of
-      helper methods.</para>
+      static helper methods.</para>
 
       <para>When testing custom Operations, use the
       <methodname>invokeFunction()</methodname>,
@@ -4763,10 +4763,10 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       independent of the underlying platform. Any unit test should subclass
       <classname>cascading.PlatformTestCase</classname> located in the
       <filename>cascading-platform-x.y.z-tests.jar</filename> jar file. Any
-      platform to be tested against should be added to the classpath as well.
-      <classname>PlatformTestCase</classname> will search the classpath for
-      all available platforms and run each test on the subclass against each
-      platform found.</para>
+      platform to be tested against should be added to the
+      <code>CLASSPATH</code> as well. <classname>PlatformTestCase</classname>
+      will search the <code>CLASSPATH</code> for all available platforms and
+      run each test on the subclass against each platform found.</para>
 
       <para>See the Cascading platform unit tests for examples.</para>
 
