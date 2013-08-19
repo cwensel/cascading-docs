@@ -2534,6 +2534,57 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       in the lib folder) will be pushed to the cluster instead, and "Class Not
       Found" exceptions will be thrown.</para>
     </section>
+
+    <section>
+      <title xreflabel="Debugging Hadoop"
+      xml:id="debugging-hadoop">Debugging</title>
+
+      <para>Debugging and testing in Cascading local mode, unlike Cascading
+      Hadoop mode, is trivial as all the work and processing happens in the
+      local JVM and in local memory. This dramatically simplifies the use of
+      an IDE and Debugger.Thus the very first recommendation for debugging
+      Cascading applications on Hadoop is to first write tests that run in
+      Cascading local mode.</para>
+
+      <para>Along with the use of an IDE Debugger, Cascading provides two
+      tools to help sort out runtime issues. First is the use of the
+      <classname>Debug</classname> filter.</para>
+
+      <para>It is a best practice to sprinkle <classname>Debug</classname>
+      operators (see <xref linkend="debug-function"/>) in the pipe assembly
+      and rely on the planner to remove them at runtime by setting a
+      <classname>DebugLevel</classname>. <classname>Debug</classname> can only
+      print to the local console via std out or std error, thus making it
+      harder for use on Hadoop, as Operations do not execute locally but on
+      the cluster side. <classname>Debug</classname> can optionally print the
+      current field names, and a prefix can be set to help distinguish between
+      instances of the <classname>Debug</classname> operation.</para>
+
+      <para>Additionally, the actual execution plan for a given Flow can be
+      written out (and visualized) via the Flow.writeDOT() method. DOT files
+      are simply text representation of graph data and can be read by tools
+      like GraphViz and Omni Graffle.</para>
+
+      <para>In Cascading local mode, these execution plans are exactly as the
+      pipe assemblies were coded, except the sub-assemblies are unwound and
+      the field names across the Flow are resolved by the local mode planner.
+      That is, <code>Fields.ALL</code> and other wild cards are converted the
+      actual field names or ordinals.</para>
+
+      <para>In the case of Hadoop mode, using the
+      <classname>HadoopFlowConnector</classname>, the DOT files also contain
+      the intermediate <classname>Tap</classname> instances created to join
+      MapReduce jobs together. Thus the branches between Tap instances are
+      effectively MapReduce jobs. See the <code>Flow.writeStepsDOT()</code>
+      method to write out all the MapReduce jobs that will be
+      scheduled.</para>
+
+      <para>If the <methodname>connect()</methodname> method on the current
+      <classname>FlowConnector</classname> fails, the resulting
+      <classname>PlannerException</classname> has a
+      <methodname>writeDOT()</methodname> method that shows the progress of
+      the current planner.</para>
+    </section>
   </chapter>
 
   <chapter>
@@ -4858,6 +4909,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       <para>Note that you can also create a DOT file from a
       <classname>Flow</classname>, by using
       <code>Flow.writeDOT()</code>.</para>
+
+      <para>See <xref linkend="debugging-hadoop"/>.</para>
     </section>
 
     <section>
@@ -4880,6 +4933,8 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       linkend="debug-function"/>) at appropriate debug levels as needed. Use
       the planner to remove them at runtime for production and staging runs,
       to avoid wasting resources.</para>
+
+      <para>See <xref linkend="debugging-hadoop"/>.</para>
     </section>
 
     <section>
