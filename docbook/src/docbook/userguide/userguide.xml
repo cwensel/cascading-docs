@@ -2579,11 +2579,30 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       method to write out all the MapReduce jobs that will be
       scheduled.</para>
 
+      <para>This information can also be misleading to what is actually
+      happening per Map or Reduce task cluster side. For a more detailed view
+      of the data pipeline actually executing on a given Map or Reduce task,
+      set the "cascading.stream.dotfile.path" property on the
+      <classname>FlowConnector</classname>. This will write, cluster side, a
+      DOT representation of the current data pipeline path the current Map or
+      Reduce task is handling which is a function of which file(s) the Map or
+      Reduce task are reading and processing. And if multiple files, which
+      files are being read to which <classname>HashJoin</classname> instances.
+      It is recommended to use a relative path like
+      <code>stepPlan/</code>.</para>
+
       <para>If the <methodname>connect()</methodname> method on the current
       <classname>FlowConnector</classname> fails, the resulting
       <classname>PlannerException</classname> has a
       <methodname>writeDOT()</methodname> method that shows the progress of
       the current planner.</para>
+
+      <para>If Cascading is failing with an unknown internal runtime exception
+      during Map or Reduce task startup, setting the
+      "cascading.stream.error.dotfile" property will tell Cascading where to
+      write a DOT representation of the pipeline it was attempting to build,
+      if any. This file will allow the Cascading community to better identify
+      and resolve issues. </para>
     </section>
   </chapter>
 
