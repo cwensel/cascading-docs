@@ -6,12 +6,9 @@
 
 package userguide;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Properties;
-import java.util.TimeZone;
 
 import cascading.cascade.Cascade;
 import cascading.cascade.CascadeConnector;
@@ -53,13 +50,11 @@ import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
 import cascading.tap.hadoop.Hfs;
+import cascading.tap.hadoop.PartitionTap;
 import cascading.tap.hadoop.TemplateTap;
+import cascading.tap.partition.DelimitedPartition;
 import cascading.tuple.Fields;
-import cascading.tuple.Tuple;
-import cascading.tuple.TupleEntry;
 import cascading.tuple.collect.SpillableProps;
-import cascading.tuple.type.CoercibleType;
-import cascading.tuple.type.DateType;
 import org.apache.hadoop.mapred.JobConf;
 
 /**
@@ -156,6 +151,21 @@ public class CompiledExamples
 
     String template = "%s-%s"; // dirs named "year-month"
     Tap months = new TemplateTap( tap, template, SinkMode.REPLACE );
+    //@extract-end
+    }
+
+  public void compilePartitionTap()
+    {
+    String path = "some/path";
+
+    //@extract-start partition-tap
+    TextDelimited scheme =
+      new TextDelimited( new Fields( "entry" ), "\t" );
+    Hfs parentTap = new Hfs( scheme, path );
+
+    // dirs named "[year]-[month]"
+    DelimitedPartition partition = new DelimitedPartition( new Fields( "year", "month" ), "-" );
+    Tap monthsTap = new PartitionTap( parentTap, partition, SinkMode.REPLACE );
     //@extract-end
     }
 

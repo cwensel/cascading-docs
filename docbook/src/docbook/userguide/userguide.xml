@@ -7,16 +7,13 @@
 <book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude"
-      xmlns:ns5="http://www.w3.org/1998/Math/MathML"
-      xmlns:ns4="http://www.w3.org/2000/svg"
-      xmlns:ns3="http://www.w3.org/1999/xhtml"
-      xmlns:ns="http://docbook.org/ns/docbook">
+  >
   <info>
-    <title>Cascading 2.2 User Guide</title>
+    <title>Cascading 2.5 User Guide</title>
 
     <releaseinfo/>
 
-    <pubdate>August 2013</pubdate>
+    <pubdate>November 2013</pubdate>
 
     <copyright>
       <year>2007-2013</year>
@@ -171,21 +168,36 @@
 
       <para>Hadoop, according to its documentation, can be configured to run
       in three modes: standalone mode (i.e., on the local computer, useful for
-      testing and debugging), pseudo-distributed mode (i.e., on an emulated
-      "cluster" of one computer, useful for testing), and fully-distributed
-      mode (on a full cluster, for production purposes). The
-      pseudo-distributed mode does not add value for most purposes, and will
-      not be discussed further. Cascading itself can run locally or on the
-      Hadoop platform, where Hadoop itself may be in standalone or distributed
-      mode. The primary difference between these two platforms is that, when
-      Cascading is running locally, it makes no use of Hadoop APIs and
-      performs all of its work in memory, allowing it to be very fast - but
-      consequently not as robust or scalable as when it is running on the
-      Hadoop platform.</para>
+      testing and debugging in an IDE), pseudo-distributed mode (i.e., on an
+      emulated "cluster" of one computer, not useful for much), and
+      fully-distributed mode (on a full cluster, for staging or production
+      purposes). The pseudo-distributed mode does not add value for most
+      purposes, and will not be discussed further. Cascading itself can run
+      locally or on the Hadoop platform, where Hadoop itself may be in
+      standalone or distributed mode. The primary difference between these two
+      platforms, local or Hadoop, is that, when Cascading is running in local
+      mode, it makes no use of Hadoop APIs and performs all of its work in
+      memory, allowing it to be very fast - but consequently not as robust or
+      scalable as when it is running on the Hadoop platform.</para>
 
       <para>Apache Hadoop is an Open Source Apache project and is freely
       available. It can be downloaded from the Hadoop website: <link
-      xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link>.</para>
+      xlink:href="http://hadoop.apache.org/core/">http://hadoop.apache.org/core/</link></para>
+
+      <para/>
+    </section>
+
+    <section>
+      <title>Hadoop 1 vs Hadoop 2</title>
+
+      <para>Cascading 2.5 supports both Hadoop 1.x and 2.x by providing two
+      Java dependencies, <filename>cascading-hadoop.jar</filename> and
+      <filename>cascading-hadoop2-mr1.jar</filename>. These dependencies can
+      be interchanged but the <filename>hadoop2-mr1.jar</filename> introduces
+      new and deprecates older API calls where appropriate. It should be
+      pointed out <filename>hadoop1-mr1.jar</filename> only supports MapReduce
+      1 API conventions. With this naming scheme new API conventions can be
+      introduced without risk of naming collisions on dependencies.</para>
     </section>
   </chapter>
 
@@ -1471,9 +1483,23 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
             <listitem>
               <para>The
               <classname>cascading.flow.hadoop.HadoopFlowConnector</classname>
-              provides a planner for running Cascading on an Apache Hadoop
+              provides a planner for running Cascading on an Apache Hadoop 1
               cluster. This allows Cascading to execute against extremely
               large data sets over a cluster of computing nodes.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>Hadoop2MR1FlowConnector</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.flow.hadoop2.Hadoop2MR1FlowConnector</classname>
+              provides a planner for running Cascading on an Apache Hadoop 2
+              cluster. This class is roughly equivalent to the above
+              <classname>HadoopFlowConnector</classname> except it uses Hadoop
+              2 specific properties and is compiled against Hadoop 2 API
+              binaries.</para>
             </listitem>
           </varlistentry>
         </variablelist> Cascading's support for pluggable planners allows a
@@ -1755,15 +1781,17 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
           </varlistentry>
 
           <varlistentry>
-            <term>TemplateTap</term>
+            <term>PartitionTap</term>
 
             <listitem>
               <para>The
-              <classname>cascading.tap.hadoop.TemplateTap</classname> and
-              <classname>cascading.tap.local.TemplateTap</classname> are used
+              <classname>cascading.tap.hadoop.PartitionTap</classname> and
+              <classname>cascading.tap.local.PartitionTap</classname> are used
               to sink tuples into directory paths based on the values in the
               Tuple. More can be read below in <xref
-              linkend="template-tap"/>.</para>
+              linkend="partition-tap"/>. Note the
+              <classname>TemplateTap</classname> has been deprecated in favor
+              of the <classname>PartitionTap</classname>.</para>
             </listitem>
           </varlistentry>
 
@@ -1859,9 +1887,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
 
                   <entry/>
 
-                  <entry><classname>TemplateTap</classname></entry>
+                  <entry><classname>PartitionTap</classname></entry>
 
-                  <entry><classname>TemplateTap</classname></entry>
+                  <entry><classname>PartitionTap</classname></entry>
                 </row>
 
                 <row>
@@ -2409,7 +2437,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
 
       <variablelist>
         <varlistentry>
-          <term>cascading-core-2.2.x.jar</term>
+          <term>cascading-core-2.5.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading Core class files. It should
@@ -2419,7 +2447,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-local-2.2.x.jar</term>
+          <term>cascading-local-2.5.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading local mode class files. It
@@ -2428,17 +2456,27 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-hadoop-2.2.x.jar</term>
+          <term>cascading-hadoop-2.5.x.jar</term>
 
           <listitem>
-            <para>This jar contains the Cascading Hadoop specific
+            <para>This jar contains the Cascading Hadoop 1 specific
             dependencies. It should be packaged with
             <filename>lib/*.jar</filename> when using Hadoop.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-xml-2.2.x.jar</term>
+          <term>cascading-hadoop2-mr1-2.5.x.jar</term>
+
+          <listitem>
+            <para>This jar contains the Cascading Hadoop 2 specific
+            dependencies. It should be packaged with
+            <filename>lib/*.jar</filename> when using Hadoop.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>cascading-xml-2.5.x.jar</term>
 
           <listitem>
             <para>This jar contains Cascading XML module class files and is
@@ -2602,7 +2640,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       "cascading.stream.error.dotfile" property will tell Cascading where to
       write a DOT representation of the pipeline it was attempting to build,
       if any. This file will allow the Cascading community to better identify
-      and resolve issues. </para>
+      and resolve issues.</para>
     </section>
   </chapter>
 
@@ -3707,26 +3745,39 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
     </section>
 
     <section>
-      <title xreflabel="Template Taps" xml:id="template-tap">Template
-      taps</title>
+      <title xreflabel="Partition Taps"
+      xml:id="partition-tap">PartitionTaps</title>
 
-      <para>The <classname>TemplateTap</classname> <classname>Tap</classname>
+      <para>The <classname>PartitionTap</classname> <classname>Tap</classname>
       class provides a simple means to break large datasets into smaller sets
-      based on data item values. This is commonly called partitioning or
-      <emphasis role="italic">binning</emphasis> the data, where each "bin" of
-      data is named after some data value(s) shared by the members of that
-      bin. For example, this is a simple way to organize log files by month
-      and year.</para>
+      based on data item values. This is also commonly called <emphasis
+      role="italic">binning</emphasis> the data, where each "bin" of data is
+      named after some data value(s) shared by the members of that bin. For
+      example, this is a simple way to organize log files by month and year.
+      PartitionTap replaces the TemplateTap in previous versions of Cascading
+      and adds the ability for a PartitionTap instance to be used as both a
+      sink and a source. Previously, TemplateTap could only be used as a
+      sink.</para>
 
-      <xi:include href="template-tap.xml"/>
+      <xi:include href="partition-tap.xml"/>
 
       <para>In the example above, we construct a parent
       <classname>Hfs</classname> <classname>tap</classname> and pass it to the
-      constructor of a <classname>Templatetap</classname> instance, along with
-      a String format "template". This format template is populated in the
-      order in which values are declared via the <classname>Scheme</classname>
-      class. If more complex path formatting is necessary, you may subclass
-      the <classname>Templatetap</classname>.</para>
+      constructor of a <classname>PartitionTap</classname> instance, along
+      with a <classname>cascading.tap.partition.DelimitedPartition</classname>
+      "partitioner". If more complex path formatting is necessary, you may
+      implement the <classname>cascading.tap.partition.Partition</classname>
+      interface.</para>
+
+      <para>It is important to see in the above example that the
+      <code>parentTap</code> will only sink "entry" fields to a text delimited
+      file. But the <code>monthsTap</code> expects "year", "month", and
+      "entry" fields from the tuple stream. Here data is stored in the
+      directory name for each partition when the PartitionTap is a sink, there
+      is no need to redundantly store the data in the text delimited file.
+      When reading from a <classname>PartitionTap</classname>, the directory
+      name will be parsed and its values will be added to the outgoing tuple
+      stream when the <classname>PartitionTap</classname> is a source.</para>
 
       <para>Note that you can only create sub-directories to bin data into.
       Hadoop must still write "part" files into each bin directory, and there
@@ -3813,7 +3864,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       helper subassemblies such as
       <classname>cascading.pipe.assembly.Rename</classname>,
       <classname>cascading.pipe.assembly.Retain</classname>, and
-      <classname>cascading.pipe.assemblyDiscard</classname>.)</para>
+      <classname>cascading.pipe.assembly.Discard</classname>.)</para>
 
       <para><variablelist>
           <varlistentry>
