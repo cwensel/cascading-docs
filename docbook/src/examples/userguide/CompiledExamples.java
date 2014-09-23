@@ -349,12 +349,22 @@ public class CompiledExamples
 
     // pass in the class name of your application
     // this will find the parent jar at runtime
-    AppProps.setApplicationJarClass( properties, Main.class );
+    properties = AppProps.appProps()
+      .setName( "sample-app" )
+      .setVersion( "1.2.3" )
+      .addTags( "deploy:prod", "team:engineering" )
+      .setJarClass( Main.class ) // find jar from class
+      .buildProperties( properties ); // returns a copy
 
     // ALTERNATIVELY ...
 
     // pass in the path to the parent jar
-    AppProps.setApplicationJarPath( properties, pathToJar );
+    properties = AppProps.appProps()
+      .setName( "sample-app" )
+      .setVersion( "1.2.3" )
+      .addTags( "deploy:prod", "team:engineering" )
+      .setJarPath( pathToJar ) // set jar path
+      .buildProperties( properties ); // returns a copy
 
 
     // pass properties to the connector
@@ -382,6 +392,7 @@ public class CompiledExamples
     Properties properties = AppProps.appProps()
       .setName( "sample-app" )
       .setVersion( "1.2.3" )
+      .addTags( "deploy:prod", "team:engineering" )
       .buildProperties( jobConf );
 
     // pass properties to the connector

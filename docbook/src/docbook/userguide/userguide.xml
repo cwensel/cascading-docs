@@ -263,7 +263,7 @@
     and sinks to pipes during planning. (The example above is an exception,
     because there is only one head and one tail - and consequently only one
     source and one sink - so the binding is unmistakable.) Another reason is
-    that the naming of pipes contributes to self-documention of pipe
+    that the naming of pipes contributes to self-documentation of pipe
     assemblies, especially where there are splits, joins, and merges in the
     assembly.</para>
 
@@ -2289,7 +2289,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         <classname>java.util.Property</classname> object so that default
         Cascading and any platform-specific properties can be passed down
         through the planner to the platform at runtime. In the case of Hadoop,
-        any relevant Hadoop <code>hadoop-default.xml</code> properties may be
+        any relevant Hadoop <code>*-default.xml</code> properties may be
         added. For instance, it's very common to add
         <code>mapred.map.tasks.speculative.execution</code>,
         <code>mapred.reduce.tasks.speculative.execution</code>, or
@@ -2306,9 +2306,6 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
 
         <para>More information on packaging production applications can be
         found in <xref linkend="executing-processes"/>.</para>
-
-        <para>Note the pattern of using a static property-setter method
-        (<classname>cascading.property.AppProps.setApplicationJarPath</classname>).</para>
 
         <para>Since the <classname>FlowConnector</classname> can be reused,
         any properties passed on the constructor will be handed to all the
@@ -2565,9 +2562,9 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       <xi:include href="flow-properties.xml"/>
 
       <para>Above we see two ways to set the same property - via the
-      <methodname>setApplicationJarClass()</methodname> method, and via the
-      <methodname>setApplicationJarPath()</methodname> method. One is based on
-      a Class name, and the other is based on a literal path.</para>
+      <methodname>setJarClass()</methodname> method, and via the
+      <methodname>setJarPath()</methodname> method. One is based on a Class
+      name, and the other is based on a literal path.</para>
 
       <para>The first method takes a Class object that owns the "main"
       function for this application. The assumption here is that
@@ -2576,7 +2573,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       that Jar is pushed to the cluster, not the parent application
       jar.</para>
 
-      <para>The second method simply sets the path to the parent Class as a
+      <para>The second method simply sets the path to the Java Jar as a
       property.</para>
 
       <para>In your application, only one of these methods needs to be called,
@@ -2591,6 +2588,64 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
       <para>Above we are starting with an existing Hadoop
       <classname>JobConf</classname> instance and building a Properties object
       with it as the default.</para>
+
+      <para>Note that <classname>AppProps</classname> is a helper fluent API
+      for setting properties that define Flows or configure the underlying
+      platform. There are quite a few "Props" based classes that expose fluent
+      API calls, the ones most commonly used are below.</para>
+
+      <informaltable>
+        <tgroup cols="2">
+          <colspec colwidth="14*"/>
+
+          <colspec colwidth="86*"/>
+
+          <tbody>
+            <row>
+              <entry><classname>cascading.property.AppProps</classname></entry>
+
+              <entry>Allows for setting application specific properties. Some
+              properties are required by the underlying platform, like
+              application Jar. Others are simple meta-data used by compatible
+              management tools, like tags.</entry>
+            </row>
+
+            <row>
+              <entry><classname>cascading.flow.FlowConnectorProps</classname></entry>
+
+              <entry>Allows for setting a <classname>DebugLevel</classname> or
+              <classname>AssertionLevel</classname> for a given FlowConnector
+              to target. Also allows for setting intermediate
+              <classname>DecoratorTap</classname> sub-classes to be used if
+              any.</entry>
+            </row>
+
+            <row>
+              <entry><classname>cascading.flow.FlowProps</classname></entry>
+
+              <entry>Allows for setting any Flow specific properties like the
+              maximum concurrent steps to be scheduled, or changing the
+              default Tuple Comparator class.</entry>
+            </row>
+
+            <row>
+              <entry><classname>cascading.cascade.CascadeProps</classname></entry>
+
+              <entry>Allows for setting any Cascade specific properties like
+              the maximum concurrent Flows to be scheduled.</entry>
+            </row>
+
+            <row>
+              <entry><classname>cascading.tap.hadoop.HfsProps</classname></entry>
+
+              <entry>Allows for setting Hadoop specific FileSystem properties,
+              specifically properties around enabling the 'combined input
+              format' support. Combining inputs minimized the performance
+              penalty around processing large numbers of small files.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
     </section>
 
     <section>

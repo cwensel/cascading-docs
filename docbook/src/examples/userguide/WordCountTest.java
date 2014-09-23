@@ -22,6 +22,7 @@ import cascading.pipe.GroupBy;
 import cascading.pipe.Pipe;
 import cascading.property.AppProps;
 import cascading.scheme.Scheme;
+import cascading.scheme.hadoop.TextDelimited;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
@@ -48,7 +49,7 @@ public class WordCountTest extends ExampleTestCase
     Scheme sourceScheme = new TextLine( new Fields( "line" ) );
     Tap source = new Hfs( sourceScheme, inputPath );
 
-    Scheme sinkScheme = new TextLine( new Fields( "word", "count" ) );
+    Scheme sinkScheme = new TextDelimited( new Fields( "word", "count" ) );
     Tap sink = new Hfs( sinkScheme, outputPath, SinkMode.REPLACE );
 
     // the 'head' of the pipe assembly
@@ -71,8 +72,10 @@ public class WordCountTest extends ExampleTestCase
     assembly = new Every( assembly, count );
 
     // initialize app properties, tell Hadoop which jar file to use
-    Properties properties = new Properties();
-    AppProps.setApplicationJarClass( properties, Main.class );
+    Properties properties = AppProps.appProps()
+      .setName( "word-count-application" )
+      .setJarClass( Main.class )
+      .buildProperties();
 
     // plan a new Flow from the assembly using the source and sink Taps
     // with the above properties
