@@ -7,16 +7,19 @@
 <book version="5.0" xml:lang="en" xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude"
-  >
+      xmlns:ns5="http://www.w3.org/2000/svg"
+      xmlns:ns4="http://www.w3.org/1999/xhtml"
+      xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+      xmlns:ns="http://docbook.org/ns/docbook">
   <info>
-    <title>Cascading 2.5 User Guide</title>
+    <title>Cascading 2.6 User Guide</title>
 
     <releaseinfo/>
 
-    <pubdate>November 2013</pubdate>
+    <pubdate>September 2014</pubdate>
 
     <copyright>
-      <year>2007-2013</year>
+      <year>2007-2014</year>
 
       <holder>Concurrent, Inc.</holder>
     </copyright>
@@ -190,7 +193,7 @@
     <section>
       <title>Hadoop 1 vs Hadoop 2</title>
 
-      <para>Cascading 2.5 supports both Hadoop 1.x and 2.x by providing two
+      <para>Cascading 2.6 supports both Hadoop 1.x and 2.x by providing two
       Java dependencies, <filename>cascading-hadoop.jar</filename> and
       <filename>cascading-hadoop2-mr1.jar</filename>. These dependencies can
       be interchanged but the <filename>hadoop2-mr1.jar</filename> introduces
@@ -2437,7 +2440,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
 
       <variablelist>
         <varlistentry>
-          <term>cascading-core-2.5.x.jar</term>
+          <term>cascading-core-2.6.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading Core class files. It should
@@ -2447,7 +2450,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-local-2.5.x.jar</term>
+          <term>cascading-local-2.6.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading local mode class files. It
@@ -2456,7 +2459,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-hadoop-2.5.x.jar</term>
+          <term>cascading-hadoop-2.6.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading Hadoop 1 specific
@@ -2466,7 +2469,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-hadoop2-mr1-2.5.x.jar</term>
+          <term>cascading-hadoop2-mr1-2.6.x.jar</term>
 
           <listitem>
             <para>This jar contains the Cascading Hadoop 2 specific
@@ -2476,7 +2479,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
         </varlistentry>
 
         <varlistentry>
-          <term>cascading-xml-2.5.x.jar</term>
+          <term>cascading-xml-2.6.x.jar</term>
 
           <listitem>
             <para>This jar contains Cascading XML module class files and is
