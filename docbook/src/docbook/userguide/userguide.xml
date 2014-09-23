@@ -1756,7 +1756,7 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
           </varlistentry>
         </variablelist>
 
-        <para>Also provided are four utility taps:</para>
+        <para>Also provided are six utility taps:</para>
 
         <variablelist>
           <varlistentry>
@@ -1807,6 +1807,39 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
               This allows for multiple paths to be used as a single source,
               where all paths match the given pattern. This tap is only
               available when running on the Hadoop platform.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>DecoratorTap</term>
+
+            <listitem>
+              <para>The <classname>cascading.tap.DecoratorTap</classname> is a
+              utility helper for wrapping an existing Tap with new
+              functionality, via sub-class, and/or adding 'meta-data' to a Tap
+              instance via the generic <classname>MetaInfo</classname>
+              instance field. Further, on the Hadoop platform, planner created
+              intermediate and <classname>Checkpoint</classname> Taps can be
+              wrapped by a <classname>DecoratorTap</classname> implementation
+              by the Cascading Planner. See
+              <classname>cascading.flow.FlowConnectorProps</classname> for
+              details.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>DistCacheTap</term>
+
+            <listitem>
+              <para>The
+              <classname>cascading.tap.hadoop.DistCacheTap</classname> is a
+              sub-class of the
+              <classname>cascading.tap.DecoratorTap</classname> that can wrap
+              an cascading.tap.hadoop.Hfs instance. It allows for writing to
+              HDFS, but reading from the Hadoop Distributed Cache under the
+              write circumstances, specifically if the Tap is being read into
+              the small side of a
+              <classname>cascading.pipe.HashJoin</classname>.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -1903,6 +1936,27 @@ RHS = [0,A] [2,C] [3,D]</programlisting>In each join type below, the values
                   <entry/>
 
                   <entry><classname>GlobHfs</classname></entry>
+                </row>
+
+                <row>
+                  <entry>Wrapping a Tap with MetaData / Decorating intra-Flow
+                  Taps</entry>
+
+                  <entry><classname>DecoratorTap</classname></entry>
+
+                  <entry/>
+
+                  <entry/>
+                </row>
+
+                <row>
+                  <entry>Reading from the Hadoop Distributed Cache</entry>
+
+                  <entry/>
+
+                  <entry/>
+
+                  <entry><classname>DistCacheTap</classname></entry>
                 </row>
               </tbody>
             </tgroup>
