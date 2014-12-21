@@ -1,0 +1,249 @@
+
+== Executing Processes on Hadoop
+
+
+
+=== Introduction
+
+This section covers some of the operational mechanics of running
+an application that uses Cascading with the Hadoop platform, including
+building the application jar file and configuring the operating
+mode.
+
+To use the [classname]+HadoopFlowConnector+ (i.e., to
+run in Hadoop mode), Cascading requires that Apache Hadoop be installed
+and correctly configured. Hadoop is an Open Source Apache project,
+freely available for download from the Hadoop website, <<,http://hadoop.apache.org/core/>>.
+
+
+
+[[building]]
+=== Building
+
+Cascading ships with several jars and dependencies in the download
+archive. Alternatively, Cascading is available over Maven and Ivy
+through the Conjars repository, along with a number of other
+Cascading-related projects. See <<,http://conjars.org >> for more
+information.
+
+The core Cascading artifacts include the following:
+
+cascading-core-2.6.x.jar::
+This jar contains the Cascading Core class files. It should
+be packaged with _lib/*.jar_ when using
+Hadoop.
+
+
+cascading-local-2.6.x.jar::
+This jar contains the Cascading local mode class files. It
+is not needed when using Hadoop.
+
+
+cascading-hadoop-2.6.x.jar::
+This jar contains the Cascading Hadoop 1 specific
+dependencies. It should be packaged with
+_lib/*.jar_ when using Hadoop.
+
+
+cascading-hadoop2-mr1-2.6.x.jar::
+This jar contains the Cascading Hadoop 2 specific
+dependencies. It should be packaged with
+_lib/*.jar_ when using Hadoop.
+
+
+cascading-xml-2.6.x.jar::
+This jar contains Cascading XML module class files and is
+optional. It should be packaged with
+_lib/xml/*.jar_ when using Hadoop.
+
+
+Cascading works with either of the Hadoop processing modes - the
+default local standalone mode and the distributed cluster mode. As
+specified in the Hadoop documentation, running in cluster mode requires
+the creation of a Hadoop job jar that includes the Cascading jars, plus
+any needed third-party jars, in its _lib_ directory.
+This is true regardless of whether they are Cascading Hadoop-mode
+applications or raw Hadoop MapReduce applications.
+
+
+
+=== Configuring
+
+During runtime, Hadoop must be told which application jar file
+should be pushed to the cluster. Typically, this is done via the Hadoop
+API [classname]+JobConf+ object.
+
+Cascading offers a shorthand for configuring this parameter,
+demonstrated here:
+
+Above we see two ways to set the same property - via the
+[methodname]+setJarClass()+ method, and via the
+[methodname]+setJarPath()+ method. One is based on a Class
+name, and the other is based on a literal path.
+
+The first method takes a Class object that owns the "main"
+function for this application. The assumption here is that
+[code]+Main.class+ is not located in a Java Jar that is stored in
+the _lib_ folder of the application Jar. If it is,
+that Jar is pushed to the cluster, not the parent application
+jar.
+
+The second method simply sets the path to the Java Jar as a
+property.
+
+In your application, only one of these methods needs to be called,
+but one of them must be called to properly configure Hadoop.
+
+.Configuring the Application Jar with a JobConf
+====
+include::flow-jobconf.adoc[]
+====
+
+Above we are starting with an existing Hadoop
+[classname]+JobConf+ instance and building a Properties object
+with it as the default.
+
+Note that [classname]+AppProps+ is a helper fluent API
+for setting properties that define Flows or configure the underlying
+platform. There are quite a few "Props" based classes that expose fluent
+API calls, the ones most commonly used are below.
+
+
+|===============
+|[classname]+cascading.property.AppProps+|Allows for setting application specific properties. Some
+properties are required by the underlying platform, like
+application Jar. Others are simple meta-data used by compatible
+management tools, like tags.
+|[classname]+cascading.flow.FlowConnectorProps+|Allows for setting a [classname]+DebugLevel+ or
+[classname]+AssertionLevel+ for a given FlowConnector
+to target. Also allows for setting intermediate
+[classname]+DecoratorTap+ sub-classes to be used if
+any.
+|[classname]+cascading.flow.FlowProps+|Allows for setting any Flow specific properties like the
+maximum concurrent steps to be scheduled, or changing the
+default Tuple Comparator class.
+|[classname]+cascading.cascade.CascadeProps+|Allows for setting any Cascade specific properties like
+the maximum concurrent Flows to be scheduled.
+|[classname]+cascading.tap.hadoop.HfsProps+|Allows for setting Hadoop specific FileSystem properties,
+specifically properties around enabling the 'combined input
+format' support. Combining inputs minimized the performance
+penalty around processing large numbers of small files.
+
+|===============
+
+
+
+
+=== Executing
+
+Running a Cascading application is the same as running any Hadoop
+application. After packaging your application into a single jar (see
+<<building>>), you must use
+_bin/hadoop_ to submit the application to the
+cluster.
+
+For example, to execute an application stuffed into
+_your-application.jar_, call the Hadoop shell
+script:
+
+.Running a Cascading Application
+====
+
+----
+
+
+
+$HADOOP_HOME/bin/hadoop jar your-application.jar [some params]
+
+----
+
+
+====
+
+If the configuration scripts in $HADOOP_CONF_DIR
+are configured to use a cluster, the Jar is pushed into the cluster for
+execution.
+
+Cascading does not rely on any environment variables like
+$HADOOP_HOME or $HADOOP_CONF_DIR, only
+_bin/hadoop_ does.
+
+It should be noted that even though
+_your-application.jar_ is passed on the command line
+to _bin/hadoop_, this in no way configures Hadoop to
+push this jar into the cluster. You must still call one of the property
+setters mentioned above to set the proper path to the application jar.
+If misconfigured, it's likely that one of the internal libraries (found
+in the lib folder) will be pushed to the cluster instead, and "Class Not
+Found" exceptions will be thrown.
+
+
+
+[[debugging-hadoop]]
+=== Debugging
+
+Debugging and testing in Cascading local mode, unlike Cascading
+Hadoop mode, is trivial as all the work and processing happens in the
+local JVM and in local memory. This dramatically simplifies the use of
+an IDE and Debugger.Thus the very first recommendation for debugging
+Cascading applications on Hadoop is to first write tests that run in
+Cascading local mode.
+
+Along with the use of an IDE Debugger, Cascading provides two
+tools to help sort out runtime issues. First is the use of the
+[classname]+Debug+ filter.
+
+It is a best practice to sprinkle [classname]+Debug+
+operators (see <<debug-function>>) in the pipe assembly
+and rely on the planner to remove them at runtime by setting a
+[classname]+DebugLevel+. [classname]+Debug+ can only
+print to the local console via std out or std error, thus making it
+harder for use on Hadoop, as Operations do not execute locally but on
+the cluster side. [classname]+Debug+ can optionally print the
+current field names, and a prefix can be set to help distinguish between
+instances of the [classname]+Debug+ operation.
+
+Additionally, the actual execution plan for a given Flow can be
+written out (and visualized) via the Flow.writeDOT() method. DOT files
+are simply text representation of graph data and can be read by tools
+like GraphViz and Omni Graffle.
+
+In Cascading local mode, these execution plans are exactly as the
+pipe assemblies were coded, except the sub-assemblies are unwound and
+the field names across the Flow are resolved by the local mode planner.
+That is, [code]+Fields.ALL+ and other wild cards are converted the
+actual field names or ordinals.
+
+In the case of Hadoop mode, using the
+[classname]+HadoopFlowConnector+, the DOT files also contain
+the intermediate [classname]+Tap+ instances created to join
+MapReduce jobs together. Thus the branches between Tap instances are
+effectively MapReduce jobs. See the [code]+Flow.writeStepsDOT()+
+method to write out all the MapReduce jobs that will be
+scheduled.
+
+This information can also be misleading to what is actually
+happening per Map or Reduce task cluster side. For a more detailed view
+of the data pipeline actually executing on a given Map or Reduce task,
+set the "cascading.stream.dotfile.path" property on the
+[classname]+FlowConnector+. This will write, cluster side, a
+DOT representation of the current data pipeline path the current Map or
+Reduce task is handling which is a function of which file(s) the Map or
+Reduce task are reading and processing. And if multiple files, which
+files are being read to which [classname]+HashJoin+ instances.
+It is recommended to use a relative path like
+[code]+stepPlan/+.
+
+If the [methodname]+connect()+ method on the current
+[classname]+FlowConnector+ fails, the resulting
+[classname]+PlannerException+ has a
+[methodname]+writeDOT()+ method that shows the progress of
+the current planner.
+
+If Cascading is failing with an unknown internal runtime exception
+during Map or Reduce task startup, setting the
+"cascading.stream.error.dotfile" property will tell Cascading where to
+write a DOT representation of the pipeline it was attempting to build,
+if any. This file will allow the Cascading community to better identify
+and resolve issues.
+

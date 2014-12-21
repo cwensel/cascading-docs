@@ -1,0 +1,198 @@
+
+== Custom Taps and Schemes
+
+
+
+=== Introduction
+
+Cascading is designed to be easily configured and enhanced by
+developers. In addition to creating custom Operations, developers can
+create custom [classname]+Tap+ and
+[classname]+Scheme+ classes that let applications connect to
+external systems or read/write data to proprietary formats.
+
+A Tap represents something physical, like a file or a database
+table. Accordingly, Tap implementations are responsible for life-cycle
+issues around the resource they represent, such as tests for resource
+existence, or to perform resource deletion (dropping a remote SQL
+table).
+
+A Scheme represents a format or representation - such as a text
+format for a file, the columns in a table, etc. Schemes are used to
+convert between the source data's native format and a
+[classname]+cascading.tuple.Tuple+ instance.
+
+Creating custom taps and schemes can be an involved process. When
+using the Cascading Hadoop mode, it requires some knowledge of Hadoop
+and the Hadoop FileSystem API. If a flow needs to support a new file
+system, passing a fully-qualified URL to the [classname]+Hfs+
+constructor may be sufficient - the [classname]+Hfs+ tap will
+look up a file system based on the URL scheme via the Hadoop FileSystem
+API. If not, a new system is commonly constructed by subclassing the
+[classname]+cascading.tap.Hfs+ class.
+
+Delegating to the Hadoop FileSystem API is not a strict
+requirement. But if not using it, the developer must implement Hadoop
+[classname]+org.apache.hadoop.mapred.InputFormat+ and/or
+[classname]+org.apache.hadoop.mapred.OutputFormat+ classes so
+that Hadoop knows how to split and handle the incoming/outgoing data.
+The custom [classname]+Scheme+ is responsible for setting the
+[classname]+InputFormat+ and
+[classname]+OutputFormat+ on the
+[classname]+JobConf+, via the
+[methodname]+sinkConfInit+ and
+[methodname]+sourceConfInit+ methods.
+
+For examples of how to implement a custom tap and scheme, see the
+<<,Cascading Modules
+>> page.
+
+
+
+=== Custom Taps
+
+All custom Tap classes must subclass the
+[classname]+cascading.tap.Tap+ abstract class and implement
+the required methods. The method
+[methodname]+getIdentifier()+ must return a
+[classname]+String+ that uniquely identifies the resource the
+Tap instance is managing. Any two Tap instances with the same
+fully-qualified identifier value will be considered equal.
+
+Every Tap is presented an opportunity to set any custom properties
+the underlying platform requires, via the methods
+[methodname]+sourceConfInit()+ (for a Tuple source tap) and
+[methodname]+sinkConfInit()+ (for a Tuple sink tap). These
+two methods may be called more than once with new configuration objects,
+and should be idempotent.
+
+A Tap is always sourced from the
+[methodname]+openForRead()+ method via a
+[classname]+TupleEntryIterator+ - i.e.,
+[methodname]+openForRead()+ is always called in the same
+process that will read the data. It is up to the Tap to return a
+[classname]+TupleEntryIterator+ that will iterate across the
+resource, returning a [classname]+TupleEntry+ instance (and
+[classname]+Tuple+ instance) for each "record" in the
+resource. [methodname]+TupleEntryIterator.close()+ is always
+called when no more entries will be read. For more on this topic, see
+[classname]+TupleEntrySchemeIterator+ in the Javadoc.
+
+On some platforms, [methodname]+openForRead()+ is
+called with a pre-instantiated Input type. Typically this Input type
+should be used instead of instantiating a new instance of the
+appropriate type.
+
+In the case of the Hadoop platform, a
+[classname]+RecordReader+ is created by Hadoop and passed to
+the Tap. This [classname]+RecordReader+ is already configured
+to read data from the current [classname]+InputSplit+.
+
+Similarly, a Tap is always used to sink data from the
+[methodname]+openForWrite()+ method via the
+[classname]+TupleEntryCollector+. Here again,
+[methodname]+openForWrite()+ is always called in the process
+in which data will be written. It is up to the Tap to return a
+[classname]+TupleEntryCollector+ that will accept and store
+any number of [classname]+TupleEntry+ or
+[classname]+Tuple+ instances for each record that is processed
+or created by a given Flow.
+[methodname]+TupleEntryCollector.close()+ is always called
+when no more entries will be written. See
+[classname]+TupleEntrySchemeCollector+ in the Javadoc.
+
+Again, on some platforms, [methodname]+openForWrite()+
+will be called with a pre-instantiated Output type. Typically this
+Output type should be used instead of instantiating a new instance of
+the appropriate type.
+
+In the case of the Hadoop platform, an
+[classname]+OutputCollector+ is created by Hadoop and passed
+to the Tap. This [classname]+OutputCollector+ is already
+configured to to write data to the current resource.
+
+Both the [classname]+TupleEntrySchemeIterator+ and
+[classname]+TupleEntrySchemeCollector+ should be used to hold
+any state or resources necessary to communicate with any remote
+services. For example, when connecting to a SQL database, any JDBC
+drivers should be created on the constructor and cleaned up on
+[methodname]+close()+.
+
+Note that the Tap is not responsible for reading or writing data
+to the Input or Output type. This is delegated to the
+[classname]+Scheme+ passed on the constructor of the
+[classname]+Tap+. Consequently, the
+[classname]+Scheme+ is responsible for configuring the Input
+and Output types it will be reading and writing.
+
+
+
+=== Custom Schemes
+
+All custom Scheme classes must subclass the
+[classname]+cascading.scheme.Scheme+ abstract class and
+implement the required methods.
+
+A [classname]+Scheme+ is ultimately responsible for
+sourcing and sinking Tuples of data. Consequently it must know what
+[classname]+Fields+ it presents during sourcing, and what
+[classname]+Fields+ it accepts during sinking. Thus the
+constructors on the base [classname]+Scheme+ type must be set
+with the source and sink Fields.
+
+A Scheme is allowed to source different Fields than it sinks. The
+[classname]+TextLine+ [classname]+Scheme+ does just
+this. (The [classname]+TextDelimited+
+[classname]+Scheme+, on the other hand, forces the source and
+sink [classname]+Fields+ to be the same.)
+
+The [methodname]+retrieveSourceFields()+ and
+[methodname]+retrieveSinkFields()+ methods allow a custom
+[classname]+Scheme+ to fetch its source and sink
+[classname]+Fields+ immediately before the planner is invoked
+- for example, from the header of a file, as is the case with
+[classname]+TextDelimited+. Also the
+[methodname]+presentSourceFields()+ and
+[methodname]+presentSinkFields()+ methods notify the
+[classname]+Scheme+ of the [classname]+Fields+ that
+the planner expects the Scheme to handle - for example, to write the
+field names as a header, as is the case with
+[classname]+TextDelimited+.
+
+Every [classname]+Scheme+ is presented the opportunity
+to set any custom properties the underlying platform requires, via the
+methods [methodname]+sourceConfInit()+ (for a Tuple source
+tap) and [methodname]+sinkConfInit()+ (for a Tuple sink tap).
+These methods may be called more than once with new configuration
+objects, and should be idempotent.
+
+On the Hadoop platform, these methods should be used to configure
+the appropriate
+[classname]+org.apache.hadoop.mapred.InputFormat+ and
+[classname]+org.apache.hadoop.mapred.OutputFormat+.
+
+A Scheme is always sourced via the
+[methodname]+source()+ method, and is always sunk to via the
+[methodname]+sink()+ method.
+
+Prior to a [methodname]+source()+ or
+[methodname]+sink()+ call, the
+[methodname]+sourcePrepare()+ and
+[methodname]+sinkPrepare()+ methods are called. After all
+values have been read or written, the s
+[methodname]+ourceCleanup()+ and
+[methodname]+sinkCleanup()+ methods are called.
+
+The [methodname]+*Prepare()+ methods allow a Scheme to
+initialize any state necessary - for example, to create a new
+[classname]+java.util.regex.Matcher+ instance for use against
+all record reads). Conversely, the [methodname]+*Cleanup()+
+methods allow for clearing up any resources.
+
+These methods are always called in the same process space as their
+associated [methodname]+source()+ and
+[methodname]+sink()+ calls. In the case of the Hadoop
+platform, this will likely be on the cluster side, unlike calls to
+[methodname]+*ConfInit()+ which will likely be on the client
+side.
+

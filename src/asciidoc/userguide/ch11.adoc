@@ -1,0 +1,244 @@
+
+== Best Practices
+
+
+
+=== Unit Testing
+
+Discrete testing of all Operations, pipe assemblies, and
+applications is a must. The
+[classname]+cascading.CascadingTestCase+ provides a number of
+static helper methods.
+
+When testing custom Operations, use the
+[methodname]+invokeFunction()+,
+[methodname]+invokeFilter()+,
+[methodname]+invokeAggregator()+, and
+[methodname]+invokeBuffer()+ methods.
+
+When testing Flows, use the
+[methodname]+validateLength()+ methods. There are quite a few
+of them, and collectively they offer great flexibility. All of them read
+the sink tap, validate that it is the correct length and has the correct
+Tuple size, and check to see whether the values match a given regular
+expression pattern.
+
+As of Cascading 2, it is possible to write tests that are
+independent of the underlying platform. Any unit test should subclass
+[classname]+cascading.PlatformTestCase+ located in the
+_cascading-platform-x.y.z-tests.jar_ jar file. Any
+platform to be tested against should be added to the
+[code]+CLASSPATH+ as well. [classname]+PlatformTestCase+
+will search the [code]+CLASSPATH+ for all available platforms and
+run each test on the subclass against each platform found.
+
+See the Cascading platform unit tests for examples.
+
+For Maven users, be sure to add the [code]+tests+ classifier
+to any dependencies. Note that the [code]+cascading-platform+
+project has no main code, but does have only tests, so it must be
+retrieved via the [code]+tests+ classifier.
+
+
+
+=== Flow Granularity
+
+Although using one large [classname]+Flow+ may result in
+slightly more efficient performance, it's advisable to use a more
+modular and flexible approach, creating medium or small Flows with
+well-defined responsibilities, and passing all the resulting
+interdependent Flows to a [classname]+Cascade+ to sequence and
+execute as a single unit. Similarly, using the
+[classname]+TextDelimited+ [classname]+Scheme+ (or
+any custom format for long-term archival) between
+[classname]+Flow+ instances allows you to hand off
+intermediate data to other systems for reporting or QA purposes,
+incurring a minimal performance penalty while remaining compatible with
+other tools.
+
+
+
+=== SubAssemblies, not Factories
+
+When developing your applications, use
+[classname]+SubAssembly+ subclasses, not "factory" methods.
+The resulting code is much easier to read and test.
+
+It's worth noting that the [classname]+Object+
+constructors are "factories", so there isn't much reason to build
+frameworks to duplicate what a constructor already does. Of course there
+are exceptional cases in which you don't have the option to use a
+[classname]+SubAssembly+, but in practice they are
+rare.
+
+
+
+=== Logical Responsibilities for SubAssemblies
+
+SubAssembies provide a very convenient means to co-locate similar
+or related responsibilities into a single place. For example, it's
+simple to use a [classname]+ParsingSubAssembly+ and a
+[classname]+RulesSubAssembly+, where the first is responsible
+solely for parsing incoming [classname]+Tuple+ streams (log
+files for example), and the second applies rules to decide whether a
+given [classname]+Tuple+ should be discarded or marked as
+bad.
+
+Additionally, in your unit tests you can create a
+[classname]+TestAssertionsSubAssembly+ that simply inlines
+various [classname]+ValueAssertions+ and
+[classname]+GroupAssertions+. The practice of inlining
+Assertions directly in your SubAssemblies is also important, but
+sometimes it makes sense to have more tests outside of the business
+logic.
+
+
+
+=== Java Operators in Field Names
+
+There are a few Operations in Cascading (e.g.,
+[classname]+ExpressionFunction+ and
+[classname]++ExpressionFilter++) that compile and apply Java
+expressions on the fly. In these expressions, Operation argument field
+names are used as variable names in the expression. For this reason,
+take care to create field names that don't contain characters which will
+cause compilation errors if they are used in an expression. For example,
+"first-name" is a valid field name for use with Cascading, but might
+result in the expression [code]+first-name.trim()+, which will
+cause a compilation error.
+
+
+
+=== Debugging Planner Failures
+
+The [classname]+FlowConnector+ will sometimes fail when
+attempting to plan a [classname]+Flow+. If the error message
+given by [classname]+PlannerException+ is vague, use the
+method [code]+PlannerException.writeDOT()+ to export a
+representation of the internal pipe assembly. DOT files can be opened by
+GraphViz and OmniGraffle. These plans are only partial, but you will be
+able to see where the Cascading planner failed.
+
+Note that you can also create a DOT file from a
+[classname]+Flow+, by using
+[code]+Flow.writeDOT()+.
+
+See <<debugging-hadoop>>.
+
+
+
+=== Optimizing Joins
+
+When joining two streams via a [classname]+CoGroup+
+[classname]+Pipe+, try to put the largest of the streams in
+the leftmost argument to the [classname]+CoGroup+. The reason
+for this is that joining multiple streams requires some accumulation of
+values before the join operator can begin, but the leftmost stream is
+not accumulated, so this technique should improve the performance of
+most joins.
+
+
+
+=== Debugging Streams
+
+When creating complex assemblies, it's safe to embed
+[classname]+Debug+ operations (see <<debug-function>>) at appropriate debug levels as needed. Use
+the planner to remove them at runtime for production and staging runs,
+to avoid wasting resources.
+
+See <<debugging-hadoop>>.
+
+
+
+[[handling-bad-data]]
+=== Handling Good and Bad Data
+
+It's very common when processing raw data streams to encounter
+data that is corrupt or malformed in some way. For instance, bad content
+may be fetched from the web via a crawler upstream, or a bug may have
+leaked into a browser widget somewhere that sends user behavior
+information back for analysis. Whatever the cause, it's a good practice
+to define a set of rules for identifying and discarding questionable
+records.
+
+It is tempting to simply throw an exception and have a Trap
+capture the offending [classname]+Tuple+, but Traps were not
+designed as a filtering mechanism, and consequently much valuable
+information would be lost.
+
+Instead of traps, use filters. Create a
+[classname]+SubAssembly+ that applies rules to the stream by
+setting a binary field that marks the tuple as good or bad. After all
+the rules are applied, split the stream based on the value of the good
+or bad [classname]+Boolean+ value. Consider setting a reason
+field that states why the Tuple was marked bad.
+
+
+
+=== Maintaining State in Operations
+
+When creating custom Operations ([classname]++Function++,
+[classname]++Filter++, [classname]++Aggregator++, or
+[classname]++Buffer++) do not store operation state in class
+fields.
+
+For example, if implementing a custom "counter"
+[classname]+Aggregator+, do not create a field named "count"
+and increment it on every
+[methodname]+Aggregator.aggregate()+ call. There is no
+guarantee that your Operation will be called from a single thread in a
+JVM - and future versions of Hadoop or Cascading local mode might
+execute the same operation from multiple threads.
+
+
+
+=== Custom Types
+
+Passing a custom class through a Tuple stream is generally frowned
+upon. It leads to the coupling of custom Operations to particular types,
+and it removes opportunities for reducing the amount of data that passes
+over the network.
+
+The first objection can be overcome with a little work. When using
+a custom type that has multiple instance fields, try to provide
+Functions that can promote a value from the custom object to a position
+in a Tuple, or demote the Tuple value for a particular field back into
+the custom type. This lets you use existing operations like
+[classname]+ExpressionFunction+ or
+[classname]+RegexFilter+ to operate on values owned by a
+custom type.
+
+For example, if you have a [classname]+Person+ object,
+create a Function named [classname]+GetPersonAge+ that takes
+Person as an argument and returns just the age. The next operation can
+then Filter all Persons based on their age. This may seem more difficult
+and less effiicient, but it keeps your application flexible and avoids
+duplicating existing operations. (The only alternative here is to create
+a [classname]+PersonAgeFilter+, which becomes one more thing
+to test.)
+
+
+
+=== Fields Constants
+
+Instead of having String field names strewn about, create an
+Interface that holds a constant value for each field name:
+
+[code]+$$public static Fields FIRST_NAME = new Fields( "firstname" );
+$$+
+
+Using the Fields class, instead of String, allows for building
+more complex constants:
+
+[code]+$$public static Fields NAME = FIRST_NAME.append( LAST_NAME );
+$$+
+
+
+
+=== Checking the Source Code
+
+When in doubt, look at the Cascading source code. If something is
+not documented in this User Guide or Javadoc, and it's a feature of
+Cascading, the feature source code or unit tests will give you clear
+instructions on what to do or expect.
+

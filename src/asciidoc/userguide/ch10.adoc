@@ -1,0 +1,176 @@
+
+== Built-in Assemblies
+
+There are a number of helper SubAssemblies provided by the core
+cascading library.
+
+As of Cascading 2.2, many of the below assemblies can optionally
+ignore null values. This allows for an optional but closer resemblance to
+how similar functions in SQL perform.
+
+
+
+[[aggregate-by]]
+=== AggregateBy
+
+The [classname]+cascading.pipe.assembly.AggregateBy+
+SubAssembly is an implementation of the Partial Aggregation pattern, and
+is the base class for built-in and custom partial aggregation
+implementations like [classname]+AverageBy+ or
+[classname]+CountBy+.
+
+Generally the AggregateBy class is used to combine multiple
+AggregateBy subclasses into a single Pipe.
+
+.Composing partials with AggregateBy
+====
+include::partials-compose.adoc[]
+====
+
+To create a custom partial aggregation, subclass the AggregateBy
+class and implement the appropriate internal interfaces. See the Javadoc
+for details.
+
+
+
+[[AverageBy]]
+==== AverageBy
+
+The [classname]+cascading.pipe.assembly.AverageBy+
+SubAssembly performs an average over the given
+[code]+valueFields+ and returns the result in the
+[code]+averageField+ field. AverageBy may be combined with other
+AggregateBy subclasses so they may be executed simultaneously over the
+same grouping.
+
+.Using AverageBy
+====
+include::partials-averageby.adoc[]
+====
+
+
+
+[[CountBy]]
+==== CountBy
+
+The [classname]+cascading.pipe.assembly.CountBy+
+SubAssembly performs a count over the given
+[code]+groupingFields+ and returns the result in the
+[code]+countField+ field. CountBy may be combined with other
+AggregateBy subclasses so they may be executed simultaneously over the
+same grouping.
+
+.Using CountBy
+====
+include::partials-countby.adoc[]
+====
+
+
+
+[[SumBy]]
+==== SumBy
+
+The [classname]+cascading.pipe.assembly.SumBy+
+SubAssembly performs a sum over the given [code]+valueFields+ and
+returns the result in the [code]+sumField+ field. SumBy may be
+combined with other AggregateBy subclasses so they may be executed
+simultaneously over the same grouping.
+
+.Using SumBy
+====
+include::partials-sumby.adoc[]
+====
+
+
+
+==== FirstBy
+
+The [classname]+cascading.pipe.assembly.FirstBy+
+SubAssembly is used to return the first encountered value in the given
+[code]+valueFields+. FirstBy may be combined with other
+AggregateBy subclasses so they may be executed simultaneously over the
+same grouping.
+
+.Using FirstBy
+====
+include::partials-firstby.adoc[]
+====
+
+Note if the [code]+valueFields+ Fields instance has field
+comparators, they will be used to sort the argument values to
+influence what values are seen first. Otherwise the fields will not be
+sorted in any deterministic order.
+
+
+
+=== Coerce
+
+The [classname]+cascading.pipe.assembly.SumBy+
+SubAssembly is used to coerce a set of values from one type to another
+type - for example, to convert the field [code]+age+ from a
+[classname]+String+ to an
+[classname]+Integer+.
+
+.Using Coerce
+====
+include::subassembly-coerce.adoc[]
+====
+
+
+
+=== Discard
+
+The [classname]+cascading.pipe.assembly.Discard+
+SubAssembly is used to shape the Tuple stream by discarding all fields
+given on the constructor. All fields not listed are retained.
+
+.Using Discard
+====
+include::subassembly-discard.adoc[]
+====
+
+
+
+=== Rename
+
+The [classname]+cascading.pipe.assembly.Rename+
+SubAssembly is used to rename a field.
+
+.Using Rename
+====
+include::subassembly-rename.adoc[]
+====
+
+
+
+=== Retain
+
+The [classname]+cascading.pipe.assembly.Retain+
+SubAssembly is used to shape the Tuple stream by retaining all fields
+given on the constructor. All fields not listed are discarded.
+
+.Using Retain
+====
+include::subassembly-retain.adoc[]
+====
+
+
+
+=== Unique
+
+The [classname]+cascading.pipe.assembly.Unique+
+SubAssembly is used to remove duplicate values in a Tuple stream.
+Uniqueness is determined by the values of all fields listed in
+[code]+uniqueFields+. Thus to find all distinct Tuples in a Tuple
+stream, use [classname]+Fields.ALL+ as the
+[code]+uniqueFields+ argument.
+
+.Using Unique
+====
+include::subassembly-unique.adoc[]
+====
+
+As of Cascading 2.2, [classname]+Unique+ uses the
+[classname]+FirstNBuffer+ to more efficiently determine unique
+values.
+

@@ -1,0 +1,137 @@
+import java.text.SimpleDateFormat
+
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+
+    maven { url 'http://repo.springsource.org/plugins-release' }
+
+    mavenRepo name: 'Bintray Asciidoctor repo', url: 'http://dl.bintray.com/content/aalmiray/asciidoctor'
+    mavenRepo name: 'Bintray JCenter', url: 'http://jcenter.bintray.com'
+  }
+
+  dependencies {
+    classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.4'
+    classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
+
+    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.5.0'
+  }
+}
+
+ext.majorVersion = '3.0'
+
+apply from: 'etc/properties.gradle'
+apply from: 'etc/s3Upload.gradle'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-idea'
+apply plugin: 'propdeps-eclipse'
+apply plugin: 'asciidoctor'
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url 'http://conjars.org/repo/' }
+}
+
+ext.cascadingVersion = '3.0.0-wip-61'
+ext.cascadingChanging = false
+ext.hadoopVersion = '1.2.1'
+ext.hadoop2Version = '2.4.1'
+ext.tezVersion = '0.5.1'
+ext.buildDate = new SimpleDateFormat( "yyyyMMdd" ).format( new Date() )
+ext.buildTimestamp = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() )
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+
+  compile group: 'cascading', name: 'cascading-local', version: cascadingVersion, changing: cascadingChanging
+  compile group: 'cascading', name: 'cascading-hadoop2-mr1', version: cascadingVersion, changing: cascadingChanging
+
+  compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.1'
+  compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.6.1'
+  compile group: 'log4j', name: 'log4j', version: '1.2.16'
+
+  compile group: 'cascading', name: 'cascading-core', version: cascadingVersion, classifier: 'tests', changing: cascadingChanging
+  compile group: 'cascading', name: 'cascading-local', version: cascadingVersion, classifier: 'tests', changing: cascadingChanging
+  compile group: 'cascading', name: 'cascading-platform', version: cascadingVersion, classifier: 'tests', changing: cascadingChanging
+
+  compile group: 'org.apache.hadoop', name: 'hadoop-common', version: hadoop2Version
+  compile group: 'org.apache.hadoop', name: 'hadoop-client', version: hadoop2Version
+  compile group: 'org.apache.hadoop', name: 'hadoop-mapreduce-client-core', version: hadoop2Version
+
+  testCompile group: 'junit', name: 'junit', version: "4.11"
+}
+
+test {
+  include '**/*Test.class'
+}
+
+task extract( type: ExtractTask ) {
+  inputDir file( 'src/test/java/examples/userguide' )
+  outputDir file( "${buildDir}" )
+}
+
+task copyGuide( type: Copy ) {
+  from 'src/asciidoc/userguide/'
+  into 'build/userguide'
+}
+
+asciidoctor {
+
+  dependsOn << copyGuide
+  dependsOn << extract
+
+  sourceDir = file( "${buildDir}/userguide" )
+  sourceDocumentName = file( "${buildDir}/userguide/index.adoc" )
+
+  // http://asciidoc.org/userguide.html#X88
+  // attributed must all be lowercase
+
+  def attributes = [
+          toc2                : '',
+          revnumber           : "${majorVersion}-${buildDate}",
+          'source-highlighter': 'highlightjs',
+          'highlightjs-theme' : 'pojoaque',
+          'linkcss!'          : '',
+          stylesdir           : "src/site/stylesheets/",
+          stylesheet          : 'cascading.css',
+          'data-uri'          : '',
+          imagesdir           : "src/site/",
+          artifactsurl        : project.s3Bucket,
+          docsurl             : project.s3BucketDocs,
+          projectroot         : project.rootDir,
+          analyticsid         : System.properties[ 'analytics.id' ],
+          analyticsdomain     : System.properties[ 'analytics.domain' ]
+
+          // disabled till attributes in docinfo are supported
+//          docinfo1: '',
+  ]
+  options = [
+          doctype     : "book",
+          template_dir: "src/templates/",
+          eruby       : 'erubis',
+          attributes  : attributes
+  ]
+}
+
+task docDist( type: Copy, dependsOn: asciidoctor ) {
+  description = "publish documentation"
+
+  from asciidoctor.outputDir
+  into "${rootProject.s3UploadDocs.source}/" // intentionally publish to root
+  rootProject.s3UploadDocs.dependsOn docDist
+}
+
+task dist( dependsOn: [test, asciidoctor] ) {
+
+}

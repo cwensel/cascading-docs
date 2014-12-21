@@ -1,0 +1,119 @@
+
+== Field Typing and Type Coercion
+
+
+
+[[field-typing]]
+=== Field Typing
+
+As of Cascading 2.2, the Fields class can hold type information
+for each field, and the Cascading planner can propagate that information
+from source Tap instances to downstream Operations through to sink Tap
+instances.
+
+This allows for Taps to read and store type information for
+external systems and applications, error detection during joins
+(detecting non-comparable types), to enforce canonical representations
+within the Tuple (prevent a field from switching arbitrarily between
+String and Integer types), and to allow for pluggable coercion from one
+type to another type, even if either isn't a Java primitive.
+
+To declare types, simply pass type information to the Fields
+instance either through the constructor or via a fluent API.
+
+.Constructor
+====
+include::fields-type-constructor.adoc[]
+====
+
+.Fluent
+====
+include::fields-type-fluent.adoc[]
+====
+
+Note the first example uses [classname]+Long.class+, and
+the second [classname]+long.class+. Since
+[classname]+Long+ is an object, we are letting Cascading know
+that the null value can be set. If declared [classname]+long+
+(a primitive) then null becomes zero.
+
+In practice, typed fields can only be used when they declare the
+results of an operation, for example:
+
+.Declaring Typed Results
+====
+include::partials-compose.adoc[]
+====
+
+Here the type information serves two roles. First, it allows a
+downstream consumer of the field value to know the type maintained in
+the tuple. Second, the SumBy sub-assembly now has a simpler API and can
+get the type information it needs internally to perform the aggregation
+directly from the Fields instance.
+
+Note that the [classname]+TextDelimited+ and other
+[classname]+Scheme+ classes should have any type information
+declared so it can be maintained by the Cascading planner. Custom
+[classname]+Scheme+ types also have the opportunity to read
+type information from any field or data sources they represent so it can
+be handed to the planner during runtime.
+
+
+
+[[field-coercion]]
+=== Type Coercion
+
+Type coercion is a means to convert one data type to another. For
+example, parsing the Java [classname]+String+ "42" to the
+[classname]+Integer+ 42 would be coercion. Or more simply,
+converting a [classname]+Long+ 42 to a
+[classname]+Double+ 42.0. Cascading supports primitive type
+coercions natively through the
+[classname]+cascading.tuple.coerce.Coercions+ class.
+
+In practice, developers implicitly invoke coercions via the
+[classname]+cascading.tuple.TupleEntry+ interface by
+requesting a [classname]+Long+ or
+[classname]+String+ representation of a field, via
+[code]+TupleEntry.getLong()+ or
+[code]+TupleEntry.getString()+, respectively.
+
+Or when data is set on a [classname]+Tuple+ via
+[code]+TupleEntry.setLong()+ or
+[code]+TupleEntry.setString()+, for example. If the field was
+declared as an [classname]+Integer+, and
+[code]+TupleEntry.setString( "someField", "42" )+ was called, the
+value of "someFields" will be coerced into its canonical form,
+42.
+
+To create custom coercions, the
+[classname]+cascading.tuple.type.CoercibleType+ interface must
+be implemented, and instances of [classname]+CoercibleType+
+can be used as the Type accepted by the Fields API as
+[classname]+CoercibleType+ extends
+[classname]+java.lang.reflect.Type+.
+
+Cascading provided a
+[classname]+cascading.tuple.type.DateType+ implementation to
+allow for coercions between date strings and the
+[classname]+Long+ canonical type. For example:
+
+.Date Type
+====
+include::fields-date-type.adoc[]
+====
+
+In this example we declare the "dateString" field to be a
+[classname]+DateType+. [classname]+DateType+
+maintains the value of the field as a [classname]+long+
+internally, but if a [classname]+String+ is set or requested,
+it will be converted using the given
+[classname]+SimpleDateFormat+ [classname]+String+
+against the given [classname]+TimeZone+. In the case of a
+[classname]+TextDelimited+ CSV file, where one column is a
+date value, [classname]+DateType+ can be used to declare its
+format allowing [classname]+TextDelimited+ to read and write
+the value as a [classname]+String+, but use the value
+internally (in the Tuple) as a [classname]+long+, which is
+much more efficient.
+

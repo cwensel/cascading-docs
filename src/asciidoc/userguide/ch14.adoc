@@ -1,0 +1,78 @@
+
+== How It Works
+
+
+
+[[job-planner]]
+=== MapReduce Job Planner
+
+The Hadoop MapReduce Job Planner is an internal feature of
+Cascading.
+
+When a collection of functions, splits, and joins are all tied up
+together into a "pipe assembly", the FlowConnector object is used to
+create a new Flow instance against input and output data paths. This
+Flow is a single Cascading job.
+
+Internally, the FlowConnector employs an intelligent planner to
+convert the pipe assembly to a graph of dependent MapReduce jobs that
+can be executed on a Hadoop cluster.
+
+All this happens behind the scenes - as does the scheduling of the
+individual MapReduce jobs, and the cleanup of intermediate data sets
+that bind the jobs together.
+
+image:images/planned-flow.svg[align="center"]
+
+
+
+The diagram above shows how a typical Flow is partitioned into
+MapReduce jobs. Every job is delimited by a temporary file that serves
+as the sink from the first job and the source for the next.
+
+To create a visualization of how your Flows are partitioned, call
+the [classname]+Flow#writeDOT()+ method. This writes a <<,DOT >> file
+out to the path specified, which can be viewed in a graphics package
+like OmniGraffle or Graphviz.
+
+
+
+[[cascade-scheduler]]
+=== The Cascade Topological Scheduler
+
+Cascading has a simple class, [classname]+Cascade+ ,
+that executes a collection of Cascading Flows on a target cluster in
+dependency order.
+
+Consider the following example.
+
+* Flow 1 reads input file A and outputs B.
+* Flow 2 expects input B and outputs C and D.
+* Flow 3 expects input C and outputs E.
+
+
+A [classname]+Cascade+ is constructed through the
+[classname]+CascadeConnector+ class, by building an internal
+graph that makes each Flow a "vertex", and each file an "edge". A
+topological walk on this graph will touch each vertex in order of its
+dependencies. When a vertex has all its incoming edges (i.e., files)
+available, it is scheduled on the cluster.
+
+In the example above, Flow 1 goes first, Flow 2 goes second, and
+Flow 3 is last.
+
+If two or more Flows are independent of one another, they are
+scheduled concurrently.
+
+And by default, if any outputs from a Flow are newer than the
+inputs, the Flow is skipped. The assumption is that the Flow was
+executed recently, since the output isn't stale. So there is no reason
+to re-execute it and use up resources or add time to the job. This is
+similar behavior a compiler would exhibit if a source file wasn't
+updated before a recompile.
+
+This is very handy if you have a large set of jobs, with varying
+interdependencies between them, that needs to be executed as a logical
+unit. Just pass them to the CascadeConnector and let it sort them all
+out.
+
