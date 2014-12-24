@@ -5,18 +5,14 @@ buildscript {
     mavenLocal()
     mavenCentral()
     jcenter()
-
     maven { url 'http://repo.springsource.org/plugins-release' }
-
-    mavenRepo name: 'Bintray Asciidoctor repo', url: 'http://dl.bintray.com/content/aalmiray/asciidoctor'
-    mavenRepo name: 'Bintray JCenter', url: 'http://jcenter.bintray.com'
+    maven { url 'http://conjars.org/repo/' }
   }
 
   dependencies {
     classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.4'
     classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
-
-    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.5.0'
+    classpath 'concurrentinc:documentation-plugin:1.0.0-dev' // until its part of the build process
   }
 }
 
@@ -33,7 +29,7 @@ apply plugin: 'propdeps'
 apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-idea'
 apply plugin: 'propdeps-eclipse'
-apply plugin: 'asciidoctor'
+apply plugin: 'documentation-plugin'
 
 repositories {
   mavenLocal()
@@ -86,52 +82,38 @@ task copyGuide( type: Copy ) {
   into 'build/userguide'
 }
 
-asciidoctor {
+createDocs {
 
   dependsOn << copyGuide
   dependsOn << extract
 
   sourceDir = file( "${buildDir}/userguide" )
-  sourceDocumentName = file( "${buildDir}/userguide/index.adoc" )
+  sourceDocumentNames = files( "${buildDir}/userguide/index.adoc" )
 
-  // http://asciidoc.org/userguide.html#X88
-  // attributed must all be lowercase
+  imagesDir = file( "src/site/" )
 
-  def attributes = [
-          toc2                : '',
-          revnumber           : "${majorVersion}-${buildDate}",
-          'source-highlighter': 'highlightjs',
-          'highlightjs-theme' : 'pojoaque',
-          'linkcss!'          : '',
-          stylesdir           : "src/site/stylesheets/",
-          stylesheet          : 'cascading.css',
-          'data-uri'          : '',
-          imagesdir           : "src/site/",
-          artifactsurl        : project.s3Bucket,
-          docsurl             : project.s3BucketDocs,
-          projectroot         : project.rootDir,
-          analyticsid         : System.properties[ 'analytics.id' ],
-          analyticsdomain     : System.properties[ 'analytics.domain' ]
+  attributes = [
+          revnumber   : "${majorVersion}-${buildDate}",
+          artifactsurl: project.s3Bucket,
+          docsurl     : project.s3BucketDocs,
 
           // disabled till attributes in docinfo are supported
-//          docinfo1: '',
+          //  docinfo1: ''
   ]
+
   options = [
-          doctype     : "book",
-          template_dir: "src/templates/",
-          eruby       : 'erubis',
-          attributes  : attributes
+          doctype: "book",
   ]
 }
 
-task docDist( type: Copy, dependsOn: asciidoctor ) {
+task docDist( type: Copy, dependsOn: createDocs ) {
   description = "publish documentation"
 
-  from asciidoctor.outputDir
+  from createDocs.outputDir
   into "${rootProject.s3UploadDocs.source}/" // intentionally publish to root
   rootProject.s3UploadDocs.dependsOn docDist
 }
 
-task dist( dependsOn: [test, asciidoctor] ) {
+task dist( dependsOn: [test, createDocs] ) {
 
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="316 278 343 237"
+     width="343pt" height="237pt"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:date>2008-11-11 16:03Z</dc:date>
+  <!-- Produced by OmniGraffle Professional 5.0.2 --></metadata><defs><font-face font-family="Helvetica" font-size="10"
+                                                                                 units-per-em="1000"
+                                                                                 underline-position="-75.683594"
+                                                                                 underline-thickness="49.316406"
+                                                                                 slope="0" x-height="550"
+                                                                                 cap-height="700" ascent="770.01953"
+                                                                                 descent="-229.98047"
+                                                                                 font-weight="bold"><font-face-src><font-face-name
+  name="Helvetica-Bold"/></font-face-src></font-face><marker orient="auto" overflow="visible" markerUnits="strokeWidth"
+                                                             id="FilledArrow_Marker" viewBox="-1 -4 10 8"
+                                                             markerWidth="10" markerHeight="8" color="black"><g><path
+  d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/></g></marker><marker
+  orient="auto" overflow="visible" markerUnits="strokeWidth" id="StickArrow_Marker" viewBox="-1 -4 10 8"
+  markerWidth="10" markerHeight="8" color="black"><g><path d="M 8 0 L 0 0 M 0 -3 L 8 0 L 0 3" fill="none"
+                                                           stroke="currentColor" stroke-width="1"/></g></marker></defs><g
+  stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1"><title>Model</title><g><title>Layer 1</title><circle
+  cx="487.229" cy="309.16498" r="28.800053" fill="#ffac73"/><circle cx="487.229" cy="309.16498" r="28.800053"
+                                                                    stroke="black" stroke-linecap="round"
+                                                                    stroke-linejoin="round" stroke-width="1"/><text
+  transform="translate(466.189 303.165)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold"
+                                                             x=".33740234" y="10" textLength="43.325195">CoGroup</tspan></text><circle
+  cx="347.047" cy="483.862" r="28.800062" fill="#e8c71d"/><circle cx="347.047" cy="483.862" r="28.800062" stroke="black"
+                                                                  stroke-linecap="round" stroke-linejoin="round"
+                                                                  stroke-width="1"/><text
+  transform="translate(325.00702 477.86203)" fill="black"><tspan font-family="Helvetica" font-size="10"
+                                                                 font-weight="bold" x=".4975586" y="10"
+                                                                 textLength="45.004883">InnerJoin</tspan></text><circle
+  cx="417.138" cy="483.862" r="28.800062" fill="#e8c71d"/><circle cx="417.138" cy="483.862" r="28.800062" stroke="black"
+                                                                  stroke-linecap="round" stroke-linejoin="round"
+                                                                  stroke-width="1"/><text
+  transform="translate(394.09802 477.86203)" fill="black"><tspan font-family="Helvetica" font-size="10"
+                                                                 font-weight="bold" x=".38671875" y="10"
+                                                                 textLength="47.226562">OuterJoin</tspan></text><circle
+  cx="487.62796" cy="483.862" r="28.800053" fill="#e8c71d"/><circle cx="487.62796" cy="483.862" r="28.800053"
+                                                                    stroke="black" stroke-linecap="round"
+                                                                    stroke-linejoin="round" stroke-width="1"/><text
+  transform="translate(468.58798 477.86203)" fill="black"><tspan font-family="Helvetica" font-size="10"
+                                                                 font-weight="bold" x=".056640625" y="10"
+                                                                 textLength="38.886719">LeftJoin</tspan></text><circle
+  cx="557.32" cy="483.862" r="28.800072" fill="#e8c71d"/><circle cx="557.32" cy="483.862" r="28.800072" stroke="black"
+                                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                                 stroke-width="1"/><text
+  transform="translate(534.28003 477.86203)" fill="black"><tspan font-family="Helvetica" font-size="10"
+                                                                 font-weight="bold" x=".4482422" y="10"
+                                                                 textLength="46.103516">RightJoin</tspan></text><circle
+  cx="487.628" cy="388.163" r="28.800062" fill="#e8c71d"/><circle cx="487.628" cy="388.163" r="28.800062" stroke="black"
+                                                                  stroke-linecap="round" stroke-linejoin="round"
+                                                                  stroke-width="1"/><text
+  transform="translate(469.588 382.16302)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold"
+                                                               x="3.0351162" y="10"
+                                                               textLength="30.009766">Joiner</tspan></text><path
+  d="M 347.047 455.06198 L 347.047 443.162 L 347.047 436.162 L 487.628 436.162 L 487.628 428.863 L 487.628 426.863"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path
+  d="M 417.138 455.06198 L 417.138 443.162 L 417.138 436.162 L 487.628 436.162 L 487.628 428.863 L 487.628 426.863"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path
+  d="M 487.62796 455.06198 L 487.62796 443.162 L 487.628 428.863 L 487.628 426.863"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path
+  d="M 557.32 455.06198 L 557.32 443.162 L 557.32 436.162 L 487.628 436.162 L 487.628 428.863 L 487.628 426.863"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><circle
+  cx="627.411" cy="483.862" r="28.800072" fill="#e8c71d"/><circle cx="627.411" cy="483.862" r="28.800072" stroke="black"
+                                                                  stroke-linecap="round" stroke-linejoin="round"
+                                                                  stroke-width="1"/><text
+  transform="translate(603.37103 477.86203)" fill="black"><tspan font-family="Helvetica" font-size="10"
+                                                                 font-weight="bold" x=".051757812" y="10"
+                                                                 textLength="48.896484">MixedJoin</tspan></text><path
+  d="M 627.411 455.06198 L 627.411 443.162 L 627.411 436.162 L 487.628 436.162 L 487.628 428.863 L 487.628 426.863"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><line
+  x1="487.22897" y1="337.965" x2="487.44342" y2="349.4647" marker-end="url(#StickArrow_Marker)" stroke="black"
+  stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/></g></g></svg>

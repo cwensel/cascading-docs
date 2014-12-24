@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="186 194 267 150"
+     width="267pt" height="150pt"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:date>2008-11-03 01:12Z</dc:date>
+  <!-- Produced by OmniGraffle Professional 5.0.2 --></metadata><defs><font-face font-family="Helvetica" font-size="10"
+                                                                                 units-per-em="1000"
+                                                                                 underline-position="-75.683594"
+                                                                                 underline-thickness="49.316406"
+                                                                                 slope="0" x-height="550"
+                                                                                 cap-height="700" ascent="770.01953"
+                                                                                 descent="-229.98047"
+                                                                                 font-weight="bold"><font-face-src><font-face-name
+  name="Helvetica-Bold"/></font-face-src></font-face><font-face font-family="Helvetica" font-size="9"
+                                                                units-per-em="1000" underline-position="-75.683594"
+                                                                underline-thickness="49.316406" slope="0"
+                                                                x-height="555.55554" cap-height="722.22223"
+                                                                ascent="770.01953" descent="-229.98047"
+                                                                font-weight="bold"><font-face-src><font-face-name
+  name="Helvetica-Bold"/></font-face-src></font-face><marker orient="auto" overflow="visible" markerUnits="strokeWidth"
+                                                             id="FilledArrow_Marker" viewBox="-1 -4 10 8"
+                                                             markerWidth="10" markerHeight="8" color="black"><g><path
+  d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/></g></marker></defs><g
+  stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1"><title>Model</title><g><title>Layer 1</title><circle
+  cx="216.8" cy="312.79999" r="28.800055" fill="#5eb4ff"/><circle cx="216.8" cy="312.79999" r="28.800055" stroke="black"
+                                                                  stroke-linecap="round" stroke-linejoin="round"
+                                                                  stroke-width="1"/><text
+  transform="translate(195.76 306.80002)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold"
+                                                              x=".39404297" y="10"
+                                                              textLength="42.211914">Function</tspan></text><circle
+  cx="318.388" cy="224.8" r="28.800055" fill="#5eb4ff"/><circle cx="318.388" cy="224.8" r="28.800055" stroke="black"
+                                                                stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="1"/><text
+  transform="translate(295.34802 218.8)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold"
+                                                             x=".38671875" y="10"
+                                                             textLength="47.226562">Operation</tspan></text><circle
+  cx="285.24698" cy="312.79999" r="28.800058" fill="#5eb4ff"/><circle cx="285.24698" cy="312.79999" r="28.800058"
+                                                                      stroke="black" stroke-linecap="round"
+                                                                      stroke-linejoin="round" stroke-width="1"/><text
+  transform="translate(267.207 306.80002)" fill="black"><tspan font-family="Helvetica" font-size="10" font-weight="bold"
+                                                               x="5.815878" y="10" textLength="24.448242">Filter</tspan></text><circle
+  cx="353.694" cy="312.79999" r="28.800062" fill="#5eb4ff"/><circle cx="353.694" cy="312.79999" r="28.800062"
+                                                                    stroke="black" stroke-linecap="round"
+                                                                    stroke-linejoin="round" stroke-width="1"/><text
+  transform="translate(329.65402 307.30002)" fill="black"><tspan font-family="Helvetica" font-size="9"
+                                                                 font-weight="bold" x=".2487793" y="9"
+                                                                 textLength="48.50244">Aggregator</tspan></text><path
+  d="M 216.8 283.99997 L 216.8 272.09998 L 216.8 269.09998 L 318.388 269.09998 L 318.388 265.50003 L 318.388 263.50003"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path
+  d="M 353.694 283.99997 L 353.694 272.09998 L 353.694 269.09998 L 318.388 269.09998 L 318.388 265.50003 L 318.388 263.50003"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><circle
+  cx="422.141" cy="312.79999" r="28.800062" fill="#5eb4ff"/><circle cx="422.141" cy="312.79999" r="28.800062"
+                                                                    stroke="black" stroke-linecap="round"
+                                                                    stroke-linejoin="round" stroke-width="1"/><text
+  transform="translate(404.10101 307.30002)" fill="black"><tspan font-family="Helvetica" font-size="9"
+                                                                 font-weight="bold" x="4.7904873" y="9"
+                                                                 textLength="26.499023">Buffer</tspan></text><path
+  d="M 422.141 283.99997 L 422.141 272.09998 L 422.141 269.09998 L 318.388 269.09998 L 318.388 265.50003 L 318.388 263.50003"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path
+  d="M 285.24698 283.99997 L 285.24698 272.09998 L 285.24698 269.09998 L 318.388 269.09998 L 318.388 265.50003 L 318.388 263.50003"
+  marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></g></g></svg>
