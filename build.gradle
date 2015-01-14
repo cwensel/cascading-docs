@@ -89,6 +89,7 @@ createDocs {
 
   sourceDir = file( "${buildDir}/userguide" )
   sourceDocumentNames = files( "${buildDir}/userguide/index.adoc" )
+  targetStyle = "cascading"
 
   imagesDir = file( "src/site/" )
 
