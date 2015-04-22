@@ -1,9 +1,11 @@
+:toc2:
+:doctitle: {_doctitle} - Built-In Operations
 
-== Built-In Operations
+= Built-In Operations
 
 
 
-=== Identity Function
+== Identity Function
 
 The [classname]+cascading.operation.Identity+ function
 is used to "shape" a tuple stream. Here are some common patterns that
@@ -93,7 +95,7 @@ include::identity-coerce-single.adoc[]
 
 
 [[debug-function]]
-=== Debug Function
+== Debug Function
 
 The [classname]+cascading.operation.Debug+ function is a
 utility function (actually, it's a [classname]++Filter++) that
@@ -117,7 +119,7 @@ available.
 
 
 
-=== Sample and Limit Functions
+== Sample and Limit Functions
 
 The Sample and Limit functions are used to limit the number of
 tuples that pass through a pipe assembly.
@@ -138,7 +140,7 @@ allows a set number of tuples to pass.
 
 
 
-=== Insert Function
+== Insert Function
 
 The [classname]+cascading.operation.Insert+ function
 allows for insertion of constant literal values into the tuple
@@ -151,7 +153,7 @@ inserted.
 
 
 
-=== Text Functions
+== Text Functions
 
 Cascading includes a number of text functions in the
 [classname]+cascading.operation.text+ package.
@@ -217,7 +219,7 @@ create a new formatted String.
 
 
 
-=== Regular Expression Operations
+== Regular Expression Operations
 
 RegexSplitter::
 The
@@ -332,7 +334,7 @@ that each contain only one value, as does
 
 
 [[operation-expression]]
-=== Java Expression Operations
+== Java Expression Operations
 
 Cascading provides some support for dynamically-compiled Java
 expressions to be used in either [classname]+Functions+ or
@@ -399,7 +401,7 @@ See the relevant Javadoc for details on usage.
 
 
 
-=== XML Operations
+== XML Operations
 
 To use XML Operations in a Cascading application, include the
 _cascading-xml-x.y.z.jar_ in the project. When using
@@ -457,7 +459,7 @@ the TagSoup website.
 
 
 
-=== Assertions
+== Assertions
 
 Cascading Stream Assertions are used to build robust reusable pipe
 assemblies. If desired, they can be planned out of a Flow instance at
@@ -593,7 +595,7 @@ multiple key values are delimited by a TAB character.
 
 
 
-=== Logical Filter Operators
+== Logical Filter Operators
 
 The logical [classname]+Filter+ operators allow you to
 combine multiple filters to run in a single Pipe, instead of chaining
@@ -659,7 +661,7 @@ Pipe.
 
 
 
-=== Buffers
+== Buffers
 
 As of Cascading 2.2, the FirstNBuffer Buffer is provided as an
 optimized means to determine the top N elements in a grouping.

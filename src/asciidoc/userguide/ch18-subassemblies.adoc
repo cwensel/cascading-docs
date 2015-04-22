@@ -1,5 +1,7 @@
+:toc2:
+:doctitle: {_doctitle} - Built-In SubAssemblies
 
-== Built-in Assemblies
+= Built-in SubAssemblies
 
 There are a number of helper SubAssemblies provided by the core
 cascading library.
@@ -11,7 +13,7 @@ how similar functions in SQL perform.
 
 
 [[aggregate-by]]
-=== AggregateBy
+== AggregateBy
 
 The [classname]+cascading.pipe.assembly.AggregateBy+
 SubAssembly is an implementation of the Partial Aggregation pattern, and
@@ -34,7 +36,7 @@ for details.
 
 
 [[AverageBy]]
-==== AverageBy
+=== AverageBy
 
 The [classname]+cascading.pipe.assembly.AverageBy+
 SubAssembly performs an average over the given
@@ -51,7 +53,7 @@ include::partials-averageby.adoc[]
 
 
 [[CountBy]]
-==== CountBy
+=== CountBy
 
 The [classname]+cascading.pipe.assembly.CountBy+
 SubAssembly performs a count over the given
@@ -68,7 +70,7 @@ include::partials-countby.adoc[]
 
 
 [[SumBy]]
-==== SumBy
+=== SumBy
 
 The [classname]+cascading.pipe.assembly.SumBy+
 SubAssembly performs a sum over the given [code]+valueFields+ and
@@ -83,7 +85,7 @@ include::partials-sumby.adoc[]
 
 
 
-==== FirstBy
+=== FirstBy
 
 The [classname]+cascading.pipe.assembly.FirstBy+
 SubAssembly is used to return the first encountered value in the given
@@ -103,7 +105,7 @@ sorted in any deterministic order.
 
 
 
-=== Coerce
+== Coerce
 
 The [classname]+cascading.pipe.assembly.SumBy+
 SubAssembly is used to coerce a set of values from one type to another
@@ -118,7 +120,7 @@ include::subassembly-coerce.adoc[]
 
 
 
-=== Discard
+== Discard
 
 The [classname]+cascading.pipe.assembly.Discard+
 SubAssembly is used to shape the Tuple stream by discarding all fields
@@ -131,7 +133,7 @@ include::subassembly-discard.adoc[]
 
 
 
-=== Rename
+== Rename
 
 The [classname]+cascading.pipe.assembly.Rename+
 SubAssembly is used to rename a field.
@@ -143,7 +145,7 @@ include::subassembly-rename.adoc[]
 
 
 
-=== Retain
+== Retain
 
 The [classname]+cascading.pipe.assembly.Retain+
 SubAssembly is used to shape the Tuple stream by retaining all fields
@@ -156,7 +158,7 @@ include::subassembly-retain.adoc[]
 
 
 
-=== Unique
+== Unique
 
 The [classname]+cascading.pipe.assembly.Unique+
 SubAssembly is used to remove duplicate values in a Tuple stream.

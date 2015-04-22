@@ -1,9 +1,11 @@
+:toc2:
+:doctitle: {_doctitle} - Cascading Best Practices
 
-== Best Practices
+= Cascading Best Practices
 
 
 
-=== Unit Testing
+== Unit Testing
 
 Discrete testing of all Operations, pipe assemblies, and
 applications is a must. The
@@ -41,7 +43,7 @@ retrieved via the [code]+tests+ classifier.
 
 
 
-=== Flow Granularity
+== Flow Granularity
 
 Although using one large [classname]+Flow+ may result in
 slightly more efficient performance, it's advisable to use a more
@@ -58,7 +60,7 @@ other tools.
 
 
 
-=== SubAssemblies, not Factories
+== SubAssemblies, not Factories
 
 When developing your applications, use
 [classname]+SubAssembly+ subclasses, not "factory" methods.
@@ -73,7 +75,7 @@ rare.
 
 
 
-=== Logical Responsibilities for SubAssemblies
+== Logical Responsibilities for SubAssemblies
 
 SubAssembies provide a very convenient means to co-locate similar
 or related responsibilities into a single place. For example, it's
@@ -94,7 +96,7 @@ logic.
 
 
 
-=== Java Operators in Field Names
+== Java Operators in Field Names
 
 There are a few Operations in Cascading (e.g.,
 [classname]+ExpressionFunction+ and
@@ -109,7 +111,7 @@ cause a compilation error.
 
 
 
-=== Debugging Planner Failures
+== Debugging Planner Failures
 
 The [classname]+FlowConnector+ will sometimes fail when
 attempting to plan a [classname]+Flow+. If the error message
@@ -127,7 +129,7 @@ See <<debugging-hadoop>>.
 
 
 
-=== Optimizing Joins
+== Optimizing Joins
 
 When joining two streams via a [classname]+CoGroup+
 [classname]+Pipe+, try to put the largest of the streams in
@@ -139,7 +141,7 @@ most joins.
 
 
 
-=== Debugging Streams
+== Debugging Streams
 
 When creating complex assemblies, it's safe to embed
 [classname]+Debug+ operations (see <<debug-function>>) at appropriate debug levels as needed. Use
@@ -151,7 +153,7 @@ See <<debugging-hadoop>>.
 
 
 [[handling-bad-data]]
-=== Handling Good and Bad Data
+== Handling Good and Bad Data
 
 It's very common when processing raw data streams to encounter
 data that is corrupt or malformed in some way. For instance, bad content
@@ -175,7 +177,7 @@ field that states why the Tuple was marked bad.
 
 
 
-=== Maintaining State in Operations
+== Maintaining State in Operations
 
 When creating custom Operations ([classname]++Function++,
 [classname]++Filter++, [classname]++Aggregator++, or
@@ -192,7 +194,7 @@ execute the same operation from multiple threads.
 
 
 
-=== Custom Types
+== Custom Types
 
 Passing a custom class through a Tuple stream is generally frowned
 upon. It leads to the coupling of custom Operations to particular types,
@@ -219,7 +221,7 @@ to test.)
 
 
 
-=== Fields Constants
+== Fields Constants
 
 Instead of having String field names strewn about, create an
 Interface that holds a constant value for each field name:
@@ -235,7 +237,7 @@ $$+
 
 
 
-=== Checking the Source Code
+== Checking the Source Code
 
 When in doubt, look at the Cascading source code. If something is
 not documented in this User Guide or Javadoc, and it's a feature of

@@ -1,10 +1,12 @@
+:toc2:
+:doctitle: {_doctitle} - Advanced Processing
 
-== Advanced Processing
+= Advanced Processing
 
 
 
 [[subassemblies]]
-=== SubAssemblies
+== SubAssemblies
 
 In Cascading, SubAssemblies are reusable pipe assemblies that are
 linked into larger pipe assemblies. They function much like subroutines
@@ -64,7 +66,7 @@ the desired branches, which can be passed to subsequent instances of
 
 
 [[stream-assertions]]
-=== Stream Assertions
+== Stream Assertions
 
 image:images/stream-assertions.svg[align="center"]
 
@@ -127,7 +129,7 @@ planner default value.
 
 
 [[failure-traps]]
-=== Failure Traps
+== Failure Traps
 
 The following diagram shows the use of _Failure Traps_ in a pipe assembly.
 
@@ -176,7 +178,7 @@ using filters. For more on this, see <<handling-bad-data>>.
 
 
 
-=== Checkpointing
+== Checkpointing
 
 New to Cascading 2, and only supported by the Hadoop planner, is
 the ability to "checkpoint" data within a Flow by using the
@@ -217,7 +219,7 @@ Finally the [classname]+Tap+ is bound to the
 
 
 
-=== Restarting a Checkpointed Flow
+== Restarting a Checkpointed Flow
 
 When using Checkpoint pipes in a Flow and the Flow fails, a future
 execution of the Flow can be restarted after the last successful
@@ -248,7 +250,7 @@ checkpoint files will be removed, if any.
 
 
 
-=== Flow and Cascade Event Handling
+== Flow and Cascade Event Handling
 
 Each Flow and Cascade has the ability to execute callbacks via an
 event listener. This ability is useful when an external application
@@ -295,7 +297,7 @@ methods.
 
 
 [[partition-tap]]
-=== PartitionTaps
+== PartitionTaps
 
 The [classname]+PartitionTap+ [classname]+Tap+
 class provides a simple means to break large datasets into smaller sets
@@ -339,7 +341,7 @@ directories.
 
 
 
-=== Partial Aggregation instead of Combiners
+== Partial Aggregation instead of Combiners
 
 In Hadoop mode, Cascading does not support MapReduce "Combiners".
 Combiners are a simple optimization allowing some Reduce functions to

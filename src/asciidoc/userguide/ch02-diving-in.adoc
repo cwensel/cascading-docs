@@ -1,5 +1,7 @@
+:toc2:
+:doctitle: {_doctitle} - Diving In
 
-== Diving In
+= Diving In
 
 The most common example presented to new Hadoop (and MapReduce)
 developers is an application that counts words. It is the Hadoop

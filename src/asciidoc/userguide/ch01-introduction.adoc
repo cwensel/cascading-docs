@@ -1,9 +1,9 @@
+:toc2:
+:doctitle: {_doctitle} - Introduction
 
-== About Cascading
+= Introduction
 
-
-
-=== What is Cascading?
+== What is Cascading?
 
 Cascading is a data processing API and processing query planner
 used for defining, sharing, and executing data-processing workflows on a
@@ -16,11 +16,11 @@ application development, job creation, and job scheduling.
 
 
 
-=== Usage Scenarios
+== Usage Scenarios
 
 
 
-==== Why use Cascading?
+=== Why use Cascading?
 
 Cascading was developed to allow organizations to rapidly
 develop complex data processing applications with Hadoop. The need for
@@ -55,7 +55,7 @@ references.
 
 
 
-==== Who are the users?
+=== Who are the users?
 
 Cascading users typically fall into three roles:
 
@@ -94,7 +94,7 @@ applications or build production processes on a Hadoop cluster.
 
 
 
-=== What is Apache Hadoop?
+== What is Apache Hadoop?
 
 From the Hadoop website, it "is a software platform that
 lets one easily write and run applications that process vast amounts of
@@ -141,7 +141,7 @@ available. It can be downloaded from the Hadoop website: <<,http://hadoop.apache
 
 
 
-=== Hadoop 1 vs Hadoop 2
+== Hadoop 1 vs Hadoop 2
 
 Cascading 2.6 supports both Hadoop 1.x and 2.x by providing two
 Java dependencies, _cascading-hadoop.jar_ and

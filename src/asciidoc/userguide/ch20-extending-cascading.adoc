@@ -1,9 +1,11 @@
+:toc2:
+:doctitle: {_doctitle} - Extending Cascading
 
-== Extending Cascading
+= Extending Cascading
 
 
 
-=== Scripting
+== Scripting
 
 The Cascading API was designed with scripting in mind. Any
 Java-compatible scripting language can import and instantiate Cascading
@@ -18,7 +20,7 @@ bindings that are publicly available.
 
 
 [[custom-types]]
-=== Custom Types and Serialization
+== Custom Types and Serialization
 
 The [classname]+Tuple+ class is a generic container for
 all [classname]+java.lang.Object+ instances. Thus any
@@ -80,7 +82,7 @@ and the unit tests for examples.
 
 
 
-=== Custom Comparators and Hashing
+== Custom Comparators and Hashing
 
 Frequently, objects in one [classname]+Tuple+ are
 compared to objects in a second [classname]+Tuple+. This is

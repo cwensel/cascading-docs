@@ -1,9 +1,10 @@
+:toc2:
+:doctitle: {_doctitle} - Apache Hadoop Platform
 
-== Executing Processes on Hadoop
+= Apache Hadoop Platform
 
 
-
-=== Introduction
+== Introduction
 
 This section covers some of the operational mechanics of running
 an application that uses Cascading with the Hadoop platform, including
@@ -18,7 +19,7 @@ freely available for download from the Hadoop website, <<,http://hadoop.apache.o
 
 
 [[building]]
-=== Building
+== Building
 
 Cascading ships with several jars and dependencies in the download
 archive. Alternatively, Cascading is available over Maven and Ivy
@@ -67,7 +68,7 @@ applications or raw Hadoop MapReduce applications.
 
 
 
-=== Configuring
+== Configuring
 
 During runtime, Hadoop must be told which application jar file
 should be pushed to the cluster. Typically, this is done via the Hadoop
@@ -134,7 +135,7 @@ penalty around processing large numbers of small files.
 
 
 
-=== Executing
+== Executing
 
 Running a Cascading application is the same as running any Hadoop
 application. After packaging your application into a single jar (see
@@ -147,7 +148,7 @@ _your-application.jar_, call the Hadoop shell
 script:
 
 .Running a Cascading Application
-====
+===
 
 ----
 
@@ -180,7 +181,7 @@ Found" exceptions will be thrown.
 
 
 [[debugging-hadoop]]
-=== Debugging
+== Debugging
 
 Debugging and testing in Cascading local mode, unlike Cascading
 Hadoop mode, is trivial as all the work and processing happens in the

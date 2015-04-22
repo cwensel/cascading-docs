@@ -1,0 +1,2 @@
+:toc2:
+:doctitle: {_doctitle} - Apache Hadoop 1.x MapReduce Platform

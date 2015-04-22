@@ -12,7 +12,7 @@ buildscript {
   dependencies {
     classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.4'
     classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
-    classpath 'concurrentinc:documentation-plugin:1.1.1-wip-+'
+    classpath 'concurrentinc:documentation-plugin:1.1.1-7'
   }
 }
 
@@ -74,36 +74,52 @@ test {
 
 task extract( type: ExtractTask ) {
   inputDir file( 'src/test/java/examples/userguide' )
-  outputDir file( "${buildDir}" )
+  outputDir file( "${buildDir}/extract" )
 }
 
-task copyGuide( type: Copy ) {
+task copyGuide( type: Copy, dependsOn: extract ) {
   from 'src/asciidoc/userguide/'
-  into 'build/userguide'
+  from "${buildDir}/extract/userguide/"
+  into "${buildDir}/asciidoc"
+}
+
+createTopTOC {
+
+  dependsOn << copyGuide
+
+  inputFiles = fileTree( dir: "${buildDir}/asciidoc", include: ['**/ch?-*.adoc', '**/ch??-*.adoc'] )
+  outputFile = file( "${buildDir}/asciidoc/toc.adoc" )
 }
 
 createDocs {
 
   dependsOn << copyGuide
+  dependsOn << createTopTOC
   dependsOn << extract
 
-  sourceDir = file( "${buildDir}/userguide" )
-  sourceDocumentNames = files( "${buildDir}/userguide/index.adoc" )
+  sourceDir = file( "${buildDir}/asciidoc" )
+//  sourceDocumentNames = files( "${buildDir}/asciidoc/ch**" )
+  sourceDocumentNames = fileTree( dir: "${buildDir}/asciidoc", include: ['index.adoc', '**/ch?-*.adoc', '**/ch??-*.adoc'] )
+  outputDir = file( "${buildDir}/userguide" )
   targetStyle = "cascading"
 
   imagesDir = file( "src/site/" )
 
   attributes = [
-          revnumber   : "${majorVersion}-${buildDate}",
-          artifactsurl: project.s3Bucket,
-          docsurl     : project.s3BucketDocs,
+          _doctitle          : "Cascading ${majorVersion} User Guide",
+          revnumber          : "${majorVersion}-${buildDate}",
+          artifactsurl       : project.s3Bucket,
+          docsurl            : project.s3BucketDocs,
+          'highlightjs-theme': 'github',
+          sectlinks          : 'true',
+          toc2               : null
 
           // disabled till attributes in docinfo are supported
           //  docinfo1: ''
   ]
 
   options = [
-          doctype: "book",
+          doctype: "book"
   ]
 }
 

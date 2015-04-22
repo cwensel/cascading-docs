@@ -1,9 +1,12 @@
+:toc2:
+:doctitle: {_doctitle} - Using and Developing Operations
 
-== Using and Developing Operations
+
+= Using and Developing Operations
 
 
 
-=== Introduction
+== Introduction
 
 So far we've talked about setting up sources and sinks, shaping
 the data streams, referencing the data fields, and so on. Within this
@@ -75,7 +78,7 @@ planner renders the Flow under certain circumstances.
 
 
 
-=== Functions
+== Functions
 
 A [classname]+Function+ expects a stream of individual
 argument Tuples, and returns zero or more result Tuples for each of
@@ -175,7 +178,7 @@ processed or persisted downstream.
 
 
 
-=== Filter
+== Filter
 
 A [classname]+Filter+ expects a stream of individual
 argument Tuples and returns a Boolean value for each one, stating
@@ -219,7 +222,7 @@ argument.
 
 
 
-=== Aggregator
+== Aggregator
 
 An [classname]+Aggregator+ expects a stream of tuple
 groups (the output of a [classname]+GroupBy+ or
@@ -284,7 +287,7 @@ not be self-evident. These are detailed in the Javadoc
 
 
 
-=== Buffer
+== Buffer
 
 A [classname]+Buffer+ expects set of argument tuples in
 the same grouping, and may return zero or more result tuples.
@@ -367,7 +370,7 @@ outgoing [classname]+Tuple+ instances for efficiency.
 
 
 
-=== Operation and BaseOperation
+== Operation and BaseOperation
 
 In all of the above sections, the
 [classname]+cascading.operation.BaseOperation+ class was

@@ -1,9 +1,11 @@
+:toc2:
+:doctitle: {_doctitle} - Custom Taps and Schemes
 
-== Custom Taps and Schemes
+= Custom Taps and Schemes
 
 
 
-=== Introduction
+== Introduction
 
 Cascading is designed to be easily configured and enhanced by
 developers. In addition to creating custom Operations, developers can
@@ -49,7 +51,7 @@ For examples of how to implement a custom tap and scheme, see the
 
 
 
-=== Custom Taps
+== Custom Taps
 
 All custom Tap classes must subclass the
 [classname]+cascading.tap.Tap+ abstract class and implement
@@ -127,7 +129,7 @@ and Output types it will be reading and writing.
 
 
 
-=== Custom Schemes
+== Custom Schemes
 
 All custom Scheme classes must subclass the
 [classname]+cascading.scheme.Scheme+ abstract class and

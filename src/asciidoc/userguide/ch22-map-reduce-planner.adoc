@@ -1,10 +1,11 @@
+:toc2:
+:doctitle: {_doctitle} - How the MapReduce Planner Works
 
-== How It Works
-
+= How the MapReduce Planner Works
 
 
 [[job-planner]]
-=== MapReduce Job Planner
+== MapReduce Job Planner
 
 The Hadoop MapReduce Job Planner is an internal feature of
 Cascading.
@@ -38,7 +39,7 @@ like OmniGraffle or Graphviz.
 
 
 [[cascade-scheduler]]
-=== The Cascade Topological Scheduler
+== The Cascade Topological Scheduler
 
 Cascading has a simple class, [classname]+Cascade+ ,
 that executes a collection of Cascading Flows on a target cluster in

@@ -1,0 +1,37 @@
+:toc2:
+:doctitle: {_doctitle} - Cascades
+
+[[cascades]]
+= Cascades
+
+image:images/cascade.svg[align="center"]
+
+A Cascade allows multiple Flow instances to be executed as a
+single logical unit. If there are dependencies between the Flows, they
+are executed in the correct order. Further, Cascades act like Ant builds
+or Unix make files - that is, a Cascade only executes Flows that have
+stale sinks (i.e., output data that is older than the input data). For
+more on this, see <<skipping-flows>>.
+
+.Creating a new Cascade
+====
+include::simple-cascade.adoc[]
+====
+
+When passing Flows to the CascadeConnector, order is not
+important. The CascadeConnector automatically identifies the
+dependencies between the given Flows and creates a scheduler that starts
+each Flow as its data sources become available. If two or more Flow
+instances have no interdependencies, they are submitted together so that
+they can execute in parallel.
+
+For more information, see the section on <<cascade-scheduler>>.
+
+If an instance of
+[classname]+cascading.flow.FlowSkipStrategy+ is given to a
+[classname]+Cascade+ instance (via the
+[classname]+Cascade.setFlowSkipStrategy()+ method), it is
+consulted for every Flow instance managed by that Cascade, and all skip
+strategies on those Flow instances are ignored. For more information on
+skip strategies, see <<skipping-flows>>.
+
