@@ -21,7 +21,6 @@
 
 package examples.userguide;
 
-
 import java.util.Iterator;
 
 import cascading.flow.FlowProcess;

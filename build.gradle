@@ -37,20 +37,26 @@ repositories {
   maven { url 'http://conjars.org/repo/' }
 }
 
-ext.cascadingVersion = '3.0.0-wip-61'
+ext.cascadingVersion = '3.0.0-wip-103'
 ext.cascadingChanging = false
-ext.hadoopVersion = '1.2.1'
-ext.hadoop2Version = '2.4.1'
-ext.tezVersion = '0.5.1'
+//ext.hadoopVersion = '1.2.1'
+ext.hadoop2Version = '2.6.0'
+//ext.tezVersion = '0.5.1'
 ext.buildDate = new SimpleDateFormat( "yyyyMMdd" ).format( new Date() )
 ext.buildTimestamp = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() )
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
+configurations.all {
+  resolutionStrategy {
+    force 'com.google.guava:guava:11.0.2'
+  }
+}
+
 dependencies {
 
-  compile group: 'cascading', name: 'cascading-local', version: cascadingVersion, changing: cascadingChanging
+//  compile group: 'cascading', name: 'cascading-local', version: cascadingVersion, changing: cascadingChanging
   compile group: 'cascading', name: 'cascading-hadoop2-mr1', version: cascadingVersion, changing: cascadingChanging
 
   compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.1'
@@ -58,8 +64,11 @@ dependencies {
   compile group: 'log4j', name: 'log4j', version: '1.2.16'
 
   compile group: 'cascading', name: 'cascading-core', version: cascadingVersion, classifier: 'tests', changing: cascadingChanging
-  compile group: 'cascading', name: 'cascading-local', version: cascadingVersion, classifier: 'tests', changing: cascadingChanging
+//  compile group: 'cascading', name: 'cascading-local', version: cascadingVersion, classifier: 'tests', changing: cascadingChanging
   compile group: 'cascading', name: 'cascading-platform', version: cascadingVersion, classifier: 'tests', changing: cascadingChanging
+
+  compile group: 'cascading', name: 'fluid-api', version: '1.0.0', changing: cascadingChanging
+  compile group: 'cascading', name: 'fluid-cascading30', version: '1.0.0', changing: cascadingChanging
 
   compile group: 'org.apache.hadoop', name: 'hadoop-common', version: hadoop2Version
   compile group: 'org.apache.hadoop', name: 'hadoop-client', version: hadoop2Version
@@ -98,7 +107,6 @@ createDocs {
   dependsOn << extract
 
   sourceDir = file( "${buildDir}/asciidoc" )
-//  sourceDocumentNames = files( "${buildDir}/asciidoc/ch**" )
   sourceDocumentNames = fileTree( dir: "${buildDir}/asciidoc", include: ['index.adoc', '**/ch?-*.adoc', '**/ch??-*.adoc'] )
   outputDir = file( "${buildDir}/userguide" )
   targetStyle = "cascading"
@@ -112,7 +120,10 @@ createDocs {
           docsurl            : project.s3BucketDocs,
           'highlightjs-theme': 'github',
           sectlinks          : 'true',
-          toc2               : null
+          sectanchors        : 'true',
+//          numbered           : 'true',
+          toc2               : null,
+          icons              : 'font' // enabled code callouts
 
           // disabled till attributes in docinfo are supported
           //  docinfo1: ''
@@ -123,14 +134,11 @@ createDocs {
   ]
 }
 
-task docDist( type: Copy, dependsOn: createDocs ) {
+task docDist( type: Copy, dependsOn: [test, createDocs] ) {
   description = "publish documentation"
 
+  s3UploadDocs.dependsOn << docDist
+
   from createDocs.outputDir
-  into "${rootProject.s3UploadDocs.source}/" // intentionally publish to root
-  rootProject.s3UploadDocs.dependsOn docDist
-}
-
-task dist( dependsOn: [test, createDocs] ) {
-
+  into "${s3UploadDocs.source}/userguide/"
 }

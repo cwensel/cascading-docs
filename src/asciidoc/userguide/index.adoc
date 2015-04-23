@@ -2,7 +2,7 @@
 
 Copyright 2007-2015, Concurrent, Inc.
 
+Version: {revnumber}
 Last Updated: {docdatetime}
-
 
 include::toc.adoc[]

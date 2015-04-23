@@ -3,90 +3,110 @@
 
 = Diving In
 
-The most common example presented to new Hadoop (and MapReduce)
-developers is an application that counts words. It is the Hadoop
-equivalent to a "Hello World" application.
+== Anatomy of a Word Count Application
 
-In the word-counting application, a document is parsed into
-individual words and the frequency of each word is counted. In the last
-paragraph, for example, "is" appears twice and "equivalent" appears
-once.
+The most common example presented to new developers is an application that
+counts words. It is the data processing equivalent to a "Hello World"
+application.
 
-The following code example uses Cascading to read each line of text
-from our document file, parse it into words, then count the number of
-times each word appears.
+In a word-counting application, a document is parsed into individual words and
+the frequency of each word is counted. In the last paragraph, for example, "is"
+appears twice and "equivalent" appears once.
+
+The following code example uses the Cascading default API to read each line of
+text from our document file, parse it into words, then count the number of times
+each word appears.
 
 .Word Counting
 ====
 include::basic-word-count.adoc[]
+<1> Read each line of text from a file and give it the field name "line"
+<2> Parse each "line" into words with the [code]+RegexGenerator+ object, which
+returns each word in the field named "word"
+<3> Sort and group all the tuples on the "word" field, using the [code]+GroupBy+
+object
+<4> Count the number of elements in each group, using the [code]+Count+ object,
+and store this value in the "count" field
+<5> Write out the "word" and "count" fields
+<6> Set application specific meta-data to allow the application to run
+<7> Choose the platform to execute on
+<8> Plan the unit of work to be executed, a Flow
+<9> Start the Flow and wait till completed
 ====
 
 Several features of this example are worth highlighting.
 
-First, notice that the pipe assembly is not coupled to the data
-(i.e., the [classname]+Tap+ instances) until the last moment
-before execution. File paths or references are not embedded in the pipe
-assembly; instead, the pipe assembly is specified independent of data
-inputs and outputs. The only dependency is the data scheme, i.e., the
-field names. In Cascading, every input or output file has field names
-associated with it, and every processing element of the pipe assembly
-either expects the specified fields or creates them. This allows
-developers to easily self-document their code, and allows the Cascading
-planner to "fail fast" if an expected dependency between elements isn't
-satisfied - for instance, if a needed field name is missing or incorrect.
-(If more information is desired on the planner, see <<job-planner>>.)
+First, notice that the pipe assembly is not coupled to the data (i.e., the
+[classname]+Tap+ instances) until the last moment before execution. File paths
+or references are not embedded in the pipe assembly; instead, the pipe assembly
+is specified independent of data inputs and outputs. The only dependency is the
+data scheme, i.e., the field names.
 
-Also notice that pipe assemblies are assembled through constructor
-chaining. This may seem odd, but it is done for two reasons. First, it
-keeps the code more concise. Second, it prevents developers from creating
-"cycles" (i.e., recursive loops) in the resulting pipe assembly. Pipe
-assemblies are intended to be Directed Acyclic Graphs (DAG's), and in
-keeping with this, the Cascading planner is not designed to handle
-processes that feed themselves. (If desired, there are safer approaches to
-achieving this result.
+In Cascading, every input or output file has field names associated with its
+contents, and every processing element of the pipe assembly either expects the
+specified fields from upstream or creates them. This allows developers to easily
+self-document their code, and allows the Cascading planner to "fail fast" if an
+expected dependency between elements isn't satisfied - for instance, if a needed
+field name is missing or incorrect.
 
-Finally, notice that the very first [code]+Pipe+ instance has a
-name. That instance is the _head_ of this
-particular pipe assembly. Pipe assemblies can have any number of heads,
-and any number of _tails_. Although the
-tail in this example does not have a name, in a more complex assembly it
-would. In general, heads and tails of pipe assemblies are assigned names
-to disambiguate them. One reason is that names are used to bind sources
-and sinks to pipes during planning. (The example above is an exception,
-because there is only one head and one tail - and consequently only one
-source and one sink - so the binding is unmistakable.) Another reason is
-that the naming of pipes contributes to self-documentation of pipe
-assemblies, especially where there are splits, joins, and merges in the
-assembly.
+Also notice that pipe assemblies are assembled through constructor chaining.
+This may seem odd, but it is done for two reasons.
 
-To sum up, the example word-counting application will:
+First, it allows each object to be immutable.
 
-*
-Read each line of text from a file and give it the field name
-"line"
+Second, it prevents developers from creating "cycles" (i.e., recursive loops) in
+the resulting pipe assembly. Pipe assemblies are intended to be Directed Acyclic
+Graphs (DAG's), and in keeping with this, the Cascading planner is not designed
+to handle processes that feed themselves. (If desired, there are safer
+approaches to achieving this result.)
 
+Finally, notice that the very first [code]+Pipe+ instance has a name. That
+instance is the _head_ of this particular pipe assembly. Pipe assemblies can
+have any number of heads, and any number of _tails_.
 
+Although the tail in this example does not have a name, in a more complex
+assembly it would. In general, heads and tails of pipe assemblies are assigned
+names to disambiguate them. One reason is that names are used to bind sources
+and sinks to pipes during planning. (The example above is an exception, because
+there is only one head and one tail - and consequently only one source and one
+sink - so the binding is unmistakable.) Another reason is that the naming of
+pipes contributes to self-documentation of pipe assemblies, especially where
+there are splits, joins, and merges in the assembly.
 
-*
-parse each "line" into words with the
-[code]+RegexGenerator+ object, which returns each word in the
-field named "word"
+== An Alternative Fluent API
 
+The above example is using the default "raw" Cascading API. This API is handy
+when creating very complex business logic, or creating frameworks that may need
+to algorithmically generate Cascading assemblies.
+[Lingual](http://www.cascading.org/lingual/), an ANSI SQL layer over Cascading,
+leverages this API.
 
+An alternative API is called [Fluid](http://www.cascading.org/fluid/).
 
-*
-sort and group all the tuples on the "word" field, using the
-[code]+GroupBy+ object
+Currently Fluid is maintained in a different project, but there are plans to
+make it available as part of all future Cascading releases. As well as provide
+a build plugin to allow any custom code to have fluent APIs generated as part
+of the build process.
 
+Here is the word count example from above re-written with the Fluid fluent API
+(and with all comments removed).
 
+.Word Counting with Fluid
+====
+include::basic-word-count-fluid.adoc[]
+<1> Read each line of text from a file and give it the field name "line"
+<2> Parse each "line" into words with the [code]+RegexGenerator+ object, which
+returns each word in the field named "word"
+<3> Sort and group all the tuples on the "word" field, using the [code]+GroupBy+
+object
+<4> Count the number of elements in each group, using the [code]+Count+ object,
+and store this value in the "count" field
+<5> Write out the "word" and "count" fields
+<6> Set application specific meta-data to allow the application to run
+<7> Choose the platform to execute on
+<8> Plan the unit of work to be executed, a Flow
+<9> Start the Flow and wait till completed
+====
 
-*
-count the number of elements in each group, using the
-[code]+Count+ object, and store this value in the "count"
-field
-
-
-
-* and write out the "word" and "count" fields.
-
-
+The remainder of this User Guide will focus on the raw Cascading Java API
+introduced in the first example above.

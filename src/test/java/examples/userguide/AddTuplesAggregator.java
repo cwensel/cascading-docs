@@ -31,8 +31,8 @@ import cascading.tuple.TupleEntry;
 
 //@extract-start sum-aggregator
 public class AddTuplesAggregator
-    extends BaseOperation<AddTuplesAggregator.Context>
-    implements Aggregator<AddTuplesAggregator.Context>
+  extends BaseOperation<AddTuplesAggregator.Context>
+  implements Aggregator<AddTuplesAggregator.Context>
   {
   public static class Context
     {

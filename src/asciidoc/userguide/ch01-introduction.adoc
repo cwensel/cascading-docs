@@ -5,150 +5,158 @@
 
 == What is Cascading?
 
-Cascading is a data processing API and processing query planner
-used for defining, sharing, and executing data-processing workflows on a
-single computing node or distributed computing cluster. On a single
-node, Cascading's "local mode" can be used to efficiently test code and
-process local files before being deployed on a cluster. On a distributed
-computing cluster using Apache Hadoop platform, Cascading adds an
-abstraction layer over the Hadoop API, greatly simplifying Hadoop
-application development, job creation, and job scheduling.
+Cascading is a data processing API and processing planner used for defining,
+sharing, and executing data-oriented applications. These applications can
+execute on a single computing node or distributed computing platform with
+minimal code changes.
 
+Cascading applications can be written in a way that allow the developer to
+create data-parallel applications that minimize the coupling to any specific
+computing platform for portability.
 
+On a single node, Cascading's "local mode" can be used to efficiently test code
+and process local files before being deployed on a cluster.
 
-== Usage Scenarios
+On a distributed computing cluster, Cascading natively supports the Apache
+Hadoop platform. Specific planners for both MapReduce and the Tez DAG model
+are provided.
 
+Additionally, Cascading can support new platforms as they emerge so business
+logic will not need to be re-written in order to leverage state-of-the-art
+technologies.
 
+== Another Perspective
+
+Another way to look at Cascading is to consider the typical stack behind a query
+syntax like SQL.
+
+At the top is the SQL syntax itself.
+
+During runtime, the query is then parsed into an Abstract Syntax Tree (AST).
+
+The next stage is logically reducing the AST into another intermediate model.
+During this processing, many logical optimizations can be applied.
+
+The next stage is to translate the intermediate model into an executable model.
+Much of the processing between the intermediate and executable models apply
+physical optimizations.
+
+Cascading provides both the intermediate model, and a planner that will
+translate that model into a physical executable model. Where the intermediate
+model is presented as a Java API, and the planner is both modifiable and
+pluggable.
 
 === Why use Cascading?
 
-Cascading was developed to allow organizations to rapidly
-develop complex data processing applications with Hadoop. The need for
-Cascading is typically driven by one of two cases:
+Cascading was developed to allow organizations to rapidly develop complex data
+processing applications. The need for Cascading is typically driven by one or
+more of three cases:
 
-*Increasing data size* exceeds
-the processing capacity of a single computing system. In response,
-developers may adopt Apache Hadoop as the base computing
-infrastructure, but discover that developing useful applications on
-Hadoop is not trivial. Cascading eases the burden on these developers
-and allows them to rapidly create, refactor, test, and execute complex
-applications that scale linearly across a cluster of computers.
+* Increasing data size
+* Increasing computation requirements
+* Increasing complexity in data centers
+* Increasing need for accountability and manageability
 
-*Increasing process complexity in data centers* results in one-off data-processing applications
-sprawling haphazardly onto any available disk space or CPU. Apache
-Hadoop solves the problem with its Global Namespace file system, which
-provides a single reliable storage framework. In this scenario,
-Cascading eases the learning curve for developers as they convert
-their existing applications for execution on a Hadoop cluster for its
-reliability and scalability. In addition, it lets developers create
-reusable libraries and applications for use by analysts, who use them
-to extract data from the Hadoop file system.
+Cascading applications are "scale free". Developing business logic for small
+data that may become exceedingly large does not require changes to the application
+logic.
 
-Since Cascading's creation, a number of Domain Specific
-Languages (DSLs) have emerged as query languages that wrap the
-Cascading APIs, allowing developers and analysts to create ad-hoc
-queries for data mining and exploration. These DSLs coupled with
-Cascading local-mode allow users to rapidly query and analyze
-reasonably large datasets on their local systems before executing them
-at scale in a production environment. See the section on DSLs for
-references.
+Cascading provides many core data processing primitives and operations. Business
+logic can be coded directly against the Cascading APIs, or higher order
+frameworks or languages can be created on top. These frameworks or languages can
+be used to improve developer or analyst productivity for a specific use-case
+or vertical.
 
+Cascading is a platform. It is fully extensible, allowing for integration and
+business logic to remain decoupled until runtime so that different storage
+platforms can be bound to the logic on demand. And new platforms can be
+leveraged during computation as business needs or infrastructure resources
+change.
 
+Cascading can be managed. Besides a number of core features that allow for
+Cascading applications to be easily operationalized, Cascading works with
+commercial tools so that applications can be monitored in real-time. This allows
+developers to deeply gain understanding of they application behavior at runtime
+in order to improve performance and reliability, and it grants visibility of
+application status and health to operations teams responsible for managing
+business processes.
+
+=== The Cascading Philosophy
+
+Cascading was designed to be extensible, to behave deterministically, and
+fail fast where possible.
+
+Many features and behaviors of Cascading can be replaced or overridden. Where
+the Cascading User Guide does not provide guidance, review the
+[JavaDoc](http://cascading.org/documentation/) for APIs and properties than can
+be used or modified from the defaults.
+
+Resulting execution plans created by the Cascading planner are both intuitive
+and stable.
+
+Intuitive in the sense that during development of an application, as new
+processing logic is added, the resulting plan in only an incremental increase in
+complexity, proportional to the changes just applied. That is, it is very easy
+to understand the implication of adding a new [classname]+CoGroup+ to the
+assembly and how it will behave on the cluster, once a developer becomes familiar
+with Cascading.
+
+Stable in the sense that with no code changes, every plan is exactly the same.
+And across versions of Cascading, any likely behavioral differences will be
+documented (if   not accompanied by a way to revert the behavior).
+
+During planning, Cascading creates all units of work up front, and in the
+process verifies all dependencies are met from available resources like sources
+and sinks, down to the field level. If a downstream operation requires a
+specific field, say 'zipcode', the planner will guarantee it is available
+upstream from a data source or operation.
+
+Many of these ideals seem obvious, but many systems will regenerate plans on the
+fly, or attempt short-cuts during execution, that if are successful may result
+in improved runtime performance.
+
+Failing part way in a non-deterministic (non-repeatable) fashion for
+applications than may run hours or days at a stretch is not acceptable.
 
 === Who are the users?
 
 Cascading users typically fall into three roles:
 
-*The application Executor* is a
-person (e.g., a developer or analyst) or process (e.g., a cron job)
-that runs a data processing application on a given cluster. This is
-typically done via the command line, using a prepackaged Java Jar file
-compiled against the Apache Hadoop and Cascading libraries. The
-application may accept command-line parameters to customize it for a
-given execution, and generally outputs a data set to be exported from
-the Hadoop file system for some specific purpose.
+*The application Executor* is a person (e.g., a developer or analyst) or process
+(e.g., a cron job) that runs a data processing application on a given cluster.
+This is typically done via the command line, using a prepackaged Java Jar file
+compiled against the Cascading libraries. The application may
+accept command-line parameters to customize it for a given execution.
 
-*The process Assembler* is a
-person who assembles data processing workflows into unique
-applications. This work is generally a development task that involves
-chaining together operations to act on one or more input data sets,
-producing one or more output data sets. This can be done with the raw
-Java Cascading API, or with a scripting language such as Scala,
-Clojure, Groovy, JRuby, or Jython (or by one of the DSLs implemented
-in these languages).
+*The process Assembler* is a person who assembles data processing workflows into
+unique applications. This work is generally a development task that involves
+chaining together operations to act on one or more input data sets, producing
+one or more output data sets. This can be done with the raw Java Cascading API,
+or with a scripting language such as Scala, Clojure, Groovy, JRuby, or Jython
+(or by one of the DSLs implemented in these languages).
 
-*The operation Developer* is a
-person who writes individual functions or operations (typically in
-Java) or reusable subassemblies that act on the data that passes
-through the data processing workflow. A simple example would be a
-parser that takes a string and converts it to an Integer. Operations
-are equivalent to Java functions in the sense that they take input
-arguments and return data. And they can execute at any granularity,
-from simply parsing a string to performing complex procedures on the
-argument data using third-party libraries.
+*The operation Developer* is a person who writes individual functions or
+operations (typically in Java) or reusable subassemblies that act on the data
+that passes through the data processing workflow. A simple example would be a
+parser that takes a string and converts it to an Integer. Operations are
+equivalent to Java functions in the sense that they take input arguments and
+return data. And they can execute at any granularity, from simply parsing a
+string to performing complex procedures on the argument data using third-party
+libraries.
 
-All three roles can be filled by a developer, but because
-Cascading supports a clean separation of these responsibilities, some
-organizations may choose to use non-developers to run ad-hoc
-applications or build production processes on a Hadoop cluster.
+These three roles can be filled by a developer, but because Cascading supports a
+clean separation of these responsibilities, some organizations may choose to use
+non-developers to run ad-hoc applications or build production processes.
 
+As of Cascading 3.0, two new roles have emerged:
 
+*The platform Optimizer* is a person who can improve the execution runtime or
+resource utilization by creating workload specific query plan rules that target
+specific improvements. Or by adding new core primitives that can be leveraged
+in application logic.
 
-== What is Apache Hadoop?
-
-From the Hadoop website, it "is a software platform that
-lets one easily write and run applications that process vast amounts of
-data". Hadoop does this by providing a storage layer that holds
-vast amounts of data, and an execution layer that runs an application in
-parallel across the cluster, using coordinated subsets of the stored
-data.
-
-The storage layer, called the Hadoop File System (HDFS), looks
-like a single storage volume that has been optimized for many concurrent
-serialized reads of large data files - where "large" might be measured
-in gigabytes or petabytes. However, it does have limitations. For
-example, random access to the data is not really possible in an
-efficient manner. And Hadoop only supports a single writer for output.
-But this limit helps make Hadoop very performant and reliable, in part
-because it allows for the data to be replicated across the cluster,
-reducing the chance of data loss.
-
-The execution layer, called MapReduce, relies on a
-divide-and-conquer strategy to manage massive data sets and computing
-processes. Explaining MapReduce is beyond the scope of this document,
-but its complexity, and the difficulty of creating real-world
-applications against it, are the chief driving force behind the creation
-of Cascading.
-
-Hadoop, according to its documentation, can be configured to run
-in three modes: standalone mode (i.e., on the local computer, useful for
-testing and debugging in an IDE), pseudo-distributed mode (i.e., on an
-emulated "cluster" of one computer, not useful for much), and
-fully-distributed mode (on a full cluster, for staging or production
-purposes). The pseudo-distributed mode does not add value for most
-purposes, and will not be discussed further. Cascading itself can run
-locally or on the Hadoop platform, where Hadoop itself may be in
-standalone or distributed mode. The primary difference between these two
-platforms, local or Hadoop, is that, when Cascading is running in local
-mode, it makes no use of Hadoop APIs and performs all of its work in
-memory, allowing it to be very fast - but consequently not as robust or
-scalable as when it is running on the Hadoop platform.
-
-Apache Hadoop is an Open Source Apache project and is freely
-available. It can be downloaded from the Hadoop website: <<,http://hadoop.apache.org/core/>>
-
-
-
-
-
-== Hadoop 1 vs Hadoop 2
-
-Cascading 2.6 supports both Hadoop 1.x and 2.x by providing two
-Java dependencies, _cascading-hadoop.jar_ and
-_cascading-hadoop2-mr1.jar_. These dependencies can
-be interchanged but the _hadoop2-mr1.jar_ introduces
-new and deprecates older API calls where appropriate. It should be
-pointed out _hadoop1-mr1.jar_ only supports MapReduce
-1 API conventions. With this naming scheme new API conventions can be
-introduced without risk of naming collisions on dependencies.
-
+*The platform Developer* ports Cascading to new computing platforms. This is an
+emerging API, but already proven to be very robust and powerful. As business
+needs change and new technologies emerge, a developer can create bindings to
+these new technologies allowing existing investments in the Cascading API to be
+leveraged.

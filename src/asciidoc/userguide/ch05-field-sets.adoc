@@ -1,7 +1,6 @@
 :toc2:
 :doctitle: {_doctitle} - Field Sets
 
-[[field-algebra]]
 = Field Sets
 
 Cascading applications can perform complex manipulation or "field
@@ -115,6 +114,3 @@ and their relationships to the [classname]+Each+ and
 Buffers.
 
 image:images/field-algebra.svg[align="center"]
-
-
-

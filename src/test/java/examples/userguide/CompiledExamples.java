@@ -351,7 +351,6 @@ public class CompiledExamples
       .setJarPath( pathToJar ) // set jar path
       .buildProperties( properties ); // returns a copy
 
-
     // pass properties to the connector
     FlowConnector flowConnector = new Hadoop2MR1FlowConnector( properties );
     //@extract-end
@@ -549,7 +548,6 @@ public class CompiledExamples
       .addSource( "assembly", source )
       .addSink( "assembly", sink )
       .addTail( assembly );
-
 
     // tell the planner to remove all Debug operations
     flowDef

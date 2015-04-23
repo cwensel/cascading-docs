@@ -59,7 +59,6 @@ public class RegexTest extends ExampleTestCase
     // outgoing -> "ip", "time", "method", "event", "status", "size"
     //@extract-end
 
-
     //@extract-start regex-filter
     // incoming -> "ip", "time", "method", "event", "status", "size"
 
@@ -98,7 +97,6 @@ public class RegexTest extends ExampleTestCase
     // the 'head' of the pipe assembly
     Pipe assembly = new Pipe( "wordcount" );
 
-
     //@extract-start regex-generator
     // incoming -> "line"
 
@@ -133,7 +131,6 @@ public class RegexTest extends ExampleTestCase
 
     // the 'head' of the pipe assembly
     Pipe assembly = new Pipe( "wordcount" );
-
 
     //@extract-start regex-replace
     // incoming -> "line"

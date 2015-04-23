@@ -21,7 +21,6 @@
 
 package examples.userguide;
 
-
 import cascading.flow.FlowProcess;
 import cascading.operation.BaseOperation;
 import cascading.operation.Function;

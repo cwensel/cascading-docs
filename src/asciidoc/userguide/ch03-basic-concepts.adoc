@@ -5,60 +5,54 @@
 
 == Terminology
 
-The Cascading processing model is based on a metaphor of pipes
-(data streams) and filters (data operations). Thus the Cascading API
-allows the developer to assemble pipe assemblies that split, merge,
-group, or join streams of data while applying operations to each data
-record or groups of records.
+The Cascading processing model is based on a metaphor of pipes (data streams)
+and filters (data operations). Thus the Cascading API allows the developer to
+assemble pipe assemblies that split, merge, group, or join streams of data while
+applying operations to each data record or groups of records.
 
-In Cascading, we call a data record a _tuple_, a simple chain of pipes without forks or
-merges a _branch_, an interconnected
-set of pipe branches a _pipe assembly_, and a series
-of tuples passing through a pipe branch or assembly a _tuple stream_.
+In Cascading, we call a data record a _tuple_, a simple chain of pipes without
+forks or merges a _branch_, an interconnected set of pipe branches a  _pipe
+assembly_, and a series of tuples passing through a pipe branch or assembly a
+_tuple stream_.
 
-Pipe assemblies are specified independently of the data source
-they are to process. So before a pipe assembly can be executed, it must
-be bound to _taps_, i.e., data sources
-and sinks. The result of binding one or more pipe assemblies to taps is
-a _flow_, which is executed on a
-computer or cluster using the Hadoop framework.
+Pipe assemblies are specified independently of the data source they are to
+process. So before a pipe assembly can be executed, it must be bound to _taps_,
+i.e., data sources and sinks. The result of binding one or more pipe assemblies
+to taps is a _flow_, which is executed on a computer or cluster.
 
-Multiple flows can be grouped together and executed as a single
-process. In this context, if one flow depends on the output of another,
-it is not executed until all of its data dependencies are satisfied.
-Such a collection of flows is called a _cascade_.
-
-
+Multiple flows can be grouped together and executed as a single unit of work or
+process. In this context, if one flow depends on the output of another, it is
+not executed until all of its data dependencies are satisfied. Such a collection
+of flows is called a _cascade_.
 
 == Pipe Assemblies
 
-Pipe assemblies define what work should be done against tuple
-streams, which are read from tap _sources_ and written to tap _sinks_.
-The work performed on the data stream may include actions such as
-filtering, transforming, organizing, and calculating. Pipe assemblies
-may use multiple sources and multiple sinks, and may define splits,
-merges, and joins to manipulate the tuple streams.
+Pipe assemblies define what work should be done against tuple streams, which are
+read from tap _sources_ and written to tap _sinks_. The work performed on the
+data stream may include actions such as filtering, transforming, organizing, and
+calculating.
 
-
+Pipe assemblies may use multiple sources and multiple sinks, and may define
+splits, merges, and joins to manipulate the tuple streams.
 
 === Pipe Assembly Workflow
 
-Pipe assemblies are created by chaining
-[classname]+cascading.pipe.Pipe+ classes and subclasses
-together. Chaining is accomplished by passing the previous
-[classname]+Pipe+ instances to the constructor of the next
-[classname]+Pipe+ instance.
+Pipe assemblies are created by chaining [classname]+cascading.pipe.Pipe+ classes
+and subclasses together. Chaining is accomplished by passing the previous
+[classname]+Pipe+ instances to the constructor of the next [classname]+Pipe+
+instance.
 
-The following example demonstrates this type of chaining. It
-creates two pipes - a "left-hand side" (lhs) and a "right-hand side"
-(rhs) - and performs some processing on them both, using the Each
-pipe. Then it joins the two pipes into one, using the CoGroup pipe,
-and performs several operations on the joined pipe using Every and
-GroupBy. The specific operations performed are not important in the
-example; the point is to show the general flow of the data streams.
-The diagram after the example gives a visual representation of the
-workflow.
+The following example demonstrates this type of chaining. The specific
+operations performed are not important in the example; the point is to show the
+general flow of the data streams.
 
+It creates two pipes - a "left-hand side" (lhs) and a "right-hand side" (rhs) -
+and performs some processing on them both, using the Each pipe. Then it joins
+the two pipes into one, using the CoGroup pipe, and performs several operations
+on the joined pipe using Every and GroupBy. The diagram after the example gives
+a visual representation of the workflow.
+
+[[chaining-pipes]]
 .Chaining Pipes
 ====
 include::simple-pipe-assembly.adoc[]
@@ -69,97 +63,73 @@ above.
 
 image:images/simple-pipe-assembly.svg[align="center"]
 
-
-
 === Common Stream Patterns
 
-As data moves through the pipe, streams may be separated or
-combined for various purposes. Here are the three basic
-patterns:
+As data moves through the pipe, streams may be separated or combined for various
+purposes. Here are the three basic patterns:
 
 Split::
-A split takes a single stream and sends it down multiple
-paths - that is, it feeds a single [classname]+Pipe+
-instance into two or more subsequent separate
-[classname]+Pipe+ instances with unique branch
-names.
+A split takes a single stream and sends it down multiple paths - that is, it
+feeds a single [classname]+Pipe+ instance into two or more subsequent separate
+[classname]+Pipe+ instances with unique branch names.
 
 
 Merge::
-A merge combines two or more streams that have identical
-fields into a single stream. This is done by passing two or more
-[classname]+Pipe+ instances to a
-[classname]+Merge+ or [classname]+GroupBy+
-pipe.
+A merge combines two or more streams that have identical fields into a single
+stream. This is done by passing two or more [classname]+Pipe+ instances to a
+[classname]+Merge+ or [classname]+GroupBy+ pipe. This is also called a union.
 
 
 Join::
-A join combines data from two or more streams that have
-different fields, based on common field values (analogous to a
-SQL join.) This is done by passing two or more
-[classname]+Pipe+ instances to a
-[classname]+HashJoin+ or
-[classname]+CoGroup+ pipe. The code sequence and
-diagram above give an example.
-
-
-
+A join combines data from two or more streams that have different fields, based
+on common field values (analogous to a SQL join.) This is done by passing two or
+more [classname]+Pipe+ instances to a [classname]+HashJoin+ or
+[classname]+CoGroup+ pipe. The code sequence and diagram above give an example.
 
 === Data Processing
 
-In addition to directing the tuple streams - using splits,
-merges, and joins - pipe assemblies can examine, filter, organize, and
-transform the tuple data as the streams move through the pipe
-assemblies. To facilitate this, the values in the tuple are typically
-given field names, just as database columns are given names, so that
-they may be referenced or selected. The following terminology is
-used:
+In addition to directing the tuple streams - using splits, merges, and joins -
+pipe assemblies can examine, filter, organize, and transform the tuple data as
+the streams move through the pipe assemblies. To facilitate this, the values in
+the tuple are typically (optionally) given field names, just as database columns
+are given names, so that they may be referenced or selected.
+
+The following terminology is used:
 
 Operation::
-Operations
-([classname]++cascading.operation.Operation++) accept an
-input argument Tuple, and output zero or more result tuples.
-There are a few sub-types of operations defined below. Cascading
-has a number of generic Operations that can be used, or
-developers can create their own custom Operations.
-
+Operations ([classname]++cascading.operation.Operation++) accept an input
+argument Tuple, and output zero or more result tuples. There are a few sub-types
+of operations defined below. Cascading has a number of generic Operations that
+can be used, or developers can create their own custom Operations.
 
 Tuple::
 In Cascading, data is processed as a stream of Tuples
-([classname]++cascading.tuple.Tuple++), which are
-composed of fields, much like a database record or row. A Tuple
-is effectively an array of (field) values, where each value can
-be any [classname]++java.lang.Object++ Java type (or
-[code]++byte[]++ array). For information on supporting
-non-primitive types, see <<custom-types>>.
-
+([classname]++cascading.tuple.Tuple++), which are composed of fields, much like
+a database record or row. A Tuple is effectively an array of (field) values,
+where each value can be any [classname]++java.lang.Object++ Java type (or
+[code]++byte[]++ array). For information on supporting non-primitive types, see
+<<ch20-extending-cascading.adoc#custom-types, Custom Types>>.
 
 Fields::
-Fields ([classname]++cascading.tuple.Fields++) are
-used either to declare the field names for fields in a Tuple, or
-reference field values in a Tuple. They can either be strings
-(such as "firstname" or "birthdate"), integers (for the field
-position, starting at [code]++0++ for the first position, or
-starting at [code]++-1++ for the last position), or one of
-the predefined __Fields sets__
-(such as [code]++Fields.ALL++, which selects all values in
-the Tuple, like an asterisk in SQL). For more on Fields sets,
-see <<field-algebra>>).
-
-
-
+Fields ([classname]++cascading.tuple.Fields++) are used either to declare the
+field names for fields in a Tuple, or reference field values in a Tuple. They
+can either be strings (such as "firstname" or "birthdate"), integers (for the
+field position, starting at [code]++0++ for the first position, or starting at
+[code]++-1++ for the last position), or one of the predefined __Fields sets__
+(such as [code]++Fields.ALL++, which selects all values in the Tuple, like an
+asterisk in SQL). For more on Fields sets, see
+<<ch05-field-sets.adoc#_field_sets, Field Sets>>).
 
 == Pipes
 
-The code for the sample pipe assembly above, <<chaining-pipes>>, consists almost entirely of a series of
-[classname]+Pipe+ constructors. This section describes the
-various [classname]+Pipe+ classes in detail. The base class
-[classname]+cascading.pipe.Pipe+ and its subclasses are shown
-in the diagram below.
+The code for the sample pipe assembly above, <<chaining-pipes>>, consists almost
+entirely of a series of [classname]+Pipe+ constructors. This section describes
+the various [classname]+Pipe+ classes in detail.
+
+The base class [classname]+cascading.pipe.Pipe+ and its subclasses are shown in
+the diagram below.
 
 image:images/pipes.svg[align="center"]
-
-
 
 === Types of Pipes
 
@@ -750,6 +720,3 @@ annotations, third-party applications can participate in a
 [classname]+Cascade+, and complex algorithms that result in
 iterative Flow executions can be encapsulated as a single Flow. All
 patterns are covered here.
-
-
-

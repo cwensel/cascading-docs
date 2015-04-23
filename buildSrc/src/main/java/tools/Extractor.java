@@ -228,7 +228,6 @@ public class Extractor
       case ASCIIDOC:
         writer.newLine();
         writer.write( "----" );
-        writer.newLine();
         break;
       }
     writer.flush();
