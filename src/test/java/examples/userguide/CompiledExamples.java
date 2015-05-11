@@ -15,7 +15,7 @@ import cascading.cascade.CascadeConnector;
 import cascading.flow.Flow;
 import cascading.flow.FlowConnector;
 import cascading.flow.FlowDef;
-import cascading.flow.hadoop2.Hadoop2MR1FlowConnector;
+import cascading.flow.local.LocalFlowConnector;
 import cascading.operation.Debug;
 import cascading.operation.DebugLevel;
 import cascading.operation.Identity;
@@ -23,7 +23,6 @@ import cascading.operation.Insert;
 import cascading.operation.expression.ExpressionFunction;
 import cascading.operation.regex.RegexSplitter;
 import cascading.operation.text.FieldJoiner;
-import cascading.pipe.Checkpoint;
 import cascading.pipe.CoGroup;
 import cascading.pipe.Each;
 import cascading.pipe.Every;
@@ -45,16 +44,15 @@ import cascading.pipe.assembly.Unique;
 import cascading.pipe.joiner.InnerJoin;
 import cascading.property.AppProps;
 import cascading.property.ConfigDef;
-import cascading.scheme.hadoop.TextDelimited;
-import cascading.scheme.hadoop.TextLine;
+import cascading.scheme.local.TextDelimited;
+import cascading.scheme.local.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
-import cascading.tap.hadoop.Hfs;
-import cascading.tap.hadoop.PartitionTap;
+import cascading.tap.local.FileTap;
+import cascading.tap.local.PartitionTap;
 import cascading.tap.partition.DelimitedPartition;
 import cascading.tuple.Fields;
 import cascading.tuple.collect.SpillableProps;
-import org.apache.hadoop.mapred.JobConf;
 
 /**
  *
@@ -125,7 +123,7 @@ public class CompiledExamples
     String path = "some/path";
 
     //@extract-start simple-tap
-    Tap tap = new Hfs( new TextLine( new Fields( "line" ) ), path );
+    Tap tap = new FileTap( new TextLine( new Fields( "line" ) ), path );
     //@extract-end
     }
 
@@ -135,7 +133,7 @@ public class CompiledExamples
 
     //@extract-start simple-replace-tap
     Tap tap =
-      new Hfs( new TextLine( new Fields( "line" ) ), path, SinkMode.REPLACE );
+      new FileTap( new TextLine( new Fields( "line" ) ), path, SinkMode.REPLACE );
     //@extract-end
     }
 
@@ -146,7 +144,7 @@ public class CompiledExamples
     //@extract-start partition-tap
     TextDelimited scheme =
       new TextDelimited( new Fields( "entry" ), "\t" );
-    Hfs parentTap = new Hfs( scheme, path );
+    FileTap parentTap = new FileTap( scheme, path );
 
     // dirs named "[year]-[month]"
     DelimitedPartition partition = new DelimitedPartition( new Fields( "year", "month" ), "-" );
@@ -161,7 +159,7 @@ public class CompiledExamples
     Pipe pipe = null;
 
     //@extract-start simple-flow
-    FlowConnector flowConnector = new Hadoop2MR1FlowConnector();
+    FlowConnector flowConnector = new LocalFlowConnector();
 
     Flow flow =
       flowConnector.connect( "flow-name", source, sink, pipe );
@@ -194,10 +192,10 @@ public class CompiledExamples
     // the tail of the assembly
     groupBy = new Each( groupBy, new SomeFunction() );
 
-    Tap lhsSource = new Hfs( new TextLine(), "lhs.txt" );
-    Tap rhsSource = new Hfs( new TextLine(), "rhs.txt" );
+    Tap lhsSource = new FileTap( new TextLine(), "lhs.txt" );
+    Tap rhsSource = new FileTap( new TextLine(), "rhs.txt" );
 
-    Tap sink = new Hfs( new TextLine(), "output" );
+    Tap sink = new FileTap( new TextLine(), "output" );
 
     FlowDef flowDef = new FlowDef()
       .setName( "flow-name" )
@@ -205,106 +203,7 @@ public class CompiledExamples
       .addSource( lhs, lhsSource )
       .addTailSink( groupBy, sink );
 
-    Flow flow = new Hadoop2MR1FlowConnector().connect( flowDef );
-    //@extract-end
-    }
-
-  public void compileCheckpointFlow()
-    {
-    //@extract-start checkpoint-flow
-    // the "left hand side" assembly head
-    Pipe lhs = new Pipe( "lhs" );
-
-    lhs = new Each( lhs, new SomeFunction() );
-    lhs = new Each( lhs, new SomeFilter() );
-
-    // the "right hand side" assembly head
-    Pipe rhs = new Pipe( "rhs" );
-
-    rhs = new Each( rhs, new SomeFunction() );
-
-    // joins the lhs and rhs
-    Pipe join = new CoGroup( lhs, rhs );
-
-    join = new Every( join, new SomeAggregator() );
-
-    // we want to see the data passing through this point
-    Checkpoint checkpoint = new Checkpoint( "checkpoint", join );
-
-    Pipe groupBy = new GroupBy( checkpoint );
-
-    groupBy = new Every( groupBy, new SomeAggregator() );
-
-    // the tail of the assembly
-    groupBy = new Each( groupBy, new SomeFunction() );
-
-    Tap lhsSource = new Hfs( new TextLine(), "lhs.txt" );
-    Tap rhsSource = new Hfs( new TextLine(), "rhs.txt" );
-
-    Tap sink = new Hfs( new TextLine(), "output" );
-
-    // write all data as a tab delimited file, with headers
-    Tap checkpointTap =
-      new Hfs( new TextDelimited( true, "\t" ), "checkpoint" );
-
-    FlowDef flowDef = new FlowDef()
-      .setName( "flow-name" )
-      .addSource( rhs, rhsSource )
-      .addSource( lhs, lhsSource )
-      .addTailSink( groupBy, sink )
-      .addCheckpoint( checkpoint, checkpointTap ); // bind the checkpoint tap
-
-    Flow flow = new Hadoop2MR1FlowConnector().connect( flowDef );
-    //@extract-end
-    }
-
-  public void compileCheckpointFlowRestart()
-    {
-    // the "left hand side" assembly head
-    Pipe lhs = new Pipe( "lhs" );
-
-    lhs = new Each( lhs, new SomeFunction() );
-    lhs = new Each( lhs, new SomeFilter() );
-
-    // the "right hand side" assembly head
-    Pipe rhs = new Pipe( "rhs" );
-
-    rhs = new Each( rhs, new SomeFunction() );
-
-    // joins the lhs and rhs
-    Pipe join = new CoGroup( lhs, rhs );
-
-    join = new Every( join, new SomeAggregator() );
-
-    // we want to see the data passing through this point
-    Checkpoint checkpoint = new Checkpoint( "checkpoint", join );
-
-    Pipe groupBy = new GroupBy( checkpoint );
-
-    groupBy = new Every( groupBy, new SomeAggregator() );
-
-    // the tail of the assembly
-    groupBy = new Each( groupBy, new SomeFunction() );
-
-    Tap lhsSource = new Hfs( new TextLine(), "lhs.txt" );
-    Tap rhsSource = new Hfs( new TextLine(), "rhs.txt" );
-
-    Tap sink = new Hfs( new TextLine(), "output" );
-
-    // write all data as a tab delimited file, with headers
-    Tap checkpointTap =
-      new Hfs( new TextDelimited( true, "\t" ), "checkpoint" );
-
-    //@extract-start checkpoint-restart-flow
-    FlowDef flowDef = new FlowDef()
-      .setName( "flow-name" )
-      .addSource( rhs, rhsSource )
-      .addSource( lhs, lhsSource )
-      .addTailSink( groupBy, sink )
-      .addCheckpoint( checkpoint, checkpointTap )
-      .setRunID( "some-unique-value" ); // re-use this id to restart this flow
-
-    Flow flow = new Hadoop2MR1FlowConnector().connect( flowDef );
+    Flow flow = new LocalFlowConnector().connect( flowDef );
     //@extract-end
     }
 
@@ -352,35 +251,7 @@ public class CompiledExamples
       .buildProperties( properties ); // returns a copy
 
     // pass properties to the connector
-    FlowConnector flowConnector = new Hadoop2MR1FlowConnector( properties );
-    //@extract-end
-    }
-
-  public void compileFlowConnectorAppProps()
-    {
-    String pathToJar = null;
-
-    //@extract-start flow-jobconf
-    JobConf jobConf = new JobConf();
-
-    // pass in the class name of your application
-    // this will find the parent jar at runtime
-    jobConf.setJarByClass( Main.class );
-
-    // ALTERNATIVELY ...
-
-    // pass in the path to the parent jar
-    jobConf.setJar( pathToJar );
-
-    // build the properties object using jobConf as defaults
-    Properties properties = AppProps.appProps()
-      .setName( "sample-app" )
-      .setVersion( "1.2.3" )
-      .addTags( "deploy:prod", "team:engineering" )
-      .buildProperties( jobConf );
-
-    // pass properties to the connector
-    FlowConnector flowConnector = new Hadoop2MR1FlowConnector( properties );
+    FlowConnector flowConnector = new LocalFlowConnector( properties );
     //@extract-end
     }
 
@@ -554,7 +425,7 @@ public class CompiledExamples
       .setDebugLevel( DebugLevel.NONE );
 
     // ...
-    FlowConnector flowConnector = new Hadoop2MR1FlowConnector();
+    FlowConnector flowConnector = new LocalFlowConnector();
 
     Flow flow = flowConnector.connect( flowDef );
     //@extract-end

@@ -11,7 +11,7 @@ assemble pipe assemblies that split, merge, group, or join streams of data while
 applying operations to each data record or groups of records.
 
 In Cascading, we call a data record a _tuple_, a simple chain of pipes without
-forks or merges a _branch_, an interconnected set of pipe branches a  _pipe
+forks or merges a _branch_, an interconnected set of pipe branches a _pipe
 assembly_, and a series of tuples passing through a pipe branch or assembly a
 _tuple stream_.
 
@@ -47,10 +47,11 @@ operations performed are not important in the example; the point is to show the
 general flow of the data streams.
 
 It creates two pipes - a "left-hand side" (lhs) and a "right-hand side" (rhs) -
-and performs some processing on them both, using the Each pipe. Then it joins
-the two pipes into one, using the CoGroup pipe, and performs several operations
-on the joined pipe using Every and GroupBy. The diagram after the example gives
-a visual representation of the workflow.
+and performs some processing on them both, using the [classname]+Each+ pipe.
+Then it joins the two pipes into one, using the [classname]+CoGroup+ pipe, and
+performs several operations on the joined pipe using [classname]+Every+ and
+[classname]+GroupBy+. The diagram after the example gives a visual
+representation of the workflow.
 
 [[chaining-pipes]]
 .Chaining Pipes
@@ -69,16 +70,14 @@ As data moves through the pipe, streams may be separated or combined for various
 purposes. Here are the three basic patterns:
 
 Split::
-A split takes a single stream and sends it down multiple paths - that is, it
-feeds a single [classname]+Pipe+ instance into two or more subsequent separate
-[classname]+Pipe+ instances with unique branch names.
-
+A split takes a single stream and sends it down multiple paths - that
+is, it feeds a single [classname]+Pipe+ instance into two or more subsequent
+separate [classname]+Pipe+ instances with unique branch names.
 
 Merge::
 A merge combines two or more streams that have identical fields into a single
 stream. This is done by passing two or more [classname]+Pipe+ instances to a
 [classname]+Merge+ or [classname]+GroupBy+ pipe. This is also called a union.
-
 
 Join::
 A join combines data from two or more streams that have different fields, based
@@ -97,26 +96,29 @@ are given names, so that they may be referenced or selected.
 The following terminology is used:
 
 Operation::
-Operations ([classname]++cascading.operation.Operation++) accept an input
-argument Tuple, and output zero or more result tuples. There are a few sub-types
-of operations defined below. Cascading has a number of generic Operations that
-can be used, or developers can create their own custom Operations.
+
+Operations ([classname]+cascading.operation.Operation+) accept an input argument
+Tuple, and output zero or more result tuples. There are a few sub-types of
+operations defined below. Cascading has a number of generic Operations that can
+be used, or developers can create their own custom Operations.
 
 Tuple::
+
 In Cascading, data is processed as a stream of Tuples
-([classname]++cascading.tuple.Tuple++), which are composed of fields, much like
-a database record or row. A Tuple is effectively an array of (field) values,
-where each value can be any [classname]++java.lang.Object++ Java type (or
-[code]++byte[]++ array). For information on supporting non-primitive types, see
+([classname]+cascading.tuple.Tuple+), which are composed of fields, much like a
+database record or row. A Tuple is effectively an array of (field) values, where
+each value can be any [classname]+java.lang.Object+ Java type (or [code]+byte[]+
+array). For information on supporting non-primitive types, see
 <<ch20-extending-cascading.adoc#custom-types, Custom Types>>.
 
 Fields::
-Fields ([classname]++cascading.tuple.Fields++) are used either to declare the
+
+Fields ([classname]+cascading.tuple.Fields+) are used either to declare the
 field names for fields in a Tuple, or reference field values in a Tuple. They
 can either be strings (such as "firstname" or "birthdate"), integers (for the
-field position, starting at [code]++0++ for the first position, or starting at
-[code]++-1++ for the last position), or one of the predefined __Fields sets__
-(such as [code]++Fields.ALL++, which selects all values in the Tuple, like an
+field position, starting at [code]+0+ for the first position, or starting at
+[code]+-1+ for the last position), or one of the predefined __Fields sets__
+(such as [code]+Fields.ALL+, which selects all values in the Tuple, like an
 asterisk in SQL). For more on Fields sets, see
 <<ch05-field-sets.adoc#_field_sets, Field Sets>>).
 
@@ -134,589 +136,415 @@ image:images/pipes.svg[align="center"]
 === Types of Pipes
 
 [classname]+Each+::
-These pipes perform operations based on the data contents
-of tuples - analyze, transform, or filter. The
-[classname]+Each+ pipe operates on individual tuples
-in the stream, applying functions or filters such as
-conditionally replacing certain field values, removing tuples
-that have values outside a target range, etc.
 
-
-+
-You can also use [classname]+Each+ to split or
-branch a stream, simply by routing the output of an
-[classname]+Each+ into a different pipe or
-sink.
-
+These pipes perform operations based on the data contents of tuples - analyze,
+transform, or filter. The [classname]+Each+ pipe operates on individual tuples
+in the stream, applying functions or filters such as conditionally replacing
+certain field values, removing tuples that have values outside a target range,
+etc.
 
 +
-Note that with [classname]+Each+, as with other
-types of pipe, you can specify a list of fields to output,
-thereby removing unwanted fields from a stream.
 
+You can also use [classname]+Each+ to split or branch a stream, simply by
+routing the output of an [classname]+Each+ into a different pipe or sink. + Note
+that with [classname]+Each+, as with other types of pipe, you can specify a list
+of fields to output, thereby removing unwanted fields from a stream.
 
 [classname]+Merge+::
-Just as [classname]+Each+ can be used to split
-one stream into two, [classname]+Merge+ can be used to
-combine two or more streams into one, as long as they have the
-same fields.
 
-
-+
-A [classname]+Merge+ accepts two or more streams
-that have identical fields, and emits a single stream of tuples
-(in arbitrary order) that contains all the tuples from all the
-specified input streams. Thus a Merge is just a mingling of all
-the tuples from the input streams, as if shuffling multiple card
-decks into one.
-
+Just as [classname]+Each+ can be used to split one stream into two,
+[classname]+Merge+ can be used to combine two or more streams into one, as long
+as they have the same fields.
 
 +
-Use [classname]+Merge+ when no grouping is
-required (i.e., no aggregator or buffer operations will be
-performed). [classname]+Merge+ is much faster than
-[classname]+GroupBy+ (see below) for merging.
 
+A [classname]+Merge+ accepts two or more streams that have identical fields, and
+emits a single stream of tuples (in arbitrary order) that contains all the
+tuples from all the specified input streams. Thus a Merge is just a mingling of
+all the tuples from the input streams, as if shuffling multiple card decks into
+one.
 
 +
-To combine streams that have different fields, based on
-one or more common values, use [classname]+CoGroup+ or
-[classname]+HashJoin+.
 
+Use [classname]+Merge+ when no grouping is required (i.e., no aggregator or
+buffer operations will be performed). Subsequently [classname]+Merge+ is much
+faster than [classname]+GroupBy+ (see below) for merging.
+
++
+
+To combine streams that have different fields, based on one or more common
+values, use [classname]+CoGroup+ or [classname]+HashJoin+.
 
 [classname]+GroupBy+::
-[classname]+GroupBy+ groups the tuples of a
-stream based on common values in a specified field.
 
+[classname]+GroupBy+ groups the tuples of a stream based on common values in a
+specified field.
 
 +
-If passed multiple streams as inputs, it performs a merge
-before the grouping. As with [classname]+Merge+, a
-[classname]+GroupBy+ requires that multiple input
+
+If passed multiple streams as inputs, it performs a merge before the grouping.
+As with [classname]+Merge+, a [classname]+GroupBy+ requires that multiple input
 streams share the same field structure.
 
++
+
+The purpose of grouping is typically to prepare a stream for processing by the
+[classname]+Every+ pipe, which performs aggregator and buffer operations on the
+groups, such as counting, totaling, or averaging values within that group.
 
 +
-The purpose of grouping is typically to prepare a stream
-for processing by the [classname]+Every+ pipe, which
-performs aggregator and buffer operations on the groups, such as
-counting, totalling, or averaging values within that
-group.
 
-
-+
-It should be clear that "grouping" here essentially means
-sorting all the tuples into groups based on the value of a
-particular field. However, within a given group, the tuples are
-in arbitrary order unless you specify a secondary sort key. For
-most purposes, a secondary sort is not required and only
-increases the execution time.
-
+It should be clear that "grouping" here essentially means sorting all the tuples
+into groups based on the value of a particular field. However, within a given
+group, the tuples are in arbitrary order unless you specify a secondary sort
+key. For most purposes, a secondary sort is not required and only increases the
+execution time.
 
 [classname]+Every+::
-The [classname]+Every+ pipe operates on a tuple
-stream that has been grouped (by [classname]+GroupBy+
-or [classname]++CoGroup++) on the values of a particular
-field, such as timestamp or zipcode. It's used to apply
-aggregator or buffer operations such as counting, totaling, or
-averaging field values within each group. Thus the
-[classname]+Every+ class is only for use on the output
-of [classname]+GroupBy+ or
-[classname]+CoGroup+, and cannot be used with the
-output of [classname]+Each+,
-[classname]+Merge+, or
-[classname]+HashJoin+.
 
+The [classname]+Every+ pipe operates on a tuple stream that has been grouped (by
+[classname]+GroupBy+ or [classname]++CoGroup++) on the values of a particular
+field, such as "timestamp" or "zipcode". It's used to apply aggregator or buffer
+operations such as counting, totaling, or averaging field values within each
+group. Thus the [classname]+Every+ class is only for use on the output of
+[classname]+GroupBy+ or [classname]+CoGroup+, and cannot be used with the output
+of [classname]+Each+, [classname]+Merge+, or [classname]+HashJoin+.
 
 +
-An [classname]+Every+ instance may follow
-another [classname]+Every+ instance, so
-[classname]+Aggregator+ operations can be chained.
-This is not true for [classname]+Buffer+
-operations.
+
+An [classname]+Every+ instance may follow another [classname]+Every+ instance,
+so [classname]+Aggregator+ operations can be chained. This is not true for
+[classname]+Buffer+ operations.
 
 
 [classname]+CoGroup+::
-[classname]+CoGroup+ performs a join on two or
-more streams, similar to a SQL join, and groups the single
-resulting output stream on the value of a specified field. As
-with SQL, the join can be inner, outer, left, or right.
-Self-joins are permitted, as well as mixed joins (for three or
-more streams) and custom joins. Null fields in the input streams
-become corresponding null fields in the output stream.
 
-
-+
-The resulting output stream contains fields from all the
-input streams. If the streams contain any field names in common,
-they must be renamed to avoid duplicate field names in the
-resulting tuples.
-
-
-[classname]+HashJoin+::
-[classname]+HashJoin+ performs a join on two or
-more streams, similar to a SQL join, and emits a single stream
-in arbitrary order. As with SQL, the join can be inner, outer,
-left, or right. Self-joins are permitted, as well as mixed joins
-(for three or more streams) and custom joins. Null fields in the
-input streams become corresponding null fields in the output
+[classname]+CoGroup+ performs a join on two or more streams, similar to a SQL
+join, and groups the single resulting output stream on the values of specified
+fields. As with SQL, the join can be inner, outer, left, or right. Self-joins are
+permitted, as well as mixed joins (for three or more streams) and custom joins.
+Null fields in the input streams become corresponding null fields in the output
 stream.
 
++
+
+The resulting output stream contains fields from all the input streams. If the
+streams contain any field names in common, they must be renamed to avoid
+duplicate field names in the resulting tuples.
+
+[classname]+HashJoin+::
+
+[classname]+HashJoin+ performs a join on two or more streams, similar to a SQL
+join, and emits a single stream in arbitrary order. As with SQL, the join can be
+inner, outer, left, or right. Self-joins are permitted, as well as mixed joins
+(for three or more streams) and custom joins. Null fields in the input streams
+become corresponding null fields in the output stream.
 
 +
-For applications that do not require grouping,
-[classname]+HashJoin+ provides faster execution than
-[classname]+CoGroup+, but only within certain
-prescribed cases. It is optimized for joining one or more small
-streams to no more than one large stream. Developers should
-thoroughly understand the limitations of this class, as
-described below, before attempting to use it.
 
+For applications that do not require grouping, [classname]+HashJoin+ provides
+faster execution than [classname]+CoGroup+, but only within certain prescribed
+cases. It is optimized for joining one or more small streams to no more than one
+large stream. Developers should thoroughly understand the limitations of this
+class, as described below, before attempting to use it.
 
-The following table summarizes the different types of
-pipes.
+The following table summarizes the different types of pipes.
 
 .Comparison of pipe types
 
-|===============
-|* _Pipe type_ *|_ *Purpose* _|_ *Input* _|_ *Output* _
-|[classname]+Pipe+|instantiate a pipe; create or name a branch|name|a (named) pipe
-|[classname]+SubAssembly+|create nested subassemblies||
-|[classname]+Each+|apply a filter or function, or branch a stream|tuple stream (grouped or not)|a tuple stream, optionally filtered or
-transformed
-|[classname]+Merge+|merge two or more streams with identical fields|two or more tuple streams|a tuple stream, unsorted
-|[classname]+GroupBy+|sort/group on field values; optionally merge two or
-more streams with identical fields|one or more tuple streams with identical fields|a single tuple stream, grouped on key field(s) with
-optional secondary sort
-|[classname]+Every+|apply aggregator or buffer operation|grouped tuple stream|a tuple stream plus new fields with operation
-results
-|[classname]+CoGroup+|join 1 or more streams on matching field values|one or more tuple streams|a single tuple stream, joined on key field(s)
-|[classname]+HashJoin+|join 1 or more streams on matching field values|one or more tuple streams|a tuple stream in arbitrary order
-
-|===============
-
+|====
+| *_Pipe type_* | *_Purpose_* | *_Input_* | *_Output_*
+| [classname]+Pipe+ | instantiate a pipe; create or name a branch | name | a (named) pipe
+| [classname]+SubAssembly+ | create nested subassemblies | |
+| [classname]+Each+ | apply a filter or function, or branch a stream | tuple stream (grouped or not) | a tuple stream, optionally filtered or transformed
+| [classname]+Merge+ | merge two or more streams with identical fields | two or more tuple streams | a tuple stream, unsorted
+| [classname]+GroupBy+ | sort/group on field values; optionally merge two or more streams with identical fields | one or more tuple streams with identical fields | a single tuple stream, grouped on key field(s) with optional secondary sort
+| [classname]+Every+ | apply aggregator or buffer operation | grouped tuple stream | a tuple stream plus new fields with operation results
+| [classname]+CoGroup+ | join 1 or more streams on matching field values | one or more tuple streams | a single tuple stream, joined on key field(s)
+| [classname]+HashJoin+ | join 1 or more streams on matching field values | one or more tuple streams | a tuple stream in arbitrary order
+|====
 
 [[platforms]]
 == Platforms
 
-Cascading supports pluggable planners that
-allow it to execute on differing platforms. Planners are invoked by an
-associated [classname]+FlowConnector+ subclass. Currently,
-only two planners are provided, as described below:
+Cascading supports pluggable planners that allow it to execute on differing
+platforms. Planners are invoked by an associated [classname]+FlowConnector+
+subclass. Currently, only four planners are provided, as described below:
 
 LocalFlowConnector::
-The
-[classname]+cascading.flow.local.LocalFlowConnector+
-provides a "local" mode planner for running Cascading completely
-in memory on the current computer. This allows for fast
-execution of Flows against local files or any other compatible
-custom [classname]+Tap+ and
-[classname]+Scheme+ classes.
 
+The [classname]+cascading.flow.local.LocalFlowConnector+ provides a "local" mode
+planner for running Cascading completely in memory on the current computer. This
+allows for fast execution of Flows against local files or any other compatible
+custom [classname]+Tap+ and [classname]+Scheme+ classes.
 
 +
-The local mode planner and platform were not designed to
-scale beyond available memory, CPU, or disk on the current
-machine. Thus any memory-intensive processes that use
-[classname]+GroupBy+, [classname]+CoGroup+,
-or [classname]+HashJoin+ are likely to fail against
-moderately large files.
 
+The local mode planner and platform were not designed to scale beyond available
+memory, CPU, or disk on the current machine. Thus any memory-intensive processes
+that use [classname]+GroupBy+, [classname]+CoGroup+, or [classname]+HashJoin+
+are likely to fail against moderately large files.
 
 +
-Local mode is useful for development, testing, and
-interactive data exploration against sample sets.
 
+Local mode is useful for development, testing, and interactive data exploration
+against sample sets.
 
 HadoopFlowConnector::
-The
-[classname]+cascading.flow.hadoop.HadoopFlowConnector+
-provides a planner for running Cascading on an Apache Hadoop 1
-cluster. This allows Cascading to execute against extremely
-large data sets over a cluster of computing nodes.
+
+The [classname]+cascading.flow.hadoop.HadoopFlowConnector+ provides a planner
+for running Cascading on an Apache Hadoop 1.x cluster. This allows Cascading to
+execute against extremely large data sets over a cluster of computing nodes.
+
++
+
+Note Hadoop 1.x only provides the MapReduce model for distributed computation.
 
 
 Hadoop2MR1FlowConnector::
-The
-[classname]+cascading.flow.hadoop2.Hadoop2MR1FlowConnector+
-provides a planner for running Cascading on an Apache Hadoop 2
-cluster. This class is roughly equivalent to the above
-[classname]+HadoopFlowConnector+ except it uses Hadoop
-2 specific properties and is compiled against Hadoop 2 API
-binaries.
+
+The [classname]+cascading.flow.hadoop2.Hadoop2MR1FlowConnector+ provides a
+planner for running Cascading on an Apache Hadoop 2.x cluster. This class is
+roughly equivalent to the above [classname]+HadoopFlowConnector+ except it uses
+Hadoop 2 specific properties and is compiled against Hadoop 2 API binaries.
+
++
+
+The underlying planner and execution is against the default MapReduce Hadoop API.
+
+Hadoop2TezFlowConnector::
+
+The [classname]+cascading.flow.tez.planner.Hadoop2TezFlowConnector+ provides a
+planner for running Cascading on an Apache Hadoop 2.x cluster with [Apache
+Tez](http://tez.apache.org) as an installed YARN application. It is beyond the
+scope of this document to provide Tez installation instructions.
 
 
-
-
-Cascading's support for pluggable planners allows a
-pipe assembly to be executed on an arbitrary platform, using
-platform-specific Tap and Scheme classes that hide the platform-related
-I/O details from the developer. For example, Hadoop uses
-[classname]+org.apache.hadoop.mapred.InputFormat+ to read
-data, but local mode is happy with a
-[classname]+java.io.FileInputStream+. This detail is hidden
-from developers unless they are creating custom Tap and Scheme
-classes.
-
-
+Cascading's support for pluggable planners allows a pipe assembly to be executed
+on an arbitrary platform, using platform-specific Tap and Scheme classes that
+hide the platform-related I/O details from the developer. For example, Hadoop
+uses [classname]+org.apache.hadoop.mapred.InputFormat+ to read data, but local
+mode is happy with a [classname]+java.io.FileInputStream+. This detail is hidden
+from developers unless they are creating custom Tap and Scheme classes.
 
 [[source-sink]]
-== Source and Sink Taps
+== Sourcing and Sinking Data
 
-All input data comes in from, and all output data goes out to,
-some instance of [classname]+cascading.tap.Tap+. A tap
-represents a data resource - such as a file on the local file system, on
-a Hadoop distributed file system, or on Amazon S3. A tap can be read
-from, which makes it a _source_, or
-written to, which makes it a _sink_.
-Or, more commonly, taps act as both sinks and sources when shared
-between flows.
+All input data comes in from, and all output data goes out to, some instance of
+[classname]+cascading.tap.Tap+ and [classname]+cascading.scheme.Scheme+ pair. A
+Tap knows where data is located and how to access it - such as a file on the
+local file system, on a Hadoop distributed file system, or on Amazon S3, and a
+Scheme knows what the data is and how to read or write it - such as the
+column/field names and if the file is text or binary.
 
-The platform on which your application is running (Cascading local
-or Hadoop) determines which specific classes you can use. Details are
-provided in the sections below.
+A tap can be read from, which makes it a _source_, or written to, which makes it
+a _sink_. Or, more commonly, taps act as both sinks and sources when shared
+between flows (a tap may not be used as both a source and sink in the same
+flow).
 
+The platform on which your application is running determines which specific Tap and Scheme
+classes you can use. Details are provided in subsequent chapters.
 
+=== Common Schemes
 
-=== Schemes
+Some Schemes are functionally common across platforms but remain platform
+specific in implementation. To prevent naming collisions, each class will have a
+platform specific package name.
 
-If the Tap is about where the data is and how to access it, the
-Scheme is about what the data is and how to read it. Every Tap must
-have a Scheme that describes the data. Cascading provides four Scheme
-classes:
+Cascading provides two common Scheme types:
 
 TextLine::
-[classname]+TextLine+ reads and writes raw text
-files and returns tuples which, by default, contain two fields
-specific to the platform used. The first field is either the
-byte offset or line number, and the second field is the actual
-line of text. When written to, all Tuple values are converted to
-Strings delimited with the TAB character (\t). A TextLine scheme
-is provided for both the local and Hadoop modes.
 
+[classname]+TextLine+ reads and writes raw text files and returns tuples which,
+by default, contain two fields specific to the platform used. The first field is
+either the byte offset or line number, and the second field is the actual line
+of text. When written to, all Tuple values are converted to Strings delimited
+with the TAB character (\t). A TextLine scheme is provided for both the local
+and Hadoop modes.
 
 +
-By default TextLine uses the UTF-8 character set. This can
-be overridden on the appropriate TextLine constructor.
 
+By default TextLine uses the UTF-8 character set. This can be overridden on the
+appropriate TextLine constructor.
 
 TextDelimited::
-[classname]+TextDelimited+ reads and writes
-character-delimited files in standard formats such as CSV
-(comma-separated variables), TSV (tab-separated variables), and
-so on. When written to, all Tuple values are converted to
-Strings and joined with the specified character delimiter. This
-Scheme can optionally handle quoted values with custom quote
-characters. Further, TextDelimited can coerce each value to a
-primitive type when reading a text file. A TextDelimited scheme
-is provided for both the local and Hadoop modes.
 
+[classname]+TextDelimited+ reads and writes character-delimited files in
+standard formats such as CSV (comma-separated variables), TSV (tab-separated
+variables), and so on. When written to, all Tuple values are converted to
+Strings and joined with the specified character delimiter. This Scheme can
+optionally handle quoted values with custom quote characters. Further,
+TextDelimited can coerce each value to a primitive type when reading a text
+file. A TextDelimited scheme is provided for both the local and Hadoop modes.
 
 +
-By default TextDelimited uses the UTF-8 character set.
-This can be overridden on appropriate the TextDelimited
-constructor.
 
-
-SequenceFile::
-[classname]+SequenceFile+ is based on the Hadoop
-Sequence file, which is a binary format. When written to or read
-from, all Tuple values are saved in their native binary form.
-This is the most efficient file format - but be aware that the
-resulting files are binary and can only be read by Hadoop
-applications running on the Hadoop platform.
-
-
-WritableSequenceFile::
-Like the [classname]+SequenceFile+ Scheme,
-[classname]+WritableSequenceFile+ is based on the
-Hadoop Sequence file, but it was designed to read and write key
-and/or value Hadoop [classname]+Writable+ objects
-directly. This is very useful if you have sequence files created
-by other applications. During writing (sinking), specified key
-and/or value fields are serialized directly into the sequence
-file. During reading (sourcing), the key and/or value objects
-are deserialized and wrapped in a Cascading Tuple object and
-passed to the downstream pipe assembly. This class is only
-available when running on the Hadoop platform.
-
-
-There's a key difference between the
-[classname]+TextLine+ and
-[classname]+SequenceFile+ schemes. With the
-[classname]+SequenceFile+ scheme, data is stored as binary
-tuples, which can be read without having to be parsed. But with the
-[classname]+TextLine+ option, Cascading must parse each line
-into a [classname]+Tuple+ before processing it, causing a
-performance hit.
-
-
+By default TextDelimited uses the UTF-8 character set. This can be overridden on
+appropriate the TextDelimited constructor.
 
 ==== Platform-specific implementation details
 
-Depending on which platform you use (Cascading local or
-Hadoop), the classes you use to specify schemes will vary.
-Platform-specific details for each standard scheme are shown
-below.
+Depending on which platform you use (Cascading local, Hadoop MapReduce, or
+Apache Tez), the classes you use to specify schemes will vary. Platform-specific
+details for each standard scheme are shown below.
 
 .Platform-specific tap scheme classes
+|====
+| *Description* | *Cascading local platform* | *Hadoop platform*
+| *Package Name* | [classname]+cascading.scheme.local+ | [classname]+cascading.scheme.hadoop+
+| Read lines of text | [classname]+TextLine+ | [classname]+TextLine+
+| Read delimited text (CSV, TSV, etc) | [classname]+TextDelimited+ | [classname]+TextDelimited+
+|====
 
-|===============
-|*Description*|*Cascading local platform*|*Hadoop platform*
-|*Package Name*|[classname]+cascading.scheme.local+|[classname]+cascading.scheme.hadoop+
-|Read lines of text|[classname]+TextLine+|[classname]+TextLine+
-|Read delimited text (CSV, TSV, etc)|[classname]+TextDelimited+|[classname]+TextDelimited+
-|Cascading proprietary efficient binary||[classname]+SequenceFile+
-|External Hadoop application binary (custom
-[classname]+Writable+ type)||[classname]+WritableSequenceFile+
+=== Common Taps
 
-|===============
-
-
-
-
-==== Sequence File Compression
-
-For best performance when running on the Hadoop platform,
-enable Sequence File Compression in the Hadoop property settings -
-either block or record-based compression. Refer to the Hadoop
-documentation for the available properties and compression
-types.
-
-
-
-=== Taps
-
-The following sample code creates a new Hadoop FileSystem Tap
-that can read and write raw text files. Since only one field name is
-provided, the "offset" field is discarded, resulting in an input tuple
-stream with only "line" values.
+The following sample code creates a new local FileSystem Tap that can read and
+write raw text files. Since only one field name is provided, the "num" field
+is discarded, resulting in an input tuple stream with only "line" values.
 
 .Creating a new tap
 ====
 include::simple-tap.adoc[]
 ====
 
-Here are the most commonly-used tap types:
+Some Taps are functionally common across platforms but remain platform
+specific in implementation. To prevent naming collisions, each class will have a
+platform specific package name.
 
-FileTap::
-The [classname]+cascading.tap.local.FileTap+ tap
-is used with the Cascading local platform to access files on the
-local file system.
-
-
-Hfs::
-The [classname]+cascading.tap.hadoop.Hfs+ tap
-uses the current Hadoop default file system, when running on the
-Hadoop platform.
-
-
-+
-If Hadoop is configured for "Hadoop local mode" (not to be
-confused with Cascading local mode), its default file system is
-the local file system. If configured for distributed mode, its
-default file system is typically the Hadoop distributed file
-system.
-
-
-+
-Note that Hadoop can be forced to use an external file
-system by specifying a prefix to the URL passed into a new Hfs
-tap. For instance, using "s3://somebucket/path" tells Hadoop to
-use the S3 [classname]+FileSystem+ implementation to
-access files in an Amazon S3 bucket. More information on this
-can be found in the Javadoc.
-
-
-Also provided are six utility taps:
-
-MultiSourceTap::
-The [classname]+cascading.tap.MultiSourceTap+ is
-used to tie multiple tap instances into a single tap for use as
-an input source. The only restriction is that all the tap
-instances passed to a new MultiSourceTap share the same Scheme
-classes (not necessarily the same Scheme instance).
-
-
-MultiSinkTap::
-The [classname]+cascading.tap.MultiSinkTap+ is
-used to tie multiple tap instances into a single tap for use as
-output sinks. At runtime, for every Tuple output by the pipe
-assembly, each child tap to the MultiSinkTap will sink the
-Tuple.
-
+Cascading provides one common Tap type:
 
 PartitionTap::
-The
-[classname]+cascading.tap.hadoop.PartitionTap+ and
-[classname]+cascading.tap.local.PartitionTap+ are used
-to sink tuples into directory paths based on the values in the
-Tuple. More can be read below in <<partition-tap>>. Note the
-[classname]+TemplateTap+ has been deprecated in favor
-of the [classname]+PartitionTap+.
 
+The [classname]+cascading.tap.hadoop.PartitionTap+ and
+[classname]+cascading.tap.local.PartitionTap+ are used to sink tuples into
+directory paths based on the values in the Tuple. More can be read below in
+<<ch16-advanced.adoc#partition-tap, PartitionTap>>.
 
-GlobHfs::
-The [classname]+cascading.tap.hadoop.GlobHfs+
-tap accepts Hadoop style "file globbing" expression patterns.
-This allows for multiple paths to be used as a single source,
-where all paths match the given pattern. This tap is only
-available when running on the Hadoop platform.
+Utility taps can be used to combine other Tap instances into a single Tap, or
+are useful to sub-class from when creating other purpose built Tap types. These
+taps are platform independent.
 
+There are six utility taps:
+
+MultiSourceTap::
+
+The [classname]+cascading.tap.MultiSourceTap+ is used to tie multiple tap
+instances into a single tap for use as an input source. The only restriction is
+that all the tap instances passed to a new MultiSourceTap share the same Scheme
+classes (not necessarily the same Scheme instance).
+
+MultiSinkTap::
+
+The [classname]+cascading.tap.MultiSinkTap+ is used to tie multiple tap
+instances into a single tap for use as output sinks. At runtime, for every Tuple
+output by the pipe assembly, each child tap to the MultiSinkTap will sink the
+Tuple.
 
 DecoratorTap::
-The [classname]+cascading.tap.DecoratorTap+ is a
-utility helper for wrapping an existing Tap with new
-functionality, via sub-class, and/or adding 'meta-data' to a Tap
-instance via the generic [classname]+MetaInfo+
-instance field. Further, on the Hadoop platform, planner created
-intermediate and [classname]+Checkpoint+ Taps can be
-wrapped by a [classname]+DecoratorTap+ implementation
-by the Cascading Planner. See
-[classname]+cascading.flow.FlowConnectorProps+ for
+
+The [classname]+cascading.tap.DecoratorTap+ is a utility helper for wrapping an
+existing Tap with new functionality, via a sub-class, and/or adding 'meta-data' to
+a Tap instance via the generic [classname]+MetaInfo+ instance field. Further, on
+the Hadoop platform, planner created intermediate and [classname]+Checkpoint+
+Taps can be wrapped by a [classname]+DecoratorTap+ implementation by the
+Cascading Planner. See [classname]+cascading.flow.FlowConnectorProps+ for
 details.
-
-
-DistCacheTap::
-The
-[classname]+cascading.tap.hadoop.DistCacheTap+ is a
-sub-class of the
-[classname]+cascading.tap.DecoratorTap+ that can wrap
-an cascading.tap.hadoop.Hfs instance. It allows for writing to
-HDFS, but reading from the Hadoop Distributed Cache under the
-write circumstances, specifically if the Tap is being read into
-the small side of a
-[classname]+cascading.pipe.HashJoin+.
-
-
-
 
 ==== Platform-specific implementation details
 
-Depending on which platform you use (Cascading local or
-Hadoop), the classes you use to specify file systems will vary.
-Platform-specific details for each standard tap type are shown
-below.
+Depending on which platform you use (Cascading local or Hadoop), the classes you
+use to specify file systems will vary. Platform-specific details for each
+standard tap type are shown below.
 
 .Platform-specific details for setting file system
+|====
+| *Description* | *Either platform* | *Cascading local platform* | *Hadoop platform*
+| *Package Name* | [classname]+cascading.tap+ | [classname]+cascading.tap.local+ | [classname]+cascading.tap.hadoop+
+| Multiple Taps as single source | [classname]+MultiSourceTap+ | |
+| Multiple Taps as single sink | [classname]+MultiSinkTap+ | |
+| Bin/Partition data into multiple files | | [classname]+PartitionTap+ | [classname]+PartitionTap+
+| Wrapping a Tap with MetaData / Decorating intra-Flow Taps | [classname]+DecoratorTap+ | |
+|====
 
-|===============
-|*Description*|*Either platform*|*Cascading local platform*|*Hadoop platform*
-|*Package Name*|[classname]+cascading.tap+|[classname]+cascading.tap.local+|[classname]+cascading.tap.hadoop+
-|File access||[classname]+FileTap+|[classname]+Hfs+
-|Multiple Taps as single source|[classname]+MultiSourceTap+||
-|Multiple Taps as single sink|[classname]+MultiSinkTap+||
-|Bin/Partition data into multiple files||[classname]+PartitionTap+|[classname]+PartitionTap+
-|Pattern match multiple files/dirs|||[classname]+GlobHfs+
-|Wrapping a Tap with MetaData / Decorating intra-Flow
-Taps|[classname]+DecoratorTap+||
-|Reading from the Hadoop Distributed Cache|||[classname]+DistCacheTap+
-
-|===============
-
-
-
-
-== Sink modes
+== Sink Modes
 
 .Overwriting An Existing Resource
 ====
 include::simple-replace-tap.adoc[]
 ====
 
-
-
-All applications created with Cascading read data from one or more
-sources, process it, then write data to one or more sinks. This is done
-via the various [classname]+Tap+ classes, where each class
-abstracts different types of back-end systems that store data as files,
-tables, blobs, and so on. But in order to sink data, some systems
-require that the resource (e.g., a file) not exist before processing
-thus must be removed (deleted) before the processing can begin. Other
-systems may allow for appending or updating of a resource (typical with
-database tables).
+All applications created with Cascading read data from one or more sources,
+process it, then write data to one or more sinks. This is done via the various
+[classname]+Tap+ classes, where each class abstracts different types of back-end
+systems that store data as files, tables, blobs, and so on. But in order to sink
+data, some systems require that the resource (e.g., a file) not exist before
+processing thus must be removed (deleted) before the processing can begin. Other
+systems may allow for appending or updating of a resource (typical with database
+tables).
 
 When creating a new [classname]+Tap+ instance, a
-[classname]+SinkMode+ may be provided so that the Tap will
-know how to handle any existing resources. Note that not all Taps
-support all [classname]+SinkMode+ values - for example, Hadoop
-does not support appends (updates) from a MapReduce job.
+[classname]+cascading.tap.SinkMode+ may be provided so that the Tap will know
+how to handle any existing resources. Note that not all Taps support all
+[classname]+SinkMode+ values - for example, Hadoop does not support appends
+(updates) from a MapReduce job.
 
 The available SinkModes are:
 
 [classname]+SinkMode.KEEP+::
-This is the default behavior. If the resource exists,
-attempting to write over it will fail.
 
+This is the default behavior. If the resource exists, attempting to write over
+it will fail.
 
 [classname]+SinkMode.REPLACE+::
-This allows Cascading to delete the file immediately after
-the Flow is started.
 
+This notifies Cascading it may delete the file immediately after the Flow is
+started.
 
 [classname]+SinkMode.UPDATE+::
-Allows for new tap types that can update or append - for
-example, to update or add records in a database. Each tap may
-implement this functionality in its own way. Cascading recognizes
-this update mode, and if a resource exists, will not fail or
-attempt to delete it.
 
+Allows for new tap types that can update or append - for example, to update or
+add records in a database. Each tap may implement this functionality in its own
+way. Cascading recognizes this update mode, and if a resource exists, will not
+fail or attempt to delete it.
 
-Note that Cascading itself only uses
-these labels internally to know when to automatically call
-[methodname]+deleteResource()+ on the
-[classname]+Tap+ or to leave the Tap alone. It is up the the
-[classname]+Tap+ implementation to actually perform a write or
-update when processing starts. Thus, when
-[methodname]+start()+ or [methodname]+complete()+
-is called on a [classname]+Flow+, any sink
-[classname]+Tap+ labeled
-[classname]+SinkMode.REPLACE+ will have its
-[methodname]+deleteResource()+ method called.
+Note that Cascading itself only uses these labels internally to know when to
+automatically call [methodname]+deleteResource()+ on the [classname]+Tap+ or to
+leave the Tap alone. It is up the the [classname]+Tap+ implementation to
+actually perform a write or update when processing starts. Thus, when
+[methodname]+start()+ or [methodname]+complete()+ is called on a
+[classname]+Flow+, any sink [classname]+Tap+ labeled
+[classname]+SinkMode.REPLACE+ will have its [methodname]+deleteResource()+
+method called.
 
-Conversely, if a
-[classname]+Flow+ is in a [classname]+Cascade+ and
-the [classname]+Tap+ is set to
-[classname]+SinkMode.KEEP+ or
-[classname]+SinkMode.REPLACE+,
-[methodname]+deleteResource()+ will be called if and only if
-the sink is stale (i.e., older than the source). This allows a
-[classname]+Cascade+ to behave like a "make" or "ant" build
-file, only running Flows that should be run. For more information, see
-<<skipping-flows>>.
-
-It's also important to understand how Hadoop deals with
-directories. By default, Hadoop cannot source data from directories with
-nested sub-directories, and it cannot write to directories that already
-exist. However, the good news is that you can simply point the
-[classname]+Hfs+ tap to a directory of data files, and they
-are all used as input - there's no need to enumerate each individual
-file into a [classname]+MultiSourceTap+. If there are nested
-directories, use [classname]+GlobHfs+.
-
+Conversely, if a [classname]+Flow+ is in a [classname]+Cascade+ and the
+[classname]+Tap+ is set to [classname]+SinkMode.KEEP+ or
+[classname]+SinkMode.REPLACE+, [methodname]+deleteResource()+ will be called if
+and only if the sink is stale (i.e., older than the source). This allows a
+[classname]+Cascade+ to behave like a complier build file, only running Flows
+that should be run. For more information, see <<ch06-flows.adoc#skipping-flows,
+Skipping Flows>>.
 
 [[flows]]
 == Flows
 
-When pipe assemblies are bound to source and sink taps, a
-[classname]+Flow+ is created. Flows are executable in the
-sense that, once they are created, they can be started and will execute
-on the specified platform. If the Hadoop platform is specified, the Flow
-will execute on a Hadoop cluster.
+When pipe assemblies are bound to source and sink taps, a [classname]+Flow+ is
+created. Flows are executable in the sense that, once they are created, they can
+be started and will execute on the specified platform. If the Hadoop platform is
+specified, the Flow will execute on a Hadoop cluster.
 
 A Flow is essentially a data processing pipeline that reads data
 from sources, processes the data as defined by the pipe assembly, and
 writes data to the sinks. Input source data does not need to exist at
 the time the Flow is created, but it must exist by the time the Flow is
-executed (unless it is executed as part of a Cascade - see <<cascades>> for more on this).
+executed.
 
-The most common pattern is to create a Flow from an existing pipe
-assembly. But there are cases where a MapReduce job (if running on
-Hadoop) has already been created, and it makes sense to encapsulate it
-in a Flow class so that it may participate in a
-[classname]+Cascade+ and be scheduled with other
-[classname]+Flow+ instances. Alternatively, via the <<,Riffle >>
-annotations, third-party applications can participate in a
-[classname]+Cascade+, and complex algorithms that result in
-iterative Flow executions can be encapsulated as a single Flow. All
-patterns are covered here.
+The most common pattern is to create a Flow from an existing pipe assembly. But
+there are cases where a MapReduce job (if running on Hadoop) has already been
+created, and it makes sense to encapsulate it in a Flow class so that it may
+participate in a [classname]+Cascade+ and be scheduled with other
+[classname]+Flow+ instances.
+
+Alternatively, <<ch06-flows.adoc#custom-flows,custom Flows>> can be created so
+that third-party applications can participate in a [classname]+Cascade+, and
+complex algorithms that result in iterative Flow executions can be encapsulated
+as a single Flow.

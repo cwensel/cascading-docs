@@ -10,8 +10,8 @@ counts words. It is the data processing equivalent to a "Hello World"
 application.
 
 In a word-counting application, a document is parsed into individual words and
-the frequency of each word is counted. In the last paragraph, for example, "is"
-appears twice and "equivalent" appears once.
+the frequency (count) of each word is calculated. In the last paragraph, for
+example, "is" appears twice and "equivalent" appears once.
 
 The following code example uses the Cascading default API to read each line of
 text from our document file, parse it into words, then count the number of times
@@ -64,14 +64,17 @@ Finally, notice that the very first [code]+Pipe+ instance has a name. That
 instance is the _head_ of this particular pipe assembly. Pipe assemblies can
 have any number of heads, and any number of _tails_.
 
-Although the tail in this example does not have a name, in a more complex
-assembly it would. In general, heads and tails of pipe assemblies are assigned
-names to disambiguate them. One reason is that names are used to bind sources
-and sinks to pipes during planning. (The example above is an exception, because
-there is only one head and one tail - and consequently only one source and one
-sink - so the binding is unmistakable.) Another reason is that the naming of
-pipes contributes to self-documentation of pipe assemblies, especially where
-there are splits, joins, and merges in the assembly.
+Although the tail in this example does not have an explicit name, in a more
+complex assembly it would (since this assembly is a single branch, the tail
+inherits the head name).
+
+In general, heads and tails of pipe assemblies are assigned names to
+disambiguate them. One reason is that names are used to bind sources and sinks
+to pipes during planning. (The example above is an exception, because there is
+only one head and one tail - and consequently only one source and one sink - so
+the binding is unmistakable.) Another reason is that the naming of pipes
+contributes to self-documentation of pipe assemblies, especially where there are
+splits, joins, and merges in the assembly.
 
 == An Alternative Fluent API
 
@@ -108,5 +111,5 @@ and store this value in the "count" field
 <9> Start the Flow and wait till completed
 ====
 
-The remainder of this User Guide will focus on the raw Cascading Java API
+The remainder of this User Guide will focus on the default Cascading Java API
 introduced in the first example above.

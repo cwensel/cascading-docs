@@ -17,6 +17,116 @@ and correctly configured. Hadoop is an Open Source Apache project,
 freely available for download from the Hadoop website, <<,http://hadoop.apache.org/core/>>.
 
 
+[[source-sink]]
+== Source and Sink Taps
+
+It's also important to understand how Hadoop deals with
+directories. By default, Hadoop cannot source data from directories with
+nested sub-directories, and it cannot write to directories that already
+exist. However, the good news is that you can simply point the
+[classname]+Hfs+ tap to a directory of data files, and they
+are all used as input - there's no need to enumerate each individual
+file into a [classname]+MultiSourceTap+. If there are nested
+directories, use [classname]+GlobHfs+.
+
+
+
+
+SequenceFile::
+
+[classname]+SequenceFile+ is based on the Hadoop Sequence file, which is a
+binary format. When written to or read from, all Tuple values are saved in their
+native binary form. This is the most efficient file format - but be aware that
+the resulting files are binary and can only be read by Hadoop applications
+running on the Hadoop platform.
+
+
+WritableSequenceFile::
+Like the [classname]+SequenceFile+ Scheme,
+[classname]+WritableSequenceFile+ is based on the
+Hadoop Sequence file, but it was designed to read and write key
+and/or value Hadoop [classname]+Writable+ objects
+directly. This is very useful if you have sequence files created
+by other applications. During writing (sinking), specified key
+and/or value fields are serialized directly into the sequence
+file. During reading (sourcing), the key and/or value objects
+are deserialized and wrapped in a Cascading Tuple object and
+passed to the downstream pipe assembly. This class is only
+available when running on the Hadoop platform.
+
+
+There's a key difference between the
+[classname]+TextLine+ and
+[classname]+SequenceFile+ schemes. With the
+[classname]+SequenceFile+ scheme, data is stored as binary
+tuples, which can be read without having to be parsed. But with the
+[classname]+TextLine+ option, Cascading must parse each line
+into a [classname]+Tuple+ before processing it, causing a
+performance hit.
+
+
+
+==== Sequence File Compression
+
+For best performance when running on the Hadoop platform,
+enable Sequence File Compression in the Hadoop property settings -
+either block or record-based compression. Refer to the Hadoop
+documentation for the available properties and compression
+types.
+
+
+=== Taps
+
+The following sample code creates a new Hadoop FileSystem Tap that can read and
+write raw text files. Since only one field name is provided, the "offset" field
+is discarded, resulting in an input tuple stream with only "line" values.
+
+.Creating a new tap
+====
+include::simple-tap.adoc[]
+====
+
+Here are the most commonly-used tap types:
+
+Hfs::
+
+The [classname]+cascading.tap.hadoop.Hfs+ tap
+uses the current Hadoop default file system, when running on the
+Hadoop platform.
+
++
+
+If Hadoop is configured for "Hadoop local mode" (not to be confused with
+Cascading local mode), its default file system is the local file system. If
+configured for distributed mode, its default file system is typically the Hadoop
+distributed file system.
+
++
+
+Note that Hadoop can be forced to use an external file system by specifying a
+prefix to the URL passed into a new Hfs tap. For instance, using
+"s3://somebucket/path" tells Hadoop to use the S3 [classname]+FileSystem+
+implementation to access files in an Amazon S3 bucket. More information on this
+can be found in the Javadoc.
+
+GlobHfs::
+
+The [classname]+cascading.tap.hadoop.GlobHfs+ tap accepts Hadoop style "file
+globbing" expression patterns. This allows for multiple paths to be used as a
+single source, where all paths match the given pattern. This tap is only
+available when running on the Hadoop platform.
+
+DistCacheTap::
+
+The [classname]+cascading.tap.hadoop.DistCacheTap+ is a sub-class of the
+[classname]+cascading.tap.DecoratorTap+ that can wrap an
+cascading.tap.hadoop.Hfs instance. It allows for writing to HDFS, but reading
+from the Hadoop Distributed Cache under the write circumstances, specifically if
+the Tap is being read into the small side of a
+[classname]+cascading.pipe.HashJoin+.
+
+
+
 
 [[building]]
 == Building
@@ -247,4 +357,3 @@ during Map or Reduce task startup, setting the
 write a DOT representation of the pipeline it was attempting to build,
 if any. This file will allow the Cascading community to better identify
 and resolve issues.
-

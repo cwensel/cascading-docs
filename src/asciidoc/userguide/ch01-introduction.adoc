@@ -18,8 +18,8 @@ On a single node, Cascading's "local mode" can be used to efficiently test code
 and process local files before being deployed on a cluster.
 
 On a distributed computing cluster, Cascading natively supports the Apache
-Hadoop platform. Specific planners for both MapReduce and the Tez DAG model
-are provided.
+Hadoop platform. Specific planners for both MapReduce and the Apache Tez DAG
+model are provided.
 
 Additionally, Cascading can support new platforms as they emerge so business
 logic will not need to be re-written in order to leverage state-of-the-art
@@ -30,12 +30,11 @@ technologies.
 Another way to look at Cascading is to consider the typical stack behind a query
 syntax like SQL.
 
-At the top is the SQL syntax itself.
+At the top is the SQL syntax itself. During runtime, the query is then parsed
+into an Abstract Syntax Tree (AST).
 
-During runtime, the query is then parsed into an Abstract Syntax Tree (AST).
-
-The next stage is logically reducing the AST into another intermediate model.
-During this processing, many logical optimizations can be applied.
+The next stage is logically reducing the AST into an intermediate model. During
+this processing, many logical optimizations can be applied.
 
 The next stage is to translate the intermediate model into an executable model.
 Much of the processing between the intermediate and executable models apply
@@ -46,11 +45,11 @@ translate that model into a physical executable model. Where the intermediate
 model is presented as a Java API, and the planner is both modifiable and
 pluggable.
 
-=== Why use Cascading?
+== Why use Cascading?
 
 Cascading was developed to allow organizations to rapidly develop complex data
 processing applications. The need for Cascading is typically driven by one or
-more of three cases:
+more of four cases:
 
 * Increasing data size
 * Increasing computation requirements
@@ -58,8 +57,8 @@ more of three cases:
 * Increasing need for accountability and manageability
 
 Cascading applications are "scale free". Developing business logic for small
-data that may become exceedingly large does not require changes to the application
-logic.
+data that may become exceedingly large does not require changes to the
+application logic.
 
 Cascading provides many core data processing primitives and operations. Business
 logic can be coded directly against the Cascading APIs, or higher order
@@ -81,7 +80,7 @@ in order to improve performance and reliability, and it grants visibility of
 application status and health to operations teams responsible for managing
 business processes.
 
-=== The Cascading Philosophy
+== The Cascading Philosophy
 
 Cascading was designed to be extensible, to behave deterministically, and
 fail fast where possible.
@@ -98,12 +97,12 @@ Intuitive in the sense that during development of an application, as new
 processing logic is added, the resulting plan in only an incremental increase in
 complexity, proportional to the changes just applied. That is, it is very easy
 to understand the implication of adding a new [classname]+CoGroup+ to the
-assembly and how it will behave on the cluster, once a developer becomes familiar
-with Cascading.
+assembly and how it will behave on the cluster, once a developer becomes
+familiar with Cascading.
 
 Stable in the sense that with no code changes, every plan is exactly the same.
 And across versions of Cascading, any likely behavioral differences will be
-documented (if   not accompanied by a way to revert the behavior).
+documented (if not accompanied by a way to revert the behavior).
 
 During planning, Cascading creates all units of work up front, and in the
 process verifies all dependencies are met from available resources like sources
@@ -112,13 +111,13 @@ specific field, say 'zipcode', the planner will guarantee it is available
 upstream from a data source or operation.
 
 Many of these ideals seem obvious, but many systems will regenerate plans on the
-fly, or attempt short-cuts during execution, that if are successful may result
-in improved runtime performance.
+fly, or attempt short-cuts during execution, that if (and only if) are
+successful _may_ result in improved runtime performance.
 
-Failing part way in a non-deterministic (non-repeatable) fashion for
-applications than may run hours or days at a stretch is not acceptable.
+It is not acceptable to fail part way, in a non-deterministic (non-repeatable)
+fashion, for applications than may run hours or days at a stretch.
 
-=== Who are the users?
+== Who are the users?
 
 Cascading users typically fall into three roles:
 
@@ -131,18 +130,19 @@ accept command-line parameters to customize it for a given execution.
 *The process Assembler* is a person who assembles data processing workflows into
 unique applications. This work is generally a development task that involves
 chaining together operations to act on one or more input data sets, producing
-one or more output data sets. This can be done with the raw Java Cascading API,
-or with a scripting language such as Scala, Clojure, Groovy, JRuby, or Jython
-(or by one of the DSLs implemented in these languages).
+one or more output data sets. This can be done with the default Java Cascading
+API, the [Fluid](http://cascading.org/fluid/) fluent API, or with a scripting
+language such as Scala, Clojure, Groovy, JRuby, or Jython (or by one of the
+DSLs implemented in these languages).
 
 *The operation Developer* is a person who writes individual functions or
-operations (typically in Java) or reusable subassemblies that act on the data
-that passes through the data processing workflow. A simple example would be a
+operations (typically in Java) or reusable sub-assemblies that act on the data
+that passes through the data processing workflow. A trivial example would be a
 parser that takes a string and converts it to an Integer. Operations are
 equivalent to Java functions in the sense that they take input arguments and
 return data. And they can execute at any granularity, from simply parsing a
 string to performing complex procedures on the argument data using third-party
-libraries.
+libraries. Cascading provides a large number of pre-built operations.
 
 These three roles can be filled by a developer, but because Cascading supports a
 clean separation of these responsibilities, some organizations may choose to use
@@ -158,5 +158,5 @@ in application logic.
 *The platform Developer* ports Cascading to new computing platforms. This is an
 emerging API, but already proven to be very robust and powerful. As business
 needs change and new technologies emerge, a developer can create bindings to
-these new technologies allowing existing investments in the Cascading API to be
-leveraged.
+these new technologies allowing existing investments in the Cascading API and
+broader ecosystem to be leveraged.

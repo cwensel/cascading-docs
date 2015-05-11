@@ -391,4 +391,3 @@ aggregations will be performed simultaneously. It is also important to
 note that, depending on the final pipe assembly, the Map side partial
 aggregate functions may be planned into the previous Reduce operation in
 Hadoop, further improving the performance of the application.
-

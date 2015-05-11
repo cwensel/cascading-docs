@@ -127,7 +127,7 @@ should be used. To do this, after creating a Hadoop
 Flow.
 
 
-
+[[custom-flows]]
 == Creating Custom Flows
 
 Any custom Class can be treated as a Flow if given the correct
