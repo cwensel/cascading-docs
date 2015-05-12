@@ -9,16 +9,16 @@ package examples.userguide;
 import java.io.IOException;
 
 import cascading.flow.Flow;
-import cascading.flow.hadoop2.Hadoop2MR1FlowConnector;
+import cascading.flow.local.LocalFlowConnector;
 import cascading.operation.expression.ExpressionFilter;
 import cascading.operation.expression.ExpressionFunction;
 import cascading.operation.regex.RegexParser;
 import cascading.pipe.Each;
 import cascading.pipe.Pipe;
-import cascading.scheme.hadoop.TextLine;
+import cascading.scheme.local.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.Tap;
-import cascading.tap.hadoop.Hfs;
+import cascading.tap.local.FileTap;
 import cascading.tuple.Fields;
 import cascading.tuple.TupleEntryIterator;
 import org.junit.Test;
@@ -35,8 +35,8 @@ public class ExpressionTest extends ExampleTestCase
     String inputPath = getDataPath() + "apache.10.txt";
     String outputPath = getOutputPath() + "expressionfilter";
 
-    Tap source = new Hfs( new TextLine(), inputPath );
-    Tap sink = new Hfs( new TextLine(), outputPath, SinkMode.REPLACE );
+    Tap source = new FileTap( new TextLine(), inputPath );
+    Tap sink = new FileTap( new TextLine(), outputPath, SinkMode.REPLACE );
 
     Pipe assembly = new Pipe( "logs" );
 
@@ -64,7 +64,7 @@ public class ExpressionTest extends ExampleTestCase
       "\"this \" + method + \" request was \" + size + \" bytes\"";
     Fields fields = new Fields( "pretty" );
     ExpressionFunction function =
-      new ExpressionFunction( fields, exp, String.class );
+      new ExpressionFunction( fields, exp, String.class ); // <1>
 
     assembly =
       new Each( assembly, new Fields( "method", "size" ), function );
@@ -72,7 +72,7 @@ public class ExpressionTest extends ExampleTestCase
     // outgoing -> "pretty" = "this GET request was 1282652 bytes"
     //@extract-end
 
-    Flow flow = new Hadoop2MR1FlowConnector().connect( source, sink, assembly );
+    Flow flow = new LocalFlowConnector().connect( source, sink, assembly );
 
     flow.complete();
 

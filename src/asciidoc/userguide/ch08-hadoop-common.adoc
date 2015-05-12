@@ -126,6 +126,13 @@ the Tap is being read into the small side of a
 [classname]+cascading.pipe.HashJoin+.
 
 
+== PartitionTap
+
+Note that you can only create sub-directories to bin data into.
+Hadoop must still write "part" files into each bin directory, and there
+is no safe mechanism for manipulating part file names.
+
+
 == Creating Flows from a JobConf
 
 If a MapReduce job already exists and needs to be managed by a
@@ -190,6 +197,26 @@ the appropriate
 [classname]+org.apache.hadoop.mapred.OutputFormat+.
 
 
+== Partial Aggregation instead of Combiners
+
+In Hadoop mode, Cascading does not support MapReduce "Combiners". Combiners are
+a simple optimization allowing some Reduce functions to run on the Map side of
+MapReduce. Combiners are very powerful in that they reduce the I/O between the
+Mappers and Reducers - why send all of your Mapper data to Reducers when you can
+compute some values on the Map side and combine them in the Reducer? But
+Combiners are limited to Associative and Commutative functions only, such as
+"sum" and "max". And the process requires that the values emitted by the Map
+task must be serialized, sorted (which involves deserialization and comparison),
+deserialized again, and operated on - after which the results are again
+serialized and sorted. Combiners trade CPU for gains in I/O.
+
+Cascading takes a different approach. It provides a mechanism to
+perform partial aggregations on the Map side and combine the results on
+the Reduce side, but trades memory, instead of CPU, for I/O gains by
+caching values (up to a threshold limit). This bypasses the redundant
+serialization, deserialization, and sorting. Also, Cascading allows any
+aggregate function to be implemented - not just Associative and
+Commutative functions.
 
 
 [[building]]

@@ -253,7 +253,7 @@ There are several constraints on the use of Aggregators that may not be
 self-evident. These are detailed in the Javadoc
 
 [[buffers]]
-== Buffer
+== Buffers
 
 A [classname]+Buffer+ expects set of argument tuples in the same grouping, and
 may return zero or more result tuples.

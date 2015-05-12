@@ -182,6 +182,22 @@ sharing it with the cluster, Driver initialization must happen with
 * [methodname]+prepareResourceForWrite()+ - initialize any shared remote
   resource for writing
 
+Reading and Writing::
+
+These methods may be called client or cluster side, and either by Cascading in
+the course of execution, or by a developer wishing direct access to the
+underlying data managed by the Tap instance. No data can be read or written
+without one of these methods being called.
+
++
+
+These methods are described in more detail above.
+
++
+
+* [methodname]+openForRead()+
+* [methodname]+openForWrite()+
+
 Transactional::
 
 These methods notify a given Tap instance if the parent Flow was successful or

@@ -104,7 +104,7 @@ influence what values are seen first. Otherwise the fields will not be
 sorted in any deterministic order.
 
 
-
+[[coerce]]
 == Coerce
 
 The [classname]+cascading.pipe.assembly.SumBy+
@@ -119,7 +119,7 @@ include::subassembly-coerce.adoc[]
 ====
 
 
-
+[[discard]]
 == Discard
 
 The [classname]+cascading.pipe.assembly.Discard+
@@ -132,7 +132,7 @@ include::subassembly-discard.adoc[]
 ====
 
 
-
+[[rename]]
 == Rename
 
 The [classname]+cascading.pipe.assembly.Rename+
@@ -144,7 +144,7 @@ include::subassembly-rename.adoc[]
 ====
 
 
-
+[[retain]]
 == Retain
 
 The [classname]+cascading.pipe.assembly.Retain+
@@ -157,7 +157,7 @@ include::subassembly-retain.adoc[]
 ====
 
 
-
+[[unique]]
 == Unique
 
 The [classname]+cascading.pipe.assembly.Unique+
@@ -175,4 +175,3 @@ include::subassembly-unique.adoc[]
 As of Cascading 2.2, [classname]+Unique+ uses the
 [classname]+FirstNBuffer+ to more efficiently determine unique
 values.
-

@@ -3,45 +3,40 @@
 
 = Advanced Processing
 
-
-
 [[subassemblies]]
 == SubAssemblies
 
-In Cascading, SubAssemblies are reusable pipe assemblies that are
-linked into larger pipe assemblies. They function much like subroutines
-in a larger program. SubAssemblies are a good way to organize complex
-pipe assemblies, and they allow for commonly-used pipe assemblies to be
-packaged into libraries for inclusion in other projects by other
-users.
+In Cascading, SubAssemblies are reusable pipe assemblies that are linked into
+larger pipe assemblies. They function much like subroutines in a larger program.
+SubAssemblies are a good way to organize complex pipe assemblies, and they allow
+for commonly-used pipe assemblies to be packaged into libraries for inclusion in
+other projects by other users.
 
-To create a SubAssembly, subclass the
-[classname]+cascading.pipe.SubAssembly+ class.
+To create a SubAssembly, subclass the [classname]+cascading.pipe.SubAssembly+
+class.
 
 .Creating a SubAssembly
 ====
 include::custom-subassembly.adoc[]
 ====
 
-In the example above, we pass in (as parameters via the
-constructor) the pipes that we wish to continue assembling against, in
-the first line we register the incoming "previous" pipes, and in the
-last line we register the outgoing "join" pipe as a tail. This allows
-SubAssemblies to be nested within larger pipe assemblies or other
-SubAssemblies.
+In the example above, we pass in (as parameters via the constructor) the pipes
+that we wish to continue assembling against, in the first line we register the
+incoming "previous" pipes, and in the last line we register the outgoing "join"
+pipe as a tail. This allows SubAssemblies to be nested within larger pipe
+assemblies or other SubAssemblies.
 
 .Using a SubAssembly
 ====
 include::simple-subassembly.adoc[]
 ====
 
-The example above demonstrates how to include a SubAssembly into a
-new pipe assembly.
+The example above demonstrates how to include a SubAssembly into a new pipe
+assembly.
 
-Note that in a SubAssembly that represents a split - that is, a
-SubAssembly with two or more tails - you can use the
-[methodname]+getTails()+ method to access the array of tails
-set internally by the [methodname]+setTails()+ method.
+Note that in a SubAssembly that represents a split - that is, a SubAssembly with
+two or more tails - you can use the [methodname]+getTails()+ method to access
+the array of tails set internally by the [methodname]+setTails()+ method.
 
 .Creating a Split SubAssembly
 ====
@@ -53,78 +48,71 @@ include::split-subassembly.adoc[]
 include::simple-split-subassembly.adoc[]
 ====
 
-To rephrase, if a [classname]+SubAssembly+ does not
-split the incoming Tuple stream, the SubAssembly instance can be passed
-directly to the next Pipe instance. But, if the
-[classname]+SubAssembly+ splits the stream into multiple
-branches, handles will be needed to access them. The solution is to pass
-each branch tail to the [methodname]+setTails()+ method, and
-call the [methodname]+getTails()+ method to get handles for
-the desired branches, which can be passed to subsequent instances of
-[classname]+Pipe+.
-
-
+To rephrase, if a [classname]+SubAssembly+ does not split the incoming Tuple
+stream, the SubAssembly instance can be passed directly to the next Pipe
+instance. But, if the [classname]+SubAssembly+ splits the stream into multiple
+branches, handles will be needed to access them. The solution is to pass each
+branch tail to the [methodname]+setTails()+ method, and call the
+[methodname]+getTails()+ method to get handles for the desired branches, which
+can be passed to subsequent instances of [classname]+Pipe+.
 
 [[stream-assertions]]
 == Stream Assertions
 
 image:images/stream-assertions.svg[align="center"]
 
-Stream assertions are simply a mechanism for asserting that one or
-more values in a tuple stream meet certain criteria. This is similar to
-the Java language "assert" keyword, or a unit test. An example would be
-"assert not null" or "assert matches".
+Stream assertions are simply a mechanism for asserting that one or more values
+in a tuple stream meet certain criteria. This is similar to the Java language
+"assert" keyword, or a unit test. An example would be "assert not null" or
+"assert matches".
 
-Assertions are treated like any other function or aggregator in
-Cascading. They are embedded directly into the pipe assembly by the
-developer. By default, if an assertion fails, the processing fails. As
-an alternative, an assertion failure can be caught by a failure
-Trap.
+Assertions are treated like any other function or aggregator in Cascading. They
+are embedded directly into the pipe assembly by the developer. By default, if an
+assertion fails, the processing fails. As an alternative, an assertion failure
+can be caught by a failure Trap.
 
-Assertions may be more, or less, desirable in different contexts.
-For this reason, stream assertions can be treated as either "strict" or
-"validating". _Strict_ assertions make
-sense when running tests against regression data - which should be
-small, and should represent many of the edge cases that the processing
-assembly must robustly support. _Validating_ assertions, on the other hand, make more sense when running
-tests in staging, or when using data that may vary in quality due to an
-unmanaged source.
+Assertions may be more, or less, desirable in different contexts. For this
+reason, stream assertions can be treated as either "strict" or "validating".
 
-And of course there are cases where assertions are unnecessary and
-only impede processing, and it would be best to just bypass them
-altogether.
+_Strict_ assertions make sense when running tests against regression data -
+which should be small, and should represent many of the edge cases that the
+processing assembly must robustly support.
 
-To handle all three of these situations, Cascading can be
-instructed to _plan out_ (i.e., omit)
-strict assertions, validation assertions, or both when building the
-Flow. To create optimal performance, Cascading implements this by
-actually leaving the undesired assertions out of the final Flow (not
-merely switching them off).
+_Validating_ assertions, on the other hand, make more sense when running tests
+in staging, or when using data that may vary in quality due to an unmanaged
+source.
+
+And of course there are cases where assertions are unnecessary and only impede
+processing, and it would be best to just bypass them altogether.
+
+To handle all three of these situations, Cascading can be instructed to _plan
+out_ (i.e., omit) strict assertions, validation assertions, or both when
+building the Flow. To create optimal performance, Cascading implements this by
+actually leaving the undesired assertions out of the final Flow (not merely
+switching them off).
 
 .Adding Assertions
 ====
 include::simple-assertion.adoc[]
 ====
 
-Again, assertions are added to a pipe assembly like any other
-operation, except that the [classname]+AssertionLevel+ must be
-set to tell the planner how to treat the assertion during
-planning.
+Again, assertions are added to a pipe assembly like any other operation, except
+that the [classname]+AssertionLevel+ must be set to tell the planner how to
+treat the assertion during planning.
 
 .Planning Out Assertions
 ====
 include::simple-assertion-planner.adoc[]
 ====
 
-To configure the planner to remove some or all assertions, a
-property can be set via the
-[classname]+FlowConnectorProps.setAssertionLevel()+ method or
-directly on the [classname]+FlowDef+ instance, as shown above.
-Setting [classname]+AssertionLevel.NONE+ removes all
-assertions. [classname]+AssertionLevel.VALID+ keeps
-[code]+VALID+ assertions but removes [code]+STRICT+ ones. And
-[classname]+AssertionLevel.STRICT+ keeps all assertions - the
-planner default value.
+To configure the planner to remove some or all assertions, a property can be set
+via the [classname]+FlowConnectorProps.setAssertionLevel()+ method or directly
+on the [classname]+FlowDef+ instance, as shown above.
+
+Setting [classname]+AssertionLevel.NONE+ removes all assertions.
+[classname]+AssertionLevel.VALID+ keeps [code]+VALID+ assertions but removes
+[code]+STRICT+ ones. And [classname]+AssertionLevel.STRICT+ keeps all assertions -
+the planner default value.
 
 
 
@@ -135,259 +123,233 @@ The following diagram shows the use of _Failure Traps_ in a pipe assembly.
 
 image:images/failure-traps.svg[align="center"]
 
-
-
-Failure Traps are similar to tap sinks (as opposed to tap sources)
-in that they allow data to be stored. The difference is that Tap sinks
-are bound to a particular tail pipe in a pipe assembly and are the
-primary outlet of a branch in a pipe assembly. Traps can be bound to
-intermediate pipe assembly branches - just like Stream Assertions - yet
-they only capture data that causes an Operation to fail (throw an
+Failure Traps are similar to tap sinks (as opposed to tap sources) in that they
+allow data to be stored. The difference is that Tap sinks are bound to a
+particular tail pipe in a pipe assembly and are the primary outlet of a branch
+in a pipe assembly. Traps can be bound to intermediate pipe assembly branches
+yet they only capture data that causes an Operation to fail (those that throw an
 Exception).
 
-Whenever an operation fails and throws an exception, if there is
-an associated trap, the offending Tuple is saved to the resource
-specified by the trap Tap. This allows the job to continue processing
-without any data loss.
+Whenever an operation fails and throws an exception, if there is an associated
+trap, the offending Tuple is saved to the resource specified by the trap Tap.
+This allows the job to continue processing with any 'bad' data saved for future
+inspection.
 
-By design, clusters are hardware fault-tolerant - lose a node, and
-the cluster continues working. But fault tolerance for software is a
-little different. Failure Traps provide a means for the processing to
-continue without losing track of the data that caused the fault. For
-high fidelity applications, this may not be very useful, since you
-likely will want any errors during processing to cause the application
-to stop. But for low fidelity applications such as webpage indexing,
-where skipping a page or two out of a few million is acceptable, this
-can dramatically improve processing reliability.
+By design, clusters are hardware fault-tolerant - lose a node, and the cluster
+continues working. But fault tolerance for software is a little different.
+Failure Traps provide a means for the processing to continue without losing
+track of the data that caused the fault. For high fidelity applications, this
+may not be very useful, since you likely will want any errors during processing
+to cause the application to stop. But for low fidelity applications such as
+webpage indexing, where skipping a page or two out of a few million is
+acceptable, this can dramatically improve processing reliability.
 
 .Setting Traps
 ====
 include::simple-traps.adoc[]
 ====
 
-The example above binds a trap tap to the pipe assembly segment
-named "assertions". Note how we can name branches and segments by using
-a single [classname]+Pipe+ instance, and that the naming
-applies to all subsequent [classname]+Pipe+ instances.
+The example above binds a trap tap to the pipe assembly segment named
+"assertions". Note how we can name branches and segments by using a single
+[classname]+Pipe+ instance, and that the naming applies to all subsequent
+[classname]+Pipe+ instances.
 
-Traps are for exceptional cases, in the same way that Java
-Exception handling is. Traps are not intended for application flow
-control, and not a means to filter some data into other locations.
-Applications that need to filter out bad data should do so explicitly,
-using filters. For more on this, see <<handling-bad-data>>.
-
-
+Traps are for exceptional cases, in the same way that Java Exception handling
+is. Traps are not intended for application flow control, and not a means to
+filter some data into other locations. Applications that need to filter out bad
+data should do so explicitly, using filters. For more on this, see
+<<ch19-best-practices.adoc#handling-bad-data>>.
 
 == Checkpointing
 
-New to Cascading 2, and only supported by the Hadoop planner, is
-the ability to "checkpoint" data within a Flow by using the
-[classname]+cascading.pipe.Checkpoint+
-[classname]+Pipe+. That is, a Tuple stream can be persisted to
-disk at most any arbitrary point. Doing so forces a new FlowStep
-(MapReduce job when using Hadoop) after the checkpoint position.
+Checkpointing is the ability to collapse a tuple stream within a Flow at any
+point as a way to improve the reliability or performance of a Flow. This is
+accomplished by using the [classname]+cascading.pipe.Checkpoint+
+[classname]+Pipe+.
 
-By default the checkpoint is anonymous and is cleaned up
-immediately after the Flow completes. This feature is useful when used
-in conjunction with a HashJoin where the small side of the join starts
-out extremely large but is filtered down to fit into memory before being
-read into the HashJoin. By forcing a checkpoint before the HashJoin,
-only the small filtered version of the data is replicated over the
-cluster. Without the checkpoint, it is likely the full unfiltered file
-will be replicated to every node the FlowStep is executing.
+Checkpointing results in all tuple stream data to be written collected before
+the next Pipe in the stream, this may be to disk, shared filesystem, or via some
+other proprietary means.
 
-Alternatively, checkpointing is useful for debugging when used
-with a checkpoint Tap, where the Tap has specified a TextDelimited
-Scheme without any declared Fields.
+By default the checkpoint is anonymous and is cleaned up immediately after the
+Flow completes.
+
+This feature is useful when used in conjunction with a [classname]+HashJoin+
+where the small side of the join starts out extremely large but is filtered down
+to fit into memory before being read into the [classname]+HashJoin+. By forcing
+a checkpoint before the HashJoin, only the small filtered version of the data is
+replicated over the cluster. Without the checkpoint, it is likely the full
+unfiltered file will be replicated to every node the pipe assembly is executing.
+
+On some platforms, Checkpointing can allow for a Flow to be restarted after a
+transient failure. See <<restarting-flows,Restarting a Flow>> below.
+
+Alternatively, checkpointing is useful for debugging when used with a checkpoint
+Tap, where the Tap has specified a TextDelimited Scheme without any declared
+Fields.
 
 .Adding a Checkpoint
 ====
 include::checkpoint-flow.adoc[]
 ====
 
-As can be seen above, we instantiate a new
-[classname]+Checkpoint+ tap by passing it the previous
-[classname]+Every+ [classname]+Pipe+. This will be
-the point at which data is persisted. Since we wish to keep the data
-after the [classname]+Flow+ has completed, we create a
-[code]+checkpointTap+ that saves the data as a TAB delimited text
-file. We also specify that field names should be written out into a
-header file on the [classname]+TextDelimited+ constructor.
-Finally the [classname]+Tap+ is bound to the
-[classname]+Checkpoint+ [classname]+Pipe+ using the
-[classname]+FlowDef+.
+As can be seen above, we instantiate a new [classname]+Checkpoint+ tap by
+passing it the previous [classname]+Every+ [classname]+Pipe+. This will be the
+point at which data is persisted.
 
+Since we wish to keep the data after the [classname]+Flow+ has completed, we
+create a [code]+checkpointTap+ that saves the data as a TAB delimited text file.
+We also specify that field names should be written out into a header file on the
+[classname]+TextDelimited+ constructor. Finally the [classname]+Tap+ is bound to
+the [classname]+Checkpoint+ [classname]+Pipe+ using the [classname]+FlowDef+.
 
+NOTE: Using a TextDelimited file as an intermediate representation within a Flow
+may result in subtle coercion errors when field types are not provided
+consitently and when dealing with complex (non-primitive) data types.
 
+[[restarting-flows]]
 == Restarting a Checkpointed Flow
 
-When using Checkpoint pipes in a Flow and the Flow fails, a future
-execution of the Flow can be restarted after the last successful
-FlowStep writing to a checkpoint file. That is, a Flow will only restart
-from the last Checkpoint Pipe location.
+When using Checkpoint pipes in a Flow and the Flow fails, a future execution of
+the Flow can be restarted after the last successful FlowStep writing to a
+checkpoint file. That is, a Flow will only restart from the last Checkpoint Pipe
+location.
 
-This feature requires that the failed Flow be planned with a
-[code]+runID+ set on the FlowDef, and the retry Flow use the same
-[code]+runID+ value. It goes without saying, the retry Flow should
-be (roughly) equivant to the previous failed attempt.
+This feature requires that the failed Flow be planned with a [code]+runID+ set
+on the FlowDef, and the retry Flow use the same [code]+runID+ value. It goes
+without saying, the retry Flow should be (roughly) equivalent to the previous
+failed attempt.
+
+NOTE: Restartable Flows are only supported by some platforms.
 
 .Setting runID
 ====
 include::checkpoint-restart-flow.adoc[]
 ====
 
-Caution should be used when using restarted checkpoint Flows. If
-the input data has changed, or the pipe assembly has significantly been
-altered, the Flow may fail or there may be undetectable errors.
+Caution should be used when using restarted checkpoint Flows. If the input data
+has changed, or the pipe assembly has significantly been altered, the Flow may
+fail or there may be undetectable errors.
 
-Note that when using a [code]+runID+, all Flow instances must
-use a unique value unless they are intended as a retry attempt. The
-runID value is used to scope the directories for the temporary
-checkpoint files to prevent file name collisions.
+Note that when using a [code]+runID+, all Flow instances must use a unique value
+unless they are intended as a retry attempt. The runID value is used to scope
+the directories for the temporary checkpoint files to prevent file name
+collisions.
 
-On successful completion of a Flow with a runID, all temporary
-checkpoint files will be removed, if any.
-
-
+On successful completion of a Flow with a runID, all temporary checkpoint files
+will be removed, if any.
 
 == Flow and Cascade Event Handling
 
-Each Flow and Cascade has the ability to execute callbacks via an
-event listener. This ability is useful when an external application
-needs to be notified that either a Flow or Cascade has started, halted,
-completed, or either has thrown an exception.
+Each Flow and Cascade has the ability to execute callbacks via an event
+listener. This ability is useful when an external application needs to be
+notified that either a Flow or Cascade has started, halted, completed, or either
+has thrown an exception.
 
-For instance, at the completion of a flow that runs on an Amazon
-EC2 Hadoop cluster, an Amazon SQS message can be sent to notify another
-application to fetch the job results from S3 or begin the shutdown of
-the cluster.
+For instance, at the completion of a flow that runs on an Amazon EC2 Hadoop
+cluster, an Amazon SQS message can be sent to notify another application to
+fetch the job results from S3 or begin the shutdown of the cluster.
 
 Flows support event listeners through the
-[classname]+cascading.flow.FlowListener+ interface and
-Cascades support event listeners through the
-[classname]+cascading.cascade.CascadeListener+, which supports
-four events:
+[classname]+cascading.flow.FlowListener+ interface and Cascades support event
+listeners through the [classname]+cascading.cascade.CascadeListener+, which
+supports four events:
 
-onStarting::
-The onStarting event is fired when a Flow or Cascade
-instance receives the [code]+start()+ message.
+[methodname]+onStarting()+::
 
+The onStarting event is fired when a Flow or Cascade instance receives the
+[code]+start()+ message.
 
-onStopping::
-The onStopping event is fired when a Flow or Cascade
-instance receives the [code]+stop()+ message.
+[methodname]+onStopping()+::
 
+The onStopping event is fired when a Flow or Cascade instance receives the
+[code]+stop()+ message.
 
-onCompleted::
-The onCompleted event is fired when a Flow or Cascade
-instance has completed all work, regardless of success or failure.
-If an exception was thrown, onThrowable will be fired before this
-event.
+[methodname]+onCompleted()+::
 
+The onCompleted event is fired when a Flow or Cascade instance has completed all
+work, regardless of success or failure. If an exception was thrown, onThrowable
+will be fired before this event.
 
-onThrowable::
-The onThrowable event is fired if any internal job client
-throws a Throwable type. This throwable is passed as an argument
-to the event. onThrowable should return true if the given
-throwable was handled, and should not be rethrown from the
-[code]+Flow.complete()+ or [code]+Cascade.complete()+
-methods.
++
 
+Success or failure can be tested on the given Flow instance via
+[code]+flow.getFlowStats().getStatus()+
 
+[methodname]+onThrowable()+::
 
+The onThrowable event is fired if any internal job client throws a Throwable
+type. This throwable is passed as an argument to the event. onThrowable should
+return true if the given throwable was handled, and should not be re-thrown from
+the [code]+Flow.complete()+ or [code]+Cascade.complete()+ methods.
 
 [[partition-tap]]
 == PartitionTaps
 
-The [classname]+PartitionTap+ [classname]+Tap+
-class provides a simple means to break large datasets into smaller sets
-based on data item values. This is also commonly called _binning_ the data, where each "bin" of data is
-named after some data value(s) shared by the members of that bin. For
-example, this is a simple way to organize log files by month and year.
-PartitionTap replaces the TemplateTap in previous versions of Cascading
-and adds the ability for a PartitionTap instance to be used as both a
-sink and a source. Previously, TemplateTap could only be used as a
-sink.
+The [classname]+PartitionTap+ [classname]+Tap+ class provides a simple means to
+break large datasets into smaller sets based on data item values. This is also
+commonly called _binning_ the data, where each "bin" of data is named after some
+data value(s) shared by the members of that bin. For example, this is a simple
+way to organize log files by month and year.
 
-In the example above, we construct a parent
-[classname]+Hfs+ [classname]+tap+ and pass it to the
-constructor of a [classname]+PartitionTap+ instance, along
-with a [classname]+cascading.tap.partition.DelimitedPartition+
-"partitioner". If more complex path formatting is necessary, you may
-implement the [classname]+cascading.tap.partition.Partition+
-interface.
+.PartitionTap
+====
+include::partition-tap.adoc[]
+====
 
-It is important to see in the above example that the
-[code]+parentTap+ will only sink "entry" fields to a text delimited
-file. But the [code]+monthsTap+ expects "year", "month", and
-"entry" fields from the tuple stream. Here data is stored in the
-directory name for each partition when the PartitionTap is a sink, there
-is no need to redundantly store the data in the text delimited file.
-When reading from a [classname]+PartitionTap+, the directory
-name will be parsed and its values will be added to the outgoing tuple
+In the example above, we construct a parent [classname]+FileTap+ tap and pass it
+to the constructor of a [classname]+PartitionTap+ instance, along with a
+[classname]+cascading.tap.partition.DelimitedPartition+ "partitioner".
+
+If more complex path formatting is necessary, you may implement the
+[classname]+cascading.tap.partition.Partition+ interface.
+
+It is important to see in the above example that the [code]+parentTap+ will only
+sink "entry" fields to a text delimited file. But the [code]+monthsTap+ expects
+"year", "month", and "entry" fields from the tuple stream.
+
+Here data is stored in the directory name for each partition when the
+PartitionTap is a sink, there is no need to redundantly store the data in the
+text delimited file. When reading from a [classname]+PartitionTap+, the
+directory name will be parsed and its values will be added to the outgoing tuple
 stream when the [classname]+PartitionTap+ is a source.
 
-Note that you can only create sub-directories to bin data into.
-Hadoop must still write "part" files into each bin directory, and there
-is no safe mechanism for manipulating part file names.
-
-One last thing to keep in mind is whether binning happens during
-the Map phase or the Reduce phase. By doing a
-[classname]+GroupBy+ on the values used to populate the
-template, binning will happen during the Reduce phase, and will likely
-scale much better in cases where there are a very large number of unique
-values used in the template resulting in a large number of
-directories.
-
-
+One last thing to keep in mind is the where writing happens when executing on a
+cluster. By doing a [classname]+GroupBy+ on the values used to define the
+partition, binning will happen during the grouping (Reducer or Partitioning)
+phase, and will likely scale much better in cases where there are a very large
+number of unique partitions that will result in a large number of directories or
+files.
 
 == Partial Aggregation instead of Combiners
 
-In Hadoop mode, Cascading does not support MapReduce "Combiners".
-Combiners are a simple optimization allowing some Reduce functions to
-run on the Map side of MapReduce. Combiners are very powerful in that
-they reduce the I/O between the Mappers and Reducers - why send all of
-your Mapper data to Reducers when you can compute some values on the Map
-side and combine them in the Reducer? But Combiners are limited to
-Associative and Commutative functions only, such as "sum" and "max". And
-the process requires that the values emitted by the Map task must be
-serialized, sorted (which involves deserialization and comparison),
-deserialized again, and operated on - after which the results are again
-serialized and sorted. Combiners trade CPU for gains in I/O.
+Cascading implements a mechanism to perform partial aggregations in order to
+reduce the amount of transmitted data so that a complete aggregation can be
+completed down stream. This implementation allows any aggregate function to be
+implemented - not just Associative and Commutative functions.
 
-Cascading takes a different approach. It provides a mechanism to
-perform partial aggregations on the Map side and combine the results on
-the Reduce side, but trades memory, instead of CPU, for I/O gains by
-caching values (up to a threshold limit). This bypasses the redundant
-serialization, deserialization, and sorting. Also, Cascading allows any
-aggregate function to be implemented - not just Associative and
-Commutative functions.
+Cascading provides a few built-in partial aggregate operations, including
+AverageBy, CountBy, SumBy, and FirstBy. These are actually SubAssemblies, not
+Operations, and are subclasses of the AggregateBy SubAssembly. For more on this,
+see the section on <<ch18-subassemblies.adoc#aggregate-by>>.
 
-Cascading supports a few built-in partial aggregate operations,
-including AverageBy, CountBy, SumBy, and FirstBy. These are actually
-SubAssemblies, not Operations, and are subclasses of the AggregateBy
-SubAssembly. For more on this, see the section on <<aggregate-by>>.
-
-Using partial aggregate operations is quite easy. They are
-actually less verbose than a standard Aggregate operation.
+Using partial aggregate operations is quite easy. They are actually less verbose
+than a standard Aggregate operation.
 
 .Using a SumBy
 ====
 include::partials-sumby.adoc[]
 ====
 
-For composing multiple partial aggregate operations, things are
-done a little differently.
+For composing multiple partial aggregate operations, things are done a little
+differently.
 
 .Composing partials with AggregateBy
 ====
 include::partials-compose.adoc[]
 ====
 
-It's important to note that a [classname]+GroupBy+ Pipe
-is embedded in the resulting assemblies above. But only one GroupBy is
-performed in the case of the AggregateBy, and all of the partial
-aggregations will be performed simultaneously. It is also important to
-note that, depending on the final pipe assembly, the Map side partial
-aggregate functions may be planned into the previous Reduce operation in
-Hadoop, further improving the performance of the application.
+It's important to note that a [classname]+GroupBy+ Pipe is embedded in the
+resulting assemblies above. But only one GroupBy is performed in the case of the
+AggregateBy, and all of the partial aggregations will be performed
+simultaneously.
