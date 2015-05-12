@@ -1,0 +1,139 @@
+:toc2:
+:doctitle: {_doctitle} - Field Sets
+
+= Tuple Fields
+
+As data stored in Tuples moves through a pipe assembly, individual columns or
+fields are either added, removed, or modified in place as they pass through each
+Pipe.
+
+Tuple fields are manipulated through the use of the
+[classname]+cascading.tuple.Fields+ class. Fields can be used to either declare
+a given set of fields (like fields are declared on a class definition), or to
+select a set of fields from another Tuple.
+
+That is, if I declare a Tuple has the following field names `[first, last]`, I
+can later select `[last]` from the Tuple for use as an argument to an Operation.
+Equivalently I can select the second position with the ordinal `[1]`, or the
+last position with the ordinal `[-1]`.
+
+Both the [classname]+Each+ and [classname]+Every+ pipes take
+an input Tuple, select fields from the input Tuple as arguments to the child
+[classname]+Operation+ (Function, Aggregator, or Buffer), receive results
+from the Operation, and finally return the Operation results, or some mix of
+incoming Tuple values and the Operation Tuple results.
+
+This is achieved by providing new Fields instances that select or declare the
+required field names or ordinals as appropriate.
+
+When selecting arguments for an Operation, or the outgoing fields of the pipe,
+Cascading provides _Fields sets_, a feature of the [classname]+Fields+ class
+that provides a sort of wildcard tool for referencing sets of field values
+without declaring them specifically.
+
+There are also cases where _Fields sets_ can be used when fields should be
+declared. All these cases are described below.
+
+[[field-sets]]
+== Field Sets
+
+These predefined Fields sets are constant values on the [classname]+Fields+
+class. They can be used in many places where the [classname]+Fields+ class is
+expected. They are:
+
+Fields.ALL::
+
+The [classname]+cascading.tuple.Fields.ALL+ constant is a wildcard that
+represents all the current available fields.
+
+include::algebra-all.adoc[]
+
+Fields.RESULTS::
+
+The [classname]+cascading.tuple.Fields.RESULTS+ constant is used to represent
+the field names of the current operations return values. This Fields set may
+only be used as an output selector on a pipe, causing the pipe to output a tuple
+containing the operation results.
+
+include::algebra-results.adoc[]
+
+Fields.REPLACE::
+
+The [classname]+cascading.tuple.Fields.REPLACE+ constant is used as an output
+selector to inline-replace values in the incoming tuple with the results of an
+operation. This convenient Fields set allows operations to overwrite the value
+stored in the specified field. The current operation must either specify the
+identical argument selector field names used by the pipe, or use the
+[classname]+ARGS+ Fields set.
+
+include::algebra-replace.adoc[]
+
+Fields.SWAP::
+
+The [classname]+cascading.tuple.Fields.SWAP+ constant is used as an output
+selector to swap the operation arguments with its results. Neither the argument
+and result field names, nor the size, need to be the same. This is useful for
+when the operation arguments are no longer necessary and the result Fields and
+values should be appended to the remainder of the input field names and Tuple.
+
+include::algebra-swap.adoc[]
+
+Fields.ARGS::
+
+The [classname]+cascading.tuple.Fields.ARGS+ constant is used to let a given
+operation inherit the field names of its argument Tuple. This Fields set is a
+convenience and is typically used when the Pipe output selector is
+[classname]+RESULTS+ or [classname]+REPLACE+. It is specifically used by the
+Identity Function when coercing values from Strings to primitive types.
+
+include::algebra-replace.adoc[]
+
+Fields.GROUP::
+
+The [classname]+cascading.tuple.Fields.GROUP+ constant represents all the fields
+used as grouping key in the most recent grouping. If no previous grouping exists
+in the pipe assembly, [classname]+GROUP+ represents all the current field names.
+
+include::algebra-group.adoc[]
+
+Fields.VALUES::
+
+The [classname]+cascading.tuple.Fields.VALUES+ constant represents all the
+fields not used as grouping fields in a previous Group. That is, if you have
+fields "a", "b", and "c", and group on "a", [classname]+Fields.VALUES+ will
+resolve to "b" and "c".
+
+include::algebra-values.adoc[]
+
+Fields.UNKNOWN::
+
+The [classname]+cascading.tuple.Fields.UNKNOWN+ constant is used when Fields
+must be declared, but it's not known how many fields or what their names are.
+This allows for processing tuples of arbitrary length from an input source or
+some operation. Use this Fields set with caution.
+
+include::algebra-unknown.adoc[]
+
+Fields.NONE::
+
+The [classname]+cascading.tuple.Fields.NONE+ constant is used to specify no
+fields. Typically used as an argument selector for Operations that do not
+process any Tuples, like [classname]+cascading.operation.Insert+.
+
+include::algebra-none.adoc[]
+
+TIP: May also be used when performing a join with [classname]+CoGroup+ or
+[classname]+HashJoin+ when a full cross product is desired across all data. But
+there will be a performance penalty.
+
+[[field-algebra]]
+== Field Algebra
+
+The chart below shows common ways to merge input and result fields for the
+desired output fields. A few minutes with this chart may help clarify the
+discussion of fields, tuples, and pipes. Also see
+<<ch04-pipe-assemblies.adoc#each-every>> for details on the different columns
+and their relationships to the [classname]+Each+ and [classname]+Every+ pipes
+and Functions, Aggregators, and Buffers.
+
+image:images/field-algebra.svg[align="center"]

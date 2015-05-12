@@ -146,6 +146,3 @@ given data set, a Riffle-annotated Class can be written that
 internally creates Cascading Flows and executes them until no more
 passes are needed. This is like nesting Flows or Cascades in a parent
 Flow, which in turn can participate in a Cascade.
-
-
-

@@ -411,4 +411,3 @@ methods.
 Note that if a "context" object is used, its type should be
 declared in the subclass class declaration using the Java Generics
 notation.
-
