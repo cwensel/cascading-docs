@@ -6,32 +6,64 @@
 
 image:images/cascade.svg[align="center"]
 
-A Cascade allows multiple Flow instances to be executed as a
-single logical unit. If there are dependencies between the Flows, they
-are executed in the correct order. Further, Cascades act like Ant builds
-or Unix make files - that is, a Cascade only executes Flows that have
-stale sinks (i.e., output data that is older than the input data). For
-more on this, see <<skipping-flows>>.
+A Cascade allows multiple Flow instances to be executed as a single logical
+unit. If there are dependencies between the Flows, they are executed in the
+correct order.
+
+Further, Cascade instances act like a compiler build file - that is, a Cascade
+only executes Flows that have stale sinks (i.e., output data that is older than
+the input data). For more on this, see <<ch06-flows.adoc#skipping-flows>>.
+
+== Creating a Cascade
 
 .Creating a new Cascade
 ====
 include::simple-cascade.adoc[]
 ====
 
-When passing Flows to the CascadeConnector, order is not
-important. The CascadeConnector automatically identifies the
-dependencies between the given Flows and creates a scheduler that starts
-each Flow as its data sources become available. If two or more Flow
-instances have no interdependencies, they are submitted together so that
-they can execute in parallel.
-
-For more information, see the section on <<cascade-scheduler>>.
+When passing Flows to the CascadeConnector, order is not important. The
+CascadeConnector automatically identifies the dependencies between the given
+Flows and creates a scheduler that starts each Flow as its data sources become
+available. If two or more Flow instances have no interdependencies, they are
+submitted together so that they can execute in parallel.
 
 If an instance of
 [classname]+cascading.flow.FlowSkipStrategy+ is given to a
 [classname]+Cascade+ instance (via the
 [classname]+Cascade.setFlowSkipStrategy()+ method), it is
 consulted for every Flow instance managed by that Cascade, and all skip
-strategies on those Flow instances are ignored. For more information on
-skip strategies, see <<skipping-flows>>.
+strategies on those Flow instances are ignored.
 
+[[cascade-scheduler]]
+== The Cascade Topological Scheduler
+
+Cascading has a simple class, [classname]+Cascade+, that executes a collection
+of Cascading Flows on a target cluster in dependency order.
+
+Consider the following example.
+
+* Flow 1 reads input file A and outputs B.
+* Flow 2 expects input B and outputs C and D.
+* Flow 3 expects input C and outputs E.
+
+
+A [classname]+Cascade+ is constructed through the [classname]+CascadeConnector+
+class, by building an internal graph that makes each Flow a "vertex", and each
+file an "edge". A topological walk on this graph will touch each vertex in order
+of its dependencies. When a vertex has all its incoming edges (i.e., files)
+available, it is scheduled on the cluster.
+
+In the example above, Flow 1 goes first, Flow 2 goes second, and Flow 3 is last.
+
+If two or more Flows are independent of one another, they are scheduled
+concurrently.
+
+And by default, if any outputs from a Flow are newer than the inputs, the Flow
+is skipped. The assumption is that the Flow was executed recently, since the
+output isn't stale. So there is no reason to re-execute it and use up resources
+or add time to the application. This is similar behavior a compiler would
+exhibit if a source file wasn't updated before a recompile.
+
+This is very handy if you have a large set of jobs, with varying
+interdependencies between them, that needs to be executed as a logical unit.
+Just pass them to the CascadeConnector and let it sort them all out.

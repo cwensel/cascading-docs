@@ -197,8 +197,9 @@ public class CompiledExamples
 
     Tap sink = new FileTap( new TextLine(), "output" );
 
-    FlowDef flowDef = new FlowDef()
+    FlowDef flowDef = new FlowDef() // <1>
       .setName( "flow-name" )
+      .addDescription( "joins lhs and rhs" )
       .addSource( rhs, rhsSource )
       .addSource( lhs, lhsSource )
       .addTailSink( groupBy, sink );
@@ -236,7 +237,7 @@ public class CompiledExamples
     properties = AppProps.appProps()
       .setName( "sample-app" )
       .setVersion( "1.2.3" )
-      .addTags( "deploy:prod", "team:engineering" )
+      .addTags( "cluster:east", "deploy:prod", "team:engineering" )
       .setJarClass( Main.class ) // find jar from class
       .buildProperties( properties ); // returns a copy
 
@@ -246,7 +247,7 @@ public class CompiledExamples
     properties = AppProps.appProps()
       .setName( "sample-app" )
       .setVersion( "1.2.3" )
-      .addTags( "deploy:prod", "team:engineering" )
+      .addTags( "cluster:east", "deploy:prod", "team:engineering" )
       .setJarPath( pathToJar ) // set jar path
       .buildProperties( properties ); // returns a copy
 

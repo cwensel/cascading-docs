@@ -20,18 +20,28 @@ each word appears.
 .Word Counting
 ====
 include::basic-word-count.adoc[]
+
 <1> Read each line of text from a file and give it the field name "line"
+
 <2> Parse each "line" into words with the [code]+RegexGenerator+ object, which
 returns each word in the field named "word"
+
 <3> Sort and group all the tuples on the "word" field, using the [code]+GroupBy+
 object
+
 <4> Count the number of elements in each group, using the [code]+Count+ object,
 and store this value in the "count" field
+
 <5> Write out the "word" and "count" fields
+
 <6> Set application specific meta-data to allow the application to run
+
 <7> Choose the platform to execute on
+
 <8> Plan the unit of work to be executed, a Flow
+
 <9> Start the Flow and wait till completed
+
 ====
 
 Several features of this example are worth highlighting.

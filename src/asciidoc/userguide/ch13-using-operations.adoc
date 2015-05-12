@@ -1,196 +1,174 @@
 :toc2:
 :doctitle: {_doctitle} - Using and Developing Operations
 
-
 = Using and Developing Operations
-
-
 
 == Introduction
 
-So far we've talked about setting up sources and sinks, shaping
-the data streams, referencing the data fields, and so on. Within this
-Pipe framework, Operations are used to act upon the data - e.g., alter
-it, filter it, analyze it, or transform it. You can use the standard
-Operations in the Cascading library to create powerful and robust
-applications by combining them in chains (much like Unix operations such
-as _sed_, _grep_,
-_sort_, _uniq_, and
-__awk__). And if you want to go further, it's also very
-simple to develop custom Operations in Cascading.
+So far we've talked about setting up sources and sinks, shaping the data
+streams, referencing the data fields, and so on. Within this Pipe framework,
+Operations are used to act upon the data - e.g., alter it, filter it, analyze
+it, or transform it. You can use the standard Operations in the Cascading
+library to create powerful and robust applications by combining them in chains
+(much like Unix operations such as _sed_, _grep_, _sort_, _uniq_, and __awk__).
+And if you want to go further, it's also very simple to develop custom
+Operations in Cascading.
 
 There are four kinds of Operations:
-[classname]+Function+, [classname]+Filter+,
-[classname]+Aggregator+, and
-[classname]+Buffer+.
+
+* <<functions,[classname]+Function+>>,
+* <<filters,[classname]+Filter+>>,
+* <<aggregators,[classname]+Aggregator+>>, and
+* <<buffers,[classname]+Buffer+>>.
 
 image:images/operations.svg[align="center"]
 
-Operations typically require an input argument Tuple to act on.
-And all Operations can return zero or more Tuple object results - except
-[classname]+Filter+, which simply returns a Boolean indicating
-whether to discard the current Tuple. A [classname]+Function+,
-for instance, can parse a string passed by an argument Tuple and return
-a new Tuple for every value parsed (i.e., one Tuple for each "word"), or
-it may create a single Tuple with every parsed value included as an
-element in one Tuple object (e.g., one Tuple with "first-name" and
-"last-name" fields).
+Operations typically require an input argument _multi-valued_ Tuple to act on. And
+all Operations can return *_zero or more_* _multi-valued_ Tuple results - except
+[classname]+Filter+, which simply returns a Boolean indicating whether to
+discard the current Tuple.
 
-In theory, a [classname]+Function+ can be used as a
-[classname]+Filter+ by not emitting a Tuple result. However,
-the [classname]+Filter+ type is optimized for filtering, and
-can be combined with logical Operations such as
-[classname]+Not+, [classname]+And+,
-[classname]+Or+, etc.
+A [classname]+Function+, for instance, can parse a string passed by an argument
+Tuple and return a new Tuple for every value parsed (i.e., one Tuple for each
+"word"), or it may create a single Tuple with every parsed value included as an
+element in one Tuple object (e.g., one Tuple with "first-name" and "last-name"
+fields).
 
-During runtime, Operations actually receive arguments as one or
-more instances of the [classname]+TupleEntry+ object. The
-TupleEntry object holds the current [classname]+Tuple+ and a
-[classname]+Fields+ object that defines field names for
+In theory, a [classname]+Function+ can be used as a [classname]+Filter+ by not
+emitting a Tuple result. However, the [classname]+Filter+ type is optimized for
+filtering, and can be combined with logical Operations such as [classname]+Not+,
+[classname]+And+, [classname]+Or+, etc.
+
+During runtime, Operations actually receive arguments as one or more instances
+of the [classname]+TupleEntry+ object. The TupleEntry object holds the current
+[classname]+Tuple+ and a [classname]+Fields+ object that defines field names for
 positions within the Tuple.
 
-Except for [classname]+Filter+, all Operations must
-declare result Fields, and if the actual output does not match the
-declaration, the process will fail. For example, consider a
-[classname]+Function+ written to parse words out of a String
-and return a new Tuple for each word. If it declares that its intended
-output is a Tuple with a single field named "word", and then returns
-more values in the Tuple beyond that single "word", processing will
-halt. However, Operations designed to return arbitrary numbers of values
-in a result Tuple may declare [code]+Fields.UNKNOWN+.
+Except for [classname]+Filter+, all Operations must declare result Fields, and
+if the actual output does not match the declaration, the process will fail. For
+example, consider a [classname]+Function+ written to parse words out of a String
+and return a new Tuple for each word. If it declares that its intended output is
+a Tuple with a single field named "word", and then returns more values in the
+Tuple beyond that single "word", processing will halt. However, Operations
+designed to return arbitrary numbers of values in a result Tuple may declare
+[code]+Fields.UNKNOWN+.
 
-The Cascading planner always attempts to "fail fast" where
-possible by checking the field name dependencies between Pipes and
-Operations, but there may be some cases the planner can't account
-for.
+The Cascading planner always attempts to "fail fast" where possible by checking
+the field name dependencies between Pipes and Operations, but there may be some
+cases the planner can't account for.
 
-All Operations must be wrapped by either an
-[classname]+Each+ or an [classname]+Every+ pipe
-instance. The pipe is responsible for passing in an argument Tuple and
-accepting the resulting output Tuple.
+All Operations must be wrapped by either an [classname]+Each+ or an
+[classname]+Every+ pipe instance. The pipe is responsible for passing in an
+argument Tuple and accepting the resulting output Tuple from the Operation, and
+merging/replacing the incoming Tuple values (to the Pipe) with the results of
+the Operation.
 
-Operations by default are assumed by the Cascading planner to be
-"safe". A safe Operation is idempotent; it can safely execute multiple
-times on the exact same record or Tuple; it has no side-effects. If a
-custom Operation is not idempotent, the method [code]+isSafe()+
-must return [code]+false+. This value influences how the Cascading
-planner renders the Flow under certain circumstances.
+Operations by default are assumed by the Cascading planner to be "safe". A safe
+Operation is idempotent; it can safely execute multiple times on the exact same
+record or Tuple; it has no side-effects. If a custom Operation is not
+idempotent, the method [code]+isSafe()+ must return [code]+false+. This value
+influences how the Cascading planner renders the Flow under certain
+circumstances.
 
-
-
+[[functions]]
 == Functions
 
-A [classname]+Function+ expects a stream of individual
-argument Tuples, and returns zero or more result Tuples for each of
-them. Like a [classname]+Filter+, a
-[classname]+Function+ is used with an
-[classname]+Each+ pipe, which may follow any pipe type.
+A [classname]+Function+ expects a stream of individual argument Tuples, and
+returns zero or more result Tuples for each of them. Like a [classname]+Filter+,
+a [classname]+Function+ is used with an [classname]+Each+ pipe, which may follow
+any pipe type.
 
-To create a custom [classname]+Function+, subclass the
-class [code]+cascading.operation.BaseOperation+ and implement the
-interface [code]+cascading.operation.Function+. Since the
-[code]+BaseOperation+ has been subclassed, the [code]+operate+
-method, as defined on the [code]+Function+ interface, is the only
-method that must be implemented.
+To create a custom [classname]+Function+, subclass the class
+[code]+cascading.operation.BaseOperation+ and implement the interface
+[code]+cascading.operation.Function+. Since the [code]+BaseOperation+ has been
+subclassed, the [code]+operate+ method, as defined on the [code]+Function+
+interface, is the only method that must be implemented.
 
 .Custom Function
 ====
 include::custom-function.adoc[]
 ====
 
-Whenever possible, functions should declare both the number of
-argument values they expect and the field names of the Tuple they
-return. However, these declarations are optional, as explained
-below.
+Whenever possible, functions should declare both the number of argument values
+they expect and the field names of the Tuple they return. However, these
+declarations are optional, as explained below.
 
-For input, functions must accept one or more values in a Tuple as
-arguments. If not specified, the default is to accept any number of
-values ([code]++Operation.ANY++). Cascading verifies during planning
-that the number of arguments selected matches the number of arguments
-expected.
+For input, functions must accept one or more values in a Tuple as arguments. If
+not specified, the default is to accept any number of values
+([code]+Operation.ANY+). Cascading verifies during planning that the number of
+arguments selected matches the number of arguments expected.
 
-For output, it's a good practice to declare the field names that a
-function returns. If not specified, the default is
-[code]+Fields.UNKNOWN+, meaning that an unknown number of fields
-are returned in each Tuple.
+For output, it's a good practice to declare the field names that a function
+returns. If not specified, the default is [code]+Fields.UNKNOWN+, meaning that
+an unknown number of fields are returned in each Tuple.
 
-Both declarations - the number of input arguments and declared
-result fields - must be done on the constructor, either by passing
-default values to the [code]+super+ constructor, or by accepting
-the values from the user via a constructor implementation.
+Both declarations - the number of input arguments and declared result fields -
+must be done on the constructor, either by passing default values to the super
+constructor, or by accepting the values from the user via a constructor
+implementation.
 
 .Add Values Function
 ====
 include::sum-function.adoc[]
 ====
 
-The example above implements a [classname]+Function+
-that accepts two values in the argument Tuple, adds them together, and
-returns the result in a new Tuple.
+The example above implements a [classname]+Function+ that accepts two values in
+the argument Tuple, adds them together, and returns the result in a new Tuple.
 
-The first constructor above assumes a default field name for the
-field that this [classname]+Function+ returns. In practice,
-it's good to give the user the option of overriding the declared field
-names, allowing them to prevent possible field name collisions that
-might cause the planner to fail.
+The first constructor above assumes a default field name for the field that this
+[classname]+Function+ returns. In practice, it's good to give the user the
+option of overriding the declared field names, allowing them to prevent possible
+field name collisions that might cause the planner to fail.
 
 This line is especially important:
 ----
-int sum = arguments.getInteger( 0 ) +
-arguments.getInteger( 1 );
-
+int sum = arguments.getInteger( 0 ) + arguments.getInteger( 1 );
 ----
 
- Note that ordinal numbers, not field names, are used
-here to get argument values. If field names had been used, the
-AddValuesFunction would have been coupled to the incoming stream.
+Note that ordinal numbers, not field names, are used here to get argument
+values. If field names had been used, the [classname]+AddValuesFunction+ would
+have been coupled to the incoming stream.
 
 .Add Values Function and Context
 ====
 include::efficient-sum-function.adoc[]
 ====
 
-This example, a minor variation on the previous one, introduces
-the use of a "context" object and [methodname]+prepare()+ and
-[methodname]+cleanup()+ methods.
+This example, a minor variation on the previous one, introduces the use of a
+"context" object and [methodname]+prepare()+ and [methodname]+cleanup()+
+methods.
 
-All Operations allow for a context object, simply a user-defined
-object that holds state between calls to the
-[methodname]+operate()+ method. This allows for a given
-instance of the Operation to be thread safe on a platform that may use
+All Operations allow for a context object, simply a user-defined object that
+holds state between calls to the [methodname]+operate()+ method. This allows for
+a given instance of the Operation to be thread safe on a platform that may use
 multiple threads of execution versus multiple processes. It also allows
-deferring initialization of complex resources until the Operation is
-engaged.
+deferring initialization of complex resources until the Operation is engaged.
 
-The [methodname]+prepare()+ and
-[methodname]+cleanup()+ methods are invoked once per thread
-of execution, and in the case of the Hadoop platform, only on the
+The [methodname]+prepare()+ and [methodname]+cleanup()+ methods are invoked once
+per thread of execution, and in the case of a clustered platform, only on the
 cluster side, never on the client.
 
-In the above example, a [classname]+Tuple+ is used as
-the context; a more complex type isn't necessary. Also note that the
-Tuple isn't storing state, but is re-used to reduce the number of new
-Object instances created. In Cascading, it is perfectly safe to output
-the same Tuple instance from [methodname]+operate()+. The
-method [code]+functionCall.getOutputCollector().add( result )+ will
-not return until the result [classname]+Tuple+ has been
-processed or persisted downstream.
+In the above example, a [classname]+Tuple+ is used as the context; a more
+complex type isn't necessary. Also note that the Tuple isn't storing state, but
+is re-used to reduce the number of new Object instances created. In Cascading,
+it is perfectly safe to output the same Tuple instance from
+[methodname]+operate()+. The method
+[code]+functionCall.getOutputCollector().add( result )+ will not return until
+the result [classname]+Tuple+ has been processed, copied, or persisted
+downstream.
 
+[[filters]]
+== Filters
 
+A [classname]+Filter+ expects a stream of individual argument Tuples and returns
+a boolean value for each one, stating whether it should be discarded. Like a
+[classname]+Function+, a [classname]+Filter+ is used with an [classname]+Each+
+pipe, which may follow any pipe type.
 
-== Filter
-
-A [classname]+Filter+ expects a stream of individual
-argument Tuples and returns a Boolean value for each one, stating
-whether it should be discarded. Like a [classname]+Function+,
-a [classname]+Filter+ is used with an
-[classname]+Each+ pipe, which may follow any pipe type.
-
-To create a custom [classname]+Filter+, subclass the
-class [code]+cascading.operation.BaseOperation+ and implement the
-interface [code]+cascading.operation.Filter+. Because
-[code]+BaseOperation+ has been subclassed, the
-[code]+isRemove+ method, as defined on the [code]+Filter+
+To create a custom [classname]+Filter+, subclass the class
+[code]+cascading.operation.BaseOperation+ and implement the interface
+[code]+cascading.operation.Filter+. Because [code]+BaseOperation+ has been
+subclassed, the [code]+isRemove+ method, as defined on the [code]+Filter+
 interface, is the only method that must be implemented.
 
 .Custom Filter
@@ -198,216 +176,190 @@ interface, is the only method that must be implemented.
 include::custom-filter.adoc[]
 ====
 
-Filters must accept one or more values in a Tuple as arguments,
-and should declare the number of argument values they expect. If not
-specified, the default is to accept any number of values
-([code]++Operation.ANY++). Cascading verifies during planning that
-the number of arguments selected matches the number of arguments
-expected.
+Filters must accept one or more values in a Tuple as arguments, and should
+declare the number of argument values they expect. If not specified, the default
+is to accept any number of values ([code]+Operation.ANY+). Cascading verifies
+during planning that the number of arguments selected matches the number of
+arguments expected.
 
-The number of arguments declaration must be done on the
-constructor, either by passing a default value to the [code]+super+
-constructor, or by accepting the value from the user via a constructor
-implementation.
+The number of arguments declaration must be done on the constructor, either by
+passing a default value to the super constructor, or by accepting the value from
+the user via a constructor implementation.
 
 .String Length Filter
 ====
 include::stringlength-filter.adoc[]
 ====
 
-The example above implements a [classname]+Filter+ that
-accepts two arguments and filters out the current Tuple if the first
-argument, String length, is greater than the integer value of the second
-argument.
+The example above implements a [classname]+Filter+ that accepts two arguments
+and filters out the current Tuple if the first argument, String length, is
+greater than the integer value of the second argument.
 
+[[aggregators]]
+== Aggregators
 
-
-== Aggregator
-
-An [classname]+Aggregator+ expects a stream of tuple
-groups (the output of a [classname]+GroupBy+ or
-[classname]+CoGroup+ pipe), and returns zero or more result
-tuples for every group. An [classname]+Aggregator+ may only be
-used with an [classname]+Every+ pipe - which may follow a
-[classname]+GroupBy+, a [classname]+CoGroup+, or
-another [classname]+Every+ pipe, but not an
+An [classname]+Aggregator+ expects a stream of tuple groups (the output of a
+[classname]+GroupBy+ or [classname]+CoGroup+ pipe), and returns zero or more
+result tuples for every group. An [classname]+Aggregator+ may only be used with
+an [classname]+Every+ pipe - which may follow a [classname]+GroupBy+, a
+[classname]+CoGroup+, or another [classname]+Every+ pipe, but not an
 [classname]+Each+.
 
-To create a custom [classname]+Aggregator+, subclass the
-class [code]+cascading.operation.BaseOperation+ and implement the
-interface [code]+cascading.operation.Aggregator+. Because
-[code]+BaseOperation+ has been subclassed, the [code]+start+,
-[code]+aggregate+, and [code]+complete+ methods, as defined on
-the [code]+Aggregator+ interface, are the only methods that must be
-implemented.
+To create a custom [classname]+Aggregator+, subclass the class
+[code]+cascading.operation.BaseOperation+ and implement the interface
+[code]+cascading.operation.Aggregator+. Because [code]+BaseOperation+ has been
+subclassed, the [code]+start+, [code]+aggregate+, and [code]+complete+ methods,
+as defined on the [code]+Aggregator+ interface, are the only methods that must
+be implemented.
 
 .Custom Aggregator
 ====
 include::custom-aggregator.adoc[]
 ====
 
-Whenever possible, Aggregators should declare both the number of
-argument values they expect and the field names of the Tuple they
-return. However, these declarations are optional, as explained
-below.
+Whenever possible, Aggregators should declare both the number of argument values
+they expect and the field names of the Tuple they return. However, these
+declarations are optional, as explained below.
 
-For input, Aggregators must accept one or more values in a Tuple
-as arguments. If not specified, the default is to accept any number of
-values ([code]++Operation.ANY++). Cascading verifies during planning
-that the number of arguments selected is the same as the number of
-arguments expected.
+For input, Aggregators must accept one or more values in a Tuple as arguments.
+If not specified, the default is to accept any number of values
+([code]+Operation.ANY+). Cascading verifies during planning that the number of
+arguments selected is the same as the number of arguments expected.
 
-For output, it's good practice for Aggregators to declare the
-field names they return. If not specified, the default is
-[code]+Fields.UNKNOWN+, meaning that an unknown number of fields
-are returned in each Tuple.
+For output, it's good practice for Aggregators to declare the field names they
+return. If not specified, the default is [code]+Fields.UNKNOWN+, meaning that an
+unknown number of fields are returned in each Tuple.
 
-Both declarations - the number of input arguments and declared
-result fields - must be done on the constructor, either by passing
-default values to the [code]+super+ constructor, or by accepting
-the values from the user via a constructor implementation.
+Both declarations - the number of input arguments and declared result fields -
+must be done on the constructor, either by passing default values to the super
+constructor, or by accepting the values from the user via a constructor
+implementation.
 
 .Add Tuples Aggregator
 ====
 include::sum-aggregator.adoc[]
 ====
 
-The example above implements an [classname]+Aggregator+
-that accepts a value in the argument Tuple, adds all the argument tuples
-in the current grouping, and returns the result as a new Tuple.
+The example above implements an [classname]+Aggregator+ that accepts a value in
+the argument Tuple, adds all the argument tuples in the current grouping, and
+returns the result as a new Tuple.
 
 The first constructor above assumes a default field name that this
-[classname]+Aggregator+ returns. In practice, it's good to
-give the user the option of overriding the declared field names,
-allowing them to prevent possible field name collisions that might cause
-the planner to fail.
+[classname]+Aggregator+ returns. In practice, it's good to give the user the
+option of overriding the declared field names, allowing them to prevent possible
+field name collisions that might cause the planner to fail.
 
-There are several constraints on the use of Aggregators that may
-not be self-evident. These are detailed in the Javadoc
+There are several constraints on the use of Aggregators that may not be
+self-evident. These are detailed in the Javadoc
 
-
-
+[[buffers]]
 == Buffer
 
-A [classname]+Buffer+ expects set of argument tuples in
-the same grouping, and may return zero or more result tuples.
+A [classname]+Buffer+ expects set of argument tuples in the same grouping, and
+may return zero or more result tuples.
 
-A [classname]+Buffer+ is very similar to an
-[classname]+Aggregator+, except that it receives the current
-Grouping Tuple, and an iterator of all the arguments it expects, for
-every value Tuple in the current grouping - all on the same method call.
-This is very similar to the typical Reducer interface in MapReduce, and
-is best used for operations that need visibility to the previous and
-next elements in the stream - such as smoothing a series of time-stamps
-where there are missing values.
+A [classname]+Buffer+ is very similar to an [classname]+Aggregator+, except that
+it receives the current Grouping Tuple, and an [classname]+Iterator+ of all the
+arguments it expects, for every value Tuple in the current grouping - all on the
+same method call.
 
-A [classname]+Buffer+ may only be used with an
-[classname]+Every+ pipe, and it may only follow a
-[classname]+GroupBy+ or [classname]+CoGroup+ pipe
-type.
+This is very similar to the typical Reducer interface in MapReduce, and is best
+used for operations that need visibility to the previous and next elements in
+the stream - such as smoothing a series of time-stamps where there are missing
+values or creating a running average.
 
-To create a custom [classname]+Buffer+, subclass the
-class [code]+cascading.operation.BaseOperation+ and implement the
-interface [code]+cascading.operation.Buffer+. Because
-[code]+BaseOperation+ has been subclassed, the [code]+operate+
-method, as defined on the [code]+Buffer+ interface, is the only
-method that must be implemented.
+A [classname]+Buffer+ may only be used with an [classname]+Every+ pipe, and it
+may only follow a [classname]+GroupBy+ or [classname]+CoGroup+ pipe type.
+
+To create a custom [classname]+Buffer+, subclass the class
+[code]+cascading.operation.BaseOperation+ and implement the interface
+[code]+cascading.operation.Buffer+. Because [code]+BaseOperation+ has been
+subclassed, the [code]+operate+ method, as defined on the [code]+Buffer+
+interface, is the only method that must be implemented.
 
 .Custom Buffer
 ====
 include::custom-buffer.adoc[]
 ====
 
-Buffers should declare both the number of argument values they
-expect and the field names of the Tuple they return.
+Buffers should declare both the number of argument values they expect and the
+field names of the Tuple they return.
 
-For input, Buffers must accept one or more values in a Tuple as
-arguments. If not specified, the default is to accept any number of
-values (Operation.ANY). During the planning phase, Cascading verifies
-that the number of arguments selected is the same as the number of
-arguments expected.
+For input, Buffers must accept one or more values in a Tuple as arguments. If
+not specified, the default is to accept any number of values
+([code]+Operation.ANY+). During the planning phase, Cascading verifies that the
+number of arguments selected is the same as the number of arguments expected.
 
-For output, it's good practice for Buffers to declare the field
-names they return. If not specified, the default is
-[code]+Fields.UNKNOWN+, meaning that an unknown number of fields
-are returned in each Tuple.
+For output, it's good practice for Buffers to declare the field names they
+return. If not specified, the default is [code]+Fields.UNKNOWN+, meaning that an
+unknown number of fields are returned in each Tuple.
 
-Both declarations - the number of input arguments and declared
-result fields - must be done on the constructor, either by passing
-default values to the [code]+super+ constructor, or by accepting
-the values from the user via a constructor implementation.
+Both declarations - the number of input arguments and declared result fields -
+must be done on the constructor, either by passing default values to the super
+constructor, or by accepting the values from the user via a constructor
+implementation.
 
 .Average Buffer
 ====
 include::average-buffer.adoc[]
 ====
 
-The example above implements a buffer that accepts a value in the
-argument Tuple, adds all these argument tuples in the current grouping,
-and returns the result divided by the number of argument tuples counted
-in a new Tuple.
+The example above implements a buffer that accepts a value in the argument
+Tuple, adds all these argument tuples in the current grouping, and returns the
+result divided by the number of argument tuples counted in a new Tuple.
 
-The first constructor above assumes a default field name for the
-field that this [classname]+Buffer+ returns. In practice, it's
-good to give the user the option of overriding the declared field names,
-allowing them to prevent possible field name collisions that might cause
-the planner to fail
+The first constructor above assumes a default field name for the field that this
+[classname]+Buffer+ returns. In practice, it's good to give the user the option
+of overriding the declared field names, allowing them to prevent possible field
+name collisions that might cause the planner to fail
 
-Note that this example is somewhat artificial. In actual practice,
-an [classname]+Aggregator+ would be a better way to compute
-averages for an entire dataset. A [classname]+Buffer+ is
-better suited for calculating running averages across very large spans,
-for example.
+Note that this example is somewhat artificial. In actual practice, an
+[classname]+Aggregator+ would be a better way to compute averages for an entire
+dataset. A [classname]+Buffer+ is better suited for calculating running averages
+across very large spans, for example.
 
-There are several constraints on the use of Buffers that may not
-be self-evident. These are detailed in the Javadoc.
+There are several constraints on the use of Buffers that may not be
+self-evident. These are detailed in the Javadoc.
 
-As with the [classname]+Function+ example above, a
-[classname]+Buffer+ may define a custom context object and
-implement the [methodname]+prepare()+ and
-[methodname]+cleanup()+ methods to maintain state, or re-use
-outgoing [classname]+Tuple+ instances for efficiency.
-
-
+As with the [classname]+Function+ example above, a [classname]+Buffer+ may
+define a custom context object and implement the [methodname]+prepare()+ and
+[methodname]+cleanup()+ methods to maintain state, or re-use outgoing
+[classname]+Tuple+ instances for efficiency.
 
 == Operation and BaseOperation
 
-In all of the above sections, the
-[classname]+cascading.operation.BaseOperation+ class was
-subclassed. This class is an implementation of the
-[classname]+cascading.operation.Operation+ interface, and
-provides a few default method implementations. It is not strictly
-required to extend [classname]+BaseOperation+ when
-implementing this interface, but it is very convenient to do so.
+In all of the above sections, the [classname]+cascading.operation.BaseOperation+
+class was subclassed. This class is an implementation of the
+[classname]+cascading.operation.Operation+ interface, and provides a few default
+method implementations. It is not strictly required to extend
+[classname]+BaseOperation+ when implementing this interface, but it is very
+convenient to do so.
 
-When developing custom operations, the developer may need to
-initialize and destroy a resource. For example, when doing pattern
-matching, you might need to initialize a
-[classname]+java.util.regex.Matcher+ and use it in a
-thread-safe way. Or you might need to open, and eventually close, a
-remote connection. But for performance reasons, the operation should not
-create or destroy the connection for each Tuple or every Tuple group
-that passes through.
+When developing custom operations, the developer may need to initialize and
+destroy a resource. For example, when doing pattern matching, you might need to
+initialize a [classname]+java.util.regex.Matcher+ and use it in a thread-safe
+way. Or you might need to open, and eventually close, a remote connection. But
+for performance reasons, the operation should not create or destroy the
+connection for each Tuple or every Tuple group that passes through. Nor should
+user code store any state values in a Class instance or static field.
 
-For this reason, the interface
-[interfacename]+Operation+ declares two methods:
-[methodname]+prepare()+ and
-[methodname]+cleanup()+. In the case of Hadoop and MapReduce,
-the [methodname]+prepare()+ and
-[methodname]+cleanup()+ methods are called once per Map or
-Reduce task. The [methodname]+prepare()+ method is called
-before any argument Tuple is passed in, and the
-[methodname]+cleanup()+ method is called after all Tuple
-arguments have been operated on. Within each of these methods, the
-developer can initialize a "context" object that can hold an open socket
-connection or [classname]+Matcher+ instance. This context is
-user defined, and is the same mechanism used by the
-[classname]+Aggregator+ operation - except that the
-[classname]+Aggregator+ is also given the opportunity to
-initialize and destroy its context, via the
-[classname]+start()+ and [classname]+complete()+
-methods.
+For this reason, the interface [interfacename]+Operation+ declares two methods:
+[methodname]+prepare()+ and [methodname]+cleanup()+.
 
-Note that if a "context" object is used, its type should be
-declared in the subclass class declaration using the Java Generics
-notation.
+In the case of a clustered platform, the [methodname]+prepare()+ and
+[methodname]+cleanup()+ methods are called once per cluster side unit of
+processing (typically a JVM).
+
+The [methodname]+prepare()+ method is called before any argument Tuple is passed
+in, and the [methodname]+cleanup()+ method is called after all Tuple arguments
+have been operated on.
+
+Within each of these methods, the developer can initialize or destroy a
+"context" object that can hold an open socket connection or [classname]+Matcher+
+instance. This context is user defined, and is the same mechanism used by the
+[classname]+Aggregator+ operation - except that the [classname]+Aggregator+ is
+also given the opportunity to initialize and destroy its context, via the
+[classname]+start()+ and [classname]+complete()+ methods.
+
+Note that if a "context" object is used, its type should be declared in the
+subclass class declaration using the Java Generics notation.

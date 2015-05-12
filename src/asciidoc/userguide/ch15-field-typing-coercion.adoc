@@ -3,8 +3,6 @@
 
 = Field Typing and Type Coercion
 
-
-
 [[field-typing]]
 == Field Typing
 
@@ -118,4 +116,3 @@ format allowing [classname]+TextDelimited+ to read and write
 the value as a [classname]+String+, but use the value
 internally (in the Tuple) as a [classname]+long+, which is
 much more efficient.
-

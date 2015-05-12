@@ -126,6 +126,70 @@ the Tap is being read into the small side of a
 [classname]+cascading.pipe.HashJoin+.
 
 
+== Creating Flows from a JobConf
+
+If a MapReduce job already exists and needs to be managed by a
+Cascade, then the
+[classname]+cascading.flow.hadoop.MapReduceFlow+ class
+should be used. To do this, after creating a Hadoop
+[classname]+JobConf+ instance simply pass it into the
+[classname]+MapReduceFlow+ constructor. The resulting
+[classname]+Flow+ instance can be used like any other
+Flow.
+
+
+== Custom Taps and Schemes
+
+=== Taps
+When using the Cascading Hadoop mode, it requires some knowledge of Hadoop and
+the Hadoop FileSystem API. If a flow needs to support a new file system, passing
+a fully-qualified URL to the [classname]+Hfs+ constructor may be sufficient -
+the [classname]+Hfs+ tap will look up a file system based on the URL scheme via
+the Hadoop FileSystem API. If not, a new system is commonly constructed by
+subclassing the [classname]+cascading.tap.Hfs+ class.
+
+Delegating to the Hadoop FileSystem API is not a strict requirement. But if not
+using it, the developer must implement Hadoop
+[classname]+org.apache.hadoop.mapred.InputFormat+ and/or
+[classname]+org.apache.hadoop.mapred.OutputFormat+ classes so that Hadoop knows
+how to split and handle the incoming/outgoing data. The custom
+[classname]+Scheme+ is responsible for setting the [classname]+InputFormat+ and
+[classname]+OutputFormat+ on the [classname]+JobConf+, via the
+[methodname]+sinkConfInit+ and [methodname]+sourceConfInit+ methods.
+
+
+On some platforms, [methodname]+openForRead()+ is called with a pre-instantiated
+Input type. Typically this Input type should be used instead of instantiating a
+new instance of the appropriate type.
+
+In the case of the Hadoop platform, a
+[classname]+RecordReader+ is created by Hadoop and passed to
+the Tap. This [classname]+RecordReader+ is already configured
+to read data from the current [classname]+InputSplit+.
+
+Again, on some platforms, [methodname]+openForWrite()+ will be called with a
+pre-instantiated Output type. Typically this Output type should be used instead
+of instantiating a new instance of the appropriate type.
+
+In the case of the Hadoop platform, an [classname]+OutputCollector+ is created
+by Hadoop and passed to the Tap. This [classname]+OutputCollector+ is already
+configured to to write data to the current resource.
+
+
+=== Schemes
+
+Every [classname]+Scheme+ is presented the opportunity to set any custom
+properties the underlying platform requires, via the methods
+[methodname]+sourceConfInit()+ and [methodname]+sinkConfInit()+. These methods
+may be called more than once with new configuration objects, and should be
+idempotent.
+
+On the Hadoop platform, these methods should be used to configure
+the appropriate
+[classname]+org.apache.hadoop.mapred.InputFormat+ and
+[classname]+org.apache.hadoop.mapred.OutputFormat+.
+
+
 
 
 [[building]]
