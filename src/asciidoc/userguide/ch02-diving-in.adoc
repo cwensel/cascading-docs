@@ -91,10 +91,10 @@ splits, joins, and merges in the assembly.
 The above example is using the default "raw" Cascading API. This API is handy
 when creating very complex business logic, or creating frameworks that may need
 to algorithmically generate Cascading assemblies.
-[Lingual](http://www.cascading.org/lingual/), an ANSI SQL layer over Cascading,
+http://www.cascading.org/lingual/[Lingual], an ANSI SQL layer over Cascading,
 leverages this API.
 
-An alternative API is called [Fluid](http://www.cascading.org/fluid/).
+An alternative API is called http://www.cascading.org/fluid/[Fluid].
 
 Currently Fluid is maintained in a different project, but there are plans to
 make it available as part of all future Cascading releases. As well as provide
@@ -107,18 +107,28 @@ Here is the word count example from above re-written with the Fluid fluent API
 .Word Counting with Fluid
 ====
 include::basic-word-count-fluid.adoc[]
+
 <1> Read each line of text from a file and give it the field name "line"
+
 <2> Parse each "line" into words with the [code]+RegexGenerator+ object, which
 returns each word in the field named "word"
+
 <3> Sort and group all the tuples on the "word" field, using the [code]+GroupBy+
 object
+
 <4> Count the number of elements in each group, using the [code]+Count+ object,
 and store this value in the "count" field
+
 <5> Write out the "word" and "count" fields
+
 <6> Set application specific meta-data to allow the application to run
+
 <7> Choose the platform to execute on
+
 <8> Plan the unit of work to be executed, a Flow
-<9> Start the Flow and wait till completed
+
+<9> Start the Flow and wait till completed.
+
 ====
 
 The remainder of this User Guide will focus on the default Cascading Java API

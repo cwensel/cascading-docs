@@ -315,9 +315,9 @@ The underlying planner and execution is against the default MapReduce Hadoop API
 Hadoop2TezFlowConnector::
 
 The [classname]+cascading.flow.tez.planner.Hadoop2TezFlowConnector+ provides a
-planner for running Cascading on an Apache Hadoop 2.x cluster with [Apache
-Tez](http://tez.apache.org) as an installed YARN application. It is beyond the
-scope of this document to provide Tez installation instructions.
+planner for running Cascading on an Apache Hadoop 2.x cluster with
+http://tez.apache.org[Apache Tez] as an installed YARN application. It is beyond
+the scope of this document to provide Tez installation instructions.
 
 
 Cascading's support for pluggable planners allows a pipe assembly to be executed

@@ -13,7 +13,7 @@ mode.
 To use the [classname]+HadoopFlowConnector+ (i.e., to
 run in Hadoop mode), Cascading requires that Apache Hadoop be installed
 and correctly configured. Hadoop is an Open Source Apache project,
-freely available for download from the Hadoop website, <<,http://hadoop.apache.org/core/>>.
+freely available for download from the Hadoop website, http://hadoop.apache.org/core/.
 
 == What is Apache Hadoop?
 
@@ -53,7 +53,7 @@ but consequently not as robust or scalable as when it is running on the Hadoop
 platform.
 
 Apache Hadoop is an Open Source Apache project and is freely available. It can
-be downloaded from the Hadoop website: <<,http://hadoop.apache.org/core/>>
+be downloaded from the Hadoop website: http://hadoop.apache.org/core/.
 
 == Hadoop 1 MapReduce vs Hadoop 2 MapReduce
 
@@ -331,7 +331,7 @@ and the unit tests for examples.
 Cascading ships with several jars and dependencies in the download
 archive. Alternatively, Cascading is available over Maven and Ivy
 through the Conjars repository, along with a number of other
-Cascading-related projects. See <<,http://conjars.org >> for more
+Cascading-related projects. See http://conjars.org for more
 information.
 
 The core Cascading artifacts include the following:

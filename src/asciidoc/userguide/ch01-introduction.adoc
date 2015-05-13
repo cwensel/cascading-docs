@@ -87,8 +87,8 @@ fail fast where possible.
 
 Many features and behaviors of Cascading can be replaced or overridden. Where
 the Cascading User Guide does not provide guidance, review the
-[JavaDoc](http://cascading.org/documentation/) for APIs and properties than can
-be used or modified from the defaults.
+http://cascading.org/documentation/[JavaDoc] for APIs and properties than can be
+used or modified from the defaults.
 
 Resulting execution plans created by the Cascading planner are both intuitive
 and stable.
@@ -131,7 +131,7 @@ accept command-line parameters to customize it for a given execution.
 unique applications. This work is generally a development task that involves
 chaining together operations to act on one or more input data sets, producing
 one or more output data sets. This can be done with the default Java Cascading
-API, the [Fluid](http://cascading.org/fluid/) fluent API, or with a scripting
+API, the http://cascading.org/fluid/[Fluid] fluent API, or with a scripting
 language such as Scala, Clojure, Groovy, JRuby, or Jython (or by one of the
 DSLs implemented in these languages).
 

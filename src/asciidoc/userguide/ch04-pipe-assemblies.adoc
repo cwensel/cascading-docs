@@ -4,7 +4,7 @@
 = Pipe Assemblies
 
 [[each-every]]
-== The Each and Every Pipes
+== Each and Every Pipes
 
 The [classname]+Each+ and [classname]+Every+ pipes perform operations on tuple
 data - for instance, perform a search-and-replace on tuple contents, filter out
