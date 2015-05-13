@@ -1,7 +1,6 @@
 :toc2:
 :doctitle: {_doctitle} - Cascades
 
-[[cascades]]
 = Cascades
 
 image:images/cascade.svg[align="center"]

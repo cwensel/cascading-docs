@@ -3,83 +3,86 @@
 
 = Cascading Cookbook
 
-This chapter demonstrates some common idioms used in Cascading
-applications.
+This chapter demonstrates some common idioms used in Cascading applications.
 
 == Tuples and Fields
 
 Copy a Tuple instance::
+
 include::cookbook-copy.adoc[]
 
 Nest a Tuple instance within a Tuple::
+
 include::cookbook-nest.adoc[]
 
 Build a longer Fields instance::
+
 include::cookbook-fieldsappend.adoc[]
 
 Remove a field from a longer Fields instance::
+
 include::cookbook-fieldssubtract.adoc[]
-
-
-
-
 
 == Stream Shaping
 
 Split (branch) a Tuple Stream::
+
 include::cookbook-split.adoc[]
 
 Copy a field value::
+
 include::cookbook-copyfield.adoc[]
 
 Discard (drop) a field::
+
 include::cookbook-discardfield.adoc[]
 
 Retain (keep) a field::
+
 include::cookbook-retainfield.adoc[]
 
 Rename a field::
+
 include::cookbook-renamefield.adoc[]
 
 Coerce field values from Strings to primitives::
+
 include::cookbook-coercefields.adoc[]
 
 Insert constant values into a stream::
+
 include::cookbook-insertvalue.adoc[]
-
-
-
-
 
 == Common Operations
 
 Parse a String date/time value::
+
 include::cookbook-parsedate.adoc[]
 
 Format a time-stamp to a date/time value::
+
 include::cookbook-formatdate.adoc[]
-
-
-
-
 
 == Stream Ordering
 
 Remove duplicate tuples in a stream::
+
 include::cookbook-distinctgroup.adoc[]
 
 Create a list of unique values::
+
 include::cookbook-distinctvalue.adoc[]
 
 Find first occurrence in time of a unique value::
+
 include::cookbook-distinctorder.adoc[]
-
-
 
 == API Usage
 
 Pass properties to a custom Operation::
+
 include::cookbook-passproperties.adoc[]
 
 Bind multiple sources and sinks to a Flow::
+
 include::cookbook-sourcessinks.adoc[]

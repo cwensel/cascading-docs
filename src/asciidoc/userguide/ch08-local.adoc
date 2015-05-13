@@ -3,7 +3,6 @@
 
 = Local Platform
 
-
 === Taps
 
 The following sample code creates a new Hadoop FileSystem Tap that can read and
