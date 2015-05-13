@@ -3,115 +3,57 @@
 
 = Extending Cascading
 
-
-
 == Scripting
 
-The Cascading API was designed with scripting in mind. Any
-Java-compatible scripting language can import and instantiate Cascading
-classes, create pipe assemblies and flows, and execute those flows. And
-if the scripting language in question supports Domain Specific Language
-(DSL) creation, users can create their own DSLs to handle common
-idioms.
+The Cascading API was designed with scripting in mind. Any JVM-compatible
+scripting language can import and instantiate Cascading classes, create pipe
+assemblies and flows, and execute those flows. And if the scripting language in
+question supports Domain Specific Language (DSL) creation, users can create
+their own DSLs to handle common idioms.
 
-The Cascading website includes information on scripting language
-bindings that are publicly available.
-
-
+The Cascading website (http://cascading.org/extensions/) includes information on
+scripting language bindings that are publicly available.
 
 [[custom-types]]
 == Custom Types and Serialization
 
-The [classname]+Tuple+ class is a generic container for
-all [classname]+java.lang.Object+ instances. Thus any
-primitive value or custom Class can be stored in a
-[classname]+Tuple+ instance - that is, returned by a
-[classname]+Function+, [classname]+Aggregator+, or
-[classname]+Buffer+ as a result value.
+The [classname]+Tuple+ class is a generic container for all
+[classname]+java.lang.Object+ instances.
 
-But for this to work when using the Cascading Hadoop mode, any
-Class that isn't a primitive type or a Hadoop
-[classname]+Writable+ type requires a corresponding Hadoop
-serialization class registered in the Hadoop configuration files for
-your cluster. Hadoop [classname]+Writable+ types work because
-there is already a generic serialization implementation built into
-Hadoop. See the Hadoop documentation for information on registering a
-new serialization helper or creating [classname]+Writable+
-types. Registered serialization implementations are automatically
-inherited by Cascading.
+Thus any primitive value or custom Class can be stored in a [classname]+Tuple+
+instance - that is, returned by a [classname]+Function+,
+[classname]+Aggregator+, or [classname]+Buffer+ as a result value.
 
-During serialization and deserialization of
-[classname]+Tuple+ instances that contain custom types, the
-Cascading [classname]+Tuple+ serialization framework must
-store the class name (as a [classname]++String++) before
-serializing the custom object. This can be very space-inefficient. To
-overcome this, custom types can add the
-[classname]+SerializationToken+ Java annotation to the custom
-type class. The [classname]+SerializationToken+ annotation
-expects two arrays - one of integers that are used as tokens, and one of
-Class name strings. Both arrays must be the same size. The integer
-tokens must all have values of 128 or greater, since the first 128
-values are reserved for internal use.
-
-During serialization and deserialization, the token values are
-used instead of the [classname]+String+ Class names, in order
-to reduce the amount of storage used.
-
-Serialization tokens may also be stored in the Hadoop config files
-or set as a property passed to the [classname]+FlowConnector+,
-with the property name [code]+cascading.serialization.tokens+. The
-value of this property is a comma separated list of
-[code]+token=classname+ values.
-
-Note that Cascading natively serializes/deserializes all
-primitives and byte arrays ([code]++byte[]++), if the developer
-registers the [classname]++BytesSerialization++ class by using
-[code]++TupleSerializationProps.addSerialization(properties,
-BytesSerialization.class.getName()++. The token 127 is used for the
-Hadoop [classname]++BytesWritable++ class.
-
-By default, Cascading uses lazy deserialization on Tuple elements
-during comparisons when Hadoop sorts keys during the "shuffle"
-phase.
-
-Cascading supports custom serialization for custom types, as well
-as lazy deserialization of custom types during comparisons. This is
-accomplished by implementing the [classname]+StreamComparator+
-interface. See the Javadoc for detailed instructions on implemention,
-and the unit tests for examples.
-
-
+Unfortunately there is no common method for managing the serialization of custom
+types that is cross platform. Please see the platform specific chapters for
+details on registering serializers that Cascading can adopt at runtime.
 
 == Custom Comparators and Hashing
 
-Frequently, objects in one [classname]+Tuple+ are
-compared to objects in a second [classname]+Tuple+. This is
-especially true during the sort phase of [classname]+GroupBy+
-and [classname]+CoGroup+ in Cascading Hadoop mode . By
-default, Hadoop and Cascading use the native
-[classname]+Object+ methods [methodname]+equals()+
-and [methodname]+hashCode()+ to compare two values and get a
-consistent hash code for a given value, respectively.
+Frequently, objects in one [classname]+Tuple+ are compared to objects in a
+second [classname]+Tuple+. This is especially true during the sort phase of
+[classname]+GroupBy+ and [classname]+CoGroup+.
+
+By default, Cascading uses the native [classname]+Object+ methods
+[methodname]+equals()+ and [methodname]+hashCode()+ to compare two values and
+get a consistent hash code for a given value, respectively.
 
 To override this default behavior, you can create a custom
-[classname]+java.util.Comparator+ class to perform comparisons
-on a given field in a Tuple. For instance, to secondary-sort a
-collection of custom [classname]+Person+ objects in a
-[classname]+GroupBy+, use the
+[classname]+java.util.Comparator+ class to perform comparisons on a given field
+in a Tuple. For instance, to secondary-sort a collection of custom
+[classname]+Person+ objects in a [classname]+GroupBy+, use the
 [code]+Fields.setComparator()+ method to designate the custom
-[classname]+Comparator+ to the [classname]+Fields+
-instance that specifies the sort fields.
+[classname]+Comparator+ to the [classname]+Fields+ instance that specifies the
+sort fields.
 
-Alternatively, you can set a default
-[classname]+Comparator+ to be used by a
-[classname]+Flow+, or used locally on a given
-[classname]+Pipe+ instance. There are two ways to do this.
-Call [code]+FlowProps.setDefaultTupleElementComparator()+ on a
+Alternatively, you can set a default [classname]+Comparator+ to be used by a
+[classname]+Flow+, or used locally on a given [classname]+Pipe+ instance. There
+are two ways to do this. Call
+[code]+FlowProps.setDefaultTupleElementComparator()+ on a
 [classname]+Properties+ instance, or use the property key
 [code]+cascading.flow.tuple.element.comparator+.
 
-If the hash code must also be customized, the custom Comparator
-can implement the interface
-[classname]+cascading.tuple.Hasher+. For more information, see
-the Javadoc.
+If the hash code must also be customized, the custom Comparator can implement
+the interface [classname]+cascading.tuple.Hasher+.
 
+For more information, see the Javadoc.

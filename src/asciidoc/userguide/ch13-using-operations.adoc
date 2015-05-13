@@ -121,6 +121,7 @@ option of overriding the declared field names, allowing them to prevent possible
 field name collisions that might cause the planner to fail.
 
 This line is especially important:
+[source,java]
 ----
 int sum = arguments.getInteger( 0 ) + arguments.getInteger( 1 );
 ----

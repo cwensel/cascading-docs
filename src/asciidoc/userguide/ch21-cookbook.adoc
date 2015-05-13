@@ -6,8 +6,6 @@
 This chapter demonstrates some common idioms used in Cascading
 applications.
 
-
-
 == Tuples and Fields
 
 Copy a Tuple instance::
@@ -85,6 +83,3 @@ include::cookbook-passproperties.adoc[]
 
 Bind multiple sources and sinks to a Flow::
 include::cookbook-sourcessinks.adoc[]
-
-
-

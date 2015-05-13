@@ -13,10 +13,12 @@ stream that share a common field value.
 
 Here is the syntax for these pipes:
 
+[source,java]
 ----
 new Each( previousPipe, argumentSelector, operation, outputSelector )
 ----
 
+[source,java]
 ----
 new Every( previousPipe, argumentSelector, operation, outputSelector )
 ----

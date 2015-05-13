@@ -35,7 +35,6 @@ code yields the same result:
 
 include::identity-discard-fields.adoc[]
 
-
 Rename all fields::
 
 Here Identity renames the incoming arguments. Since Fields.RESULTS is implied,
@@ -243,7 +242,6 @@ include::regex-replace.adoc[]
 In the example above, all adjoined white space characters are replaced with a
 single space character.
 
-
 RegexFilter::
 
 The [classname]+cascading.operation.regex.RegexFilter+ function filters a Tuple
@@ -265,7 +263,6 @@ include::regex-filter.adoc[]
 +
 
 The above keeps all lines in which "68." appears at the start of the IP address.
-
 
 RegexGenerator::
 
@@ -378,13 +375,11 @@ to handle multiple [classname]+NodeList+ values. If the returned result of an
 XPath expression is a [classname]+NodeList+, only the first [classname]+Node+ is
 used for the field value and the rest are ignored.
 
-
 XPathGenerator::
 
 Similar to XPathParser, the [classname]+cascading.operation.adoc.XPathGenerator+
 function emits a new [classname]+Tuple+ for every [classname]+Node+ returned by
 the given XPath expression from the XML in the current Tuple.
-
 
 XPathFilter::
 
@@ -392,7 +387,6 @@ The filter [classname]+cascading.operation.adoc.XPathFilter+ removes a Tuple if
 the specified XPath expression returns [code]+false+. Set the removeMatch
 parameter to [code]+true+ if the filter should be reversed, i.e., to keep only
 those Tuples where the XPath expression returns [code]+true+.
-
 
 TagSoupParser::
 

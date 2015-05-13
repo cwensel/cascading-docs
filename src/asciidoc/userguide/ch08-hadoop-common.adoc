@@ -219,6 +219,63 @@ aggregate function to be implemented - not just Associative and
 Commutative functions.
 
 
+[[custom-types]]
+== Custom Types and Serialization
+
+But for this to work when using the Cascading Hadoop mode, any
+Class that isn't a primitive type or a Hadoop
+[classname]+Writable+ type requires a corresponding Hadoop
+serialization class registered in the Hadoop configuration files for
+your cluster. Hadoop [classname]+Writable+ types work because
+there is already a generic serialization implementation built into
+Hadoop. See the Hadoop documentation for information on registering a
+new serialization helper or creating [classname]+Writable+
+types. Registered serialization implementations are automatically
+inherited by Cascading.
+
+During serialization and deserialization of
+[classname]+Tuple+ instances that contain custom types, the
+Cascading [classname]+Tuple+ serialization framework must
+store the class name (as a [classname]++String++) before
+serializing the custom object. This can be very space-inefficient. To
+overcome this, custom types can add the
+[classname]+SerializationToken+ Java annotation to the custom
+type class. The [classname]+SerializationToken+ annotation
+expects two arrays - one of integers that are used as tokens, and one of
+Class name strings. Both arrays must be the same size. The integer
+tokens must all have values of 128 or greater, since the first 128
+values are reserved for internal use.
+
+During serialization and deserialization, the token values are
+used instead of the [classname]+String+ Class names, in order
+to reduce the amount of storage used.
+
+Serialization tokens may also be stored in the Hadoop config files
+or set as a property passed to the [classname]+FlowConnector+,
+with the property name [code]+cascading.serialization.tokens+. The
+value of this property is a comma separated list of
+[code]+token=classname+ values.
+
+Note that Cascading natively serializes/deserializes all
+primitives and byte arrays ([code]++byte[]++), if the developer
+registers the [classname]++BytesSerialization++ class by using
+[code]++TupleSerializationProps.addSerialization(properties,
+BytesSerialization.class.getName()++. The token 127 is used for the
+Hadoop [classname]++BytesWritable++ class.
+
+By default, Cascading uses lazy deserialization on Tuple elements
+during comparisons when Hadoop sorts keys during the "shuffle"
+phase.
+
+Cascading supports custom serialization for custom types, as well
+as lazy deserialization of custom types during comparisons. This is
+accomplished by implementing the [classname]+StreamComparator+
+interface. See the Javadoc for detailed instructions on implemention,
+and the unit tests for examples.
+
+
+
+
 [[building]]
 == Building
 
@@ -350,16 +407,9 @@ script:
 
 .Running a Cascading Application
 ===
-
 ----
-
-
-
 $HADOOP_HOME/bin/hadoop jar your-application.jar [some params]
-
 ----
-
-
 ====
 
 If the configuration scripts in $HADOOP_CONF_DIR
