@@ -1,0 +1,63 @@
+:toc2:
+:doctitle: {_doctitle} - Local Platform
+
+[[local-platform]
+= Local Platform
+
+[[source-sink]]
+== Source and Sink Taps
+
+=== Taps
+
+The following sample code creates a new Hadoop FileSystem Tap that can read and
+write raw text files. Since only one field name is provided, the "offset" field
+is discarded, resulting in an input tuple stream with only "line" values.
+
+Here are the most commonly-used tap types:
+
+FileTap::
+
+The [classname]+cascading.tap.local.FileTap+ tap is used with the Cascading
+local platform to access files on the local file system.
+
+[[debugging]]
+== Troubleshooting and Debugging
+
+Debugging and testing in Cascading local mode, unlike Cascading other platforms,
+is straightforward as all the processing happens in the local JVM and
+in local memory.
+
+This dramatically simplifies the use of an IDE and Debugger.Thus the very first
+recommendation for debugging Cascading applications on a given platform is to
+first write tests that run in Cascading local mode.
+
+Along with the use of an IDE Debugger, Cascading provides two tools to help sort
+out runtime issues. First is the use of the [classname]+Debug+ filter.
+
+It is a best practice to sprinkle [classname]+Debug+ operators (see
+<<ch16-operations.adoc#debug-function>>) in the pipe assembly and rely on the
+planner to remove them at runtime by setting a [classname]+DebugLevel+.
+
+[classname]+Debug+ can only print to the local console via std out or std error,
+thus making it harder for use on distributed platforms, as Operations do not
+execute locally but on the cluster side. [classname]+Debug+ can optionally print
+the current field names, and a prefix can be set to help distinguish between
+instances of the [classname]+Debug+ operation.
+
+Additionally, the actual execution plan for a given Flow can be written out (and
+visualized) via the Flow.writeDOT() method. DOT files are simply text
+representation of graph data and can be read by tools like GraphViz and Omni
+Graffle.
+
+In Cascading local mode, these execution plans are exactly as the pipe
+assemblies were coded, except the sub-assemblies are unwound and the field names
+across the Flow are resolved by the planner. That is, [code]+Fields.ALL+ and
+other wild cards are converted the actual field names or ordinals.
+
+If the [methodname]+connect()+ method on the current [classname]+FlowConnector+
+fails, the resulting [classname]+PlannerException+ has a
+[methodname]+writeDOT()+ method that shows the progress of the current planner.
+
+For planner related errors that present during runtime when executing a Flow,
+see the chapter on <<ch22-query-process-planner.adoc#process-planner,The
+Cascading Process Planner>>.

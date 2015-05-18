@@ -188,7 +188,7 @@ public class Hadoop2MR1CompiledExamples
 
   public void compileFlowConnectorAppProps()
     {
-    String pathToJar = null;
+    String pathToJar = "";
 
     //@extract-start flow-jobconf
     JobConf jobConf = new JobConf();
@@ -214,4 +214,23 @@ public class Hadoop2MR1CompiledExamples
     //@extract-end
     }
 
+  public void compileAppProps()
+    {
+    String pathToJar = "";
+
+    //@extract-start app-props
+    Properties properties = AppProps.appProps()
+      .setName( "sample-app" )
+      .setVersion( "1.2.3" )
+      .addTags( "deploy:prod", "team:engineering" )
+
+      .setJarClass( Main.class ) // <1>
+
+        // ALTERNATIVELY ...
+
+      .setJarPath( pathToJar ) // <2>
+
+      .buildProperties();
+    //@extract-end
+    }
   }

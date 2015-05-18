@@ -1,7 +1,7 @@
 :toc2:
 :doctitle: {_doctitle} - Cascading Basic Concepts
 
-= Cascading Basic Concept
+= Cascading Basic Concepts
 
 == Terminology
 
@@ -70,16 +70,19 @@ As data moves through the pipe, streams may be separated or combined for various
 purposes. Here are the three basic patterns:
 
 Split::
+
 A split takes a single stream and sends it down multiple paths - that
 is, it feeds a single [classname]+Pipe+ instance into two or more subsequent
 separate [classname]+Pipe+ instances with unique branch names.
 
 Merge::
+
 A merge combines two or more streams that have identical fields into a single
 stream. This is done by passing two or more [classname]+Pipe+ instances to a
 [classname]+Merge+ or [classname]+GroupBy+ pipe. This is also called a union.
 
 Join::
+
 A join combines data from two or more streams that have different fields, based
 on common field values (analogous to a SQL join.) This is done by passing two or
 more [classname]+Pipe+ instances to a [classname]+HashJoin+ or
@@ -271,7 +274,7 @@ Cascading supports pluggable planners that allow it to execute on differing
 platforms. Planners are invoked by an associated [classname]+FlowConnector+
 subclass. Currently, only four planners are provided, as described below:
 
-LocalFlowConnector::
+[classname]+LocalFlowConnector+::
 
 The [classname]+cascading.flow.local.LocalFlowConnector+ provides a "local" mode
 planner for running Cascading completely in memory on the current computer. This
@@ -290,7 +293,7 @@ are likely to fail against moderately large files.
 Local mode is useful for development, testing, and interactive data exploration
 against sample sets.
 
-HadoopFlowConnector::
+[classname]+HadoopFlowConnector+::
 
 The [classname]+cascading.flow.hadoop.HadoopFlowConnector+ provides a planner
 for running Cascading on an Apache Hadoop 1.x cluster. This allows Cascading to
@@ -300,8 +303,7 @@ execute against extremely large data sets over a cluster of computing nodes.
 
 Note Hadoop 1.x only provides the MapReduce model for distributed computation.
 
-
-Hadoop2MR1FlowConnector::
+[classname]+Hadoop2MR1FlowConnector+::
 
 The [classname]+cascading.flow.hadoop2.Hadoop2MR1FlowConnector+ provides a
 planner for running Cascading on an Apache Hadoop 2.x cluster. This class is
@@ -312,13 +314,12 @@ Hadoop 2 specific properties and is compiled against Hadoop 2 API binaries.
 
 The underlying planner and execution is against the default MapReduce Hadoop API.
 
-Hadoop2TezFlowConnector::
+[classname]+Hadoop2TezFlowConnector+::
 
 The [classname]+cascading.flow.tez.planner.Hadoop2TezFlowConnector+ provides a
 planner for running Cascading on an Apache Hadoop 2.x cluster with
 http://tez.apache.org[Apache Tez] as an installed YARN application. It is beyond
 the scope of this document to provide Tez installation instructions.
-
 
 Cascading's support for pluggable planners allows a pipe assembly to be executed
 on an arbitrary platform, using platform-specific Tap and Scheme classes that
@@ -345,6 +346,7 @@ flow).
 The platform on which your application is running determines which specific Tap and Scheme
 classes you can use. Details are provided in subsequent chapters.
 
+[[common-schemes]]
 === Common Schemes
 
 Some Schemes are functionally common across platforms but remain platform
@@ -353,7 +355,7 @@ platform specific package name.
 
 Cascading provides two common Scheme types:
 
-TextLine::
+[classname]+TextLine+::
 
 [classname]+TextLine+ reads and writes raw text files and returns tuples which,
 by default, contain two fields specific to the platform used. The first field is
@@ -367,7 +369,7 @@ and Hadoop modes.
 By default TextLine uses the UTF-8 character set. This can be overridden on the
 appropriate TextLine constructor.
 
-TextDelimited::
+[classname]+TextDelimited+::
 
 [classname]+TextDelimited+ reads and writes character-delimited files in
 standard formats such as CSV (comma-separated variables), TSV (tab-separated
@@ -396,6 +398,7 @@ details for each standard scheme are shown below.
 | Read delimited text (CSV, TSV, etc) | [classname]+TextDelimited+ | [classname]+TextDelimited+
 |====
 
+[[common-taps]]
 === Common Taps
 
 The following sample code creates a new local FileSystem Tap that can read and
@@ -413,7 +416,7 @@ platform specific package name.
 
 Cascading provides one common Tap type:
 
-PartitionTap::
+[classname]+PartitionTap+::
 
 The [classname]+cascading.tap.hadoop.PartitionTap+ and
 [classname]+cascading.tap.local.PartitionTap+ are used to sink tuples into
@@ -426,21 +429,21 @@ taps are platform independent.
 
 There are six utility taps:
 
-MultiSourceTap::
+[classname]+MultiSourceTap+::
 
 The [classname]+cascading.tap.MultiSourceTap+ is used to tie multiple tap
 instances into a single tap for use as an input source. The only restriction is
 that all the tap instances passed to a new MultiSourceTap share the same Scheme
 classes (not necessarily the same Scheme instance).
 
-MultiSinkTap::
+[classname]+MultiSinkTap+::
 
 The [classname]+cascading.tap.MultiSinkTap+ is used to tie multiple tap
 instances into a single tap for use as output sinks. At runtime, for every Tuple
 output by the pipe assembly, each child tap to the MultiSinkTap will sink the
 Tuple.
 
-DecoratorTap::
+[classname]+DecoratorTap+::
 
 The [classname]+cascading.tap.DecoratorTap+ is a utility helper for wrapping an
 existing Tap with new functionality, via a sub-class, and/or adding 'meta-data' to
@@ -532,19 +535,20 @@ created. Flows are executable in the sense that, once they are created, they can
 be started and will execute on the specified platform. If the Hadoop platform is
 specified, the Flow will execute on a Hadoop cluster.
 
-A Flow is essentially a data processing pipeline that reads data
-from sources, processes the data as defined by the pipe assembly, and
-writes data to the sinks. Input source data does not need to exist at
-the time the Flow is created, but it must exist by the time the Flow is
-executed.
+A Flow is essentially a data processing pipeline that reads data from sources,
+processes the data as defined by the pipe assembly, and writes data to the
+sinks. Input source data does not need to exist at the time the Flow is created,
+but it must exist by the time the Flow is executed.
 
 The most common pattern is to create a Flow from an existing pipe assembly. But
-there are cases where a MapReduce job (if running on Hadoop) has already been
-created, and it makes sense to encapsulate it in a Flow class so that it may
-participate in a [classname]+Cascade+ and be scheduled with other
+there are cases where a MapReduce job (if running on Hadoop MapReduce) has
+already been created, and it makes sense to encapsulate it in a Flow class so
+that it may participate in a [classname]+Cascade+ and be scheduled with other
 [classname]+Flow+ instances.
 
 Alternatively, <<ch06-flows.adoc#custom-flows,custom Flows>> can be created so
 that third-party applications can participate in a [classname]+Cascade+, and
 complex algorithms that result in iterative Flow executions can be encapsulated
 as a single Flow.
+
+The chapter on <<ch06-flows.adoc#_flows,Flows>> provides further detail.

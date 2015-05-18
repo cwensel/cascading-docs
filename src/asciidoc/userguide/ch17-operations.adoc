@@ -10,7 +10,8 @@ tuple stream.
 
 Here are some common patterns that illustrate how Cascading "field algebra"
 works. (Note that, in actual practice, some of these example tasks might be
-better performed with helper <<ch18-subassemblies.adoc,subassemblies>> such as
+better performed with helper
+<<ch18-subassemblies.adoc#subassemblies,subassemblies>> such as
 <<ch18-subassemblies.adoc#rename,[classname]+Rename+>>,
 <<ch18-subassemblies.adoc#retain,[classname]+Retain+>>, and
 <<ch18-subassemblies.adoc#discard,[classname]+Discard+>>.)

@@ -114,8 +114,6 @@ Setting [classname]+AssertionLevel.NONE+ removes all assertions.
 [code]+STRICT+ ones. And [classname]+AssertionLevel.STRICT+ keeps all assertions -
 the planner default value.
 
-
-
 [[failure-traps]]
 == Failure Traps
 

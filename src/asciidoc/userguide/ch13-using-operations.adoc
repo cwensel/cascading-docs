@@ -23,9 +23,9 @@ There are four kinds of Operations:
 
 image:images/operations.svg[align="center"]
 
-Operations typically require an input argument _multi-valued_ Tuple to act on. And
-all Operations can return *_zero or more_* _multi-valued_ Tuple results - except
-[classname]+Filter+, which simply returns a Boolean indicating whether to
+Operations typically require an input argument _multi-valued_ Tuple to act on.
+And all Operations can return *_zero or more_* _multi-valued_ Tuple results -
+except [classname]+Filter+, which simply returns a Boolean indicating whether to
 discard the current Tuple.
 
 A [classname]+Function+, for instance, can parse a string passed by an argument

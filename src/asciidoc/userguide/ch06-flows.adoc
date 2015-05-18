@@ -112,3 +112,61 @@ Since many algorithms need to perform multiple passes over a given data set, a
 Riffle-annotated Class can be written that internally creates Cascading Flows
 and executes them until no more passes are needed. This is like nesting Flows or
 Cascades in a parent Flow, which in turn can participate in a Cascade.
+
+[[process-levels]]
+== Flow Process Hierarchy
+
+A Flow is a parent, top-level unit-of-work. Underneath are other process levels
+that have specific roles.
+
+[classname]+Flow+::
+
+The prior sections provide a detailed description of a Flow, but at its essence
+it is a single business oriented unit-of-work. The data consumed and produced
+has some level of durability and business need. A Flow satisfies some business
+or architectural need.
+
+[classname]+FlowStep+::
+
+A FlowStep represent a unit of platform managed work.
+
++
+
+On Hadoop MapReduce, it would be a "job". On Apache Tez, it would be a "DAG".
+
+[classname]+FlowNode+::
+
+A FlowNode represents the complete unit-of-work that conceptually fits in a
+single JVM and what becomes parallelized by handling sub-sets of the input data
+source.
+
++
+
+The FlowNode may represent multiple data paths, where one path is selected at
+runtime depending on which input data set is actually being processed.
+
++
+
+On Hadoop MapReduce, it would be a "mapper" or a "reducer". On Apache Tez, it
+would be a "vertex".
+
+
+[classname]+FlowSlice+::
+
+The FlowSlice is the smallest unit of parallelization. At runtime, a FlowSlice
+represents the actual JVM executing Cascading code, and the data path(s) being
+executed in that JVM.
+
++
+
+If the FlowNode being parallelized has FlowPipelines, one of thise pipelines
+will be represented here.
+
++
+
+On Hadoop MapReduce and Apache Tez this would be an individual "task attempt".
+
+== Runtime Metrics
+
+Developers can retrieve runtime metrics (counters) of each <<process-levels,
+process level>> in a platform independent way.

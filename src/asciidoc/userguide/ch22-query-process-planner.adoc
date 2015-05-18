@@ -1,0 +1,50 @@
+:toc2:
+:doctitle: {_doctitle} - The Cascading Process Planner
+
+[[process-planner]]
+= The Cascading Process Planner
+
+When a collection of functions, splits, and joins are all tied up together into
+a "pipe assembly", the FlowConnector object is used to create a new Flow
+instance against input and output data paths. This Flow is a single Cascading
+job.
+
+Internally, the FlowConnector employs an intelligent planner to convert the pipe
+assembly to a graph of dependent MapReduce jobs that can be executed on a Hadoop
+cluster.
+
+All this happens behind the scenes - as does the scheduling of the individual
+MapReduce jobs, and the cleanup of intermediate data sets that bind the jobs
+together.
+
+image:images/planned-flow.svg[align="center"]
+
+The diagram above shows how a typical Flow is partitioned into MapReduce jobs.
+Every job is delimited by a temporary file that serves as the sink from the
+first job and the source for the next.
+
+To create a visualization of how your Flows are partitioned, call the
+[classname]+Flow#writeDOT()+ method. This writes a <<,DOT >> file out to the
+path specified, which can be viewed in a graphics package like OmniGraffle or
+Graphviz.
+
+
+
+/////////
+
+
+In the case of Hadoop MapReduce, using the [classname]+HadoopFlowConnector+, the
+DOT files also contain the intermediate [classname]+Tap+ instances created to
+join MapReduce jobs together. Thus the branches between Tap instances are
+effectively MapReduce jobs. See the [code]+Flow.writeStepsDOT()+ method to write
+out all the MapReduce jobs that will be scheduled.
+
+This information can also be misleading to what is actually happening per Map or
+Reduce task cluster side. For a more detailed view of the data pipeline actually
+executing on a given Map or Reduce task, set the "cascading.stream.dotfile.path"
+property on the [classname]+FlowConnector+. This will write, cluster side, a DOT
+representation of the current data pipeline path the current Map or Reduce task
+is handling which is a function of which file(s) the Map or Reduce task are
+reading and processing. And if multiple files, which files are being read to
+which [classname]+HashJoin+ instances. It is recommended to use a relative path
+like [code]+stepPlan/+.

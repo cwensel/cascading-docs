@@ -1,4 +1,0 @@
-:toc2:
-:doctitle: {_doctitle} - Apache Hadoop MapReduce Platform
-
-= Apache Hadoop MapReduce Platform

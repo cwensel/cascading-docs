@@ -1,4 +1,5 @@
 :toc2:
 :doctitle: {_doctitle} - Apache Tez Platform
 
+[[tez-platform]]
 = Apache Tez Platform

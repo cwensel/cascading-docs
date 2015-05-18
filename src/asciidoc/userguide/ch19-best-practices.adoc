@@ -66,7 +66,7 @@ are rare.
 
 == Logical Responsibilities for SubAssemblies
 
-SubAssembies provide a very convenient means to co-locate similar or related
+SubAssemblies provide a very convenient means to co-locate similar or related
 responsibilities into a single place. For example, it's simple to use a
 [classname]+ParsingSubAssembly+ and a [classname]+RulesSubAssembly+, where the
 first is responsible solely for parsing incoming [classname]+Tuple+ streams (log
@@ -74,9 +74,9 @@ files for example), and the second applies rules to decide whether a given
 [classname]+Tuple+ should be discarded or marked as bad.
 
 Additionally, in your unit tests you can create a
-[classname]+TestAssertionsSubAssembly+ that simply inlines various
+[classname]+TestAssertionsSubAssembly+ that simply in-lines various
 [classname]+ValueAssertions+ and [classname]+GroupAssertions+. The practice of
-inlining Assertions directly in your SubAssemblies is also important, but
+in-lining Assertions directly in your SubAssemblies is also important, but
 sometimes it makes sense to have more tests outside of the business logic.
 
 == Java Operators in Field Names

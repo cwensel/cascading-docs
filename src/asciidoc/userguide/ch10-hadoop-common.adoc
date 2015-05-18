@@ -1,0 +1,523 @@
+:toc2:
+:doctitle: {_doctitle} - The Apache Hadoop Platform
+
+= The Apache Hadoop Platforms
+
+== Introduction
+
+This section covers some of the operational mechanics of running an application
+that uses Cascading with the Hadoop platform, including building the application
+jar file and configuring the operating mode.
+
+Cascading requires that Apache Hadoop be installed and correctly configured.
+Hadoop is an Open Source Apache project, freely available for download from the
+Hadoop website, http://hadoop.apache.org/core/.
+
+== What is Apache Hadoop?
+
+From the Hadoop website, it "is a software platform that lets one easily write
+and run applications that process vast amounts of data". Hadoop does this by
+providing a storage layer that holds vast amounts of data, and an execution
+layer that runs an application in parallel across the cluster, using coordinated
+subsets of the stored data.
+
+The storage layer, called the Hadoop File System (HDFS), looks like a single
+storage volume that has been optimized for many concurrent serialized reads of
+large data files - where "large" might be measured in gigabytes or petabytes.
+However, it does have limitations. For example, random access to the data is not
+really possible in an efficient manner. And Hadoop only supports a single writer
+for output. But this limit helps make Hadoop very performant and reliable, in
+part because it allows for the data to be replicated across the cluster,
+reducing the chance of data loss.
+
+The default execution layer, called MapReduce, relies on a divide-and-conquer
+strategy to manage massive data sets and computing processes. Explaining
+MapReduce is beyond the scope of this document, but its complexity, and the
+difficulty of creating real-world applications against it, is the original
+driving force behind the creation of Cascading.
+
+As of Cascading 3.0, http://tez.apache.org[Apache Tez] has become a third
+execution layer, or platform, option. See  the
+<<ch12-hadoop-tez.adoc#tez-platform,chapter on Apache Tez>> for more
+information.
+
+Hadoop, according to its documentation, can be configured to run in three modes:
+
+* standalone mode (i.e., on the local computer, useful for testing and debugging
+  in an IDE),
+* pseudo-distributed mode (i.e., on an emulated "cluster" of one computer, not
+  useful for much), and
+* fully-distributed mode (on a full cluster, for staging or production
+  purposes).
+
+The pseudo-distributed mode does not add value for most purposes, and will not
+be discussed further.
+
+Cascading itself can run in <<ch09-local.adoc#local-platform,local mode>> or on
+the Hadoop platform, where Hadoop itself may be in standalone or distributed
+mode.
+
+The primary difference between these two platforms, local or Hadoop, is that,
+when Cascading is running in local mode, it makes no use of Hadoop APIs and
+performs all of its work in memory, allowing it to be very fast - but
+consequently not as robust or scalable as when it is running on the Hadoop
+platform.
+
+See the <<ch09-local.adoc#local-platform,chapter on local mode>> for more
+information.
+
+== Hadoop 1 MapReduce vs Hadoop 2 MapReduce
+
+Cascading supports both Hadoop 1.x and 2.x by providing two Java dependencies,
+[code]+cascading-hadoop.jar+ and [code]+cascading-hadoop2-mr1.jar+. These
+dependencies can be interchanged but the [code]+hadoop2-mr1.jar+ introduces new
+and deprecates older API calls where appropriate. It should be pointed out
+[code]+hadoop2-mr1.jar+ only supports MapReduce 1 API conventions. With this
+naming scheme new API conventions can be introduced without risk of naming
+collisions on dependencies.
+
+NOTE: It is extremely important to use the correct Cascading Hadoop dependencies
+that match the cluster version the Cascading application will be deployed to.
+There are a number of subtle API and configuration property differences that may
+be difficult to diagnose.
+
+== Hadoop 2 MapReduce vs Hadoop 2 Tez
+
+Apache Hadoop 2 introduces YARN as the resource manager for the cluster. In
+short, this allows a single physical cluster to contain and execute different
+computing foundations simultaneously. By default a Hadoop 2 installation
+includes an implementation of MapReduce that is API compatible with Apache
+Hadoop 1 (see above).
+
+But YARN also allows other technologies to co-exist and share the same HDFS
+deployment. Apache Tez is one such technology. A single Hadoop YARN cluster can
+now execute some applications on MapReduce and others on Tez, where both could
+share or hand-off data via HDFS. Without cluster wide re-configuration.
+
+Apache Tez has yet to reach a 1.0 status, but is now currently supported by
+Cascading via the [code]+cascading-hadoop2-tez.jar+ dependency.
+
+Since both MapReduce and Tez share HDFS, both implementations share much of the
+same APIs provided by Cascading. This greatly simplifies porting applications
+from MapReduce to Tez, in most cases the changes are to the build and one line
+of code to switch to the appropriate [code]+FlowConnector+.
+
+The remainder of this document describe the common features of each supported
+Hadoop based platform.
+
+[[configuring]]
+== Configuring Applications
+
+During runtime, Hadoop must be told which application jar file should be pushed
+to the cluster, specific details on described on the platform specific pages.
+
+But to remain platform independent, the [classname]+AppProps+ class can be used,
+which is a helper fluent API for setting application level configuration
+settings.
+
+.Configuring the Application Jar
+====
+
+include::app-props.adoc[]
+
+====
+
+Use this class for maximum portability.
+
+Other Hadoop specific Props classes include:
+
+|====
+
+| [classname]+cascading.tap.hadoop.HfsProps+ | Allows for setting Hadoop
+specific FileSystem properties, specifically properties around enabling the
+'combined input format' support. Combining inputs minimizes the performance
+penalty around processing large numbers of small files.
+
+| [classname]+cascading.tuple.hadoop.TupleSerializationProps+ | Allows for
+setting Hadoop specific serialization and deserialization properties. See
+<<custom-types,Custom Types>>.
+
+|====
+
+[[building]]
+== Building an Application
+
+See the platform specific chapters on how best to build an application for
+exeuction on that platform.
+
+[[executing]]
+== Executing an Application
+
+Running a Cascading application is the same as running any Hadoop application.
+
+After packaging your application into a single jar (see <<building>>), you must
+use _bin/hadoop_ on Hadoop 1, or _bin/yarn_ on Hadoop 2, to submit the
+application to the cluster.
+
+For example, to execute an application stuffed into _your-application.jar_, call
+the Hadoop 2 shell script:
+
+.Running a Cascading Application
+===
+----
+$HADOOP_HOME/bin/yarn jar your-application.jar [some params]
+----
+====
+
+If the configuration scripts in $HADOOP_CONF_DIR are configured to use a
+cluster, the Jar is pushed into that cluster for execution.
+
+Cascading does not rely on any environment variables like $HADOOP_HOME or
+$HADOOP_CONF_DIR, only _bin/hadoop_ and _bin/yarn_ do.
+
+It should be noted that even though _your-application.jar_ is passed on the
+command line to _bin/hadoop_ or _bin/yarn_, this in no way configures Hadoop to
+push this jar into the cluster. You must still call one of the property setters
+mentioned above to set the proper path to the application jar. If misconfigured,
+it's likely that one of the internal libraries (found in the lib folder) will be
+pushed to the cluster instead, and "Class Not Found" exceptions will be thrown
+on the cluster.
+
+[[debugging]]
+== Troubleshooting and Debugging
+
+Debugging and troubleshooting Cascading is described in
+<<ch08-local.adoc#debugging,Local Mode Troubleshooting>>, please read that first
+before continuing.
+
+For planner related errors that present during runtime when executing a Flow,
+see the chapter <<ch22-query-process-planner.adoc#process-planner,The Cascading
+Process Planner>>.
+
+[[source-sink]]
+== Source and Sink Taps
+
+Cascading provides a few HDFS specific Tap and Scheme implementations.
+Regardless of the build dependencies, the packages names remain consistent.
+
+It's important to understand how Hadoop deals with directories. By default,
+Hadoop cannot source data from directories with nested sub-directories, and it
+cannot write to directories that already exist.
+
+However, the good news is that you can simply point the [classname]+Hfs+ tap
+(described below) to a directory of data files, and they are all used as input -
+there's no need to enumerate each individual file into a
+[classname]+MultiSourceTap+. If there are nested directories, use
+[classname]+GlobHfs+.
+
+=== Schemes
+
+There are Hadoop specific versions of [code]+TextLine+ and
+[code]+TextDelimited+, see the section on
+<<ch03-basic-concepts.adoc#common-schemes, Common Schemes>>.
+
+NOTE: One important difference with the Hadoop version of [code]+TextLine+,
+there is no way to know a line number, so the field [code]+offset+ is used
+instead of [code]+num+  as provided in the local mode version.
+
+[classname]+SequenceFile+::
+
+[classname]+cascading.scheme.hadoop.SequenceFile+ is based on the Hadoop
+Sequence file, which is a binary format. When written to or read from, all Tuple
+values are saved in their native binary form. This is the most efficient file
+format - but be aware that the resulting files are binary and can only be read
+by Hadoop applications running on the Hadoop platform.
+
+
+[classname]+WritableSequenceFile+::
+
+Like the [classname]+SequenceFile+ Scheme,
+[classname]+cascading.scheme.hadoop.WritableSequenceFile+ is based on the Hadoop
+Sequence file, but it was designed to read and write key and/or value Hadoop
+[classname]+Writable+ objects directly.
+
++
+
+This is very useful if you have sequence files created by other applications.
+During writing (sinking), specified key and/or value fields are serialized
+directly into the sequence file. During reading (sourcing), the key and/or value
+objects are deserialized and wrapped in a Cascading Tuple object and passed to
+the downstream pipe assembly.
+
+TIP: For best performance when running on the Hadoop platform, enable Sequence
+File Compression in the Hadoop property settings - either block or record-based
+compression. Refer to the Hadoop documentation for the available properties and
+compression types.
+
+=== Taps
+
+The following sample code creates a new Hadoop FileSystem Tap that can read and
+write raw text files. Since only one field name is provided, the "offset" field
+is discarded, resulting in an input tuple stream with only "line" values.
+
+.Creating a new tap
+====
+include::h2mr1-simple-tap.adoc[]
+====
+
+Here are the most commonly-used tap types:
+
+[classname]+Hfs+::
+
+The [classname]+cascading.tap.hadoop.Hfs+ tap uses the current Hadoop default
+file system.
+
++
+
+If Hadoop is configured for "Hadoop standalone mode" (not to be confused with
+Cascading local mode), the default file system will be the local file system
+(using a URI scheme of [code]+file://+). If configured for distributed mode, its
+default file system is typically the Hadoop distributed file system
+([code]+hdfs://+).
+
++
+
+Note that Hadoop can be forced to use an external file system by specifying a
+prefix to the URL passed into a new Hfs tap. For instance, using
+"s3://somebucket/path" tells Hadoop to use the S3 [classname]+FileSystem+
+implementation to access files in an Amazon S3 bucket. More information on this
+can be found in the Javadoc.
+
+[classname]+GlobHfs+::
+
+The [classname]+cascading.tap.hadoop.GlobHfs+ tap accepts Hadoop style "file
+globbing" expression patterns. This allows for multiple paths to be used as a
+single source, where all paths match the given pattern.
+
+[classname]+DistCacheTap+::
+
+The [classname]+cascading.tap.hadoop.DistCacheTap+ is a sub-class of the
+<<ch03-basic-concepts.adoc#common-taps,[classname]+cascading.tap.DecoratorTap+>>
+that can wrap an [classname]+Hfs+ instance. It allows for writing to
+HDFS, but reading from the Hadoop Distributed Cache under the right
+circumstances, specifically if the Tap is being read into the small side of a
+[classname]+cascading.pipe.HashJoin+.
+
+NOTE: Apache Tez doesn't document a "Distributed Cache" implementation, but
+Cascading leverages YARNs ability to distribute files transparently.
+
+[classname]+PartitionTap+::
+
+See
+<<ch03-basic-concepts.adoc#common-taps,[classname]+cascading.tap.hadoop.PartitionTap+>>
+for details.
+
+Note that you can only create sub-directories to bin data into. Hadoop must
+still write "part" files into each bin directory, and there is no safe mechanism
+for manipulating part file names.
+
+== Custom Taps and Schemes
+
+Integrating Cascading with either remote systems or file types can be done in a
+few ways:
+
+Supporting a new _file type_::
+
+A new file format for a file stored on an HDFS file system implementation, only
+a new Scheme needs to be created for use with the [classname]+Hfs+ tap. See
+below for details.
+
+Supporting a new _file system_::
+
+A new file system, like Amazon S3, would be implemented by creating a new Hadoop
+[classname]+FileSystem+ sub-class. This implementation would be referenced by
+registering a new URI scheme (Amazon S3 uses [code]+s3://+).
+
++
+
+Such an implementation would allow for the [classname]+Hfs+ tap to be used with
+any pre-existing [classname]+Scheme+ implementations (like
+[classname]+TextDelimited+).
+
+Supporting a new _data storage system_::
+
+For reading or writing data from a back-end system like a database or key/value
+store, a new Tap and possibly a compatible Scheme must be created.
+
+NOTE: Tap and Scheme implementations are typically tied together. The purpose of
+the Tap and Scheme interface is just that, to provide a consistent interface
+over disparate technologies as interfaced to Cascading. Not to hide
+implementation details from each other.
+
+Before beginning, or for inspiration, please see if any integrations for your
+file type or storage system already exist by visiting the
+http://cascading.org/extensions/[extensions page].
+
+=== Schemes
+
+If the goal is to simply add a new _file type_, to be stored on a Hadoop
+compatible file system, only a new [classname]+Scheme+ needs to be implemented.
+
+As noted above [classname]+Tap+ and [classname]+Scheme+ implementations are
+coupled. In this case the goal is to create a Scheme that works with the
+[classname]+Hfs+ tap. Hfs is an encapsulation of the Hadoop FileSystem API, in
+part. So the only effort to create a new file type will be to find or implement
+an appropriate [classname]+org.apache.hadoop.mapred.FileInputFormat+ and
+[classname]+org.apache.hadoop.mapred.FileOutputFormat+ interface.
+
+Every [classname]+Scheme+ is presented the opportunity to set any custom
+properties the underlying platform requires, via the methods
+[methodname]+sourceConfInit()+ and [methodname]+sinkConfInit()+. These methods
+may be called more than once with new configuration objects, and should be
+idempotent (do not initialize resources in these methods).
+
+Once the proper [classname]+FileInputFormat+ and [classname]+FileOutputFormat+
+are created, creating the [classname]+Scheme+ implementation is a matter of
+implementing the [methodname]+*ConfInit()+ methods and the
+[methodname]+source()+ and [methodname]+sink()+ methods to perform the key/value
+conversion to a Tuple (when sourcing data), and back again (on the sinking of
+data).
+
+TIP: It is highly recommended that the Cascading source code is consulted, in
+many cases simply overriding [classname]+SequenceFile+ or
+[classname]+WritableSequenceFile+ might be suitable.
+
+NOTE: Cascading only supports the [code]+mapred.*+ APIs, not the
+[code]+mapreduce.*+ APIs.  It's unfortunate, but we cannot support both APIs
+simultaneously on the MapReduce framework, so the more stable original version
+is the one in play. Apache Tez relaxes this restriction allowing future version
+to support Input/OutputFormat implementations from both Java package namespaces.
+
+=== Taps
+
+If the goal is to simply add a new HDFS compatible file type, see the above
+section.
+
+If the goal is to add a new data store type, read on knowing that creating
+custom taps for HDFS and Hadoop MapReduce requires fair knowledge of Hadoop and
+the Hadoop FileSystem API.
+
+First the developer must implement Hadoop
+[classname]+org.apache.hadoop.mapred.InputFormat+ and/or
+[classname]+org.apache.hadoop.mapred.OutputFormat+ interfaces so that Hadoop
+knows how to split and handle the incoming/outgoing data. See the note above on
+API compatibility.
+
+*In order to configure Hadoop to use these implementations*, the custom
+[classname]+Scheme+ is responsible for setting the [classname]+InputFormat+ and
+[classname]+OutputFormat+ on the [classname]+Configuration+ object, via the
+[methodname]+sinkConfInit()+ and [methodname]+sourceConfInit()+ methods.
+
+The [classname]+Scheme+ is also responsible for translating the data from the
+data storage native type to a Cascading [classname]+Tuple+, and back again when
+writing.
+
+The Tap implementation is typically straightforward except for one detail.
+
+During runtime the methods [methodname]+openForRead()+ and
+[methodname]+openForWrite()+ are _always_ called. Respectively they return a
+[classname]+TupleEntryIterator+ and [classname]+TupleEntryCollector+, which in
+turn _always_ produce or receive Tuple/TupleEntry instances to consume or store.
+
+There are two cases in which these open methods are called.
+
+When the [code]+Input+ and [code]+Output+ arguments on the [code]+abstract+
+methods [methodname]+openForRead()+ and [methodname]+openForWrite()+
+
+* are [code]+null+, and
+* are not [code]+null+.
+
+The first case happens when the developer wants to read or write data directly
+to the underlying system (put/retrieve records into/from a database table). This
+can be client side code in a test, or the application loading data into memory
+and using the [classname]+Tap+ instance as a convenience. Or loading a lookup
+table cluster side from the Hadoop 'distributed cache'.
+
+It will also happen when Cascading needs to read or write data, for example when
+reading a stream to populate the accumulated side of a [classname]+HashJoin+ or
+when a [classname]+PartitionTap+ is writing data to binned directories.
+
+The second case, not [code]+null+ argument, happens when Hadoop has initiated
+the read, sourcing data specified in an [classname]+InputSplit+, or Hadoop is
+managing the write, the output of a Map/Reduce/Vertice task.
+
+When those method arguments are [code]+null+ it is the responsibility of the Tap
+implementation to create the declared Input/Ouput types.
+
+When they are not, they must be used directly, and not ignored.
+
+On the Hadoop platform, the [code]+Input+ is a [classname]+RecordReader+, which
+is created by Hadoop and passed to the Tap. This [classname]+RecordReader+ is
+already configured to read data from the current [classname]+InputSplit+.
+
+In the case of the Hadoop platform, the [code]+Ouput+ is an
+[classname]+OutputCollector+, which is created by Hadoop and passed to the Tap.
+This [classname]+OutputCollector+ is already configured to to write data to the
+current resource.
+
+To ease the development at this stage, the classes
+[classname]+cascading.tap.hadoop.io.HadoopTupleEntrySchemeIterator+ and
+[classname]+cascading.tap.hadoop.io.HadoopTupleEntrySchemeCollector+ can be
+reused if possible.
+
+== Partial Aggregation instead of Combiners
+
+In Hadoop mode, Cascading does not support MapReduce "Combiners". Combiners are
+a simple optimization allowing some Reduce functions to run on the Map side of
+MapReduce. Combiners are very powerful in that they reduce the I/O between the
+Mappers and Reducers - why send all of your Mapper data to Reducers when you can
+compute some values on the Map side and combine them in the Reducer?
+
+But Combiners are limited to Associative and Commutative functions only, such as
+"sum" and "max". And the process requires that the values emitted by the Map
+task must be serialized, sorted (which involves deserialization and comparison),
+deserialized again, and operated on - after which the results are again
+serialized and sorted. Combiners trade CPU for gains in I/O.
+
+Cascading takes a different approach. It provides a mechanism to perform partial
+aggregations on the Map side and combine the results on the Reduce side, but
+trades memory, instead of CPU, for I/O gains by caching values (up to a
+threshold limit). This bypasses the redundant serialization, deserialization,
+and sorting. Also, Cascading allows any aggregate function to be implemented -
+not just Associative and Commutative functions.
+
+[[custom-types]]
+== Custom Types and Serialization
+
+Cascading supports any class type as values stored and passed in
+[classname]+Tuple+ instances.
+
+But for this to work when using the Cascading Hadoop mode, any Class that isn't
+a primitive type or a Hadoop [classname]+Writable+ type requires a corresponding
+Hadoop serialization class registered in the Hadoop configuration files for your
+cluster. Hadoop [classname]+Writable+ types work because there is already a
+generic serialization implementation built into Hadoop. See the Hadoop
+documentation for information on registering a new serialization helper or
+creating [classname]+Writable+ types.
+
+Registered serialization implementations are automatically inherited by
+Cascading.
+
+During serialization and deserialization of [classname]+Tuple+ instances that
+contain custom types, the Cascading [classname]+Tuple+ serialization framework
+must store the class name (as a [classname]+String+) before serializing the
+custom object. This can be very space-inefficient. To overcome this, custom
+types can add the [classname]+SerializationToken+ Java annotation to the custom
+type class. The [classname]+SerializationToken+ annotation expects two arrays -
+one of integers that are used as tokens, and one of Class name strings. Both
+arrays must be the same size. The integer tokens must all have values of 128 or
+greater, since the first 128 values are reserved for internal use.
+
+During serialization and deserialization, the token values are used instead of
+the [classname]+String+ Class names, in order to reduce the amount of storage
+used.
+
+Serialization tokens may also be stored in the Hadoop config files or set as a
+property passed to the [classname]+FlowConnector+, with the property name
+[code]+cascading.serialization.tokens+. The value of this property is a comma
+separated list of [code]+token=classname+ values.
+
+Note that Cascading natively serializes/deserializes all primitives and byte
+arrays ([code]+byte[]+), if the developer registers the
+[classname]+BytesSerialization+ class by using
+[code]+TupleSerializationProps.addSerialization(properties,
+BytesSerialization.class.getName()+. The token 127 is used for the Hadoop
+[classname]+BytesWritable+ class.
+
+By default, Cascading uses lazy deserialization on Tuple elements during
+comparisons when Hadoop sorts keys during the "shuffle" phase.
+
+Cascading supports custom serialization for custom types, as well as lazy
+deserialization of custom types during comparisons. This is accomplished by
+implementing the [classname]+StreamComparator+ interface. See the Javadoc for
+detailed instructions on implementation, and the unit tests for examples.

@@ -15,8 +15,8 @@ This allows for:
 * Taps to read and store type information for external systems and
   applications,
 * error detection during joins (detecting non-comparable types),
-* enforcement of canonical representations within the Tuple (prevent a field from
-  switching arbitrarily between String and Integer types), and
+* enforcement of canonical representations within the Tuple (prevent a field
+  from switching arbitrarily between String and Integer types), and
 * to allow for pluggable coercion from one type to another type, even if either
   isn't a Java primitive.
 
