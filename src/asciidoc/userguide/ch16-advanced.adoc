@@ -117,7 +117,20 @@ the planner default value.
 [[failure-traps]]
 == Failure Traps
 
-The following diagram shows the use of _Failure Traps_ in a pipe assembly.
+Cascading provides the ability to trap the data and associated diagnostics that
+cause Java exceptions to be thrown from an Operation or Tap.
+
+Typically if an exception is thrown, Cascading will shutdown the complete
+executing Flow, and force the [methodname]+Flow.complete()+ method to throw an
+exeption client side. Obviously if this exception is not handled, the client
+application will exit.
+
+To prevent the shutdown, a trap Tap can be bound to whole branches. And in the
+face of an exception, the argument data will be saved to the location specified
+by the trap Tap, including any specific diagnostic fields that may aide in
+resolving any persistent issues.
+
+The following diagram shows the use of traps in a pipe assembly.
 
 image:images/failure-traps.svg[align="center"]
 
@@ -157,6 +170,19 @@ is. Traps are not intended for application flow control, and not a means to
 filter some data into other locations. Applications that need to filter out bad
 data should do so explicitly, using filters. For more on this, see
 <<ch19-best-practices.adoc#handling-bad-data>>.
+
+Optionally diagnostic information, with the given field names, may be captured
+along with the argument Tuple.
+
+* [code]+element-trace+ - the file and line number the failed operation was
+instantiated
+
+* [code]+throwable-message+ - the [methodname]+Throwable#getMessage()+ value
+
+* [code]+throwable-stacktrace+ - the [methodname]+Throwable#printStackTrace()+
+value, cleansed
+
+See the [classname]+cascading.tap.TrapProps+ Javadoc for more details.
 
 == Checkpointing
 
