@@ -214,12 +214,15 @@ Fields.
 
 .Adding a Checkpoint
 ====
-include::checkpoint-flow.adoc[]
+include::h2mr1-checkpoint-flow.adoc[]
 ====
 
 As can be seen above, we instantiate a new [classname]+Checkpoint+ tap by
 passing it the previous [classname]+Every+ [classname]+Pipe+. This will be the
 point at which data is persisted.
+
+NOTE: The example above is using the Hadoop platform, Cascading local mode
+ignores [classname]+Checkpoint+ pipes.
 
 Since we wish to keep the data after the [classname]+Flow+ has completed, we
 create a [code]+checkpointTap+ that saves the data as a TAB delimited text file.
@@ -229,7 +232,7 @@ the [classname]+Checkpoint+ [classname]+Pipe+ using the [classname]+FlowDef+.
 
 NOTE: Using a TextDelimited file as an intermediate representation within a Flow
 may result in subtle coercion errors when field types are not provided
-consitently and when dealing with complex (non-primitive) data types.
+consistently and when dealing with complex (non-primitive) data types.
 
 [[restarting-flows]]
 === Restarting a Checkpointed Flow
@@ -248,8 +251,11 @@ NOTE: Restartable Flows are only supported by some platforms.
 
 .Setting runID
 ====
-include::checkpoint-restart-flow.adoc[]
+include::h2mr1-checkpoint-restart-flow.adoc[]
 ====
+
+NOTE: The example above is using the Hadoop platform, Cascading local mode
+ignores [classname]+Checkpoint+ pipes.
 
 Caution should be used when using restarted checkpoint Flows. If the input data
 has changed, or the pipe assembly has significantly been altered, the Flow may
