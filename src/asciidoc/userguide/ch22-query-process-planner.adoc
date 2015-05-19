@@ -4,47 +4,227 @@
 [[process-planner]]
 == The Cascading Process Planner
 
-When a collection of functions, splits, and joins are all tied up together into
-a "pipe assembly", the FlowConnector object is used to create a new Flow
-instance against input and output data paths. This Flow is a single Cascading
-unit-of-work.
+For an introduction to the thinking and design behind the 3.0 query planner, see
+the blog post
+http://cascading.org/2014/09/18/the-cascading-3-0-query-planner/[The Cascading
+3.0 Query Planner] on http://cascading.org/.
 
-Internally, the FlowConnector employs an intelligent planner to convert the pipe
-assembly to a graph of dependent MapReduce jobs that can be executed on a Hadoop
-cluster.
+=== FlowConnector
 
-All this happens behind the scenes - as does the scheduling of the individual
-MapReduce jobs, and the cleanup of intermediate data sets that bind the jobs
-together.
+The various [classname]+FlowConnector+s provided by Cascading are covered in the
+section <<ch03-basic-concepts.adoc#platforms,Platforms>>.
 
-image:images/planned-flow.svg[align="center"]
+Common to all sub-classes is the ability to provide a custom
+[classname]+RuleRegistrySet+ which in turn encapsulates one or more
+[classname]+RuleRegistry+ instances, which in turn provide a set of
+[classname]+Rule+ instances.
 
-The diagram above shows how a typical Flow is partitioned into MapReduce jobs.
-Every job is delimited by a temporary file that serves as the sink from the
-first job and the source for the next.
+The [classname]+RuleRegistrySet+ is mutable, thus the default registry can be
+retrieved via [methodname]+FlowConnector.getRuleRegistrySet()+ and updated.
 
-To create a visualization of how your Flows are partitioned, call the
-[classname]+Flow#writeDOT()+ method. This writes a <<,DOT >> file out to the
-path specified, which can be viewed in a graphics package like OmniGraffle or
-Graphviz.
+=== RuleRegistrySet
 
+The [classname]+RuleRegistrySet+ manages one or more [classname]+RuleRegistry+
+instances.
 
+During planning, all registered RuleRegistries will be used independently to
+create candidate execution plans. If more than one RuleRegistry is available
+they all will be executed in parallel, though a total plan timeout can be
+provided in the case a planner executes too long.
 
-/////////
+When the planner completes, either the first or 'best' plan will be utilized,
+depending on the value of [methodname]+RuleRegistrySet.setSelect()+, which can
+be one of two values:
 
+[classname]+Select.FIRST+::
 
-In the case of Hadoop MapReduce, using the [classname]+HadoopFlowConnector+, the
-DOT files also contain the intermediate [classname]+Tap+ instances created to
-join MapReduce jobs together. Thus the branches between Tap instances are
-effectively MapReduce jobs. See the [code]+Flow.writeStepsDOT()+ method to write
-out all the MapReduce jobs that will be scheduled.
+The first [classname]+RuleRegistry+ instance to complete will be used. All
+remaining planners will be cancelled.
 
-This information can also be misleading to what is actually happening per Map or
-Reduce task cluster side. For a more detailed view of the data pipeline actually
-executing on a given Map or Reduce task, set the "cascading.stream.dotfile.path"
-property on the [classname]+FlowConnector+. This will write, cluster side, a DOT
-representation of the current data pipeline path the current Map or Reduce task
-is handling which is a function of which file(s) the Map or Reduce task are
-reading and processing. And if multiple files, which files are being read to
-which [classname]+HashJoin+ instances. It is recommended to use a relative path
-like [code]+stepPlan/+.
+[classname]+Select.COMPARED+::
+
+The _best_ [classname]+RuleRegistry+ instance will be used where best is a
+function of the registred [code]+planComparator+, set by calling
+[methodname]+RuleRegistrySet.setPlanComparator()+.
+
++
+
+If not set, the default behavior will be to choose the plan with the fewest
+[classname]+FlowStep+ instances, and if equal, the fewest [classname]+FlowNode+
+instances. Otherwise the order in which the [classname]+RuleRegistry+ instances
+were registered will prevail.
+
+NOTE: Relying the fewest [classname]+FlowStep+ and [classname]+FlowNode+
+instances in the resulting plan is a simplified version of _cost_. If competing
+plans can  be measured differently, supply a custom [classname]+Comparator+ to
+perform the comparison.
+
+Support for multiple registries in important. As Cascading advances, new
+primitives, at the [classname]+Pipe+ level, will added that offer new
+optimizations or  capabilities.
+
+These additions have consequences when related to the set of other pipe
+primitives being utilized. Each new primitive will add to the time complexity of
+finding a suitable plan, and frequently two or more primitives working together
+add yet another  topological complexity (some combinations could cause failures
+if not accounted for).
+
+The end result is that a one-size-fits-all rule set, in order to be safe, makes
+conservative decisions so that plan time or the resulting execution are
+reasonable instead of optimal.
+
+By allowing multiple simultaneous plans, the rule set can decide if it is
+applicable, and if so, will apply itself. If not applicable, it will leave the
+competition.
+
+The Cascading Apache Tez planner provides a rule registry that supports
+[classname]+HashJoin+ pipes, and one that does not.
+
+Under very complex scenarios, when HashJoins are in play, the planner can
+execute must faster if it makes some compromises to limit the search space the
+planner must navigate to find a functional plan. When there are no HashJoins, it
+isn't worth the time to find and apply the compromises.
+
+=== RuleRegistry
+
+The [classname]+RuleRegistry+ contains a set of [classname]+Rule+s. Rules in
+short navigate and mutate what is known as an *Element Graph*, simply a directed
+acyclic graph (DAG) of [classname]+Pipe+ and [classname]+Tap+ instances
+connected by edges ([classname]+Scope+ instances).
+
+The input of a rule is an element graph, and the output is either a
+[classname]+PlannerException+ a modified element graph, or a sub-graph of the
+given element graph.
+
+Of which, there are three main types:
+
+[classname]+RuleAssert+::
+
+This rule simply provides an _assertion_ mechanism about the structure of the
+pipe assembly. If a pipe or tap is in the wrong place or unsupported, it can
+throw what amounts to a syntax error, which includes the name and location of
+the offending element.
+
+[classname]+RuleTransformer+::
+
+This rule provides a means to modify or mutate a given element graph. Either the
+element graph can have elements removed or added.
+
++
+
+In addition to mutating an element graph, a transformer can _annotate_ the graph
+with meta-data that can inform downstream rules, or Cascading itself during
+runtime.  Identifying the _accumulated_ and _streamed_ sides of a HashJoin
+greatly simplifies the construction of the actual execution logic.
+
+[classname]+RulePartitioner+::
+
+This rule provides a means to break a large graph into smaller graphs. This is
+where a pipe assembly along with attached sources and sinks are broken down into
+[classname]+FlowStep+, [classname]+FlowNode+ and possibly
+[classname]+FlowPipeline+ instances.
+
++
+
+It should be noted that a partitioner can partition the current top level
+element graph, or re-partition a prior sub-graph element graph into new
+sub-graphs.
+
++
+
+See the section on <<ch06-flows.adoc#process-levels,Flow Process Hierarchy>>
+for details on the roles these classes play.
+
+In addition to the Rules, rules are applies at different phases. There are twelve
+[classname]+PlanPhase+ types:
+
+[classname]+PreBalanceAssembly+::
+
+The PreBalanceAssembly phase is where most assertions are applied.
+
+[classname]+BalanceAssembly+::
+
+The BalanceAssembly phase is where, for example with MapReduce, intermediate
+taps are injected into the element graph.
+
+[classname]+PostBalanceAssembly+::
+
+The PostBalanceAssembly phase provides a means to perform any cleanup after the
+balancing phase.
+
+[classname]+PreResolveAssembly+::
+
+The PreResolveAssembly phase is where any _no op_ pipe instances, or unnecessary
+[classname]+Debug+ or [classname]+Assertion+ filters should be removed
+(depending on the configured [classname]+DebugLevel+ or
+[classname]+AssertionLevel+, respectively.)
+
+[classname]+ResolveAssembly+::
+
+The ResolveAssembly is where Cascading performs all field resolution by
+inspecting the source and sink taps and any operations that produce or require
+fields, to ensure that all field level dependencies are satisfied.
+
++
+
+No rules are applied in this phase.
+
+[classname]+PostResolveAssembly+::
+
+The PostResolveAssembly phase is where any logical optimizations could be
+applied based on now fully resolved field names in the element graph prior to
+any sub-graph partitioning.
+
+[classname]+PartitionSteps+::
+
+The PartitionSteps phase is where the element graphs that represent the work
+that would be contained in individual [classname]+FlowStep+ instances are found.
+
++
+
+In the case of MapReduce, all the MapReduce jobs would be broken out into
+individual sub-graph element graphs, each bounded by source and sink taps, or
+intermediate temporary source and sink taps.
+
+[classname]+PostSteps+::
+
+The PostSteps phase provides a means to clean up post step partitioning.
+
+[classname]+PartitionNodes+::
+
+The PartitionNodes phase is where the element graphs that represent the work
+that would be contained in individual [classname]+FlowNode+ instances are found.
+
+[classname]+PostNodes+::
+
+The PostNodes phase provides a means to clean up post node partitioning.
+Frequently malformed remainder sub-graphs may result in rules that have already
+been applied, this is the best opportunity to remove these graphs.
+
+[classname]+PartitionPipelines+::
+
+The PartitionPipelines phase is where the element graphs that represent the work
+that would be contained in individual [classname]+FlowPipeline+ instances are
+found.
+
++
+
+In the case of MapReduce, a _mapper function_ can have multiple discrete input
+paths that correspond to different computation paths. Consider joining two
+files, one pipeline would process the left hand side, and another the right hand
+side. The side to process within the [classname]+FlowNode+ is determined at
+runtime when the child mapper JVM is instantiated and handed an _input split_, a
+portion of one of the input files, that in turn corresponds to one of the
+pipelines.
+
+[classname]+PostPipelines+::
+
+The PostPipelines phase provides a means to clean up post pipeline partitioning.
+Frequently malformed remainder sub-graphs may result in rules that have already
+been applied, this is the best opportunity to remove these graphs.
+
+=== Debugging RuleRegistrySets
+
+Debugging planner rules can be done by enabling the various trace mechanisms
+outlined  in the section on
+<<ch19-best-practices.adoc#debugging-planner,Debugging Planner Failures>>.

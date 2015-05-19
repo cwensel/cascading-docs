@@ -92,6 +92,7 @@ example, "first-name" is a valid field name for use with Cascading, but might
 result in the expression [code]+first-name.trim()+, which will cause a
 compilation error.
 
+[[debugging-planner]]
 === Debugging Planner Failures
 
 The [classname]+FlowConnector+ will sometimes fail when attempting to plan a

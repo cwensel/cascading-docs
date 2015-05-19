@@ -257,14 +257,32 @@ The following table summarizes the different types of pipes.
 
 |====
 | *_Pipe type_* | *_Purpose_* | *_Input_* | *_Output_*
-| [classname]+Pipe+ | instantiate a pipe; create or name a branch | name | a (named) pipe
+
+| [classname]+Pipe+ | instantiate a pipe; create or name a branch | name | a
+(named) pipe
+
 | [classname]+SubAssembly+ | create nested subassemblies | |
-| [classname]+Each+ | apply a filter or function, or branch a stream | tuple stream (grouped or not) | a tuple stream, optionally filtered or transformed
-| [classname]+Merge+ | merge two or more streams with identical fields | two or more tuple streams | a tuple stream, unsorted
-| [classname]+GroupBy+ | sort/group on field values; optionally merge two or more streams with identical fields | one or more tuple streams with identical fields | a single tuple stream, grouped on key field(s) with optional secondary sort
-| [classname]+Every+ | apply aggregator or buffer operation | grouped tuple stream | a tuple stream plus new fields with operation results
-| [classname]+CoGroup+ | join 1 or more streams on matching field values | one or more tuple streams | a single tuple stream, joined on key field(s)
-| [classname]+HashJoin+ | join 1 or more streams on matching field values | one or more tuple streams | a tuple stream in arbitrary order
+
+| [classname]+Each+ | apply a filter or function, or branch a stream | tuple
+stream (grouped or not) | a tuple stream, optionally filtered or transformed
+
+| [classname]+Merge+ | merge two or more streams with identical fields | two or
+more tuple streams | a tuple stream, unsorted
+
+| [classname]+GroupBy+ | sort/group on field values; optionally merge two or
+more streams with identical fields | one or more tuple streams with identical
+fields | a single tuple stream, grouped on key field(s) with optional secondary
+sort
+
+| [classname]+Every+ | apply aggregator or buffer operation | grouped tuple
+stream | a tuple stream plus new fields with operation results
+
+| [classname]+CoGroup+ | join 1 or more streams on matching field values | one
+or more tuple streams | a single tuple stream, joined on key field(s)
+
+| [classname]+HashJoin+ | join 1 or more streams on matching field values | one
+or more tuple streams | a tuple stream in arbitrary order
+
 |====
 
 [[platforms]]

@@ -8,6 +8,25 @@ Outside of the details provided in the chapter on
 <<ch10-hadoop-common.adoc#apache-hadoop,Apache Hadoop>>, the remainder of this
 chapter provided details specific to the Apache Tez platform.
 
+The most up to date information on running Apache Tez and supported Tez releases
+can be found in the git repo README:
+
+Released Source::
+  https://github.com/cascading/cascading/tree/3.0/cascading-hadoop2-tez
+
+Work In Progress Source::
+  https://github.com/cwensel/cascading/tree/wip-3.0/cascading-hadoop2-tez
+
+It should be noted the model behind Apache Tez is much improved over MapReduce.
+
+Some of the benefits include:
+
+* no more ‘identity mappers’ - mappers that simply forward data to the reducer
+* support for multiple outputs
+* no prefixing data with join ordinality
+* suppressing sorting when not needed
+* removing HDFS as an intermediate store between jobs
+
 === Configuring Applications
 
 During runtime, Hadoop must be told which application jar file should be pushed
