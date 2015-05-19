@@ -1,11 +1,10 @@
 :toc2:
 :doctitle: {_doctitle} - The Apache Hadoop Platform
 
+[[apache-hadoop]]
 == The Apache Hadoop Platforms
 
-=== Introduction
-
-This section covers some of the operational mechanics of running an application
+This chapter covers some of the operational mechanics of running an application
 that uses Cascading with the Hadoop platform, including building the application
 jar file and configuring the operating mode.
 
@@ -182,7 +181,7 @@ on the cluster.
 === Troubleshooting and Debugging
 
 Debugging and troubleshooting Cascading is described in
-<<ch08-local.adoc#debugging,Local Mode Troubleshooting>>, please read that first
+<<ch08-local.adoc#debugging,Local Mode Troubleshooting>>, please begin there
 before continuing.
 
 For planner related errors that present during runtime when executing a Flow,
@@ -193,7 +192,7 @@ Process Planner>>.
 === Source and Sink Taps
 
 Cascading provides a few HDFS specific Tap and Scheme implementations.
-Regardless of the build dependencies, the packages names remain consistent.
+Regardless of the build dependencies, the package names remain consistent.
 
 It's important to understand how Hadoop deals with directories. By default,
 Hadoop cannot source data from directories with nested sub-directories, and it
@@ -208,21 +207,20 @@ there's no need to enumerate each individual file into a
 ==== Schemes
 
 There are Hadoop specific versions of [code]+TextLine+ and
-[code]+TextDelimited+, see the section on
+[classname]+TextDelimited+, see the section on
 <<ch03-basic-concepts.adoc#common-schemes, Common Schemes>>.
 
 NOTE: One important difference with the Hadoop version of [code]+TextLine+,
 there is no way to know a line number, so the field [code]+offset+ is used
-instead of [code]+num+  as provided in the local mode version.
+instead of [code]+num+ as provided in the local mode version.
 
 [classname]+SequenceFile+::
 
 [classname]+cascading.scheme.hadoop.SequenceFile+ is based on the Hadoop
-Sequence file, which is a binary format. When written to or read from, all Tuple
-values are saved in their native binary form. This is the most efficient file
+Sequence file format, which is a binary format. When written to or read from,
+all Tuple values are saved in a binary form. This is the most efficient file
 format - but be aware that the resulting files are binary and can only be read
 by Hadoop applications running on the Hadoop platform.
-
 
 [classname]+WritableSequenceFile+::
 
@@ -264,11 +262,10 @@ file system.
 
 +
 
-If Hadoop is configured for "Hadoop standalone mode" (not to be confused with
-Cascading local mode), the default file system will be the local file system
-(using a URI scheme of [code]+file://+). If configured for distributed mode, its
-default file system is typically the Hadoop distributed file system
-([code]+hdfs://+).
+If Hadoop is configured for "Hadoop standalone mode", the default file system
+will be the local file system (using a URI scheme of [code]+file://+). If
+configured for distributed mode, its default file system is typically the Hadoop
+distributed file system ([code]+hdfs://+).
 
 +
 

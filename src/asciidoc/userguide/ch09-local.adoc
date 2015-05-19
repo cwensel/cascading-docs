@@ -4,6 +4,29 @@
 [[local-platform]]
 == Local Platform
 
+[[building]]
+=== Building an Application
+
+Cascading local mode has no special requirements for building outside the
+requirement for any Java application to be executed from the command line.
+
+That said, there are to top-level dependencies that should be added to the
+build file, both described below.
+
+[code]+cascading-core-3.x.y.jar+::
+
+This jar contains the Cascading Core class files.
+
+cascading-local-3.x.y.jar::
+
+This jar contains the Cascading local mode class files.
+
+[[executing]]
+=== Executing an Application
+
+After completing a build of the applications 'main' class, the application
+can be run like any other Java based command line application.
+
 [[source-sink]]
 === Source and Sink Taps
 
@@ -27,7 +50,7 @@ Debugging and testing in Cascading local mode, unlike Cascading other platforms,
 is straightforward as all the processing happens in the local JVM and
 in local memory.
 
-This dramatically simplifies the use of an IDE and Debugger.Thus the very first
+This dramatically simplifies the use of an IDE and Debugger. Thus the very first
 recommendation for debugging Cascading applications on a given platform is to
 first write tests that run in Cascading local mode.
 

@@ -7,7 +7,7 @@
 When a collection of functions, splits, and joins are all tied up together into
 a "pipe assembly", the FlowConnector object is used to create a new Flow
 instance against input and output data paths. This Flow is a single Cascading
-job.
+unit-of-work.
 
 Internally, the FlowConnector employs an intelligent planner to convert the pipe
 assembly to a graph of dependent MapReduce jobs that can be executed on a Hadoop
