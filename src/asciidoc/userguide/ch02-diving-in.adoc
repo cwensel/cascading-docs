@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Diving In
 
-= Diving In
+== Diving In
 
-== Anatomy of a Word Count Application
+=== Anatomy of a Word Count Application
 
 The most common example presented to new developers is an application that
 counts words. It is the data processing equivalent to a "Hello World"
@@ -86,7 +86,7 @@ the binding is unmistakable.) Another reason is that the naming of pipes
 contributes to self-documentation of pipe assemblies, especially where there are
 splits, joins, and merges in the assembly.
 
-== An Alternative Fluent API
+=== An Alternative Fluent API
 
 The above example is using the default "raw" Cascading API. This API is handy
 when creating very complex business logic, or creating frameworks that may need

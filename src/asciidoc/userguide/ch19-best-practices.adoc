@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Cascading Best Practices
 
-= Cascading Best Practices
+== Cascading Best Practices
 
-== Unit Testing
+=== Unit Testing
 
 Discrete testing of all Operations, pipe assemblies, and applications is a must.
 The [classname]+cascading.CascadingTestCase+ provides a number of static helper
@@ -36,7 +36,7 @@ dependencies. Note that the [code]+cascading-platform+ project has no main code,
 but does have only tests, so it must be retrieved via the [code]+tests+
 classifier.
 
-== Flow Granularity
+=== Flow Granularity
 
 Although using one large [classname]+Flow+ may result in slightly more efficient
 performance, it's advisable to use a more modular and flexible approach,
@@ -53,7 +53,7 @@ remaining compatible with other tools.
 TIP: Visit http://cascading.org/extensions/ for a list of available file formats
 suitable for data archival or debugging.
 
-== SubAssemblies, not Factories
+=== SubAssemblies, not Factories
 
 When developing your applications, use [classname]+SubAssembly+ subclasses, not
 "factory" methods. The resulting code is much easier to read and test.
@@ -64,7 +64,7 @@ constructor already does. Of course there are exceptional cases in which you
 don't have the option to use a [classname]+SubAssembly+, but in practice they
 are rare.
 
-== Logical Responsibilities for SubAssemblies
+=== Logical Responsibilities for SubAssemblies
 
 SubAssemblies provide a very convenient means to co-locate similar or related
 responsibilities into a single place. For example, it's simple to use a
@@ -79,7 +79,7 @@ Additionally, in your unit tests you can create a
 in-lining Assertions directly in your SubAssemblies is also important, but
 sometimes it makes sense to have more tests outside of the business logic.
 
-== Java Operators in Field Names
+=== Java Operators in Field Names
 
 There are a few Operations in Cascading (e.g., [classname]+ExpressionFunction+
 and [classname]++ExpressionFilter++) that compile and apply Java expressions on
@@ -92,7 +92,7 @@ example, "first-name" is a valid field name for use with Cascading, but might
 result in the expression [code]+first-name.trim()+, which will cause a
 compilation error.
 
-== Debugging Planner Failures
+=== Debugging Planner Failures
 
 The [classname]+FlowConnector+ will sometimes fail when attempting to plan a
 [classname]+Flow+. If the error message given by [classname]+PlannerException+
@@ -127,7 +127,7 @@ selectively with the following properties passed to the
 * `cascading.planner.plan.path` - basic planner information
 * `cascading.planner.plan.transforms.path` - detailed information for each rule
 
-== Optimizing Joins
+=== Optimizing Joins
 
 When joining two streams via a [classname]+CoGroup+ pipe, try to put the largest
 of the streams in the leftmost argument to the [classname]+CoGroup+.
@@ -136,7 +136,7 @@ The reason for this is that joining multiple streams requires some accumulation
 of values before the join operator can begin, but the leftmost stream is not
 accumulated, so this technique should improve the performance of most joins.
 
-== Debugging Streams
+=== Debugging Streams
 
 When creating complex assemblies, it's safe to embed
 <<ch17-operations.adoc#debug-function,[classname]+Debug+>> operations at
@@ -144,7 +144,7 @@ appropriate debug levels as needed. Use the planner to remove them at runtime
 for production and staging runs, to avoid wasting resources.
 
 [[handling-bad-data]]
-== Handling Good and Bad Data
+=== Handling Good and Bad Data
 
 It's very common when processing raw data streams to encounter data that is
 corrupt or malformed in some way.
@@ -164,7 +164,7 @@ bad. After all the rules are applied, split the stream based on the value of the
 good or bad [classname]+Boolean+ value. Consider setting a reason field that
 states why the Tuple was marked bad.
 
-== Maintaining State in Operations
+=== Maintaining State in Operations
 
 When creating custom Operations ([classname]+Function+, [classname]+Filter+,
 [classname]+Aggregator+, or [classname]+Buffer+) do not store operation state in
@@ -178,7 +178,7 @@ There is no guarantee that your Operation will be called from a single thread in
 a JVM - and future versions of Hadoop or Cascading local mode might execute the
 same operation from multiple threads.
 
-== Fields Constants
+=== Fields Constants
 
 Instead of having String field names strewn about, create an Interface that
 holds a constant value for each field name:
@@ -201,7 +201,7 @@ TIP: Always declare the canonical type for each field. When building more
 complex Fields instances from pre-defined constant Fields, the type information
 will be retained.
 
-== Checking the Source Code
+=== Checking the Source Code
 
 When in doubt, look at the Cascading source code. If something is not documented
 in this User Guide or Javadoc, and it's a feature of Cascading, the feature

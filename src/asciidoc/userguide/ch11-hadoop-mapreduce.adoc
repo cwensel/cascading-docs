@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Apache Hadoop MapReduce Platform
 
-= Apache Hadoop MapReduce Platform
+== Apache Hadoop MapReduce Platform
 
-== Configuring Applications
+=== Configuring Applications
 
 During runtime, Hadoop must be told which application jar file should be pushed
 to the cluster. Typically, this is done via the Hadoop API [classname]+JobConf+
@@ -36,7 +36,7 @@ building a Properties object with it as the default.
 Note that [classname]+AppProps+ is a helper fluent API for setting properties
 that define Flows or configure the underlying platform.
 
-== Creating Flows from a JobConf
+=== Creating Flows from a JobConf
 
 If a MapReduce job already exists and needs to be managed by a Cascade, then the
 [classname]+cascading.flow.hadoop.MapReduceFlow+ class should be used. To do
@@ -45,7 +45,7 @@ the [classname]+MapReduceFlow+ constructor. The resulting [classname]+Flow+
 instance can be used like any other Flow.
 
 [[building]]
-== Building
+=== Building
 
 Cascading ships with several jars and dependencies in the download
 archive. Alternatively, Cascading is available over Maven and Ivy

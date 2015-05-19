@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - The Apache Hadoop Platform
 
-= The Apache Hadoop Platforms
+== The Apache Hadoop Platforms
 
-== Introduction
+=== Introduction
 
 This section covers some of the operational mechanics of running an application
 that uses Cascading with the Hadoop platform, including building the application
@@ -13,7 +13,7 @@ Cascading requires that Apache Hadoop be installed and correctly configured.
 Hadoop is an Open Source Apache project, freely available for download from the
 Hadoop website, http://hadoop.apache.org/core/.
 
-== What is Apache Hadoop?
+=== What is Apache Hadoop?
 
 From the Hadoop website, it "is a software platform that lets one easily write
 and run applications that process vast amounts of data". Hadoop does this by
@@ -66,7 +66,7 @@ platform.
 See the <<ch09-local.adoc#local-platform,chapter on local mode>> for more
 information.
 
-== Hadoop 1 MapReduce vs Hadoop 2 MapReduce
+=== Hadoop 1 MapReduce vs Hadoop 2 MapReduce
 
 Cascading supports both Hadoop 1.x and 2.x by providing two Java dependencies,
 [code]+cascading-hadoop.jar+ and [code]+cascading-hadoop2-mr1.jar+. These
@@ -81,7 +81,7 @@ that match the cluster version the Cascading application will be deployed to.
 There are a number of subtle API and configuration property differences that may
 be difficult to diagnose.
 
-== Hadoop 2 MapReduce vs Hadoop 2 Tez
+=== Hadoop 2 MapReduce vs Hadoop 2 Tez
 
 Apache Hadoop 2 introduces YARN as the resource manager for the cluster. In
 short, this allows a single physical cluster to contain and execute different
@@ -106,7 +106,7 @@ The remainder of this document describe the common features of each supported
 Hadoop based platform.
 
 [[configuring]]
-== Configuring Applications
+=== Configuring Applications
 
 During runtime, Hadoop must be told which application jar file should be pushed
 to the cluster, specific details on described on the platform specific pages.
@@ -140,13 +140,13 @@ setting Hadoop specific serialization and deserialization properties. See
 |====
 
 [[building]]
-== Building an Application
+=== Building an Application
 
 See the platform specific chapters on how best to build an application for
 exeuction on that platform.
 
 [[executing]]
-== Executing an Application
+=== Executing an Application
 
 Running a Cascading application is the same as running any Hadoop application.
 
@@ -179,7 +179,7 @@ pushed to the cluster instead, and "Class Not Found" exceptions will be thrown
 on the cluster.
 
 [[debugging]]
-== Troubleshooting and Debugging
+=== Troubleshooting and Debugging
 
 Debugging and troubleshooting Cascading is described in
 <<ch08-local.adoc#debugging,Local Mode Troubleshooting>>, please read that first
@@ -190,7 +190,7 @@ see the chapter <<ch22-query-process-planner.adoc#process-planner,The Cascading
 Process Planner>>.
 
 [[source-sink]]
-== Source and Sink Taps
+=== Source and Sink Taps
 
 Cascading provides a few HDFS specific Tap and Scheme implementations.
 Regardless of the build dependencies, the packages names remain consistent.
@@ -205,7 +205,7 @@ there's no need to enumerate each individual file into a
 [classname]+MultiSourceTap+. If there are nested directories, use
 [classname]+GlobHfs+.
 
-=== Schemes
+==== Schemes
 
 There are Hadoop specific versions of [code]+TextLine+ and
 [code]+TextDelimited+, see the section on
@@ -244,7 +244,7 @@ File Compression in the Hadoop property settings - either block or record-based
 compression. Refer to the Hadoop documentation for the available properties and
 compression types.
 
-=== Taps
+==== Taps
 
 The following sample code creates a new Hadoop FileSystem Tap that can read and
 write raw text files. Since only one field name is provided, the "offset" field
@@ -306,7 +306,7 @@ Note that you can only create sub-directories to bin data into. Hadoop must
 still write "part" files into each bin directory, and there is no safe mechanism
 for manipulating part file names.
 
-== Custom Taps and Schemes
+=== Custom Taps and Schemes
 
 Integrating Cascading with either remote systems or file types can be done in a
 few ways:
@@ -343,7 +343,7 @@ Before beginning, or for inspiration, please see if any integrations for your
 file type or storage system already exist by visiting the
 http://cascading.org/extensions/[extensions page].
 
-=== Schemes
+==== Schemes
 
 If the goal is to simply add a new _file type_, to be stored on a Hadoop
 compatible file system, only a new [classname]+Scheme+ needs to be implemented.
@@ -378,7 +378,7 @@ simultaneously on the MapReduce framework, so the more stable original version
 is the one in play. Apache Tez relaxes this restriction allowing future version
 to support Input/OutputFormat implementations from both Java package namespaces.
 
-=== Taps
+==== Taps
 
 If the goal is to simply add a new HDFS compatible file type, see the above
 section.
@@ -450,7 +450,7 @@ To ease the development at this stage, the classes
 [classname]+cascading.tap.hadoop.io.HadoopTupleEntrySchemeCollector+ can be
 reused if possible.
 
-== Partial Aggregation instead of Combiners
+=== Partial Aggregation instead of Combiners
 
 In Hadoop mode, Cascading does not support MapReduce "Combiners". Combiners are
 a simple optimization allowing some Reduce functions to run on the Map side of
@@ -472,7 +472,7 @@ and sorting. Also, Cascading allows any aggregate function to be implemented -
 not just Associative and Commutative functions.
 
 [[custom-types]]
-== Custom Types and Serialization
+=== Custom Types and Serialization
 
 Cascading supports any class type as values stored and passed in
 [classname]+Tuple+ instances.

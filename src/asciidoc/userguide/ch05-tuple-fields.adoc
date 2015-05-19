@@ -1,7 +1,7 @@
 :toc2:
 :doctitle: {_doctitle} - Tuple Fields
 
-= Tuple Fields
+== Tuple Fields
 
 As data stored in Tuples moves through a pipe assembly, individual columns or
 fields are either added, removed, or modified in place as they pass through each
@@ -35,7 +35,7 @@ There are also cases where _Fields sets_ can be used when fields should be
 declared. All these cases are described below.
 
 [[field-sets]]
-== Field Sets
+=== Field Sets
 
 These predefined Fields sets are constant values on the [classname]+Fields+
 class. They can be used in many places where the [classname]+Fields+ class is
@@ -127,7 +127,7 @@ TIP: May also be used when performing a join with [classname]+CoGroup+ or
 there will be a performance penalty.
 
 [[field-algebra]]
-== Field Algebra
+=== Field Algebra
 
 The chart below shows common ways to merge input and result fields for the
 desired output fields. A few minutes with this chart may help clarify the

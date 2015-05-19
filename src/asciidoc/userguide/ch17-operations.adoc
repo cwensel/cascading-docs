@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Built-In Operations
 
-= Built-In Operations
+== Built-In Operations
 
-== Identity Function
+=== Identity Function
 
 The [classname]+cascading.operation.Identity+ function is used to "shape" a
 tuple stream.
@@ -96,7 +96,7 @@ while keeping all the other values in the output Tuple.
 include::identity-coerce-single.adoc[]
 
 [[debug-function]]
-== Debug Function
+=== Debug Function
 
 The [classname]+cascading.operation.Debug+ function is a utility function
 (actually, it's a [classname]+Filter+) that prints the current argument Tuple
@@ -114,7 +114,7 @@ cluster nodes will be used. Nothing from the debug output will display on the
 client side. Debug is only useful when testing things in an IDE or if the remote
 logs are readily available.
 
-== Sample and Limit Functions
+=== Sample and Limit Functions
 
 The Sample and Limit functions are used to limit the number of tuples that pass
 through a pipe assembly.
@@ -129,7 +129,7 @@ Limit::
 The [classname]+cascading.operation.filter.Limit+ filter allows a set number of
 tuples to pass.
 
-== Insert Function
+=== Insert Function
 
 The [classname]+cascading.operation.Insert+ function allows for insertion of
 constant values into the tuple stream.
@@ -138,7 +138,7 @@ This is most useful when a splitting a tuple stream and one of the branches
 needs some identifying value, or when some missing parameter or value, like a
 date String for the current date, needs to be inserted.
 
-== Text Functions
+=== Text Functions
 
 Cascading includes a number of text functions in the
 [classname]+cascading.operation.text+ package.
@@ -191,7 +191,7 @@ values with a given String format and stuffs the result into a new field. The
 [classname]+java.util.Formatter+ class is used internally to create a new
 formatted String.
 
-== Regular Expression Operations
+=== Regular Expression Operations
 
 RegexSplitter::
 
@@ -294,7 +294,7 @@ may contain multiple values, and [classname]+RegexSplitGenerator+ emits multiple
 tuples that each contain only one value, as does [classname]+RegexGenerator+.
 
 [[operation-expression]]
-== Java Expression Operations
+=== Java Expression Operations
 
 Cascading provides some support for dynamically-compiled Java expressions to be
 used in either [classname]+Functions+ or [classname]+Filters+. This capability
@@ -354,7 +354,7 @@ expression must be expressed in multiple lines of Java code.
 
 See the relevant Javadoc for details on usage.
 
-== XML Operations
+=== XML Operations
 
 To use XML Operations in a Cascading application, include the
 _cascading-xml-x.y.z.jar_ in the project. When using the
@@ -396,7 +396,7 @@ TagSoup library to convert incoming HTML to clean XHTML. Use the
 [code]+setFeature( feature, value )+ method to set TagSoup-specific features,
 which are documented on the TagSoup website.
 
-== Assertions
+=== Assertions
 
 Cascading Stream Assertions are used to build robust reusable pipe assemblies.
 If desired, they can be planned out of a Flow instance at runtime. For more
@@ -501,7 +501,7 @@ than ([code]+&gt;+) the given size. If a pattern String is given, only grouping
 keys that match the regular expression will have this assertion applied where
 multiple key values are delimited by a TAB character.
 
-== Logical Filter Operators
+=== Logical Filter Operators
 
 The logical [classname]+Filter+ operators allow you to combine multiple filters
 to run in a single Pipe, instead of chaining multiple Pipes together to get the
@@ -549,7 +549,7 @@ include::filter-and.adoc[]
 The example above performs a logical "and" on the two filters. Both must be
 satisfied for the data to pass through this one Pipe.
 
-== Buffers
+=== Buffers
 
 The FirstNBuffer Buffer is provided as an optimized means to determine the top N
 elements in a grouping.

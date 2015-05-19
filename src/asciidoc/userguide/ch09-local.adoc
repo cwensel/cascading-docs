@@ -1,13 +1,13 @@
 :toc2:
 :doctitle: {_doctitle} - Local Platform
 
-[[local-platform]
-= Local Platform
+[[local-platform]]
+== Local Platform
 
 [[source-sink]]
-== Source and Sink Taps
+=== Source and Sink Taps
 
-=== Taps
+==== Taps
 
 The following sample code creates a new Hadoop FileSystem Tap that can read and
 write raw text files. Since only one field name is provided, the "offset" field
@@ -21,7 +21,7 @@ The [classname]+cascading.tap.local.FileTap+ tap is used with the Cascading
 local platform to access files on the local file system.
 
 [[debugging]]
-== Troubleshooting and Debugging
+=== Troubleshooting and Debugging
 
 Debugging and testing in Cascading local mode, unlike Cascading other platforms,
 is straightforward as all the processing happens in the local JVM and

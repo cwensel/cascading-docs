@@ -2,7 +2,7 @@
 :doctitle: {_doctitle} - The Cascading Process Planner
 
 [[process-planner]]
-= The Cascading Process Planner
+== The Cascading Process Planner
 
 When a collection of functions, splits, and joins are all tied up together into
 a "pipe assembly", the FlowConnector object is used to create a new Flow

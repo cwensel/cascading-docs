@@ -1,10 +1,10 @@
 :toc2:
 :doctitle: {_doctitle} - Advanced Processing
 
-= Advanced Processing
+== Advanced Processing
 
 [[subassemblies]]
-== SubAssemblies
+=== SubAssemblies
 
 In Cascading, SubAssemblies are reusable pipe assemblies that are linked into
 larger pipe assemblies. They function much like subroutines in a larger program.
@@ -57,7 +57,7 @@ branch tail to the [methodname]+setTails()+ method, and call the
 can be passed to subsequent instances of [classname]+Pipe+.
 
 [[stream-assertions]]
-== Stream Assertions
+=== Stream Assertions
 
 image:images/stream-assertions.svg[align="center"]
 
@@ -115,7 +115,7 @@ Setting [classname]+AssertionLevel.NONE+ removes all assertions.
 the planner default value.
 
 [[failure-traps]]
-== Failure Traps
+=== Failure Traps
 
 Cascading provides the ability to trap the data and associated diagnostics that
 cause Java exceptions to be thrown from an Operation or Tap.
@@ -184,7 +184,7 @@ value, cleansed
 
 See the [classname]+cascading.tap.TrapProps+ Javadoc for more details.
 
-== Checkpointing
+=== Checkpointing
 
 Checkpointing is the ability to collapse a tuple stream within a Flow at any
 point as a way to improve the reliability or performance of a Flow. This is
@@ -232,7 +232,7 @@ may result in subtle coercion errors when field types are not provided
 consitently and when dealing with complex (non-primitive) data types.
 
 [[restarting-flows]]
-== Restarting a Checkpointed Flow
+=== Restarting a Checkpointed Flow
 
 When using Checkpoint pipes in a Flow and the Flow fails, a future execution of
 the Flow can be restarted after the last successful FlowStep writing to a
@@ -263,7 +263,7 @@ collisions.
 On successful completion of a Flow with a runID, all temporary checkpoint files
 will be removed, if any.
 
-== Flow and Cascade Event Handling
+=== Flow and Cascade Event Handling
 
 Each Flow and Cascade has the ability to execute callbacks via an event
 listener. This ability is useful when an external application needs to be
@@ -308,7 +308,7 @@ return true if the given throwable was handled, and should not be re-thrown from
 the [code]+Flow.complete()+ or [code]+Cascade.complete()+ methods.
 
 [[partition-tap]]
-== PartitionTaps
+=== PartitionTaps
 
 The [classname]+PartitionTap+ [classname]+Tap+ class provides a simple means to
 break large datasets into smaller sets based on data item values. This is also
@@ -345,7 +345,7 @@ phase, and will likely scale much better in cases where there are a very large
 number of unique partitions that will result in a large number of directories or
 files.
 
-== Partial Aggregation instead of Combiners
+=== Partial Aggregation instead of Combiners
 
 Cascading implements a mechanism to perform partial aggregations in order to
 reduce the amount of transmitted data so that a complete aggregation can be

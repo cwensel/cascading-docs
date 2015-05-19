@@ -1,10 +1,10 @@
 :toc2:
 :doctitle: {_doctitle} - Field Typing and Type Coercion
 
-= Field Typing and Type Coercion
+== Field Typing and Type Coercion
 
 [[field-typing]]
-== Field Typing
+=== Field Typing
 
 The Fields class can hold type information for each field, and the Cascading
 planner can propagate that information from source Tap instances to downstream
@@ -62,7 +62,7 @@ read type information from any field or data sources they represent so it can be
 handed to the planner during runtime.
 
 [[field-coercion]]
-== Type Coercion
+=== Type Coercion
 
 Type coercion is a means to convert one data type to another. For example,
 parsing the Java [classname]+String+ "42" to the [classname]+Integer+ 42 would

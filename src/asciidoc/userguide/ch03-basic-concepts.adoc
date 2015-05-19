@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Cascading Basic Concepts
 
-= Cascading Basic Concepts
+== Cascading Basic Concepts
 
-== Terminology
+=== Terminology
 
 The Cascading processing model is based on a metaphor of pipes (data streams)
 and filters (data operations). Thus the Cascading API allows the developer to
@@ -25,7 +25,7 @@ process. In this context, if one flow depends on the output of another, it is
 not executed until all of its data dependencies are satisfied. Such a collection
 of flows is called a _cascade_.
 
-== Pipe Assemblies
+=== Pipe Assemblies
 
 Pipe assemblies define what work should be done against tuple streams, which are
 read from tap _sources_ and written to tap _sinks_. The work performed on the
@@ -35,7 +35,7 @@ calculating.
 Pipe assemblies may use multiple sources and multiple sinks, and may define
 splits, merges, and joins to manipulate the tuple streams.
 
-=== Pipe Assembly Workflow
+==== Pipe Assembly Workflow
 
 Pipe assemblies are created by chaining [classname]+cascading.pipe.Pipe+ classes
 and subclasses together. Chaining is accomplished by passing the previous
@@ -64,7 +64,7 @@ above.
 
 image:images/simple-pipe-assembly.svg[align="center"]
 
-=== Common Stream Patterns
+==== Common Stream Patterns
 
 As data moves through the pipe, streams may be separated or combined for various
 purposes. Here are the three basic patterns:
@@ -88,7 +88,7 @@ on common field values (analogous to a SQL join.) This is done by passing two or
 more [classname]+Pipe+ instances to a [classname]+HashJoin+ or
 [classname]+CoGroup+ pipe. The code sequence and diagram above give an example.
 
-=== Data Processing
+==== Data Processing
 
 In addition to directing the tuple streams - using splits, merges, and joins -
 pipe assemblies can examine, filter, organize, and transform the tuple data as
@@ -125,7 +125,7 @@ field position, starting at [code]+0+ for the first position, or starting at
 asterisk in SQL). For more on Fields sets, see
 <<ch05-field-sets.adoc#_field_sets, Field Sets>>).
 
-== Pipes
+=== Pipes
 
 The code for the sample pipe assembly above, <<chaining-pipes>>, consists almost
 entirely of a series of [classname]+Pipe+ constructors. This section describes
@@ -136,7 +136,7 @@ the diagram below.
 
 image:images/pipes.svg[align="center"]
 
-=== Types of Pipes
+==== Types of Pipes
 
 [classname]+Each+::
 
@@ -268,7 +268,7 @@ The following table summarizes the different types of pipes.
 |====
 
 [[platforms]]
-== Platforms
+=== Platforms
 
 Cascading supports pluggable planners that allow it to execute on differing
 platforms. Planners are invoked by an associated [classname]+FlowConnector+
@@ -329,7 +329,7 @@ mode is happy with a [classname]+java.io.FileInputStream+. This detail is hidden
 from developers unless they are creating custom Tap and Scheme classes.
 
 [[source-sink]]
-== Sourcing and Sinking Data
+=== Sourcing and Sinking Data
 
 All input data comes in from, and all output data goes out to, some instance of
 [classname]+cascading.tap.Tap+ and [classname]+cascading.scheme.Scheme+ pair. A
@@ -347,7 +347,7 @@ The platform on which your application is running determines which specific Tap 
 classes you can use. Details are provided in subsequent chapters.
 
 [[common-schemes]]
-=== Common Schemes
+==== Common Schemes
 
 Some Schemes are functionally common across platforms but remain platform
 specific in implementation. To prevent naming collisions, each class will have a
@@ -384,7 +384,7 @@ file. A TextDelimited scheme is provided for both the local and Hadoop modes.
 By default TextDelimited uses the UTF-8 character set. This can be overridden on
 appropriate the TextDelimited constructor.
 
-==== Platform-specific implementation details
+===== Platform-specific implementation details
 
 Depending on which platform you use (Cascading local, Hadoop MapReduce, or
 Apache Tez), the classes you use to specify schemes will vary. Platform-specific
@@ -399,7 +399,7 @@ details for each standard scheme are shown below.
 |====
 
 [[common-taps]]
-=== Common Taps
+==== Common Taps
 
 The following sample code creates a new local FileSystem Tap that can read and
 write raw text files. Since only one field name is provided, the "num" field
@@ -453,7 +453,7 @@ Taps can be wrapped by a [classname]+DecoratorTap+ implementation by the
 Cascading Planner. See [classname]+cascading.flow.FlowConnectorProps+ for
 details.
 
-==== Platform-specific implementation details
+===== Platform-specific implementation details
 
 Depending on which platform you use (Cascading local or Hadoop), the classes you
 use to specify file systems will vary. Platform-specific details for each
@@ -469,7 +469,7 @@ standard tap type are shown below.
 | Wrapping a Tap with MetaData / Decorating intra-Flow Taps | [classname]+DecoratorTap+ | |
 |====
 
-== Sink Modes
+=== Sink Modes
 
 .Overwriting An Existing Resource
 ====
@@ -528,7 +528,7 @@ that should be run. For more information, see <<ch06-flows.adoc#skipping-flows,
 Skipping Flows>>.
 
 [[flows]]
-== Flows
+=== Flows
 
 When pipe assemblies are bound to source and sink taps, a [classname]+Flow+ is
 created. Flows are executable in the sense that, once they are created, they can

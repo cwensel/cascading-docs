@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Using and Developing Operations
 
-= Using and Developing Operations
+== Using and Developing Operations
 
-== Introduction
+=== Introduction
 
 So far we've talked about setting up sources and sinks, shaping the data
 streams, referencing the data fields, and so on. Within this Pipe framework,
@@ -71,7 +71,7 @@ influences how the Cascading planner renders the Flow under certain
 circumstances.
 
 [[functions]]
-== Functions
+=== Functions
 
 A [classname]+Function+ expects a stream of individual argument Tuples, and
 returns zero or more result Tuples for each of them. Like a [classname]+Filter+,
@@ -159,7 +159,7 @@ the result [classname]+Tuple+ has been processed, copied, or persisted
 downstream.
 
 [[filters]]
-== Filters
+=== Filters
 
 A [classname]+Filter+ expects a stream of individual argument Tuples and returns
 a boolean value for each one, stating whether it should be discarded. Like a
@@ -197,7 +197,7 @@ and filters out the current Tuple if the first argument, String length, is
 greater than the integer value of the second argument.
 
 [[aggregators]]
-== Aggregators
+=== Aggregators
 
 An [classname]+Aggregator+ expects a stream of tuple groups (the output of a
 [classname]+GroupBy+ or [classname]+CoGroup+ pipe), and returns zero or more
@@ -254,7 +254,7 @@ There are several constraints on the use of Aggregators that may not be
 self-evident. These are detailed in the Javadoc
 
 [[buffers]]
-== Buffers
+=== Buffers
 
 A [classname]+Buffer+ expects set of argument tuples in the same grouping, and
 may return zero or more result tuples.
@@ -327,7 +327,7 @@ define a custom context object and implement the [methodname]+prepare()+ and
 [methodname]+cleanup()+ methods to maintain state, or re-use outgoing
 [classname]+Tuple+ instances for efficiency.
 
-== Operation and BaseOperation
+=== Operation and BaseOperation
 
 In all of the above sections, the [classname]+cascading.operation.BaseOperation+
 class was subclassed. This class is an implementation of the

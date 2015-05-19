@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Introduction
 
-= Introduction
+== Introduction
 
-== What is Cascading?
+=== What is Cascading?
 
 Cascading is a data processing API and processing planner used for defining,
 sharing, and executing data-oriented applications. These applications can
@@ -25,7 +25,7 @@ Additionally, Cascading can support new platforms as they emerge so business
 logic will not need to be re-written in order to leverage state-of-the-art
 technologies.
 
-== Another Perspective
+=== Another Perspective
 
 Another way to look at Cascading is to consider the typical stack behind a query
 syntax like SQL.
@@ -45,7 +45,7 @@ translate that model into a physical executable model. Where the intermediate
 model is presented as a Java API, and the planner is both modifiable and
 pluggable.
 
-== Why use Cascading?
+=== Why use Cascading?
 
 Cascading was developed to allow organizations to rapidly develop complex data
 processing applications. The need for Cascading is typically driven by one or
@@ -80,7 +80,7 @@ in order to improve performance and reliability, and it grants visibility of
 application status and health to operations teams responsible for managing
 business processes.
 
-== The Cascading Philosophy
+=== The Cascading Philosophy
 
 Cascading was designed to be extensible, to behave deterministically, and
 fail fast where possible.
@@ -117,7 +117,7 @@ successful _may_ result in improved runtime performance.
 It is not acceptable to fail part way, in a non-deterministic (non-repeatable)
 fashion, for applications than may run hours or days at a stretch.
 
-== Who are the users?
+=== Who are the users?
 
 Cascading users typically fall into three roles:
 

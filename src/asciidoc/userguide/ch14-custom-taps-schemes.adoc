@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Custom Taps and Schemes
 
-= Custom Taps and Schemes
+== Custom Taps and Schemes
 
-== Introduction
+=== Introduction
 
 Cascading is designed to be easily configured and enhanced by developers. In
 addition to creating custom Operations, developers can create custom
@@ -28,7 +28,7 @@ For examples of how to implement a custom tap and scheme for different
 platforms, see the http://.cascading.org/extensions/[Cascading Extensions] page
 for source code of similiar extensions.
 
-== Custom Taps
+=== Custom Taps
 
 All custom Tap classes must subclass the [classname]+cascading.tap.Tap+ abstract
 class and implement the required methods. The method
@@ -86,7 +86,7 @@ constructor of the [classname]+Tap+. Consequently, the [classname]+Scheme+ is
 responsible for configuring the Input and Output types it will be reading and
 writing.
 
-== Custom Schemes
+=== Custom Schemes
 
 All custom Scheme classes must subclass the [classname]+cascading.scheme.Scheme+
 abstract class and implement the required methods.
@@ -136,9 +136,9 @@ clustered platform platform, this will likely be on the cluster side, unlike
 calls to [methodname]+*ConfInit()+ which will likely be on the client side (but
 not guaranteed).
 
-== SinkModes
+=== SinkModes
 
-== File Like Taps
+=== File Like Taps
 
 Tap classes that are meant to manage resources that are files should implement
 the interface [classname]+cascading.tap.type.FileType+.
@@ -150,7 +150,7 @@ Non-file like resources should not be managed by a Tap that implements this
 interface. For example, a "JDBCTap" implementation would not treat tables as
 directories with child files.
 
-== Tap Lifecycle Methods
+=== Tap Lifecycle Methods
 
 The Tap interface has a number of _lifecycle_ methods that allow the underlying
 resource to be managed by the Tap instance.

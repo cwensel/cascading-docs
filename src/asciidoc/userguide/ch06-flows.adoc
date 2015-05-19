@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Flows
 
-= Flows
+== Flows
 
-== Creating Flows from Pipe Assemblies
+=== Creating Flows from Pipe Assemblies
 
 .Creating a new Flow
 ====
@@ -32,7 +32,7 @@ Internally Cascading uses those names to bind the source taps to the pipe
 assembly.
 
 [[configuring-flows]]
-== Configuring Flows
+=== Configuring Flows
 
 The FlowConnector constructor accepts the [classname]+java.util.Property+ object
 so that default Cascading and any platform-specific properties can be passed
@@ -59,7 +59,7 @@ given [classname]+Pipe+ or [classname]+Tap+ instance directly - via the
 [methodname]+getStepConfigDef()+ methods.
 
 [[skipping-flows]]
-== Skipping Flows
+=== Skipping Flows
 
 When a [classname]+Flow+ participates in a [classname]+Cascade+, the
 [classname]+Flow.isSkipFlow()+ method is consulted before calling
@@ -97,7 +97,7 @@ determine whether the current strategy indicates that the Flow should be
 skipped.
 
 [[custom-flows]]
-== Creating Custom Flows
+=== Creating Custom Flows
 
 Any custom Class can be treated as a Flow if given the correct
 https://github.com/Cascading/riffle[Riffle] annotations. Riffle is a set of Java
@@ -114,7 +114,7 @@ and executes them until no more passes are needed. This is like nesting Flows or
 Cascades in a parent Flow, which in turn can participate in a Cascade.
 
 [[process-levels]]
-== Flow Process Hierarchy
+=== Flow Process Hierarchy
 
 A Flow is a parent, top-level unit-of-work. Underneath are other process levels
 that have specific roles.
@@ -166,7 +166,7 @@ will be represented here.
 
 On Hadoop MapReduce and Apache Tez this would be an individual "task attempt".
 
-== Runtime Metrics
+=== Runtime Metrics
 
 Developers can retrieve runtime metrics (counters) of each <<process-levels,
 process level>> in a platform independent way.

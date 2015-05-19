@@ -1,7 +1,7 @@
 :toc2:
 :doctitle: {_doctitle} - Cascades
 
-= Cascades
+== Cascades
 
 image:images/cascade.svg[align="center"]
 
@@ -13,7 +13,7 @@ Further, Cascade instances act like a compiler build file - that is, a Cascade
 only executes Flows that have stale sinks (i.e., output data that is older than
 the input data). For more on this, see <<ch06-flows.adoc#skipping-flows>>.
 
-== Creating a Cascade
+=== Creating a Cascade
 
 .Creating a new Cascade
 ====
@@ -34,7 +34,7 @@ consulted for every Flow instance managed by that Cascade, and all skip
 strategies on those Flow instances are ignored.
 
 [[cascade-scheduler]]
-== The Cascade Topological Scheduler
+=== The Cascade Topological Scheduler
 
 Cascading has a simple class, [classname]+Cascade+, that executes a collection
 of Cascading Flows on a target cluster in dependency order.

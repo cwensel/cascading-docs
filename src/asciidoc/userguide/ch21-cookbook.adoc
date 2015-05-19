@@ -1,11 +1,11 @@
 :toc2:
 :doctitle: {_doctitle} - Cascading Cookbook
 
-= Cascading Cookbook
+== Cascading Cookbook
 
 This chapter demonstrates some common idioms used in Cascading applications.
 
-== Tuples and Fields
+=== Tuples and Fields
 
 Copy a Tuple instance::
 
@@ -23,7 +23,7 @@ Remove a field from a longer Fields instance::
 
 include::cookbook-fieldssubtract.adoc[]
 
-== Stream Shaping
+=== Stream Shaping
 
 Split (branch) a Tuple Stream::
 
@@ -53,7 +53,7 @@ Insert constant values into a stream::
 
 include::cookbook-insertvalue.adoc[]
 
-== Common Operations
+=== Common Operations
 
 Parse a String date/time value::
 
@@ -63,7 +63,7 @@ Format a time-stamp to a date/time value::
 
 include::cookbook-formatdate.adoc[]
 
-== Stream Ordering
+=== Stream Ordering
 
 Remove duplicate tuples in a stream::
 
@@ -77,7 +77,7 @@ Find first occurrence in time of a unique value::
 
 include::cookbook-distinctorder.adoc[]
 
-== API Usage
+=== API Usage
 
 Pass properties to a custom Operation::
 

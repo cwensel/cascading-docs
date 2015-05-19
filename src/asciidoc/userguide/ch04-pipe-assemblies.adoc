@@ -1,10 +1,10 @@
 :toc2:
 :doctitle: {_doctitle} - Pipe Assemblies
 
-= Pipe Assemblies
+== Pipe Assemblies
 
 [[each-every]]
-== Each and Every Pipes
+=== Each and Every Pipes
 
 The [classname]+Each+ and [classname]+Every+ pipes perform operations on tuple
 data - for instance, perform a search-and-replace on tuple contents, filter out
@@ -120,7 +120,7 @@ Aggregator, where an Aggregator is just a special optimized case of a Buffer.
 
 For more information on how operations process fields, see <<field-processing>> .
 
-== Merge
+=== Merge
 
 The [classname]+Merge+ pipe is very simple. It accepts two or more streams that
 have the same fields, and emits a single stream containing all the tuples from
@@ -136,7 +136,7 @@ include::simple-merge.adoc[]
 The example above simply combines all the tuples from two existing streams
 ("lhs" and "rhs") into a new tuple stream ("merge").
 
-== GroupBy
+=== GroupBy
 
 [classname]+GroupBy+ groups the tuples of a stream based on common values in
 specified fields. If passed multiple streams as inputs, it performs a merge
@@ -152,7 +152,7 @@ instance, when grouping on "lastname", the tuples [code]+[doe, john]+ and
 [code]+[doe, jane]+ end up in the same group, but in arbitrary sequence.
 
 [[secondary-sorting]]
-=== Secondary sorting
+==== Secondary sorting
 
 If multi-level sorting is desired, the names of the sort fields must be
 specified to the [classname]+GroupBy+ instance, as seen below. In this example,
@@ -191,7 +191,7 @@ want to reverse the order of the tuples within that grouping by "time of day".
 include::simple-groupby-secondary-time.adoc[]
 ====
 
-== CoGroup
+=== CoGroup
 
 The [classname]+CoGroup+ pipe is similar to [classname]+GroupBy+, but instead of
 a merge, performs a join. That is, [classname]+CoGroup+ accepts two or more
@@ -216,7 +216,7 @@ should be an instance of [classname]+Fields+ containing [classname]+Comparator+
 instances for the appropriate fields. This allows fine-grained control of the
 sort grouping order.
 
-=== Field names
+==== Field names
 
 In a join operation, all the field names used in any of the input tuples must be
 unique; duplicate field names are not allowed. If the names overlap there is a
@@ -254,7 +254,7 @@ approach allows the behavior of the [classname]+CoGroup+ to be deterministic and
 consistent.
 
 [[joiner-class]]
-=== The Joiner class
+==== The Joiner class
 
 In the example above, we explicitly specified a Joiner class (InnerJoin) to
 perform a join on our data. There are five Joiner subclasses, as shown in this
@@ -353,7 +353,7 @@ _Custom_::
 Developers can subclass the [classname]+cascading.pipe.cogroup.Joiner+ class to
 create custom join operations.
 
-=== Scaling
+==== Scaling
 
 [classname]+CoGroup+ attempts to store the entire current unique keys tuple
 "bag" from the right-hand stream in memory for rapid joining to the left-hand
@@ -363,7 +363,7 @@ the threshold value is too large). Thus it's usually best to put the stream with
 the largest groupings on the left-hand side and, if necessary, adjust the spill
 threshold as described in the Javadoc.
 
-== HashJoin
+=== HashJoin
 
 [classname]+HashJoin+ performs a join (similar to a SQL join) on two or more
 streams, and emits a stream of tuples that contain fields from all of the input
@@ -390,7 +390,7 @@ on common values in two fields. The field names that are specified in
 [classname]+lhsFields+ and [classname]+rhsFields+ are among the field names
 previously declared for the two input streams.
 
-=== Scaling
+==== Scaling
 
 For joins that do not require grouping, [classname]+HashJoin+ provides faster
 execution than [classname]+CoGroup+, but it operates within stricter

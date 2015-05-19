@@ -1,9 +1,9 @@
 :toc2:
 :doctitle: {_doctitle} - Extending Cascading
 
-= Extending Cascading
+== Extending Cascading
 
-== Scripting
+=== Scripting
 
 The Cascading API was designed with scripting in mind. Any JVM-compatible
 scripting language can import and instantiate Cascading classes, create pipe
@@ -15,7 +15,7 @@ The Cascading website (http://cascading.org/extensions/) includes information on
 scripting language bindings that are publicly available.
 
 [[custom-types]]
-== Custom Types and Serialization
+=== Custom Types and Serialization
 
 The [classname]+Tuple+ class is a generic container for all
 [classname]+java.lang.Object+ instances.
@@ -28,7 +28,7 @@ Unfortunately there is no common method for managing the serialization of custom
 types that is cross platform. Please see the platform specific chapters for
 details on registering serializers that Cascading can adopt at runtime.
 
-== Custom Comparators and Hashing
+=== Custom Comparators and Hashing
 
 Frequently, objects in one [classname]+Tuple+ are compared to objects in a
 second [classname]+Tuple+. This is especially true during the sort phase of

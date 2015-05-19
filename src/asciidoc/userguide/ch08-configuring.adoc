@@ -2,9 +2,9 @@
 :toc2:
 :doctitle: {_doctitle} - Configuring
 
-= Configuring
+== Configuring
 
-== Introduction
+=== Introduction
 
 Cascading provides a number of ways to pass properties down for use by built-in
 or custom operations and integrations, to Cascading internals, or down to the
@@ -14,7 +14,7 @@ Additionally the scope of the configuration properties can be application wide,
 limited to a <<ch06-flows.adoc#process-level,specific process level>> (a Flow, a
 FlowStep, or a FlowNode), or specific to a given Pipe or Tap instance.
 
-== Creating Properties
+=== Creating Properties
 
 Cascading is very configurable. To configure aspects of Cascading, a property
 set must be created, where a property is a key and value pair.
@@ -35,7 +35,7 @@ hierarchy of default key/values. But calling [code]+getKeySet()+ and other
 [classname]+Map+ specific API calls will not return the nested key values. See
 [methodname]+Properties.getPropertyNames()+.
 
-=== Props
+==== Props
 
 All frequently used Cascading properties are encapsulated in sub-system specific
 [classname]+Props+ sub-classes. All [classname]+Props+ classes are fluent style
@@ -91,7 +91,7 @@ grained control over the underlying caches used.
 
 |====
 
-== Passing Properties
+=== Passing Properties
 
 The scopes at which properties can be applied are:
 
@@ -117,7 +117,7 @@ possible
 
 NOTE: FlowNode level properties cannot be applied to the Map/Reduce platform.
 
-=== Planner Properties
+==== Planner Properties
 
 Properties passed to a [classname]+FlowConnector+ will be consulted during
 planning.
@@ -126,7 +126,7 @@ In addition, these properties will be pushed directly to the underlying platform
 as defaults. Any of which may be overridden by a given scoped
 [classname]+ConfigDef+
 
-=== ConfigDef
+==== ConfigDef
 
 The ConfigDef class allows for the creation of a configuration properties
 template to be applied to an existing properties configuration set.
