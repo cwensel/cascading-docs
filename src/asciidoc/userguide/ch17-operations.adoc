@@ -303,8 +303,8 @@ into byte code for optimal processing speed. Janino is documented in detail on
 its website, http://www.janino.net/.
 
 This capability allows an Operation to evaluate a suitable one-line Java
-expression, such as [code]+$$a + 3 * 2$$+ or [code]+a &lt; 7+, where the
-variable values ( [code]+a+ and [code]+b+) are passed in as Tuple fields.
+expression, such as [code]+$$a + 3 * 2$$+ or [code]+a < 7+, where the variable
+values ( [code]+a+ and [code]+b+) are passed in as Tuple fields.
 
 The result of the Operation thus depends on the evaluated result of the
 expression - in the first example, a [classname]+Number+, and in the second, a
@@ -551,8 +551,8 @@ satisfied for the data to pass through this one Pipe.
 
 === Buffers
 
-The FirstNBuffer Buffer is provided as an optimized means to determine the top N
-elements in a grouping.
+The [classname+FirstNBuffer+ Buffer is provided as an optimized means to
+determine the top N elements in a grouping.
 
 FirstNBuffer::
 

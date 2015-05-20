@@ -34,8 +34,8 @@ method. One is based on a Class name, and the other is based on a literal path.
 
 The first method takes a Class object that owns the "main" function for this
 application. The assumption here is that [code]+Main.class+ is not located in a
-Java Jar that is stored in the +lib+ folder of the application Jar. If it is,
-that Jar is pushed to the cluster, not the parent application jar.
+Java Jar that is stored in the [code]+lib+ folder of the application Jar. If it
+is, that Jar is pushed to the cluster, not the parent application jar.
 
 The second method simply sets the path to the Java Jar as a property.
 
@@ -73,12 +73,12 @@ This jar contains the Cascading Core class files. It should be packaged with
 [code]+cascading-hadoop-3.x.y.jar+::
 
 This jar contains the Cascading Hadoop 1 specific dependencies. It should be
-packaged with +lib/*.jar+ when using Hadoop.
+packaged with [code]+lib/*.jar+ when using Hadoop.
 
 [code]+cascading-hadoop2-mr1-3.x.y.jar+::
 
 This jar contains the Cascading Hadoop 2 specific dependencies. It should be
-packaged with +lib/*.jar+ when using Hadoop.
+packaged with [code]+lib/*.jar+ when using Hadoop.
 
 NOTE: Do not package both [code]+cascading-hadoop-3.x.y.jar+ and
 [code]+cascading-hadoop2-mr1-3.x.y.jar+ jar files into your application. Choose
@@ -87,6 +87,6 @@ the version that matches your Hadoop distribution version.
 Cascading works with either of the Hadoop processing modes - the default local
 standalone mode and the distributed cluster mode. As specified in the Hadoop
 documentation, running in cluster mode requires the creation of a Hadoop job jar
-that includes the Cascading jars, plus any needed third-party jars, in its +lib+
-directory. This is true regardless of whether they are Cascading Hadoop-mode
-applications or raw Hadoop MapReduce applications.
+that includes the Cascading jars, plus any needed third-party jars, in its
+[code]+lib+ directory. This is true regardless of whether they are Cascading
+Hadoop-mode applications or raw Hadoop MapReduce applications.

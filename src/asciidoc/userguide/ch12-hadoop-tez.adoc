@@ -55,11 +55,11 @@ This jar contains the Cascading Core class files. It should be packaged with
 [code]+cascading-hadoop2-tez-3.x.y.jar+::
 
 This jar contains the Cascading Hadoop 2 and Apache Tez specific dependencies.
-It should be packaged with +lib/*.jar+ when using Hadoop.
+It should be packaged with [code]+lib/*.jar+ when using Hadoop.
 
 Cascading works with either of the Hadoop processing modes - the default local
 standalone mode and the distributed cluster mode. As specified in the Hadoop
 documentation, running in cluster mode requires the creation of a Hadoop job jar
-that includes the Cascading jars, plus any needed third-party jars, in its +lib+
-directory. This is true regardless of whether they are Cascading Hadoop-mode
-applications or raw Apache Tez applications.
+that includes the Cascading jars, plus any needed third-party jars, in its
+[code]+lib+ directory. This is true regardless of whether they are Cascading
+Hadoop-mode applications or raw Apache Tez applications.

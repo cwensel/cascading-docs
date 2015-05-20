@@ -1,0 +1,43 @@
+= Style Guide
+
+Much of this is in place in order to retain docbook compatibility, and leverage
+the tool limitations.
+
+== Tools
+
+* Atom is being used for content generation
+* OmniGraffle is for generating SVG files
+
+== ToC Generation
+
+Chapters should be numbered so that order is maintained.
+
+Part headings are ignored, see below.
+
++index.adoc+ will become +index.html+, it has a single include that pulls in
+the generated +toc.adoc+.
+
+== Headings
+
+Chapter headings are ==, section headings are ===.
+
+A single = is left for part headings.
+
+== Style
+
+We are limited to the following styles supported by the css.
+
+code:: monotype
+classname:: monotype
+methodname:: monotype
+
+== Layout
+
+In Atom, cmd-opt-Q will reformat a paragraph to match the line width
+restrictions. Line spacing is informed by its limitations.
+
+* Line widths are 80 chars
+* continuations (+) have a blank space before and after
+* where possible, rows in tables have blank space before and after
+
+There should never be more than two blank lines consecutively.

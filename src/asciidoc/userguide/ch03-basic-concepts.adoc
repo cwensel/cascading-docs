@@ -149,9 +149,12 @@ etc.
 +
 
 You can also use [classname]+Each+ to split or branch a stream, simply by
-routing the output of an [classname]+Each+ into a different pipe or sink. + Note
-that with [classname]+Each+, as with other types of pipe, you can specify a list
-of fields to output, thereby removing unwanted fields from a stream.
+routing the output of an [classname]+Each+ into a different pipe or sink.
+
++
+
+Note that with [classname]+Each+, as with other types of pipe, you can specify a
+list of fields to output, thereby removing unwanted fields from a stream.
 
 [classname]+Merge+::
 
