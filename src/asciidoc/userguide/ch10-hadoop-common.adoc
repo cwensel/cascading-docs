@@ -142,7 +142,7 @@ setting Hadoop specific serialization and deserialization properties. See
 === Building an Application
 
 See the platform specific chapters on how best to build an application for
-exeuction on that platform.
+execution on that platform.
 
 [[executing]]
 === Executing an Application
@@ -150,14 +150,14 @@ exeuction on that platform.
 Running a Cascading application is the same as running any Hadoop application.
 
 After packaging your application into a single jar (see <<building>>), you must
-use _bin/hadoop_ on Hadoop 1, or _bin/yarn_ on Hadoop 2, to submit the
+use +bin/hadoop+ on Hadoop 1, or +bin/yarn+ on Hadoop 2, to submit the
 application to the cluster.
 
-For example, to execute an application stuffed into _your-application.jar_, call
+For example, to execute an application stuffed into +your-application.jar+, call
 the Hadoop 2 shell script:
 
 .Running a Cascading Application
-===
+====
 ----
 $HADOOP_HOME/bin/yarn jar your-application.jar [some params]
 ----
@@ -167,10 +167,10 @@ If the configuration scripts in $HADOOP_CONF_DIR are configured to use a
 cluster, the Jar is pushed into that cluster for execution.
 
 Cascading does not rely on any environment variables like $HADOOP_HOME or
-$HADOOP_CONF_DIR, only _bin/hadoop_ and _bin/yarn_ do.
+$HADOOP_CONF_DIR, only +bin/hadoop+ and +bin/yarn+ do.
 
-It should be noted that even though _your-application.jar_ is passed on the
-command line to _bin/hadoop_ or _bin/yarn_, this in no way configures Hadoop to
+It should be noted that even though +your-application.jar+ is passed on the
+command line to +bin/hadoop+ or +bin/yarn+, this in no way configures Hadoop to
 push this jar into the cluster. You must still call one of the property setters
 mentioned above to set the proper path to the application jar. If misconfigured,
 it's likely that one of the internal libraries (found in the lib folder) will be
