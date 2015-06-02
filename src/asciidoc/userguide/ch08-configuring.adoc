@@ -26,7 +26,7 @@ Property sets can be managed directly in a [classname]+java.util.Properties+
 instance. This class has methods allowing for [code]+*.property+ files to be
 loaded from disk or other locations.
 
-TIP: [classname]+Properties+ is a subclass of [classname]+Map<Object,Object>+,
+NOTE: [classname]+Properties+ is a subclass of [classname]+Map<Object,Object>+,
 thus any Map type can be used, so long as both key and value pairs are stored as
 type [classname]+java.util.String+,
 
@@ -48,7 +48,6 @@ level configuration settings.
 ====
 include::app-props.adoc[]
 ====
-
 
 The [classname]+Props+ interface allows for both setting available values as
 well as populating either a [classname]+Properties+ or [classname]+ConfigDef+

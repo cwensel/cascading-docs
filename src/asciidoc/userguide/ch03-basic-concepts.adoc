@@ -112,7 +112,7 @@ In Cascading, data is processed as a stream of Tuples
 database record or row. A Tuple is effectively an array of (field) values, where
 each value can be any [classname]+java.lang.Object+ Java type (or [code]+byte[]+
 array). For information on supporting non-primitive types, see
-<<ch20-extending-cascading.adoc#custom-types, Custom Types>>.
+<<ch19-extending-cascading.adoc#custom-types, Custom Types>>.
 
 Fields::
 
@@ -123,7 +123,7 @@ field position, starting at [code]+0+ for the first position, or starting at
 [code]+-1+ for the last position), or one of the predefined __Fields sets__
 (such as [code]+Fields.ALL+, which selects all values in the Tuple, like an
 asterisk in SQL). For more on Fields sets, see
-<<ch05-field-sets.adoc#_field_sets, Field Sets>>).
+<<ch04-tuple-fields.adoc#field-sets, Field Sets>>).
 
 === Pipes
 
@@ -227,10 +227,10 @@ so [classname]+Aggregator+ operations can be chained. This is not true for
 
 [classname]+CoGroup+ performs a join on two or more streams, similar to a SQL
 join, and groups the single resulting output stream on the values of specified
-fields. As with SQL, the join can be inner, outer, left, or right. Self-joins are
-permitted, as well as mixed joins (for three or more streams) and custom joins.
-Null fields in the input streams become corresponding null fields in the output
-stream.
+fields. As with SQL, the join can be inner, outer, left, or right. Self-joins
+are permitted, as well as mixed joins (for three or more streams) and custom
+joins. Null fields in the input streams become corresponding null fields in the
+output stream.
 
 +
 
@@ -364,8 +364,8 @@ a _sink_. Or, more commonly, taps act as both sinks and sources when shared
 between flows (a tap may not be used as both a source and sink in the same
 flow).
 
-The platform on which your application is running determines which specific Tap and Scheme
-classes you can use. Details are provided in subsequent chapters.
+The platform on which your application is running determines which specific Tap
+and Scheme classes you can use. Details are provided in subsequent chapters.
 
 [[common-schemes]]
 ==== Common Schemes
@@ -413,10 +413,15 @@ details for each standard scheme are shown below.
 
 .Platform-specific tap scheme classes
 |====
+
 | *Description* | *Cascading local platform* | *Hadoop platform*
+
 | *Package Name* | [classname]+cascading.scheme.local+ | [classname]+cascading.scheme.hadoop+
+
 | Read lines of text | [classname]+TextLine+ | [classname]+TextLine+
+
 | Read delimited text (CSV, TSV, etc) | [classname]+TextDelimited+ | [classname]+TextDelimited+
+
 |====
 
 [[common-taps]]
@@ -442,7 +447,7 @@ Cascading provides one common Tap type:
 The [classname]+cascading.tap.hadoop.PartitionTap+ and
 [classname]+cascading.tap.local.PartitionTap+ are used to sink tuples into
 directory paths based on the values in the Tuple. More can be read below in
-<<ch16-advanced.adoc#partition-tap, PartitionTap>>.
+<<ch15-advanced.adoc#partition-tap, PartitionTap>>.
 
 Utility taps can be used to combine other Tap instances into a single Tap, or
 are useful to sub-class from when creating other purpose built Tap types. These
@@ -467,9 +472,9 @@ Tuple.
 [classname]+DecoratorTap+::
 
 The [classname]+cascading.tap.DecoratorTap+ is a utility helper for wrapping an
-existing Tap with new functionality, via a sub-class, and/or adding 'meta-data' to
-a Tap instance via the generic [classname]+MetaInfo+ instance field. Further, on
-the Hadoop platform, planner created intermediate and [classname]+Checkpoint+
+existing Tap with new functionality, via a sub-class, and/or adding 'meta-data'
+to a Tap instance via the generic [classname]+MetaInfo+ instance field. Further,
+on the Hadoop platform, planner created intermediate and [classname]+Checkpoint+
 Taps can be wrapped by a [classname]+DecoratorTap+ implementation by the
 Cascading Planner. See [classname]+cascading.flow.FlowConnectorProps+ for
 details.
@@ -482,13 +487,27 @@ standard tap type are shown below.
 
 .Platform-specific details for setting file system
 |====
+
 | *Description* | *Either platform* | *Cascading local platform* | *Hadoop platform*
+
 | *Package Name* | [classname]+cascading.tap+ | [classname]+cascading.tap.local+ | [classname]+cascading.tap.hadoop+
+
 | Multiple Taps as single source | [classname]+MultiSourceTap+ | |
+
 | Multiple Taps as single sink | [classname]+MultiSinkTap+ | |
+
 | Bin/Partition data into multiple files | | [classname]+PartitionTap+ | [classname]+PartitionTap+
+
 | Wrapping a Tap with MetaData / Decorating intra-Flow Taps | [classname]+DecoratorTap+ | |
+
 |====
+
+TIP: To learn more about creating custom [classname]+Tap+ or [classname]+Scheme+
+implementations, read the chapter on
+<<ch14-custom-taps-schemes.adoc#custom-taps-schemes,Custom Taps and Schemes>>
+
+TIP: Visit http://cascading.org/extensions/ for a list of available
+[classname]+Tap+ or [classname]+Scheme+ implementations.
 
 === Sink Modes
 

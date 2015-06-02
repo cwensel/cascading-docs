@@ -1,6 +1,7 @@
 :toc2:
 :doctitle: {_doctitle} - Custom Taps and Schemes
 
+[[custom-taps-schemes]]
 == Custom Taps and Schemes
 
 === Introduction
@@ -86,6 +87,10 @@ constructor of the [classname]+Tap+. Consequently, the [classname]+Scheme+ is
 responsible for configuring the Input and Output types it will be reading and
 writing.
 
+NOTE: It is important to be mindful of how a Tap and Scheme implementation
+not based on HDFS should behave in the face of a failure. The [classname]+Tap+
+class has a few methods to help cleanup after a failed Flow.
+
 === Custom Schemes
 
 All custom Scheme classes must subclass the [classname]+cascading.scheme.Scheme+
@@ -135,6 +140,11 @@ These methods are always called in the same process space as their associated
 clustered platform platform, this will likely be on the cluster side, unlike
 calls to [methodname]+*ConfInit()+ which will likely be on the client side (but
 not guaranteed).
+
+NOTE: Schemes are also responsible for converting to and from the canonical data
+type from and to the supported types for the system the Scheme is wrapping. See
+the section on <<ch04-tuple-fields.adoc#field-types-coercion,Field Typing and
+Coercion>> for more information.
 
 === SinkModes
 

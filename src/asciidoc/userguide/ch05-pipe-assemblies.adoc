@@ -30,7 +30,10 @@ Both types take four arguments:
 * an Operation instance
 * an output selector
 
-on the constructor (selectors here are Fields instances)
+on the constructor.
+
+NOTE: "selectors" are Fields instances that define the field positions and names
+that should be retrieved or returned.
 
 The key difference between [classname]+Each+ and [classname]+Every+ is that the
 [classname]+Each+ operates on individual tuples, and [classname]+Every+ operates
@@ -118,7 +121,7 @@ are relevant. It is also possible for a Buffer to emit more than one result
 Tuple per unique grouping. That is, a Buffer may or may not emulate an
 Aggregator, where an Aggregator is just a special optimized case of a Buffer.
 
-For more information on how operations process fields, see <<field-processing>> .
+For more information on how operations process fields, see <<field-processing>>.
 
 === Merge
 

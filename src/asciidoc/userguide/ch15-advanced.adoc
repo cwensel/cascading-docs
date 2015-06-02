@@ -12,6 +12,10 @@ SubAssemblies are a good way to organize complex pipe assemblies, and they allow
 for commonly-used pipe assemblies to be packaged into libraries for inclusion in
 other projects by other users.
 
+There are already many SubAssemblies provided by Cascading, see the
+<<ch17-subassemblies.adoc#subassemblies,Built-in SubAssemblies>> chapter for
+details
+
 To create a SubAssembly, subclass the [classname]+cascading.pipe.SubAssembly+
 class.
 
@@ -111,8 +115,8 @@ on the [classname]+FlowDef+ instance, as shown above.
 
 Setting [classname]+AssertionLevel.NONE+ removes all assertions.
 [classname]+AssertionLevel.VALID+ keeps [code]+VALID+ assertions but removes
-[code]+STRICT+ ones. And [classname]+AssertionLevel.STRICT+ keeps all assertions -
-the planner default value.
+[code]+STRICT+ ones. And [classname]+AssertionLevel.STRICT+ keeps all assertions
+- the planner default value.
 
 [[failure-traps]]
 === Failure Traps
@@ -169,7 +173,7 @@ Traps are for exceptional cases, in the same way that Java Exception handling
 is. Traps are not intended for application flow control, and not a means to
 filter some data into other locations. Applications that need to filter out bad
 data should do so explicitly, using filters. For more on this, see
-<<ch19-best-practices.adoc#handling-bad-data>>.
+<<ch18-best-practices.adoc#handling-bad-data>>.
 
 Optionally diagnostic information, with the given field names, may be captured
 along with the argument Tuple.
@@ -361,7 +365,7 @@ implemented - not just Associative and Commutative functions.
 Cascading provides a few built-in partial aggregate operations, including
 AverageBy, CountBy, SumBy, and FirstBy. These are actually SubAssemblies, not
 Operations, and are subclasses of the AggregateBy SubAssembly. For more on this,
-see the section on <<ch18-subassemblies.adoc#aggregate-by>>.
+see the section on <<ch17-subassemblies.adoc#aggregate-by>>.
 
 Using partial aggregate operations is quite easy. They are actually less verbose
 than a standard Aggregate operation.

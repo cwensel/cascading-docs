@@ -25,6 +25,8 @@ Additionally, Cascading can support new platforms as they emerge so business
 logic will not need to be re-written in order to leverage state-of-the-art
 technologies.
 
+NOTE: Cascading is open-source under the Apache 2.0 License.
+
 === Another Perspective
 
 Another way to look at Cascading is to consider the typical stack behind a query

@@ -14,14 +14,15 @@ chapter provided details specific to the MapReduce platform.
 === Configuring Applications
 
 During runtime, Hadoop must be told which application jar file should be pushed
-to the cluster. Historically, this is done via the Hadoop API [classname]+JobConf+
-object, as seen in the example below.
+to the cluster. Historically, this is done via the Hadoop API
+[classname]+JobConf+ object, as seen in the example below.
 
 In order to remain platform independent, the [classname]+AppProps+ class should
 be used as described in <<ch10-hadoop-common.adoc#configuring,Configuring
 Applications>>.
 
-If it is required to use an existing JobConf instance, consider the example below:
+If it is required to use an existing JobConf instance, consider the example
+below:
 
 .Configuring the Application Jar with a JobConf
 ====

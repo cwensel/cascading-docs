@@ -50,6 +50,10 @@ Debugging and testing in Cascading local mode, unlike Cascading other platforms,
 is straightforward as all the processing happens in the local JVM and
 in local memory.
 
+NOTE: Because Cascading local mode runs entirely in memory, large data-sets will
+cause an OutOfMemoryException. Also be sure to adjust the java runtime memory
+settings.
+
 This dramatically simplifies the use of an IDE and Debugger. Thus the very first
 recommendation for debugging Cascading applications on a given platform is to
 first write tests that run in Cascading local mode.
@@ -82,5 +86,5 @@ fails, the resulting [classname]+PlannerException+ has a
 [methodname]+writeDOT()+ method that shows the progress of the current planner.
 
 For planner related errors that present during runtime when executing a Flow,
-see the chapter on <<ch22-query-process-planner.adoc#process-planner,The
+see the chapter on <<ch21-query-process-planner.adoc#process-planner,The
 Cascading Process Planner>>.

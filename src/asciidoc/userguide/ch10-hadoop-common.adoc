@@ -169,23 +169,23 @@ cluster, the Jar is pushed into that cluster for execution.
 Cascading does not rely on any environment variables like [code]+$HADOOP_HOME+ or
 [code]+$HADOOP_CONF_DIR+, only [code]+bin/hadoop+ and [code]+bin/yarn+ do.
 
-It should be noted that even though [code]+your-application.jar+ is passed on the
-command line to [code]+bin/hadoop+ or [code]+bin/yarn+, this in no way configures Hadoop to
-push this jar into the cluster. You must still call one of the property setters
-mentioned above to set the proper path to the application jar. If misconfigured,
-it's likely that one of the internal libraries (found in the lib folder) will be
-pushed to the cluster instead, and "Class Not Found" exceptions will be thrown
-on the cluster.
+It should be noted that even though [code]+your-application.jar+ is passed on
+the command line to [code]+bin/hadoop+ or [code]+bin/yarn+, this in no way
+configures Hadoop to push this jar into the cluster. You must still call one of
+the property setters mentioned above to set the proper path to the application
+jar. If misconfigured, it's likely that one of the internal libraries (found in
+the lib folder) will be pushed to the cluster instead, and "Class Not Found"
+exceptions will be thrown on the cluster.
 
 [[debugging]]
 === Troubleshooting and Debugging
 
 Debugging and troubleshooting Cascading is described in
-<<ch08-local.adoc#debugging,Local Mode Troubleshooting>>, please begin there
+<<ch09-local.adoc#debugging,Local Mode Troubleshooting>>, please begin there
 before continuing.
 
 For planner related errors that present during runtime when executing a Flow,
-see the chapter <<ch22-query-process-planner.adoc#process-planner,The Cascading
+see the chapter <<ch21-query-process-planner.adoc#process-planner,The Cascading
 Process Planner>>.
 
 [[source-sink]]
@@ -473,6 +473,8 @@ not just Associative and Commutative functions.
 
 Cascading supports any class type as values stored and passed in
 [classname]+Tuple+ instances.
+
+NOTE: That said, enum types are currently unsupported.
 
 But for this to work when using the Cascading Hadoop mode, any Class that isn't
 a primitive type or a Hadoop [classname]+Writable+ type requires a corresponding

@@ -135,8 +135,8 @@ sub-graphs.
 See the section on <<ch06-flows.adoc#process-levels,Flow Process Hierarchy>>
 for details on the roles these classes play.
 
-In addition to the Rules, rules are applies at different phases. There are twelve
-[classname]+PlanPhase+ types:
+In addition to the Rules, rules are applies at different phases. There are
+twelve [classname]+PlanPhase+ types:
 
 [classname]+PreBalanceAssembly+::
 
@@ -227,4 +227,4 @@ been applied, this is the best opportunity to remove these graphs.
 
 Debugging planner rules can be done by enabling the various trace mechanisms
 outlined  in the section on
-<<ch19-best-practices.adoc#debugging-planner,Debugging Planner Failures>>.
+<<ch18-best-practices.adoc#debugging-planner,Debugging Planner Failures>>.

@@ -140,7 +140,7 @@ accumulated, so this technique should improve the performance of most joins.
 === Debugging Streams
 
 When creating complex assemblies, it's safe to embed
-<<ch17-operations.adoc#debug-function,[classname]+Debug+>> operations at
+<<ch16-operations.adoc#debug-function,[classname]+Debug+>> operations at
 appropriate debug levels as needed. Use the planner to remove them at runtime
 for production and staging runs, to avoid wasting resources.
 

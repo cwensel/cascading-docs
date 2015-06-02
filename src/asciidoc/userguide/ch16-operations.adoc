@@ -3,6 +3,7 @@
 
 == Built-In Operations
 
+[[identity-function]]
 === Identity Function
 
 The [classname]+cascading.operation.Identity+ function is used to "shape" a
@@ -11,10 +12,10 @@ tuple stream.
 Here are some common patterns that illustrate how Cascading "field algebra"
 works. (Note that, in actual practice, some of these example tasks might be
 better performed with helper
-<<ch18-subassemblies.adoc#subassemblies,subassemblies>> such as
-<<ch18-subassemblies.adoc#rename,[classname]+Rename+>>,
-<<ch18-subassemblies.adoc#retain,[classname]+Retain+>>, and
-<<ch18-subassemblies.adoc#discard,[classname]+Discard+>>.)
+<<ch17-subassemblies.adoc#subassemblies,subassemblies>> such as
+<<ch17-subassemblies.adoc#rename,[classname]+Rename+>>,
+<<ch17-subassemblies.adoc#retain,[classname]+Retain+>>, and
+<<ch17-subassemblies.adoc#discard,[classname]+Discard+>>.)
 
 Discard unused fields::
 
@@ -400,7 +401,7 @@ which are documented on the TagSoup website.
 
 Cascading Stream Assertions are used to build robust reusable pipe assemblies.
 If desired, they can be planned out of a Flow instance at runtime. For more
-information, see the section on <<ch16-advanced.adoc#stream-assertions>>. Below
+information, see the section on <<ch15-advanced.adoc#stream-assertions>>. Below
 we describe the Assertions available in the core library.
 
 AssertEquals::
@@ -562,4 +563,4 @@ returns the first N tuples seen in a given grouping. Unlike the
 [classname]+cascading.operation.aggregator.First+ [classname]+Aggregator+,
 [classname]+FirstNBuffer+ will stop iterating the available tuples when the top
 N condition is met. [classname]+FirstNBuffer+ is used by
-<<ch18-subassemblies.adoc#unique,[classname]+cascading.pipe.assembly.Unique+>>.
+<<ch17-subassemblies.adoc#unique,[classname]+cascading.pipe.assembly.Unique+>>.
