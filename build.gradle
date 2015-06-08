@@ -123,7 +123,10 @@ createDocs {
           sectanchors        : 'true',
 //          numbered           : 'true',
           toc2               : null,
-          icons              : 'font' // enabled code callouts
+          icons              : 'font', // enabled code callouts
+
+          analyticsid        : System.properties[ 'analytics.id' ],
+          analyticsdomain    : System.properties[ 'analytics.domain' ]
 
           // disabled till attributes in docinfo are supported
           //  docinfo1: ''
@@ -135,9 +138,9 @@ createDocs {
 }
 
 task zipDocs( type: Zip, dependsOn: createDocs ) {
-  description = "zip documentation" 
+  description = "zip documentation"
   baseName = "userguide"
-  from createDocs.outputDir 
+  from createDocs.outputDir
   into "userguide"
 }
 
