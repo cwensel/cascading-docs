@@ -128,7 +128,7 @@ sunk to via the [methodname]+sink()+ method.
 Prior to the first [methodname]+source()+ or [methodname]+sink()+ call, the
 [methodname]+sourcePrepare()+ and [methodname]+sinkPrepare()+ methods are
 called. After all values have been read or written, the
-[methodname]+ourceCleanup()+ and [methodname]+sinkCleanup()+ methods are called.
+[methodname]+sourceCleanup()+ and [methodname]+sinkCleanup()+ methods are called.
 
 The [methodname]+*Prepare()+ methods allow a Scheme to initialize any state
 necessary - for example, to create a new [classname]+java.util.regex.Matcher+
@@ -137,7 +137,7 @@ instance for use against all record reads). Conversely, the
 
 These methods are always called in the same process space as their associated
 [methodname]+source()+ and [methodname]+sink()+ calls. In the case of a
-clustered platform platform, this will likely be on the cluster side, unlike
+clustered platform, this will likely be on the cluster side, unlike
 calls to [methodname]+*ConfInit()+ which will likely be on the client side (but
 not guaranteed).
 
