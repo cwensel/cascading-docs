@@ -1,9 +1,9 @@
 :toc2:
-:doctitle: {_doctitle} - Diving In
+:doctitle: {_doctitle} - Diving into the APIs
 
-== Diving In
+== Diving into the APIs
 
-=== Anatomy of a Word Count Application
+=== Anatomy of a Word-Count Application
 
 The most common example presented to new developers is an application that
 counts words. It is the data processing equivalent to a "Hello World"
@@ -13,9 +13,9 @@ In a word-counting application, a document is parsed into individual words and
 the frequency (count) of each word is calculated. In the last paragraph, for
 example, "is" appears twice and "equivalent" appears once.
 
-The following code example uses the Cascading default API to read each line of
-text from our document file, parse it into words, then count the number of times
-each word appears.
+The following code example uses the default Cascading API to read each line of
+text from a document file, parse it into words, and then count the number of
+times each word appears.
 
 .Word Counting
 ====
@@ -34,59 +34,54 @@ and store this value in the "count" field
 
 <5> Write out the "word" and "count" fields
 
-<6> Set application specific meta-data to allow the application to run
+<6> Set application-specific metadata to allow the application to run
 
-<7> Choose the platform to execute on
+<7> Choose the platform for execution
 
-<8> Plan the unit of work to be executed, a Flow
+<8> Plan the unit of work (a [classname]+Flow+) to be executed
 
-<9> Start the Flow and wait till completed
+<9> Start the flow and wait until it is completed
 
 ====
 
-Several features of this example are worth highlighting.
+Several features of this example are worth highlighting:
 
-First, notice that the pipe assembly is not coupled to the data (i.e., the
-[classname]+Tap+ instances) until the last moment before execution. File paths
-or references are not embedded in the pipe assembly; instead, the pipe assembly
-is specified independent of data inputs and outputs. The only dependency is the
-data scheme, i.e., the field names.
+* The pipe assembly is not coupled to the data (i.e., the [classname]+Tap+
+instances) until the last moment before execution. File paths or references are
+not embedded in the pipe assembly. Instead, the pipe assembly is specified
+independent of data inputs and outputs. The only dependency is the data scheme
+(i.e., the field names).
 
-In Cascading, every input or output file has field names associated with its
+* In Cascading, every input or output file has field names associated with its
 contents, and every processing element of the pipe assembly either expects the
 specified fields from upstream or creates them. This allows developers to easily
-self-document their code, and allows the Cascading planner to "fail fast" if an
-expected dependency between elements isn't satisfied - for instance, if a needed
+self-document their code. The Cascading planner "fails fast" if an
+expected dependency between elements is not satisfied -- for instance, if a needed
 field name is missing or incorrect.
 
-Also notice that pipe assemblies are assembled through constructor chaining.
-This may seem odd, but it is done for two reasons.
+* Pipe assemblies are assembled through constructor chaining. This may seem odd,
+but it is done for two reasons. First, constructor chaining  allows each object
+to be immutable. Second, it prevents developers from  creating "cycles" (i.e.,
+recursive loops) in the resulting pipe assembly. Recursive loops hinder the
+generation of insightful  directed acyclic graphs (DAGs) from pipe assemblies.
+(If looping processes are desired, there are safer approaches to achieving this
+result.)
 
-First, it allows each object to be immutable.
+* The very first [code]+Pipe+ instance has a name. That instance is the _head_ of
+this particular pipe assembly. Pipe assemblies can have any number of heads, and
+any number of _tails_. Although the tail in this example does not have an
+explicit name, in a more complex assembly it would (since this assembly is a
+single branch, the tail inherits the head name).
 
-Second, it prevents developers from creating "cycles" (i.e., recursive loops) in
-the resulting pipe assembly. Pipe assemblies are intended to be Directed Acyclic
-Graphs (DAG's), and in keeping with this, the Cascading planner is not designed
-to handle processes that feed themselves. (If desired, there are safer
-approaches to achieving this result.)
+Heads and tails of pipe assemblies are assigned names to disambiguate them. One
+reason is that names are used to bind sources and sinks to pipes during
+planning. (The example above is an exception, because there is only one head and
+one tail -- and consequently only one source and one sink--so the binding is
+unmistakable.) Another reason is that the naming of pipes contributes to
+self-documentation of pipe assemblies, especially where there are splits, joins,
+and merges in the assembly.
 
-Finally, notice that the very first [code]+Pipe+ instance has a name. That
-instance is the _head_ of this particular pipe assembly. Pipe assemblies can
-have any number of heads, and any number of _tails_.
-
-Although the tail in this example does not have an explicit name, in a more
-complex assembly it would (since this assembly is a single branch, the tail
-inherits the head name).
-
-In general, heads and tails of pipe assemblies are assigned names to
-disambiguate them. One reason is that names are used to bind sources and sinks
-to pipes during planning. (The example above is an exception, because there is
-only one head and one tail - and consequently only one source and one sink - so
-the binding is unmistakable.) Another reason is that the naming of pipes
-contributes to self-documentation of pipe assemblies, especially where there are
-splits, joins, and merges in the assembly.
-
-=== An Alternative Fluent API
+=== Fluid: An Alternative Fluent API
 
 The above example is using the default "raw" Cascading API. This API is handy
 when creating very complex business logic, or creating frameworks that may need
@@ -94,15 +89,14 @@ to algorithmically generate Cascading assemblies.
 http://www.cascading.org/lingual/[Lingual], an ANSI SQL layer over Cascading,
 leverages this API.
 
-An alternative API is called http://www.cascading.org/fluid/[Fluid].
+An alternative API is called http://www.cascading.org/fluid/[Fluid]. Currently
+Fluid is maintained in a different project, but there are plans to make it
+available as part of all future Cascading releases. The goal is to provide a
+build plugin that generates fluent APIs from any custom code that is run in the
+build.
 
-Currently Fluid is maintained in a different project, but there are plans to
-make it available as part of all future Cascading releases. As well as provide
-a build plugin to allow any custom code to have fluent APIs generated as part
-of the build process.
-
-Here is the word count example from above re-written with the Fluid fluent API
-(and with all comments removed).
+Example 2 shows how the same word-count application that appeared in Example 1
+could be coded with the Fluid fluent API (with all comments removed).
 
 .Word Counting with Fluid
 ====
@@ -121,15 +115,14 @@ and store this value in the "count" field
 
 <5> Write out the "word" and "count" fields
 
-<6> Set application specific meta-data to allow the application to run
+<6> Set application-specific metadata to allow the application to run
 
-<7> Choose the platform to execute on
+<7> Choose the platform for execution
 
-<8> Plan the unit of work to be executed, a Flow
+<8> Plan the unit of work (a [classname]+Flow+) to be executed
 
-<9> Start the Flow and wait till completed.
-
+<9> Start the flow and wait until it is completed
 ====
 
-The remainder of this User Guide will focus on the default Cascading Java API
-introduced in the first example above.
+The remainder of this _Cascading User Guide_ focuses on the default Cascading
+Java API introduced in Example 1.

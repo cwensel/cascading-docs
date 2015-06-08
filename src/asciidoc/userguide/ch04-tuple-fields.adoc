@@ -3,39 +3,41 @@
 
 == Tuple Fields
 
-As data stored in Tuples moves through a pipe assembly, individual columns or
-fields are either added, removed, or modified in place as they pass through each
-Pipe.
+As data stored in tuples moves through a pipe assembly, individual columns or
+fields are added, removed, or modified in place as they pass through each pipe.
 
 Tuple fields are manipulated through the use of the
 [classname]+cascading.tuple.Fields+ class. Fields can be used to either declare
-a given set of fields (like fields are declared on a class definition), or to
-select a set of fields from another Tuple.
+a given set of fields (like fields are declared on a class definition) or to
+select a set of fields from another tuple. For example, if you declare a Tuple
+has the following field names `[first, last]`, you can later select `[last]`
+from the Tuple for use as an argument to an Operation. Equivalently, you can
+select the second position with the ordinal `[1]` or the last position with the
+ordinal `[-1]`.
 
-That is, if I declare a Tuple has the following field names `[first, last]`, I
-can later select `[last]` from the Tuple for use as an argument to an Operation.
-Equivalently I can select the second position with the ordinal `[1]`, or the
-last position with the ordinal `[-1]`.
+Both [classname]+Each+ and [classname]+Every+ pipes process an input Tuple with
+the following steps:
 
-Both the [classname]+Each+ and [classname]+Every+ pipes take
-an input Tuple, select fields from the input Tuple as arguments to the child
-[classname]+Operation+ (Function, Aggregator, or Buffer), receive results
-from the Operation, and finally return the Operation results, or some mix of
-incoming Tuple values and the Operation Tuple results.
+. The pipe selects fields from the input Tuple as arguments to the child
+[classname]+Operation+ (Function ,Filter , Aggregator, or Buffer).
+
+. The pipe receives results from the [classname]+Operation+.
+
+. [classname]+Operation+ results are returned. The results can be a mix of
+incoming Tuple values and Operation Tuple results.
 
 This is achieved by providing new Fields instances that select or declare the
-required field names or ordinals as appropriate.
-
-When selecting arguments for an Operation, or the outgoing fields of the pipe,
-Cascading provides _Fields sets_, a feature of the [classname]+Fields+ class
-that provides a sort of wildcard tool for referencing sets of field values
-without declaring them specifically.
+required field names or ordinals as appropriate. When selecting arguments for
+an Operation, or the outgoing fields of the pipe, Cascading provides _Fields
+sets_, a feature of the [classname]+Fields+ class that provides a sort of
+wildcard tool for referencing sets of field values without declaring them
+specifically.
 
 There are also cases where _Fields sets_ can be used when fields should be
 declared. All these cases are described below.
 
-TIP: To see _Fields sets_ in action, checkout the section on the
-<<ch16-operations.adoc#identity-function,Identity function>>.
+TIP: To see _Fields sets_ in action, see the
+<<ch16-operations.adoc#identity-function,Identity function documentation>>.
 
 [[field-sets]]
 === Field Sets
@@ -54,7 +56,7 @@ include::algebra-all.adoc[]
 Fields.RESULTS::
 
 The [classname]+cascading.tuple.Fields.RESULTS+ constant is used to represent
-the field names of the current operations return values. This Fields set may
+the field names of the current-operation return values. This Fields set can
 only be used as an output selector on a pipe, causing the pipe to output a tuple
 containing the operation results.
 
@@ -87,15 +89,16 @@ The [classname]+cascading.tuple.Fields.ARGS+ constant is used to let a given
 operation inherit the field names of its argument Tuple. This Fields set is a
 convenience and is typically used when the Pipe output selector is
 [classname]+RESULTS+ or [classname]+REPLACE+. It is specifically used by the
-Identity Function when coercing values from Strings to primitive types.
+Identity function when coercing values from Strings to primitive types.
 
 include::algebra-replace.adoc[]
 
 Fields.GROUP::
 
 The [classname]+cascading.tuple.Fields.GROUP+ constant represents all the fields
-used as grouping key in the most recent grouping. If no previous grouping exists
-in the pipe assembly, [classname]+GROUP+ represents all the current field names.
+used as the grouping key in the most recent grouping. If no previous grouping
+exists in the pipe assembly, [classname]+GROUP+ represents all the current
+field names.
 
 include::algebra-group.adoc[]
 
@@ -103,31 +106,34 @@ Fields.VALUES::
 
 The [classname]+cascading.tuple.Fields.VALUES+ constant represents all the
 fields not used as grouping fields in a previous Group. That is, if you have
-fields "a", "b", and "c", and group on "a", [classname]+Fields.VALUES+ will
-resolve to "b" and "c".
+fields _a_, _b_, and _c_, and group on _a_, [classname]+Fields.VALUES+
+resolves to _b_ and _c_.
 
 include::algebra-values.adoc[]
 
 Fields.UNKNOWN::
 
 The [classname]+cascading.tuple.Fields.UNKNOWN+ constant is used when Fields
-must be declared, but it's not known how many fields or what their names are.
+must be declared, but neither quantity nor names of the fields are known.
 This allows for processing tuples of arbitrary length from an input source or
-some operation. Use this Fields set with caution.
+an operation.
+
+NOTE: Use [classname]+cascading.tuple.Fields.UNKNOWN+ with caution.
 
 include::algebra-unknown.adoc[]
 
 Fields.NONE::
 
 The [classname]+cascading.tuple.Fields.NONE+ constant is used to specify no
-fields. Typically used as an argument selector for Operations that do not
-process any Tuples, like [classname]+cascading.operation.Insert+.
+fields. This constant is typically used as an argument selector for Operations
+that do not process any tuples, like [classname]+cascading.operation.Insert+.
 
 include::algebra-none.adoc[]
 
-TIP: May also be used when performing a join with [classname]+CoGroup+ or
+TIP: The [classname]+cascading.tuple.Fields.NONE+ constant can also be used
+when performing a join with [classname]+CoGroup+ or
 [classname]+HashJoin+ when a full cross product is desired across all data. But
-there will be a performance penalty.
+doing this type of join degrades performance.
 
 [[field-algebra]]
 === Field Algebra
@@ -135,9 +141,9 @@ there will be a performance penalty.
 The chart below shows common ways to merge input and result fields for the
 desired output fields. A few minutes with this chart may help clarify the
 discussion of fields, tuples, and pipes. Also see
-<<ch05-pipe-assemblies.adoc#each-every>> for details on the different columns
-and their relationships to the [classname]+Each+ and [classname]+Every+ pipes
-and Functions, Aggregators, and Buffers.
+<<ch05-pipe-assemblies.adoc#each-every, Each and Every Pipes>> for details on
+the different columns and their relationships to the [classname]+Each+
+and [classname]+Every+ pipes and functions, aggregators, and buffers.
 
 image:images/field-algebra.svg[align="center"]
 
@@ -151,12 +157,12 @@ Operations through to sink Tap instances.
 This allows for:
 
 * Taps to read and store type information for external systems and
-  applications,
-* error detection during joins (detecting non-comparable types),
-* enforcement of canonical representations within the Tuple (prevent a field
-  from switching arbitrarily between String and Integer types), and
-* to allow for pluggable coercion from one type to another type, even if either
-  isn't a Java primitive.
+  applications
+* Error detection during joins (detecting non-comparable types)
+* Enforcement of canonical representations within the Tuple (prevent a field
+  from switching arbitrarily between String and Integer types)
+* Pluggable coercion from one type to another type, even if either
+  is not a Java primitive
 
 To declare types, simply pass type information to the Fields instance either
 through the constructor or via a fluent API.
@@ -174,12 +180,12 @@ include::fields-type-fluent.adoc[]
 Note the first example uses [classname]+Long.class+, and the second
 [classname]+long.class+. Since [classname]+Long+ is an object, we are letting
 Cascading know that the null value can be set. If declared [classname]+long+ (a
-primitive) then null becomes zero.
+primitive) then, null becomes zero.
 
 In practice, typed fields can only be used when they declare the results of an
-Operation, for example:
+Operation.
 
-.Declaring Typed Results
+.Declaring typed results
 ====
 include::partials-compose.adoc[]
 ====
@@ -189,7 +195,7 @@ Here the type information serves two roles.
 First, it allows a downstream consumer of the field value to know the type
 maintained in the tuple.
 
-Second, the SumBy sub-assembly now has a simpler API and can get the type
+Second, the SumBy subassembly now has a simpler API and can get the type
 information it needs internally to perform the aggregation directly from the
 Fields instance.
 
@@ -197,7 +203,7 @@ Note that the [classname]+TextDelimited+ and other [classname]+Scheme+ classes
 should have any type information declared so it can be maintained by the
 Cascading planner. Custom [classname]+Scheme+ types also have the opportunity to
 read type information from any field or data sources they represent so it can be
-handed to the planner during runtime.
+passed to the planner during runtime.
 
 [[field-coercion]]
 === Type Coercion
@@ -226,9 +232,9 @@ be used as the [classname]+Type+ accepted by the Fields API as
 
 Cascading provides a [classname]+cascading.tuple.type.DateType+ implementation
 to allow for coercions between date strings and the [classname]+Long+ canonical
-type. For example:
+type.
 
-.Date Type
+.Date type
 ====
 include::fields-date-type.adoc[]
 ====

@@ -3,51 +3,50 @@
 
 == Introduction
 
-=== What is Cascading?
+=== What Is Cascading?
 
 Cascading is a data processing API and processing planner used for defining,
 sharing, and executing data-oriented applications. These applications can
 execute on a single computing node or distributed computing platform with
 minimal code changes.
 
-Cascading applications can be written in a way that allow the developer to
+Cascading applications can be written in a way that allows the developer to
 create data-parallel applications that minimize the coupling to any specific
-computing platform for portability.
+computing platform. Fewer platform dependencies optimizes portability.
 
 On a single node, Cascading's "local mode" can be used to efficiently test code
 and process local files before being deployed on a cluster.
 
 On a distributed computing cluster, Cascading natively supports the Apache
-Hadoop platform. Specific planners for both MapReduce and the Apache Tez DAG
-model are provided.
+Hadoop platform. Specific planners for both MapReduce and the Apache Tez
+directed acyclic graphs (DAGs) are provided.
 
 Additionally, Cascading can support new platforms as they emerge so business
-logic will not need to be re-written in order to leverage state-of-the-art
+logic will not need to be rewritten in order to leverage state-of-the-art
 technologies.
 
 NOTE: Cascading is open-source under the Apache 2.0 License.
 
 === Another Perspective
 
-Another way to look at Cascading is to consider the typical stack behind a query
-syntax like SQL.
+Another way to look at Cascading is to consider the typical stack behind running
+a query with syntax like SQL:
 
-At the top is the SQL syntax itself. During runtime, the query is then parsed
-into an Abstract Syntax Tree (AST).
+. The query syntax is parsed to an abstract syntax tree (AST).
 
-The next stage is logically reducing the AST into an intermediate model. During
-this processing, many logical optimizations can be applied.
+. The AST is logically reduced to an intermediate model. During this processing,
+many logical optimizations can be applied.
 
-The next stage is to translate the intermediate model into an executable model.
-Much of the processing between the intermediate and executable models apply
-physical optimizations.
+. The intermediate model is translated into an executable model. Much of the
+processing between the intermediate and executable models applies physical
+optimizations.
 
 Cascading provides both the intermediate model, and a planner that will
-translate that model into a physical executable model. Where the intermediate
+translate that model into a physical executable model. The intermediate
 model is presented as a Java API, and the planner is both modifiable and
 pluggable.
 
-=== Why use Cascading?
+=== Why Use Cascading?
 
 Cascading was developed to allow organizations to rapidly develop complex data
 processing applications. The need for Cascading is typically driven by one or
@@ -58,106 +57,106 @@ more of four cases:
 * Increasing complexity in data centers
 * Increasing need for accountability and manageability
 
-Cascading applications are "scale free". Developing business logic for small
-data that may become exceedingly large does not require changes to the
-application logic.
+Cascading applications scale to load seamlessly. The business logic for small
+data that may become big data does not require changes to the application logic.
 
 Cascading provides many core data processing primitives and operations. Business
 logic can be coded directly against the Cascading APIs, or higher order
 frameworks or languages can be created on top. These frameworks or languages can
 be used to improve developer or analyst productivity for a specific use-case
-or vertical.
+or type of enterprise.
 
-Cascading is a platform. It is fully extensible, allowing for integration and
+Cascading as a platform allows for integration and
 business logic to remain decoupled until runtime so that different storage
-platforms can be bound to the logic on demand. And new platforms can be
+platforms can be bound to the logic on demand. New platforms can be
 leveraged during computation as business needs or infrastructure resources
 change.
 
 Cascading can be managed. Besides a number of core features that allow for
 Cascading applications to be easily operationalized, Cascading works with
-commercial tools so that applications can be monitored in real-time. This allows
-developers to deeply gain understanding of they application behavior at runtime
-in order to improve performance and reliability, and it grants visibility of
-application status and health to operations teams responsible for managing
-business processes.
+commercial tools so that applications can be monitored in real-time. Developers
+gain in-depth understanding of application behavior at runtime in order to
+improve performance and reliability. Operations teams that are responsible for
+managing business processes can easily monitor application status.
 
 === The Cascading Philosophy
 
-Cascading was designed to be extensible, to behave deterministically, and
+Cascading was designed to be extensible, to behave deterministically, and to
 fail fast where possible.
 
-Many features and behaviors of Cascading can be replaced or overridden. Where
-the Cascading User Guide does not provide guidance, review the
-http://cascading.org/documentation/[JavaDoc] for APIs and properties than can be
-used or modified from the defaults.
+Many default features and behaviors of Cascading can be replaced or overridden.
+Where the _Cascading User Guide_ does not provide guidance, review the
+http://cascading.org/documentation/[Javadoc] for APIs and properties that can be
+used or modified.
 
-Resulting execution plans created by the Cascading planner are both intuitive
-and stable.
+The execution plans created by the Cascading planner are both intuitive
+and stable:
 
-Intuitive in the sense that during development of an application, as new
-processing logic is added, the resulting plan in only an incremental increase in
-complexity, proportional to the changes just applied. That is, it is very easy
-to understand the implication of adding a new [classname]+CoGroup+ to the
-assembly and how it will behave on the cluster, once a developer becomes
-familiar with Cascading.
+* As processing logic is added during application development, the resulting
+plan is only an incremental increase in complexity and is proportional to the
+changes that were just applied. After becoming familiar with Cascading, you can
+easily understand the implication of adding a new [classname]+CoGroup+ to the
+assembly and how it will behave on the cluster.
 
-Stable in the sense that with no code changes, every plan is exactly the same.
-And across versions of Cascading, any likely behavioral differences will be
-documented (if not accompanied by a way to revert the behavior).
+* Every execution plan is the same when there are no code changes. Across
+versions of Cascading, any likely behavioral differences are documented (if not
+accompanied by a way to revert the behavior).
 
-During planning, Cascading creates all units of work up front, and in the
-process verifies all dependencies are met from available resources like sources
+* The Cascading planner creates all units of work up front. The planner verifies
+all dependencies are met from available resources like sources
 and sinks, down to the field level. If a downstream operation requires a
-specific field, say 'zipcode', the planner will guarantee it is available
+specific field (for example, "zipcode"), the planner guarantees it is available
 upstream from a data source or operation.
 
-Many of these ideals seem obvious, but many systems will regenerate plans on the
-fly, or attempt short-cuts during execution, that if (and only if) are
-successful _may_ result in improved runtime performance.
+Many of these ideals seem obvious, but many systems regenerate plans on the fly
+or attempt shortcuts during execution. Even if these methods of other systems
+are successful, there is no certainty that they result in improved runtime
+performance.
 
 It is not acceptable to fail part way, in a non-deterministic (non-repeatable)
-fashion, for applications than may run hours or days at a stretch.
+fashion, for applications that may run hours or days at a stretch.
 
-=== Who are the users?
+=== Who Are the Users?
 
 Cascading users typically fall into three roles:
 
-*The application Executor* is a person (e.g., a developer or analyst) or process
-(e.g., a cron job) that runs a data processing application on a given cluster.
-This is typically done via the command line, using a prepackaged Java Jar file
-compiled against the Cascading libraries. The application may
-accept command-line parameters to customize it for a given execution.
+The *application executor* is a person (for example, a developer or analyst) or
+process (for example, a cron job) that runs a data processing application on a
+given cluster. This is typically done via the command line, using a prepackaged
+JAR file compiled against the Cascading libraries. The application can accept
+command-line parameters for customization during execution.
 
-*The process Assembler* is a person who assembles data processing workflows into
-unique applications. This work is generally a development task that involves
-chaining together operations to act on one or more input data sets, producing
-one or more output data sets. This can be done with the default Java Cascading
-API, the http://cascading.org/fluid/[Fluid] fluent API, or with a scripting
-language such as Scala, Clojure, Groovy, JRuby, or Jython (or by one of the
-DSLs implemented in these languages).
+The *process assembler* assembles data processing workflows into unique
+applications. This work is generally a development task that involves chaining
+together operations to act on input data sets so that they produce output data
+sets. Development can be done with the default Java Cascading API, the
+http://cascading.org/fluid/[Fluid] API, or with a scripting language such as
+Scala, Clojure, Groovy, JRuby, Jython. Cascading also supports domain-specific
+languages that are implemented in the scripting languages.
 
-*The operation Developer* is a person who writes individual functions or
-operations (typically in Java) or reusable sub-assemblies that act on the data
-that passes through the data processing workflow. A trivial example would be a
-parser that takes a string and converts it to an Integer. Operations are
-equivalent to Java functions in the sense that they take input arguments and
-return data. And they can execute at any granularity, from simply parsing a
-string to performing complex procedures on the argument data using third-party
-libraries. Cascading provides a large number of pre-built operations.
+The *operation developer* writes individual functions or operations (typically
+in Java) or reusable subassemblies that act on the data that passes through the
+data processing workflow. A trivial example would be a parser that takes a
+string and converts it to an integer. Operations are equivalent to Java
+functions in the sense that they take input arguments and return data.
+Operations can execute at any granularity, from simply parsing a string to
+performing complex procedures on the argument data using third-party libraries.
+Cascading provides many prebuilt operations.
 
-These three roles can be filled by a developer, but because Cascading supports a
-clean separation of these responsibilities, some organizations may choose to use
-non-developers to run ad-hoc applications or build production processes.
+Each of the three roles can be filled by a developer. But in some organizations
+non-developers might run ad-hoc applications or build production processes
+because Cascading supports clean separation of the responsibilities that are
+entailed in the three roles.
 
 As of Cascading 3.0, two new roles have emerged:
 
-*The platform Optimizer* is a person who can improve the execution runtime or
-resource utilization by creating workload specific query plan rules that target
-specific improvements. Or by adding new core primitives that can be leveraged
-in application logic.
+The *platform optimizer* improves execution runtime or resource utilization.
+This role can be responsible for creating workload-specific query-plan rules
+that target specific improvements. Another responsibility of the platform
+optimizer could be to add new core primitives that can be leveraged in
+application logic.
 
-*The platform Developer* ports Cascading to new computing platforms. This is an
+The *platform developer* ports Cascading to new computing platforms. This is an
 emerging API, but already proven to be very robust and powerful. As business
 needs change and new technologies emerge, a developer can create bindings to
 these new technologies allowing existing investments in the Cascading API and
