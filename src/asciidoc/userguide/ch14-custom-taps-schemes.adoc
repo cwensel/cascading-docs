@@ -145,8 +145,6 @@ NOTE: Schemes are also responsible for converting to and from the canonical data
 type from and to the supported types for the system the Scheme is wrapping. See
 the section on <<ch04-tuple-fields.adoc#field-typing,Field Typing>> for more information.
 
-=== SinkModes
-
 === File Like Taps
 
 Tap classes that are meant to manage resources that are files should implement
