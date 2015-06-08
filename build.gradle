@@ -134,11 +134,19 @@ createDocs {
   ]
 }
 
-task docDist( type: Copy, dependsOn: [test, createDocs] ) {
+task zipDocs( type: Zip, dependsOn: createDocs ) {
+  description = "zip documentation" 
+  baseName = "userguide"
+  from createDocs.outputDir 
+  into "userguide"
+}
+
+task docDist( type: Copy, dependsOn: [test, createDocs, zipDocs] ) {
   description = "publish documentation"
 
   s3UploadDocs.dependsOn << docDist
 
   from createDocs.outputDir
+  from zipDocs.archivePath
   into "${s3UploadDocs.source}/userguide/"
 }
