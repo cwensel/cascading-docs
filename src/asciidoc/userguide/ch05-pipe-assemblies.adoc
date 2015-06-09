@@ -7,7 +7,7 @@
 === Each and Every Pipes
 
 The [classname]+Each+ and [classname]+Every+ pipes perform operations on tuple
-data - for instance, perform a search-and-replace on tuple contents, filter out
+data -- for instance, perform a search-and-replace on tuple contents, filter out
 some of the tuples based on their contents, or count the number of tuples in a
 stream that share a common field value.
 
@@ -23,30 +23,26 @@ new Each( previousPipe, argumentSelector, operation, outputSelector )
 new Every( previousPipe, argumentSelector, operation, outputSelector )
 ----
 
-Both types take four arguments:
+Both types take the following arguments on the constructor:
 
-* the incoming Pipe instance
-* an argument selector
-* an Operation instance
-* an output selector
+* incoming Pipe instance
+* argument selector
+* Operation instance
+* output selector
 
-on the constructor.
-
-NOTE: "selectors" are Fields instances that define the field positions and names
+NOTE: "Selectors" are Fields instances that define the field positions and names
 that should be retrieved or returned.
 
-The key difference between [classname]+Each+ and [classname]+Every+ is that the
-[classname]+Each+ operates on individual tuples, and [classname]+Every+ operates
-on groups of tuples emitted by [classname]+GroupBy+ or [classname]+CoGroup+.
+The key difference between [classname]+Each+ and [classname]+Every+ is that an
+[classname]+Each+ pipe operates on individual tuples, and an [classname]+Every+
+pipe operates on groups of tuples sent out by [classname]+GroupBy+ or
+[classname]+CoGroup+ pipes.
 
-This affects the kind of operations that these two pipes can perform, and the
-kind of output they produce as a result.
-
-The [classname]+Each+ pipe applies operations that are subclasses of
-[classname]+Functions+ and [classname]+Filters+ (described in the Javadoc). For
-example, using [classname]+Each+ you can parse lines from a log file into their
-constituent fields, filter out all lines except the "HTTP GET" requests, and
-replace the "time string" fields with date fields.
+An [classname]+Each+ pipe applies operations that are subclasses of the
+[classname]+Function+ and [classname]+Filter+ classes (described in the
+Javadoc). For example, using [classname]+Each+ you can parse lines from a log
+file into their constituent fields, filter out all lines except the HTTP GET
+requests, and replace the "time string" fields with date fields.
 
 Similarly, since the [classname]+Every+ pipe works on tuple groups (the output
 of a [classname]+GroupBy+ or [classname]+CoGroup+ pipe), it applies operations
@@ -71,14 +67,14 @@ the operation result. This new output [classname]+Tuple+ becomes the input
 is [code]+Fields.ALL+, the output is the input [classname]+Tuple+ plus the
 operation result, merged into a single [classname]+Tuple+.
 
-Note that it's possible for a [classname]+Function+ or [classname]+Aggregator+
-to return more than one output [classname]+Tuple+ per input [classname]+Tuple+.
-In this case, the input tuple is duplicated as many times as necessary to create
-the necessary output tuples. This is similar to the reiteration of values that
-happens during a join. If a function is designed to always emit three result
-tuples for every input tuple, each of the three outgoing tuples will consist of
-the selected input tuple values plus one of the three sets of function result
-values.
+Note that it is possible for a [classname]+Function+, [classname]+Aggregator+,
+or [classname]+Buffer+ to return more than one output [classname]+Tuple+ per
+input [classname]+Tuple+. In this case, the input tuple is duplicated as many
+times as necessary to create the necessary output tuples. This is similar to the
+reiteration of values that happens during a join. If a function is designed to
+always emit three result tuples for every input tuple, each of the three
+outgoing tuples will consist of the selected input tuple values plus one of the
+three sets of function result values.
 
 image:images/each-operation-relationship.svg[align="center"]
 
@@ -90,12 +86,12 @@ the input tuple or return it intact, and thus do not use an output selector.)
 
 image:images/every-operation-relationship.svg[align="center"]
 
-For the [classname]+Every+ pipe, the Aggregator results are appended to the
-input Tuple ([code]++Fields.ALL++) by default.
+For the [classname]+Every+ pipe, the [classname]+Aggregator+ results are
+appended to the input Tuple ([code]+Fields.ALL+) by default.
 
 Note that the [classname]+Every+ pipe associates [classname]+Aggregator+ results
-with the current group [classname]+Tuple+ (the unique keys currently being
-grouped on). For example, if you are grouping on the field "department" and
+with the current group [classname]+Tuple+ (the unique keys that define the
+group). For example, if you are grouping on the field "department" and
 counting the number of "names" grouped by that department, the resulting output
 Fields will be `["department","num_employees"]`.
 
@@ -103,8 +99,8 @@ If you are also adding up the salaries associated with each "name" in each
 "department", the output Fields will be
 `["department","num_employees","total_salaries"]`.
 
-This is only true for chains of [classname]+Aggregator+ Operations - you are not
-allowed to chain [classname]+Buffer+ operations, as explained below.
+This is only true for chains of [classname]+Aggregator+ Operations -- you are
+not allowed to chain [classname]+Buffer+ operations, as explained below.
 
 image:images/buffer-operation-relationship.svg[align="center"]
 
@@ -115,13 +111,12 @@ associated with the current values tuple. This is analogous to how an
 [classname]+Each+ pipe works with a [classname]+Function+. This approach may
 seem slightly unintuitive, but provides much more flexibility.
 
-To put it another way, the results of the buffer operation are not appended to
-the current keys being grouped on. It is up to the buffer to emit them if they
-are relevant. It is also possible for a Buffer to emit more than one result
-Tuple per unique grouping. That is, a Buffer may or may not emulate an
-Aggregator, where an Aggregator is just a special optimized case of a Buffer.
-
-For more information on how operations process fields, see <<field-processing>>.
+To put it another way, the results of the buffer operation appends the current
+keys that define the group only if appending the keys is relevant. It is also
+possible for a Buffer to return more than one result Tuple per unique grouping.
+A [classname]+Buffer+ may or may not emulate an [classname]+Aggregator+ in cases
+where an [classname]+Aggregator+ is just a special optimized case of a
+[classname]+Buffer+.
 
 === Merge
 
@@ -131,7 +126,7 @@ all the input streams. Thus a merge is just a mingling of all the tuples from
 the input streams, as if shuffling multiple card decks into one. Note that the
 output of [classname]+Merge+ is in arbitrary order.
 
-.Merging Two Tuple Streams
+.Merging two tuple streams
 ====
 include::simple-merge.adoc[]
 ====
@@ -151,29 +146,29 @@ which performs [classname]+Aggregator+ and [classname]+Buffer+ operations, such
 as counting, totaling, or averaging groups of tuples that have a common grouping
 value (e.g., the same date). By default, [classname]+GroupBy+ performs no
 secondary sort, so within each group the tuples are in arbitrary order. For
-instance, when grouping on "lastname", the tuples [code]+[doe, john]+ and
-[code]+[doe, jane]+ end up in the same group, but in arbitrary sequence.
+instance, when grouping on "lastname," the tuples [code]+[doe, john]+ and
+[code]+[doe, jane]+ are placed in arbitrary sequence of the same group.
 
 [[secondary-sorting]]
-==== Secondary sorting
+==== Secondary Sorting
 
-If multi-level sorting is desired, the names of the sort fields must be
+If multilevel sorting is desired, the names of the sort fields must be
 specified to the [classname]+GroupBy+ instance, as seen below. In this example,
-[code]+value1+ and [code]+value2+ will arrive in their natural sort order
-(assuming they are [classname]++java.lang.Comparable++).
+[code]+value1+ and [code]+value2+ arrive in their natural sort order
+(assuming they can implement [classname]++java.lang.Comparable++).
 
-.Secondary Sorting
+.Secondary sorting
 ====
 include::simple-groupby-secondary.adoc[]
 ====
 
-If we don't care about the order of [code]+value2+, we can leave it out of the
-[code]+sortFields+ [classname]+Fields+ constructor.
+If the developer does not care about the order of [code]+value2+, it can be
+omitted from the [code]+sortFields+ [classname]+Fields+ constructor.
 
 In the next example, we reverse the order of [code]+value1+ while keeping the
 natural order of [code]+value2+.
 
-.Reversing Secondary Sort Order
+.Reversing secondary sort order
 ====
 include::simple-groupby-secondary-comparator.adoc[]
 ====
@@ -186,22 +181,23 @@ developer to use the [code]+Fields.setComparator()+ call to control the sort.
 To sort or group on non-Java-comparable classes, consider creating a custom
 [classname]+Comparator+.
 
-Below is a more practical example, where we group by the "day of the year", but
-want to reverse the order of the tuples within that grouping by "time of day".
+The following example is more practical: fields are grouped by the "day of the
+year", but the code reverses the order of the tuples within that grouping by
+"time of day".
 
-.Reverse Order by Time
+.Reverse order by time
 ====
 include::simple-groupby-secondary-time.adoc[]
 ====
 
 === CoGroup
 
-The [classname]+CoGroup+ pipe is similar to [classname]+GroupBy+, but instead of
-a merge, performs a join. That is, [classname]+CoGroup+ accepts two or more
-input streams and groups them on one or more specified keys, and performs a join
-operation on equal key values, similar to a SQL join.
+The [classname]+CoGroup+ pipe is similar to [classname]+GroupBy+. This pipe
+performs a join instead of a merge. [classname]+CoGroup+ accepts two or more
+input streams and groups them on one or more specified keys. The join operation
+is performed on equal key values, similar to a SQL join.
 
-The output stream contains all the fields from all the input streams.
+The output stream contains all the fields in the input streams.
 
 As with SQL, the join can be inner, outer, left, or right. Self-joins are
 permitted, as well as mixed joins (for three or more streams) and custom joins.
@@ -209,9 +205,9 @@ Null fields in the input streams become corresponding null fields in the output
 stream.
 
 Since the output is grouped, it is suitable for the [classname]+Every+ pipe,
-which performs [classname]+Aggregator+ and [classname]+Buffer+ operations - such
-as counting, totaling, or averaging groups of tuples that have a common value
-(e.g., the same date).
+which performs [classname]+Aggregator+ and [classname]+Buffer+ operations --
+such as counting, totaling, or averaging groups of tuples that have a common
+value (e.g., the same date).
 
 The output stream is sorted by the natural order of the grouping fields. To
 control this order, at least the first [classname]+groupingFields+ value given
@@ -219,7 +215,7 @@ should be an instance of [classname]+Fields+ containing [classname]+Comparator+
 instances for the appropriate fields. This allows fine-grained control of the
 sort grouping order.
 
-==== Field names
+==== Field Names
 
 In a join operation, all the field names used in any of the input tuples must be
 unique; duplicate field names are not allowed. If the names overlap there is a
@@ -234,7 +230,7 @@ To handle the conflict, developers can use the [parameter]+declaredFields+
 argument (described in the Javadoc) to declare unique field names for the output
 tuple, as in the following example.
 
-.Joining Two Tuple Streams with Duplicate Field Names
+.Joining two tuple streams with duplicate field names
 ====
 include::duplicate-cogroup.adoc[]
 ====
@@ -245,23 +241,22 @@ This revised figure demonstrates the use of declared field names to prevent a
 planning failure.
 
 It might seem preferable for Cascading to automatically recognize the
-duplication and simply merge the identically-named fields, saving effort for the
+duplication and simply merge the identically named fields, saving effort for the
 developer. However, consider the case of an outer type join in which one field
 (or set of fields used for the join) for a given join side happens to be
 [code]+null+. Discarding one of the duplicate fields would lose this
 information.
 
-Further, the internal implementation relies on field position, not field names,
-when reading tuples; the field names are a device for the developer. This
+Further, the internal implementation for reading tuples relies on field position
+and not field names. The field names are a device for the developer. This
 approach allows the behavior of the [classname]+CoGroup+ to be deterministic and
 consistent.
 
 [[joiner-class]]
 ==== The Joiner class
 
-In the example above, we explicitly specified a Joiner class (InnerJoin) to
-perform a join on our data. There are five Joiner subclasses, as shown in this
-diagram.
+In Example 5, a Joiner class (InnerJoin) is specified to perform a join on our
+data. There are five Joiner subclasses, as shown in the following diagram.
 
 image:images/joins.svg[align="center"]
 
@@ -272,17 +267,16 @@ instances associated with that grouping.
 
 image:images/cogrouped-values.svg[align="center"]
 
-It's already been mentioned that joins in Cascading are analogous to joins in
-SQL. The most commonly-used type of join is the inner join, the default in
+As mentioned previously, joins in Cascading are analogous to joins in SQL. The
+most commonly used type of join is the inner join, which is the default in
 [classname]+CoGroup+. An inner join tries to match _each_ Tuple on the "lhs"
-with _every_ Tuple on the "rhs", based on matching fields values. With an inner
-join, if either side has no tuples for a given value, no tuples are joined. An
-outer join, conversely, allows for either side to be empty and simply
-substitutes a [classname]+Tuple+ containing [code]+null+ values for the
-non-existent tuple.
+with _every_ Tuple on the "rhs," based on matching fields values. If either side
+of an inner join has no tuples for a given value, no tuples are joined. An outer
+join, conversely, allows for either side to be empty and simply substitutes a
+[classname]+Tuple+ containing [code]+null+ values for the nonexistent tuple.
 
-This sample data is used in the discussion below to explain and compare the
-different types of join:
+The following sample data is used in the discussion below to explain and compare
+the different types of join:
 
 ----
 LHS = [0,a] [1,b] [2,c]
@@ -290,15 +284,15 @@ RHS = [0,A] [2,C] [3,D]
 ----
 
 In each join type below, the values are joined on the first tuple position (the
-join key), a numeric value. Note that, when Cascading joins tuples, the
+join key), which is a numeric value. Note that, when Cascading joins tuples, the
 resulting [classname]+Tuple+ contains all the incoming values from incoming
 tuple streams, and does not discard the duplicate key fields. As mentioned
 above, on outer joins where there is no equivalent key in the alternate stream,
 [code]+null+ values are used.
 
-For example using the data above, the result Tuple of an "inner" join with join
-key value of [code]+2+ would be [code]+[2,c,2,C]+. The result Tuple of an
-"outer" join with join key value of [code]+1+ would be [code]+[1,b,null,null]+.
+For example using the data above, the result Tuple of an inner join with join
+key value of [code]+2+ would be [code]+[2,c,2,C]+. The result Tuple of an outer
+join with join key value of [code]+1+ would be [code]+[1,b,null,null]+.
 
 InnerJoin::
 
@@ -313,9 +307,8 @@ join key is empty.
 
 OuterJoin::
 
-An outer join performs a join if one bag (left or
-right) for the join key is empty, or if neither bag is
-empty.
+An outer join performs a join if one bag (left or right) for the join key is
+empty or if neither bag is empty.
 
 +
 
@@ -353,16 +346,16 @@ array to specify each of the join types to use. For more information, see the
 
 _Custom_::
 
-Developers can subclass the [classname]+cascading.pipe.cogroup.Joiner+ class to
-create custom join operations.
+Developers can use the [classname]+cascading.pipe.cogroup.Joiner+ class as a
+subclass to create custom join operations.
 
 ==== Scaling
 
-[classname]+CoGroup+ attempts to store the entire current unique keys tuple
-"bag" from the right-hand stream in memory for rapid joining to the left-hand
-stream. If the bag is very large, it may exceed a configurable threshold and be
-spilled to disk, reducing performance and potentially causing a memory error (if
-the threshold value is too large). Thus it's usually best to put the stream with
+[classname]+CoGroup+ attempts to store the entire unique-keys tuple "bag" from
+the right-hand stream in memory for rapid joining to the left-hand stream. If
+the bag is very large, it may exceed a configurable threshold and be spilled to
+disk, reducing performance and potentially causing a memory error (if the
+threshold value is too large). Thus it is usually best to put the stream with
 the largest groupings on the left-hand side and, if necessary, adjust the spill
 threshold as described in the Javadoc.
 
@@ -383,7 +376,7 @@ right, or mixed (three or more streams). Self-joins are permitted. Developers
 can also create custom Joiners if desired. For more information on types of
 joins, refer to <<joiner-class>> or the Javadoc.
 
-.Joining Two Tuple Streams
+.Joining two tuple streams
 ====
 include::simple-join.adoc[]
 ====
@@ -414,11 +407,10 @@ compared to the slower but much more reliable [classname]++CoGroup++),
 developers should thoroughly understand this class before attempting to use it
 in a production environment.
 
-TIP: Frequently the [classname]+HashJoin+ is fed a filtered down stream of
+TIP: Frequently the [classname]+HashJoin+ is fed a filtered-down stream of
 Tuples from what was originally a very large file. To prevent the large file
-from being replicated throughout a cluster, when running on a cluster, use a
-[classname]+Checkpoint+ pipe at the point where the data has been filtered down
-to its smallest before it is streamed into a [classname]+HashJoin+. This will
-force the Tuple stream to be persisted to disk and new [classname]+FlowStep+
-(MapReduce job) to be created to read the smaller data size more efficiently.
-*Not all platforms support checkpointing.*
+from being replicated throughout a cluster, use a [classname]+Checkpoint+ pipe
+at the point where the data has been filtered down to its smallest prior to
+entering a [classname]+HashJoin+. The Tuple stream will persist on disk. A new
+[classname]+FlowStep+ (MapReduce job) is created to read the smaller data size
+more efficiently. *Not all platforms support checkpointing.*
