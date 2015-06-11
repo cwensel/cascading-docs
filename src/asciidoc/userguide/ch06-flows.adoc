@@ -10,24 +10,24 @@
 include::simple-flow.adoc[]
 ====
 
-To create a Flow, it must be planned though one of the
+To create a [classname]+Flow+, it must be planned though one of the
 [classname]+FlowConnector+ subclass objects. In Cascading, each platform (i.e.,
 local and Hadoop) has its own connectors. The [code]+connect()+ method is used
-to create new Flow instances based on a set of sink taps, source taps, and a
-pipe assembly. Above is a trivial example that uses the local mode connector.
+to create new flow instances based on a set of sink taps, source taps, and a
+pipe assembly. Above is a trivial example that uses the local-mode connector.
 
 .Binding taps in a Flow
 ====
 include::complex-flow.adoc[]
 
-<1>The [classname]+FlowDef+ is a fluent API for passing required and optional
-meta-data to the [classname]+FlowConnector+.
+<1>The [classname]+FlowDef+ class is a fluent API for passing required and
+optional metadata to the [classname]+FlowConnector+.
 
 ====
 
 The example above expands on our previous pipe assembly example by creating
 multiple source and sink taps and planning a [classname]+Flow+. Note there are
-two branches in the pipe assembly - one named "lhs" and the other named "rhs".
+two branches in the pipe assembly -- one named "lhs" and the other named "rhs."
 Internally Cascading uses those names to bind the source taps to the pipe
 assembly.
 
@@ -43,18 +43,18 @@ added. For instance, it's very common to add [code]+mapreduce.job.reduces+ to
 set the number of reducers.
 
 When running on a cluster, one of the two properties that must always be set for
-production applications is the application Jar class or Jar path.
+production applications is the application JAR class or JAR path.
 
-.Configuring the Application Jar
+.Configuring the application JAR
 ====
 include::flow-properties.adoc[]
 ====
 
 Since the [classname]+FlowConnector+ can be reused, any properties passed on the
-constructor will be handed to all the Flows it is used to create. If Flows need
-to be created with different default properties, a new FlowConnector will need
-to be instantiated with those properties, or properties will need to be set on a
-given [classname]+Pipe+ or [classname]+Tap+ instance directly - via the
+constructor are handed to all the flows it is used to create. If flows need to
+be created with different default properties, a new FlowConnector must be
+instantiated with those properties. Alternatively, properties can be set on a
+given [classname]+Pipe+ or [classname]+Tap+ instance directly -- with the
 [methodname]+getConfigDef()+, [methodname]+getNodeConfigDef()+ or
 [methodname]+getStepConfigDef()+ methods.
 
@@ -62,82 +62,84 @@ given [classname]+Pipe+ or [classname]+Tap+ instance directly - via the
 === Skipping Flows
 
 When a [classname]+Flow+ participates in a [classname]+Cascade+, the
-[classname]+Flow.isSkipFlow()+ method is consulted before calling
-[classname]+Flow.start()+ on the flow. The result is based on the Flow's _skip
-strategy_.
+[classname]+Flow.isSkipFlow()+ method is checked before calling
+[classname]+Flow.start()+ on the [classname]+Flow+. The result is based on the
+_skip strategy_ of the [classname]+Flow+.
 
 By default, [methodname]+isSkipFlow()+ returns true if any of the sinks are
-stale - i.e., the sinks don't exist or the resources are older than the sources.
-However, the strategy can be changed via the
-[classname]+Flow.setFlowSkipStrategy()+ and
+_stale_ -- i.e., the sinks do not exist or the resources are older than the
+sources. However, the strategy can be changed with either the
+[classname]+Flow.setFlowSkipStrategy()+ method or the
 [classname]+Cascade.setFlowSkipStrategy()+ method.
 
 Cascading provides a choice of two standard skip strategies:
 
 FlowSkipIfSinkNotStale::
 
-This strategy - [classname]+cascading.flow.FlowSkipIfSinkNotStale+ - is the
-default. Sinks are treated as stale if they don't exist or the sink resources
+This strategy -- [classname]+cascading.flow.FlowSkipIfSinkNotStale+ -- is the
+default. Sinks are treated as _stale_ if they do not exist or the sink resources
 are older than the sources. If the SinkMode for the sink tap is REPLACE, then
 the tap is treated as stale.
 
 FlowSkipIfSinkExists::
 
-The [classname]+cascading.flow.FlowSkipIfSinkExists+ strategy skips the Flow if
-the sink tap exists, regardless of age. If the [classname]+SinkMode+ for the
-sink tap is [code]+REPLACE+, then the tap is treated as stale.
+The [classname]+cascading.flow.FlowSkipIfSinkExists+ strategy skips the
+[classname]+Flow+ if the sink tap exists, regardless of age. If the
+[classname]+SinkMode+ for the sink tap is [code]+REPLACE+, then the tap is
+treated as stale.
 
 Additionally, you can implement custom skip strategies by implementing the
 interface [classname]+cascading.flow.FlowSkipStrategy+.
 
-Note that [classname]+Flow.start()+ does not consult the
+Note that [classname]+Flow.start()+ does not check the
 [methodname]+isSkipFlow()+ method, and consequently always tries to start the
-Flow if called. It is up to the user code to call [classname]+isSkipFlow()+ to
-determine whether the current strategy indicates that the Flow should be
-skipped.
+[classname]+Flow+ if called. The user code determines whether or not to call
+[classname]+isSkipFlow()+ for assessing if the programming logic indicates  that
+the [classname]+Flow+ should be skipped.
 
 [[custom-flows]]
 === Creating Custom Flows
 
-Any custom Class can be treated as a Flow if given the correct
+Custom classes can be treated as flows if given the correct
 https://github.com/Cascading/riffle[Riffle] annotations. Riffle is a set of Java
 annotations that identify specific methods on a class as providing specific
 life-cycle and dependency functionality. For more information, see the Riffle
 documentation and examples. To use with Cascading, a Riffle-annotated instance
 must be passed to the [classname]+cascading.flow.process.ProcessFlow+
 constructor method. The resulting [classname]+ProcessFlow+ instance can be used
-like any other Flow instance.
+like any other flow instance.
 
 Since many algorithms need to perform multiple passes over a given data set, a
-Riffle-annotated Class can be written that internally creates Cascading Flows
-and executes them until no more passes are needed. This is like nesting Flows or
-Cascades in a parent Flow, which in turn can participate in a Cascade.
+Riffle-annotated class can be written that internally creates Cascading flows
+and executes them until no more passes are needed. This is like nesting flows or
+Cascades in a parent [classname]+Flow+, which in turn can participate in a
+Cascade.
 
 [[process-levels]]
-=== Flow Process Hierarchy
+=== Process Levels in the Flow Hierarchy
 
-A Flow is a parent, top-level unit-of-work. Underneath are other process levels
-that have specific roles.
+A [classname]+Flow+ is a parent of other process levels, which have other
+specific roles.
 
 [classname]+Flow+::
 
-The prior sections provide a detailed description of a Flow, but at its essence
-it is a single business oriented unit-of-work. The data consumed and produced
-has some level of durability and business need. A Flow satisfies some business
-or architectural need.
+The prior sections provide a detailed description of flows, but at its essence
+flows are business-oriented units-of-work. The consumed and produced data  has
+some level of durability. A flow satisfies a business or  architectural need.
 
 [classname]+FlowStep+::
 
-A FlowStep represent a unit of platform managed work.
+A FlowStep represents a unit of platform-managed work.
 
 +
 
-On Hadoop MapReduce, it would be a "job". On Apache Tez, it would be a "DAG".
+Hadoop MapReduce term: _job_ +
+Apache Tez term: _DAG_
 
 [classname]+FlowNode+::
 
 A FlowNode represents the complete unit-of-work that conceptually fits in a
-single JVM and what becomes parallelized by handling sub-sets of the input data
+single JVM and what becomes parallelized by handling subsets of the input data
 source.
 
 +
@@ -147,26 +149,26 @@ runtime depending on which input data set is actually being processed.
 
 +
 
-On Hadoop MapReduce, it would be a "mapper" or a "reducer". On Apache Tez, it
-would be a "vertex".
+Hadoop MapReduce terms: _mapper_  and _reducer_ +
+Apache Tez term: _vertex_
 
 
 [classname]+FlowSlice+::
 
 The FlowSlice is the smallest unit of parallelization. At runtime, a FlowSlice
-represents the actual JVM executing Cascading code, and the data path(s) being
+represents the actual JVM-executing Cascading code and the data path(s) being
 executed in that JVM.
 
 +
 
-If the FlowNode being parallelized has FlowPipelines, one of thise pipelines
-will be represented here.
+If the FlowNode being parallelized has FlowPipelines, one of those pipelines is
+represented here.
 
 +
 
-On Hadoop MapReduce and Apache Tez this would be an individual "task attempt".
+Hadoop MapReduce and Apache Tez terms: _task attempt_
 
 === Runtime Metrics
 
-Developers can retrieve runtime metrics (counters) of each <<process-levels,
-process level>> in a platform independent way.
+Developers can retrieve runtime metrics (counters) of each process level in a
+platform-independent way.
