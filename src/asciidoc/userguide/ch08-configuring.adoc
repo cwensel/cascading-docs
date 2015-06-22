@@ -7,44 +7,41 @@
 === Introduction
 
 Cascading provides a number of ways to pass properties down for use by built-in
-or custom operations and integrations, to Cascading internals, or down to the
+or custom operations and integrations, to Cascading internals, or to the
 underlying platform.
 
-Additionally the scope of the configuration properties can be application wide,
-limited to a <<ch06-flows.adoc#process-level,specific process level>> (a Flow, a
-FlowStep, or a FlowNode), or specific to a given Pipe or Tap instance.
+Additionally the scope of the configuration properties can be application-wide,
+limited to a <<ch06-flows.adoc#process-levels,specific process level>> (a Flow,
+a FlowStep, or a FlowNode), or specific to a given Pipe or Tap instance.
 
 === Creating Properties
 
-Cascading is very configurable. To configure aspects of Cascading, a property
-set must be created, where a property is a key and value pair.
-
-The key is a String value like [code]+cascading.app.appjar.path+, and the value
-is the String path to the "app jar".
+Cascading is very configurable. You can configure aspects of Cascading by
+creating a property set. Each property consists of a key-value pair.
+The key is a String value, such as [code]+cascading.app.appjar.path+. The value
+is the String path to the "app JAR."
 
 Property sets can be managed directly in a [classname]+java.util.Properties+
-instance. This class has methods allowing for [code]+*.property+ files to be
+instance. This class has methods that allow [code]+*.property+ files to be
 loaded from disk or other locations.
 
-NOTE: [classname]+Properties+ is a subclass of [classname]+Map<Object,Object>+,
-thus any Map type can be used, so long as both key and value pairs are stored as
-type [classname]+java.util.String+,
+NOTE: [classname]+Properties+ is a subclass of [classname]+Map<Object,Object>+.
+Any Map type can be used, so long as key-value pairs are stored as
+type [classname]+java.util.String+.
 
 NOTE: [classname]+Properties+ can be nested via the constructor creating a
-hierarchy of default key/values. But calling [code]+getKeySet()+ and other
-[classname]+Map+ specific API calls will not return the nested key values. See
+hierarchy of default key values. But calling [code]+getKeySet()+ and other
+[classname]+Map+-specific API calls does not return the nested key values. See
 [methodname]+Properties.getPropertyNames()+.
 
 ==== Props
 
-All frequently used Cascading properties are encapsulated in sub-system specific
-[classname]+Props+ sub-classes. All [classname]+Props+ classes are fluent style
-interfaces for creating property sets.
+All frequently used Cascading properties are encapsulated in subsystem-specific
+[classname]+Props+ subclasses. All [classname]+Props+ classes are fluent-style
+interfaces for creating property sets. For example, the [classname]+AppProps+
+class can be used for setting application-level configuration settings.
 
-For example, the [classname]+AppProps+ class can be used for setting application
-level configuration settings.
-
-.Configuring the Application Jar
+.Configuring the application JAR
 ====
 include::app-props.adoc[]
 ====
@@ -53,96 +50,97 @@ The [classname]+Props+ interface allows for both setting available values as
 well as populating either a [classname]+Properties+ or [classname]+ConfigDef+
 instance for use by Cascading.
 
-There are quite a few "Props" based classes that expose fluent API calls, the
-ones most commonly used are below.
+There are various "Props-based" classes that expose fluent API calls. The
+following table lists the most commonly used classes for creating property sets
+with fluent-style interfaces.
 
 |====
 
-| [classname]+cascading.property.AppProps+ | Allows for setting application
-specific properties. Some properties are required by the underlying platform,
-like application Jar. Others are simple meta-data used by compatible management
-tools, like tags.
+| [classname]+cascading.property.AppProps+ | Allows for setting
+application-specific properties. Some properties are required by the underlying
+platform, like application JAR. Others are simple metadata used by compatible
+management tools, like tags.
 
 | [classname]+cascading.flow.FlowConnectorProps+ | Allows for setting a
 [classname]+DebugLevel+ or [classname]+AssertionLevel+ for a given FlowConnector
 to target. Also allows for setting intermediate [classname]+DecoratorTap+
-sub-classes to be used, if any.
+subclasses to be used, if any.
 
-| [classname]+cascading.flow.FlowProps+ | Allows for setting any Flow specific
+| [classname]+cascading.flow.FlowProps+ | Allows for setting any Flow-specific
 properties like the maximum concurrent steps to be scheduled, or changing the
 default Tuple Comparator class.
 
 | [classname]+cascading.flow.FlowRuntimeProps+ | Allows for setting specific
 runtime properties, like the level of parallelization to use.
 
-| [classname]+cascading.cascade.CascadeProps+ | Allows for setting any Cascade
-specific properties like the maximum concurrent Flows to be scheduled.
+| [classname]+cascading.cascade.CascadeProps+ | Allows for setting any
+Cascade-specific properties like the maximum concurrent Flows to be scheduled.
 
-| [classname]+cascading.tap.TrapProps+ | Allows for fine grained configuration
+| [classname]+cascading.tap.TrapProps+ | Allows for fine-grained configuration
 of what diagnostic data traps should capture on failures.
 
-| [classname]+cascading.tuple.collect.SpillableProps+ | Allows for fine grained
+| [classname]+cascading.tuple.collect.SpillableProps+ | Allows for fine-grained
 control over how to manage spilling of data during certain operators that
 accumulate data. Specifically thresholds and what compression codecs to use.
 
-| [classname]+cascading.pipe.assembly.AggregateByProps+ | Allows for fine
-grained control over the underlying caches used.
+| [classname]+cascading.pipe.assembly.AggregateByProps+ | Allows for
+fine-grained control over the underlying caches used.
 
 |====
 
 === Passing Properties
 
-The scopes at which properties can be applied are:
+Properties can be applied to the following scopes:
 
-* Application - through a default shared [classname]+Properties+ instance
+* Application: through a default, shared [classname]+Properties+ instance
 
-* [classname]+Flow+ - through a Flow specific [classname]+Properties+ instance
+* [classname]+Flow+: through a Flow-specific [classname]+Properties+ instance
 passed to the proper [classname]+FlowConnector+
 
-* [classname]+FlowStep+ - through either [methodname]+Pipe.getStepConfigDef()+
+* [classname]+FlowStep+: through either [methodname]+Pipe.getStepConfigDef()+
 or [methodname]+Tap.getStepConfigDef()+
 
-* [classname]+FlowNode+ - through either [methodname]+Pipe.getNodeConfigDef()+
+* [classname]+FlowNode+: through either [methodname]+Pipe.getNodeConfigDef()+
 or [methodname]+Tap.getNodeConfigDef()+
 
-* [classname]+Pipe+ - through [methodname]+Pipe.getConfigDef()+
+* [classname]+Pipe+: through [methodname]+Pipe.getConfigDef()+
 
-* [classname]+Tap+ - through [methodname]+Tap.getConfigDef()+
+* [classname]+Tap+: through [methodname]+Tap.getConfigDef()+
 
-In the cases of FlowStep and FlowNode, the Pipe and Tap instances that are
-planned into those levels will be inspected for property settings, the union of
-which will be applied to the underlying configuration for that level, if
-possible
+In the cases of [classname]+FlowStep+ and [classname]+FlowNode+, the
+[classname]+Pipe+ and [classname]+Tap+ instances that are coded to run on those
+levels are inspected for property settings. The property settings are merged
+and, if possible, applied to the underlying configuration for that level.
 
-NOTE: FlowNode level properties cannot be applied to the Map/Reduce platform.
+NOTE: [classname]+FlowNode+-level properties cannot be applied to the
+MapReduce platform.
 
 ==== Planner Properties
 
-Properties passed to a [classname]+FlowConnector+ will be consulted during
-planning.
-
-In addition, these properties will be pushed directly to the underlying platform
-as defaults. Any of which may be overridden by a given scoped
-[classname]+ConfigDef+
+Properties passed to a [classname]+FlowConnector+ are checked by the Cascading
+query planner. In addition, these properties are pushed directly to the
+underlying platform as defaults. Any such properties can be overridden by a
+given scoped [classname]+ConfigDef+ instance.
 
 ==== ConfigDef
 
-The ConfigDef class allows for the creation of a configuration properties
-template to be applied to an existing properties configuration set.
+The ConfigDef class supports the creation of a configuration properties
+template. The template can then be applied to an existing properties
+configuration set.
 
-There are three property modes, [classname]+Mode.DEFAULT+,
+There are three property mode: [classname]+Mode.DEFAULT+,
 [classname]+Mode.REPLACE+, and [classname]+Mode.UPDATE+.
 
  * A [classname]+DEFAULT+ property is only applied if there is no existing value
- in the  property set.
+ in the property set.
 
  * A [classname]+REPLACE+ property is always applied overriding any previous
  values.
 
- * An [classname]+UPDATE+ property is always applied to an existing property.
- Usually when the property key represent a list of values.
+ * An [classname]+UPDATE+ property is always applied to an existing property,
+ usually when the property key represents a list of values.
 
-The following examples show using the [classname]+ConfigDef+. at different
+The following examples show using the [classname]+ConfigDef+ at different
 scopes.
 
 .Configuring properties at the FlowStep scope
