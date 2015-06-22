@@ -4,63 +4,67 @@
 [[mapreduce-platform]]
 == Apache Hadoop MapReduce Platform
 
-By default Apache Hadoop provides an API called *MapReduce* for performing
+By default, Apache Hadoop provides an API called _MapReduce_ for performing
 computation at scale.
 
-Outside of the details provided in the chapter on
-<<ch10-hadoop-common.adoc#apache-hadoop,Apache Hadoop>>, the remainder of this
-chapter provided details specific to the MapReduce platform.
+The following documentation covers details about using Cascading on the
+MapReduce platform that are not covered in the
+<<ch10-hadoop-common.adoc#apache-hadoop,Apache Hadoop>> documentation of this
+guide.
 
 === Configuring Applications
 
-During runtime, Hadoop must be told which application jar file should be pushed
-to the cluster. Historically, this is done via the Hadoop API
-[classname]+JobConf+ object, as seen in the example below.
+At runtime, Hadoop must be told which application JAR file should be pushed to
+the cluster. Historically, this is done via the Hadoop API [classname]+JobConf+
+object, as seen in the example below.
 
-In order to remain platform independent, the [classname]+AppProps+ class should
-be used as described in <<ch10-hadoop-common.adoc#configuring,Configuring
-Applications>>.
+In order to remain platform-independent, use the [classname]+AppProps+ class  as
+described in <<ch10-hadoop-common.adoc#configuring,Configuring Applications>>.
 
-If it is required to use an existing JobConf instance, consider the example
+If you must use an existing [classname]+JobConf+ instance, consider the example
 below:
 
-.Configuring the Application Jar with a JobConf
+.Configuring the application JAR with a JobConf
 ====
 include::flow-jobconf.adoc[]
 ====
 
-Above we see two ways to set the same property - via the
-[methodname]+setJarClass()+ method, and via the [methodname]+setJarPath()+
-method. One is based on a Class name, and the other is based on a literal path.
+In the example above we see two ways to use methods to set the same property:
 
-The first method takes a Class object that owns the "main" function for this
-application. The assumption here is that [code]+Main.class+ is not located in a
-Java Jar that is stored in the [code]+lib+ folder of the application Jar. If it
-is, that Jar is pushed to the cluster, not the parent application jar.
+[methodname]+setJarClass()+::
 
-The second method simply sets the path to the Java Jar as a property.
+In this method, you invoke a Class object by name. In the example, the Class
+that is named owns the "main" function for this application. The assumption here
+is that [code]+Main.class+ is not located in a Java JAR that is stored in the
+[code]+lib+ folder of the application JAR. If it is, the dependent lib folder
+JAR will be pushed to the cluster, not to the parent application JAR (the JAR
+containing the lib folder).
 
-In your application, only one of these methods needs to be called, but one of
-them must be called to properly configure Hadoop.
+[methodname]+setJarPath()+::
+
+This method requires setting a literal path to the Java JAR as a property.
+
+In your application, only one of these methods must be called to properly
+configure Hadoop.
 
 === Creating Flows from a JobConf
 
 If a MapReduce job already exists, then the
 [classname]+cascading.flow.hadoop.MapReduceFlow+ class should be used. To do
-this, after creating a Hadoop [classname]+JobConf+ instance simply pass it into
-the [classname]+MapReduceFlow+ constructor. The resulting [classname]+Flow+
-instance can be used like any other Flow.
+this, create a Hadoop [classname]+JobConf+ instance and simply pass it into the
+[classname]+MapReduceFlow+ constructor. The resulting [classname]+Flow+ instance
+can be used like any other [classname]+Flow+.
 
-Note multiple [classname]+MapReduceFlow+ instances can be passed to a
-[classname]+CascadeConnector+ along with other [classname]+Flow+ instances to
+Note both multiple [classname]+MapReduceFlow+ instances and other
+[classname]+Flow+ instances can be passed to a [classname]+CascadeConnector+ to
 produce a [classname]+Cascade+.
 
 [[building]]
 === Building
 
-Cascading ships with several jars and dependencies in the download archive.
+Cascading ships with several JARs and dependencies in the download archive.
 
-Alternatively, Cascading is available over Maven and Ivy through the Conjars
+Alternatively, Cascading is available via Maven and Ivy through the Conjars
 repository, along with a number of other Cascading-related projects. See
 http://conjars.org for more information.
 
@@ -68,26 +72,26 @@ The Cascading Hadoop artifacts include the following:
 
 [code]+cascading-core-3.x.y.jar+::
 
-This jar contains the Cascading Core class files. It should be packaged with
-+lib/*.jar+ when using Hadoop.
+This JAR contains the Cascading Core class files. It should be packaged with
+[code]+lib/*.jar+ when using Hadoop.
 
 [code]+cascading-hadoop-3.x.y.jar+::
 
-This jar contains the Cascading Hadoop 1 specific dependencies. It should be
+This JAR contains the Cascading _Hadoop 1_ specific dependencies. It should be
 packaged with [code]+lib/*.jar+ when using Hadoop.
 
 [code]+cascading-hadoop2-mr1-3.x.y.jar+::
 
-This jar contains the Cascading Hadoop 2 specific dependencies. It should be
+This JAR contains the Cascading _Hadoop 2_ specific dependencies. It should be
 packaged with [code]+lib/*.jar+ when using Hadoop.
 
 NOTE: Do not package both [code]+cascading-hadoop-3.x.y.jar+ and
-[code]+cascading-hadoop2-mr1-3.x.y.jar+ jar files into your application. Choose
+[code]+cascading-hadoop2-mr1-3.x.y.jar+ JAR files into your application. Choose
 the version that matches your Hadoop distribution version.
 
-Cascading works with either of the Hadoop processing modes - the default local
-standalone mode and the distributed cluster mode. As specified in the Hadoop
-documentation, running in cluster mode requires the creation of a Hadoop job jar
-that includes the Cascading jars, plus any needed third-party jars, in its
+Cascading works with either of the Hadoop processing modes: the default local
+stand-alone mode and the distributed cluster mode. As specified in the Hadoop
+documentation, running in cluster mode requires the creation of a Hadoop job JAR
+that includes the Cascading JARs, plus any needed third-party JARs, in its
 [code]+lib+ directory. This is true regardless of whether they are Cascading
 Hadoop-mode applications or raw Hadoop MapReduce applications.
