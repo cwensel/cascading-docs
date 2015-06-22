@@ -7,84 +7,80 @@
 [[building]]
 === Building an Application
 
-Cascading local mode has no special requirements for building outside the
+The Cascading local mode has no special requirements for building outside the
 requirement for any Java application to be executed from the command line.
+However, there are two top-level dependencies that should be added to the build
+file:
 
-That said, there are to top-level dependencies that should be added to the
-build file, both described below.
+cascading-core-3.x.y.jar::
 
-[code]+cascading-core-3.x.y.jar+::
-
-This jar contains the Cascading Core class files.
+This JAR contains the Cascading Core class files.
 
 cascading-local-3.x.y.jar::
 
-This jar contains the Cascading local mode class files.
+This JAR contains the Cascading local-mode class files.
 
 [[executing]]
 === Executing an Application
 
-After completing a build of the applications 'main' class, the application
-can be run like any other Java based command line application.
+After completing a build of the application's "main" class, the application can
+be run like any other Java-based command-line application.
 
 [[source-sink]]
 === Source and Sink Taps
 
 ==== Taps
 
-The following sample code creates a new Hadoop FileSystem Tap that can read and
-write raw text files. Since only one field name is provided, the "offset" field
-is discarded, resulting in an input tuple stream with only "line" values.
-
-Here are the most commonly-used tap types:
+The Cascading local mode only provides a single platform specific
+[classname]+Tap+ type:
 
 FileTap::
 
 The [classname]+cascading.tap.local.FileTap+ tap is used with the Cascading
-local platform to access files on the local file system.
+local platform to access files on the local filesystem.
 
 [[debugging]]
 === Troubleshooting and Debugging
 
-Debugging and testing in Cascading local mode, unlike Cascading other platforms,
-is straightforward as all the processing happens in the local JVM and
-in local memory.
+IDE debugging and testing in Cascading local mode, unlike Cascading on other
+platforms, is straightforward as all the processing happens in the local JVM and
+in local memory. Therefore, the first recommendation for debugging Cascading
+applications on a given platform is to first write tests that run in Cascading
+local mode.
 
-NOTE: Because Cascading local mode runs entirely in memory, large data-sets will
-cause an OutOfMemoryException. Also be sure to adjust the java runtime memory
+NOTE: Because Cascading local mode runs entirely in memory, large data sets may
+cause an OutOfMemoryException. Also, be sure to adjust the Java runtime memory
 settings.
 
-This dramatically simplifies the use of an IDE and Debugger. Thus the very first
-recommendation for debugging Cascading applications on a given platform is to
-first write tests that run in Cascading local mode.
+In addition to using an IDE debugger, you can use two Cascading features to help
+sort out runtime issues.
 
-Along with the use of an IDE Debugger, Cascading provides two tools to help sort
-out runtime issues. First is the use of the [classname]+Debug+ filter.
+One feature is the [classname]+Debug+ filter. Best practice is to sprinkle
+[classname]+Debug+ operators (see <<ch16-operations.adoc#debug-function, Debug
+Function>>) in the pipe assembly and rely on the planner to remove them at
+runtime by setting a [classname]+DebugLevel+.
 
-It is a best practice to sprinkle [classname]+Debug+ operators (see
-<<ch16-operations.adoc#debug-function>>) in the pipe assembly and rely on the
-planner to remove them at runtime by setting a [classname]+DebugLevel+.
+[classname]+Debug+ can only print to the local console via standard output or
+standard error. This print limitation makes it harder to use [classname]+Debug+
+on distributed platforms, as operations do not execute locally but on the
+cluster side. [classname]+Debug+ provides the option to print the current field
+names, and a prefix can be set to help distinguish between instances of the
+[classname]+Debug+ operation.
 
-[classname]+Debug+ can only print to the local console via std out or std error,
-thus making it harder for use on distributed platforms, as Operations do not
-execute locally but on the cluster side. [classname]+Debug+ can optionally print
-the current field names, and a prefix can be set to help distinguish between
-instances of the [classname]+Debug+ operation.
-
-Additionally, the actual execution plan for a given Flow can be written out (and
-visualized) via the Flow.writeDOT() method. DOT files are simply text
-representation of graph data and can be read by tools like GraphViz and Omni
-Graffle.
+Additionally, the actual execution plan for a Flow can be written (and
+visualized) via the [methodname]+Flow.writeDOT()+ method. DOT files are simply
+text representations of graph data and can be read by tools like Graphviz and
+OmniGraffle.
 
 In Cascading local mode, these execution plans are exactly as the pipe
-assemblies were coded, except the sub-assemblies are unwound and the field names
-across the Flow are resolved by the planner. That is, [code]+Fields.ALL+ and
-other wild cards are converted the actual field names or ordinals.
+assemblies were coded, except the subassemblies are unwound and the field names
+across the Flow are resolved by the planner. In other words, [code]+Fields.ALL+
+and other wild cards are converted to the actual field names or ordinals.
 
 If the [methodname]+connect()+ method on the current [classname]+FlowConnector+
 fails, the resulting [classname]+PlannerException+ has a
 [methodname]+writeDOT()+ method that shows the progress of the current planner.
 
-For planner related errors that present during runtime when executing a Flow,
-see the chapter on <<ch21-query-process-planner.adoc#process-planner,The
-Cascading Process Planner>>.
+For planner-related errors that appear during runtime when executing a Flow, see
+the chapter on the <<ch21-query-process-planner.adoc#process-planner, Cascading
+Process Planner>>.
