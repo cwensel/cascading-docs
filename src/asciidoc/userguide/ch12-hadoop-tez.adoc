@@ -4,42 +4,41 @@
 [[tez-platform]]
 == Apache Tez Platform
 
-Outside of the details provided in the chapter on
-<<ch10-hadoop-common.adoc#apache-hadoop,Apache Hadoop>>, the remainder of this
-chapter provided details specific to the Apache Tez platform.
+The following documentation covers details about using Cascading on the 
+Apache Tez platform that are not covered in the  
+<<ch10-hadoop-common.adoc#apache-hadoop,Apache Hadoop>> documentation of this 
+guide.
 
-The most up to date information on running Apache Tez and supported Tez releases
-can be found in the git repo README:
+The most up-to-date information about running Cascading on Apache Tez and 
+supported Tez releases can be found in a GitHub repo README at:
 
 Released Source::
   https://github.com/cascading/cascading/tree/3.0/cascading-hadoop2-tez
 
-Work In Progress Source::
+Work-in-Progress Source::
   https://github.com/cwensel/cascading/tree/wip-3.0/cascading-hadoop2-tez
 
-It should be noted the model behind Apache Tez is much improved over MapReduce.
+Apache Tez is a noticeable improvement over MapReduce. Tez's merits include:
 
-Some of the benefits include:
-
-* no more ‘identity mappers’ - mappers that simply forward data to the reducer
-* support for multiple outputs
-* no prefixing data with join ordinality
-* suppressing sorting when not needed
-* removing HDFS as an intermediate store between jobs
+* No more "identity mappers" -- mappers that simply forward data to a reducer
+* Support for multiple outputs
+* No prefixing data with join ordinality
+* Suppression of sorting when not needed
+* Removal of HDFS as an intermediate store between jobs
 
 === Configuring Applications
 
-During runtime, Hadoop must be told which application jar file should be pushed
-to the cluster
+During runtime, Hadoop must be told which application JAR file should be pushed
+to the cluster.
 
-In order to remain platform independent, the [classname]+AppProps+ class should
-be used as described in <<ch10-hadoop-common.adoc#configuring,Configuring
-Applications>>.
+In order to remain platform-independent, the [classname]+AppProps+ class should
+be used as described in the <<ch10-hadoop-common.adoc#configuring,configuring
+applications for Hadoop>> documentation.
 
 [[building]]
 === Building
 
-Cascading ships with several jars and dependencies in the download archive.
+Cascading ships with several JARs and dependencies in the download archive.
 
 Alternatively, Cascading is available over Maven and Ivy through the Conjars
 repository, along with a number of other Cascading-related projects. See
@@ -49,17 +48,17 @@ The Cascading Hadoop artifacts include the following:
 
 [code]+cascading-core-3.x.y.jar+::
 
-This jar contains the Cascading Core class files. It should be packaged with
-+lib/*.jar+ when using Hadoop.
+This JAR contains the Cascading Core class files. It should be packaged with
+[code]+lib/*.jar+ when using Hadoop.
 
 [code]+cascading-hadoop2-tez-3.x.y.jar+::
 
-This jar contains the Cascading Hadoop 2 and Apache Tez specific dependencies.
+This JAR contains the Cascading Hadoop 2 and Apache Tez specific dependencies.
 It should be packaged with [code]+lib/*.jar+ when using Hadoop.
 
-Cascading works with either of the Hadoop processing modes - the default local
-standalone mode and the distributed cluster mode. As specified in the Hadoop
-documentation, running in cluster mode requires the creation of a Hadoop job jar
-that includes the Cascading jars, plus any needed third-party jars, in its
+Cascading works with either of the Hadoop processing modes -- the default local
+stand-alone mode and the distributed cluster mode. As specified in the Hadoop
+documentation, running in cluster mode requires the creation of a Hadoop job JAR
+that includes the Cascading JARs, plus any needed third-party JARs, in its
 [code]+lib+ directory. This is true regardless of whether they are Cascading
 Hadoop-mode applications or raw Apache Tez applications.
