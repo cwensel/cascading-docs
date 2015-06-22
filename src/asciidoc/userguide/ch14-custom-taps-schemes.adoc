@@ -13,21 +13,21 @@ to external systems or read/write data to proprietary formats.
 
 A Tap represents something physical, like a file or a database table.
 Accordingly, Tap implementations are responsible for life-cycle issues around
-the resource they represent, such as tests for resource existence, or to perform
-resource deletion (dropping a remote SQL table).
+the resource they represent, such as tests for resource existence or deletion of
+a resource (e.g., dropping a remote SQL table).
 
-A Scheme represents a format or representation - such as a text format for a
+A Scheme represents a format or representation -- such as a text format for a
 file, the columns in a table, etc. Schemes are used to convert between the
 source data's native format and a [classname]+cascading.tuple.Tuple+ instance.
 
-Creating custom taps and schemes can be an involved process and will require
-knowledge of the underlying platform. Not only do Tap and Scheme classes
-manage the access to a resource or the format of the resource, they must also
-abstract away details of the underlying platform.
+Creating custom taps and schemes is an involved process and requires knowledge
+of the underlying platform. Not only do Tap and Scheme classes manage the access
+to a resource or the format of the resource, they must also selectively hide
+details of the underlying platform to retain platform  independence.
 
-For examples of how to implement a custom tap and scheme for different
-platforms, see the http://.cascading.org/extensions/[Cascading Extensions] page
-for source code of similiar extensions.
+For examples of how to implement a custom Tap and Scheme for different
+platforms, see http://www.cascading.org/extensions/[Cascading Extensions]
+for links to source code of similiar extensions.
 
 === Custom Taps
 
@@ -35,25 +35,23 @@ All custom Tap classes must subclass the [classname]+cascading.tap.Tap+ abstract
 class and implement the required methods. The method
 [methodname]+getIdentifier()+ must return a [classname]+String+ that uniquely
 identifies the resource the Tap instance is managing. Any two Tap instances with
-the same fully-qualified identifier value will be considered equal.
+the same fully-qualified identifier value are considered equal.
 
-Every Tap is presented an opportunity to set any custom properties the
-underlying platform requires, via the methods [methodname]+sourceConfInit()+
-(for when it is used as a _source tap_) and [methodname]+sinkConfInit()+ (for
-when it is used as a _sink tap_). These two methods may be called more than once
-with new configuration objects, and should be idempotent.
+A Tap can set any custom properties the underlying platform requires, via the
+methods [methodname]+sourceConfInit()+ (for when it is used as a _source tap_)
+and [methodname]+sinkConfInit()+ (for when it is used as a _sink tap_). These
+two methods may be called more than once with new configuration objects and
+should be idempotent.
 
-Tuples are always read (sourced) from the [methodname]+openForRead()+
-method via a [classname]+TupleEntryIterator+ - i.e., [methodname]+openForRead()+
-is always called in the same process that will read the data. It is up to the
-Tap to return a [classname]+TupleEntryIterator+ that will iterate across the
+Tuples are always read (sourced) from the [methodname]+openForRead()+ method via
+a [classname]+TupleEntryIterator+ -- i.e.,  [methodname]+openForRead()+ is
+always called in the same process that reads  the data. The Tap returns a
+[classname]+TupleEntryIterator+ that is responsible for  iterating across the
 resource, returning a [classname]+TupleEntry+ instance (and [classname]+Tuple+
 instance) for each "record" in the resource.
 [methodname]+TupleEntryIterator.close()+ is always called when no more entries
-will be read.
-
-For more on this topic, see [classname]+TupleEntrySchemeIterator+ in the
-Javadoc.
+will be read. See [classname]+TupleEntrySchemeIterator+ in the Javadoc for more
+information.
 
 On some platforms, [methodname]+openForRead()+ is called with a pre-instantiated
 Input type. Typically this Input type should be used instead of instantiating a
@@ -62,14 +60,12 @@ new instance of the appropriate type.
 Similarly, when writing (sinking) Tuple data, a Tap is always used to sink data
 from the [methodname]+openForWrite()+ method via the
 [classname]+TupleEntryCollector+. Here again, [methodname]+openForWrite()+ is
-always called in the process in which data will be written. It is up to the Tap
-to return a [classname]+TupleEntryCollector+ that will accept and store any
-number of [classname]+TupleEntry+ or [classname]+Tuple+ instances for each
-record that is processed or created by a given Flow.
-[methodname]+TupleEntryCollector.close()+ is always called when no more entries
-will be written.
-
-See [classname]+TupleEntrySchemeCollector+ in the Javadoc.
+always called in the process in which data will be written. The Tap returns a
+[classname]+TupleEntryCollector+ that will accept and store any number of
+[classname]+TupleEntry+ or [classname]+Tuple+ instances for each record that is
+processed or created by a given Flow. [methodname]+TupleEntryCollector.close()+
+is always called when no more entries will be written. See
+[classname]+TupleEntrySchemeCollector+ in the Javadoc for more information.
 
 Again, on some platforms, [methodname]+openForWrite()+ will be called with a
 pre-instantiated Output type. Typically this Output type should be used instead
@@ -87,7 +83,7 @@ constructor of the [classname]+Tap+. Consequently, the [classname]+Scheme+ is
 responsible for configuring the Input and Output types it will be reading and
 writing.
 
-NOTE: It is important to be mindful of how a Tap and Scheme implementation
+NOTE: *Important:* Consider how a Tap and Scheme implementation that is
 not based on HDFS should behave in the face of a failure. The [classname]+Tap+
 class has a few methods to help cleanup after a failed Flow.
 
@@ -97,69 +93,74 @@ All custom Scheme classes must subclass the [classname]+cascading.scheme.Scheme+
 abstract class and implement the required methods.
 
 A [classname]+Scheme+ is ultimately responsible for sourcing and sinking Tuples
-of data. Consequently it must know what [classname]+Fields+ it presents during
-sourcing, and what [classname]+Fields+ it accepts during sinking. Thus the
-constructors on the base [classname]+Scheme+ type must be set with the source
-and sink Fields.
+of data. Consequently a [classname]+Scheme+ must be programmed to automatically
+present the correct [classname]+Fields+ during sourcing and to accept specific
+[classname]+Fields+ during sinking. Therefore, the constructors on the base
+[classname]+Scheme+ type must be set with the source and sink
+[classname]+Fields+.
 
-A Scheme is allowed to source different Fields than it sinks. The
-[classname]+TextLine+ [classname]+Scheme+ does just this. (The
-[classname]+TextDelimited+ [classname]+Scheme+, on the other hand, forces the
-source and sink [classname]+Fields+ to be the same.)
+[classname]+TextLine+ [classname]+Scheme+ configures a Scheme so that it sources
+different Fields than it sinks. On the other hand, the
+[classname]+TextDelimited+ [classname]+Scheme+ forces the source and sink
+[classname]+Fields+ to be the same.
 
 The [methodname]+retrieveSourceFields()+ and [methodname]+retrieveSinkFields()+
-methods allow a custom [classname]+Scheme+ to fetch its source and sink
-[classname]+Fields+ immediately before the planner is invoked - for example,
-from the header of a file, as is the case with [classname]+TextDelimited+. Also
-the [methodname]+presentSourceFields()+ and [methodname]+presentSinkFields()+
-methods notify the [classname]+Scheme+ of the [classname]+Fields+ that the
-planner expects the Scheme to handle - for example, to write the field names as
-a header, as is the case with [classname]+TextDelimited+.
+methods, as well as the [classname]+TextDelimited+ class, allow a custom
+[classname]+Scheme+ to fetch source and sink [classname]+Fields+ immediately
+before the Cascading planner is invoked. For example, the [classname]+Scheme+
+could fetch [classname]+Fields+ from the header of a file. Also, the
+[methodname]+presentSourceFields()+ and [methodname]+presentSinkFields()+
+methods, as well as the [classname]+TextDelimited+ class, notify the
+[classname]+Scheme+ of the [classname]+Fields+ that the planner expects the
+[classname]+Scheme+ to handle. For example, [classname]+Fields+ could to write
+the field names as a header.
 
-Every [classname]+Scheme+ is presented the opportunity to set any custom
-properties the underlying platform requires, via the methods
-[methodname]+sourceConfInit()+ and [methodname]+sinkConfInit()+. These methods
-may be called more than once with new configuration objects, and should be
-idempotent.
+A [classname]+Scheme+ can set any custom properties that the underlying platform
+requires, via the [methodname]+sourceConfInit()+ and
+[methodname]+sinkConfInit()+ methods. These methods may be called more than once
+with new configuration objects and should be idempotent.
 
-A Scheme is always sourced via the [methodname]+source()+ method, and is always
-sunk to via the [methodname]+sink()+ method.
+A Scheme is always sourced via the [methodname]+source()+ method. The
+[methodname]+sink()+ method must be called to sink data to the Scheme. The
+sequence of methods for a Scheme is the following:
 
-Prior to the first [methodname]+source()+ or [methodname]+sink()+ call, the
-[methodname]+sourcePrepare()+ and [methodname]+sinkPrepare()+ methods are
-called. After all values have been read or written, the
-[methodname]+sourceCleanup()+ and [methodname]+sinkCleanup()+ methods are called.
+. The [methodname]+sourcePrepare()+ or [methodname]+sinkPrepare()+ method
+is called.
+
+. The [methodname]+source()+ or [methodname]+sink()+ method is called.
+
+. After all values have been read or written, the
+[methodname]+sourceCleanup()+ or [methodname]+sinkCleanup()+ method is called.
 
 The [methodname]+*Prepare()+ methods allow a Scheme to initialize any state
-necessary - for example, to create a new [classname]+java.util.regex.Matcher+
-instance for use against all record reads). Conversely, the
-[methodname]+*Cleanup()+ methods allow for clearing up any resources.
-
-These methods are always called in the same process space as their associated
+necessary -- for example, to create a new [classname]+java.util.regex.Matcher+
+instance for use against all record reads. Conversely, the
+[methodname]+*Cleanup()+ methods allow for clearing up any resources. These
+methods are always called in the same process space as their associated
 [methodname]+source()+ and [methodname]+sink()+ calls. In the case of a
-clustered platform, this will likely be on the cluster side, unlike
-calls to [methodname]+*ConfInit()+ which will likely be on the client side (but
-not guaranteed).
+clustered platform, this is usually on the cluster side.
 
-NOTE: Schemes are also responsible for converting to and from the canonical data
-type from and to the supported types for the system the Scheme is wrapping. See
-the section on <<ch04-tuple-fields.adoc#field-typing,Field Typing>> for more information.
+Calls to [methodname]+*ConfInit()+ are usually on the client side.
 
-=== File Like Taps
+NOTE: Schemes are also responsible for converting canonical data types to
+supported types for the system that the Scheme is wrapping, and vice versa. See
+the section on <<ch04-tuple-fields.adoc#field-typing,Field Typing>> for more
+information.
+
+=== Taps with File and Nonfile Resources
 
 Tap classes that are meant to manage resources that are files should implement
-the interface [classname]+cascading.tap.type.FileType+.
+the [classname]+cascading.tap.type.FileType+ interface. This interface allows a
+a user to directly access a Tap to manipulate the remote filesystem or to
+retrieve child resources (files in subdirectories).
 
-This interfaces allows a Tap to be used directly by a user to manipulate the
-remote filesystem, or retrieve child resources (files in sub-directories).
+Nonfile resources should not be managed by a Tap that implements the
+[classname]+cascading.tap.type.FileType+ interface. For example, a "JDBCTap"
+implementation does not treat tables as directories with child files.
 
-Non-file like resources should not be managed by a Tap that implements this
-interface. For example, a "JDBCTap" implementation would not treat tables as
-directories with child files.
+=== Tap Life-Cycle Methods
 
-=== Tap Lifecycle Methods
-
-The Tap interface has a number of _lifecycle_ methods that allow the underlying
+The Tap interface has a number of _life-cycle_ methods that allow the underlying
 resource to be managed by the Tap instance.
 
 Existence::
@@ -168,19 +169,19 @@ These methods test for existence or create the resource managed by the Tap.
 
 +
 
-* [methodname]+resourceExists()+ - called frequently, should be idempotent
+* [methodname]+resourceExists()+ - called frequently; should be idempotent
 * [methodname]+deleteResource()+ - only called if [code]+SinkMode+ is
-  [classname]+SinkMode.REPLACE+, or from within a Cascading and the resource is
+  [classname]+SinkMode.REPLACE+, or from within Cascading and the resource is
   _stale_.
 
 Initialization::
 
-These methods allow for client side initialization of a remote resource that
-will be shared across parallelized instances cluster side. For example, creating
-a database table if it does not exist so that data may be written to it from the
-cluster. Note this is not the same as initializing a JDBC Driver client side and
-sharing it with the cluster, Driver initialization must happen with
-[methodname]+openForWrite()+ or [methodname]+openForRead()+.
+These methods allow for client-side initialization of a remote resource that
+will be shared across parallelized instances on the cluster side. For example,
+creating a database table if it does not exist so that data may be written to it
+from the cluster. Note this is not the same as initializing a JDBC Driver on the
+client side and sharing it with the cluster; Driver initialization must happen
+with [methodname]+openForWrite()+ or [methodname]+openForRead()+.
 
 +
 
@@ -191,10 +192,10 @@ sharing it with the cluster, Driver initialization must happen with
 
 Reading and Writing::
 
-These methods may be called client or cluster side, and either by Cascading in
-the course of execution, or by a developer wishing direct access to the
-underlying data managed by the Tap instance. No data can be read or written
-without one of these methods being called.
+These methods may be called on the client or cluster side. Either method can be
+invoked by Cascading during execution or by a developer wishing direct access to
+the underlying data managed by the Tap instance. One of these methods must be
+called to read or write data.
 
 +
 
@@ -208,11 +209,13 @@ These methods are described in more detail above.
 Transactional::
 
 These methods notify a given Tap instance if the parent Flow was successful or
-if there was a failure. They are called client side so that any remote shared
-resources can be cleaned up or any changes written can be committed/persisted.
-They are only invoked if the Tap instance is used as a sink.
+if there was a failure. They are called on the client side so that any remote
+shared resources can be cleaned up or any changes written can be
+committed/persisted. They are only invoked if the Tap instance is used as a
+sink.
 
 +
 
-* [methodname]+commitResource()+ - commit the saved values written to the resource
+* [methodname]+commitResource()+ - commit the saved values written to the
+  resource
 * [methodname]+rollbackResource()+ - revert the resource to its original state
