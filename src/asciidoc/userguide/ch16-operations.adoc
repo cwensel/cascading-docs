@@ -19,8 +19,8 @@ better performed with helper
 
 Discard unused fields::
 
-Here Identity passes its arguments out as results, thanks to the
-[code]+Fields.ARGS+ field declaration.
+Here the arguments of the Identity function are passed as results because the
+[code]+Fields.ARGS+ field declaration is coded on the line.
 
 +
 
@@ -28,10 +28,10 @@ include::identity-discard-fields-long.adoc[]
 
 +
 
-In practice the field declaration can be left out, as [code]+Field.ARGS+ is the
-default declaration for the Identity function. And [code]+Fields.RESULTs+ can be
-left off, as it is the default for the [classname]+Each+ pipe. Thus, simpler
-code yields the same result:
+In practice you can omit the field declaration, as [code]+Field.ARGS+ is the
+default declaration for the Identity function. You can also omit
+[code]+Fields.RESULTS+, as it is the default for the [classname]+Each+ pipe.
+Thus, simpler code yields the same result:
 
 +
 
@@ -49,9 +49,9 @@ include::identity-rename-fields-explicit.adoc[]
 
 +
 
-In the example above, if there were more fields than "ip" and "method", it would
-work fine - all the extra fields would be discarded. But if the same were true
-for the next example, the planner would fail.
+In the example above, if there were more fields than "ip" and "method," it would
+work fine -- all the extra fields would be discarded. But if the same were true
+for the next example, the Cascading query planner would fail.
 
 +
 
@@ -106,14 +106,9 @@ to either [code]+stdout+ or [code]+stderr+. Used with one of the
 [classname]+DEFAULT+, or [classname]+VERBOSE+), different debug levels can
 be embedded in a pipe assembly.
 
-The example below inserts a [classname]+Debug+ operation at the
-[classname]+VERBOSE+ level, but configures the planner to remove all
-[classname]+Debug+ operations from the resulting [classname]+Flow+.
-
-Note that if the above Flow is run on a cluster, the [code]+stdout+ on the
-cluster nodes will be used. Nothing from the debug output will display on the
-client side. Debug is only useful when testing things in an IDE or if the remote
-logs are readily available.
+Nothing from the [classname]+Debug+ output displays on the client side.
+[classname]+Debug+ is only useful when testing in an IDE or if the remote logs
+are readily available.
 
 === Sample and Limit Functions
 
@@ -122,22 +117,24 @@ through a pipe assembly.
 
 Sample::
 
-The [classname]+cascading.operation.filter.Sample+ filter allows a percentage of
-tuples to pass.
+The [classname]+cascading.operation.filter.Sample+ filter specifies a percentage
+of tuples that can pass through a pipe assembly.
 
 Limit::
 
-The [classname]+cascading.operation.filter.Limit+ filter allows a set number of
-tuples to pass.
+The [classname]+cascading.operation.filter.Limit+ sets a maximum number of
+tuples that can pass through a pipe assembly.
 
 === Insert Function
 
-The [classname]+cascading.operation.Insert+ function allows for insertion of
-constant values into the tuple stream.
+The [classname]+cascading.operation.Insert+ function enables insertion of
+constant values into the tuple stream. This function is most useful in either of
+the following cases:
 
-This is most useful when a splitting a tuple stream and one of the branches
-needs some identifying value, or when some missing parameter or value, like a
-date String for the current date, needs to be inserted.
+* A tuple stream is split and one of the branches needs an identifying value.
+
+* A missing parameter or value, such as a date String for the current date,
+  needs to be inserted.
 
 === Text Functions
 
@@ -147,7 +144,7 @@ Cascading includes a number of text functions in the
 DateFormatter::
 
 The [classname]+cascading.operation.text.DateFormatter+ function is used to
-convert a date timestamp to a formatted String. This function expects a
+convert a datestamp to a formatted String. This function expects a
 [classname]+long+ value representing the number of milliseconds since January 1,
 1970, 00:00:00 GMT/UTC, and formats the output using
 [classname]+java.text.SimpleDateFormat+ syntax.
@@ -164,7 +161,7 @@ String.
 DateParser::
 
 The [classname]+cascading.operation.text.DateParser+ function is used to convert
-a text date String to a timestamp, using the
+a text date-and-time String to a timestamp, using the
 [classname]+java.text.SimpleDateFormat+ syntax. The timestamp is a
 [classname]+long+ value representing the number of milliseconds since January 1,
 1970, 00:00:00 GMT/UTC. By default, the output is a field with the name "ts"
@@ -183,12 +180,13 @@ FieldJoiner::
 
 The [classname]+cascading.operation.text.FieldJoiner+ function joins all the
 values in a Tuple with a specified delimiter and places the result into a new
-field. (For the opposite effect, see the [classname]+RegexSplitter+ function.)
+field. (For the opposite effect, use the [classname]+RegexSplitter+ function
+that is described below.)
 
 FieldFormatter::
 
 The [classname]+cascading.operation.text.FieldFormatter+ function formats Tuple
-values with a given String format and stuffs the result into a new field. The
+values with a given String format and places the result into a new field. The
 [classname]+java.util.Formatter+ class is used internally to create a new
 formatted String.
 
@@ -197,8 +195,8 @@ formatted String.
 RegexSplitter::
 
 The [classname]+cascading.operation.regex.RegexSplitter+ function splits an
-argument value based on a regex pattern String. (For the opposite effect, see
-the FieldJoiner function.)
+argument value based on a regex pattern String. (For the opposite effect, use
+the FieldJoiner function that is described above.)
 
 +
 
@@ -224,16 +222,16 @@ include::regex-parser.adoc[]
 
 In the example above, a line from an Apache access log is parsed into its
 component parts. Note that the [classname]+int[]+ groups array starts at 1, not
-0. Group 0 is the whole group, so if the first field is included, it is a copy
-of "line" and not "ip".
+0. Group 0 is the whole group -- if the first field is included, it is a copy of
+"line" and not "ip."
 
 RegexReplace::
 
 The [classname]+cascading.operation.regex.RegexReplace+ function is used to
 replace a regex-matched value with a specified replacement value. It can operate
 in a "replace all" or "replace first" mode. For more information, see the
-method Javadoc for [classname]+java.util.regex.Matcher.replaceAll()+ and
-[classname]+java.util.regex.Matcher.replaceFirst()+.
+Javadoc for the [classname]+java.util.regex.Matcher.replaceAll()+ and
+[classname]+java.util.regex.Matcher.replaceFirst()+ methods.
 
 +
 
@@ -268,9 +266,9 @@ The above keeps all lines in which "68." appears at the start of the IP address.
 
 RegexGenerator::
 
-The [classname]+cascading.operation.regex.RegexGenerator+ function emits a new
-tuple for every string (found in an input tuple) that matches a specified regex
-pattern.
+The [classname]+cascading.operation.regex.RegexGenerator+ function generates a
+new Tuple for every String (found in an input tuple) that matches a specified
+regex pattern.
 
 +
 
@@ -278,43 +276,43 @@ include::regex-generator.adoc[]
 
 +
 
-Above each "line" in a document is parsed into unique words and stored in the
-"word" field of each result Tuple.
+In the above example, each "line" in a document is parsed into unique words and
+stored in the "word" field of each result Tuple.
 
 RegexSplitGenerator::
 
-The [classname]+cascading.operation.regex.RegexSplitGenerator+ function emits a
-new Tuple for every split on the incoming argument value delimited by the given
-pattern String.
+The [classname]+cascading.operation.regex.RegexSplitGenerator+ function
+generates a new Tuple for every split on the incoming argument value delimited
+by the given pattern String.
 
 +
 
 The behavior is similar to the [classname]+RegexSplitter+ function, except that
-(assuming multiple matches) [classname]+RegexSplitter+ emits a single tuple that
-may contain multiple values, and [classname]+RegexSplitGenerator+ emits multiple
-tuples that each contain only one value, as does [classname]+RegexGenerator+.
+(assuming multiple matches) [classname]+RegexSplitter+ generates a single Tuple
+that may contain multiple values. Another differing characteristic is that
+[classname]+RegexSplitGenerator+, as well as [classname]+RegexGenerator+, pass
+multiple Tuples, each of which contain only one value.
 
 [[operation-expression]]
 === Java Expression Operations
 
 Cascading provides some support for dynamically-compiled Java expressions to be
 used in either [classname]+Functions+ or [classname]+Filters+. This capability
-is provided by the Janino embedded Java compiler, which compiles the expressions
+is provided by the Janino-embedded Java compiler, which compiles the expressions
 into byte code for optimal processing speed. Janino is documented in detail on
-its website, http://www.janino.net/.
+its website: http://www.janino.net/.
 
 This capability allows an Operation to evaluate a suitable one-line Java
 expression, such as [code]+$$a + 3 * 2$$+ or [code]+a < 7+, where the variable
-values ( [code]+a+ and [code]+b+) are passed in as Tuple fields.
-
-The result of the Operation thus depends on the evaluated result of the
-expression - in the first example, a [classname]+Number+, and in the second, a
-[classname]+Boolean+ value.
+values ([code]+a+ and [code]+b+) are passed in as Tuple fields. The result of
+the Operation thus depends on the evaluated result of the expression -- in the
+first example, a [classname]+Number+, and in the second, a [classname]+Boolean+
+value.
 
 ExpressionFunction::
 
 The function [classname]+cascading.operation.expression.ExpressionFunction+
-dynamically compiles a string expression when executed, assigning argument Tuple
+dynamically compiles a String expression when executed, assigning argument Tuple
 values to variables in the expression.
 
 +
@@ -322,7 +320,7 @@ values to variables in the expression.
 ====
 include::expression-function.adoc[]
 
-<1> convert all field values to a [classname]+String+
+<1> Converts all field values to a [classname]+String+
 ====
 
 +
@@ -343,15 +341,15 @@ include::expression-filter.adoc[]
 +
 
 In this example, every line in the Apache log that does not have a status of
-"200" is filtered out. ExpressionFilter coerces the value into the specified
-type if necessary to make the comparison - in this case, coercing the status
-String into an [classname]+int+.
+"200" is filtered out. [classname]+ExpressionFilter+ coerces the value into the
+specified type if necessary to make the comparison. In this case,
+[classname]+ExpressionFilter+ coerces the status String into an
+[classname]+int+.
 
-Along with [classname]+ExpressionFilter+ and
-[classname]+ExpressionFunction+, either
-[classname]+cascading.operation.expression.ScriptFilter+ and
+Along with [classname]+ExpressionFilter+ and [classname]+ExpressionFunction+,
+either [classname]+cascading.operation.expression.ScriptFilter+ or
 [classname]+cascading.operation.expression.ScriptFunction+ can be used when an
-expression must be expressed in multiple lines of Java code.
+expression must be invoked in multiple lines of Java code.
 
 See the relevant Javadoc for details on usage.
 
@@ -360,8 +358,8 @@ See the relevant Javadoc for details on usage.
 To use XML Operations in a Cascading application, include the
 _cascading-xml-x.y.z.jar_ in the project. When using the
 [classname]+TagSoupParser+ operation, this module requires the TagSoup library,
-which provides support for HTML and XML "tidying". More information is available
-at the TagSoup website, http://home.ccil.org/~cowan/XML/tagsoup/.
+which provides support for HTML and XML "tidying." More information is available
+at the TagSoup website: http://home.ccil.org/~cowan/XML/tagsoup/.
 
 XPathParser::
 
@@ -372,16 +370,16 @@ the result(s) into one or more new fields in the current Tuple. In this way, it
 effectively parses an XML document into a table of fields, creating one Tuple
 field value for every given XPath expression. The [classname]+Node+ is converted
 to a String type containing an XML document. If only the text values are
-required, search on the [code]+text()+ nodes, or consider using XPathGenerator
-to handle multiple [classname]+NodeList+ values. If the returned result of an
-XPath expression is a [classname]+NodeList+, only the first [classname]+Node+ is
-used for the field value and the rest are ignored.
+required, search on the [code]+text()+ nodes or consider using XPathGenerator to
+handle multiple [classname]+NodeList+ values. If the returned result of an XPath
+expression is a [classname]+NodeList+, only the first [classname]+Node+ is used
+for the field value and the rest are ignored.
 
 XPathGenerator::
 
 Similar to XPathParser, the [classname]+cascading.operation.adoc.XPathGenerator+
-function emits a new [classname]+Tuple+ for every [classname]+Node+ returned by
-the given XPath expression from the XML in the current Tuple.
+function generates a new [classname]+Tuple+ for every [classname]+Node+ returned
+by the given XPath expression from the XML in the current [classname]+Tuple+.
 
 XPathFilter::
 
@@ -399,68 +397,68 @@ which are documented on the TagSoup website.
 
 === Assertions
 
-Cascading Stream Assertions are used to build robust reusable pipe assemblies.
+Cascading stream assertions are used to build robust reusable pipe assemblies.
 If desired, they can be planned out of a Flow instance at runtime. For more
-information, see the section on <<ch15-advanced.adoc#stream-assertions>>. Below
-we describe the Assertions available in the core library.
+information, see <<ch15-advanced.adoc#stream-assertions, Stream Assertions>>.
+The following documentation covers the assertions available in the core library.
 
 AssertEquals::
 
-The [classname]+cascading.operation.assertion.AssertEquals+ Assertion asserts
+The [classname]+cascading.operation.assertion.AssertEquals+ assertion specifies
 that the number of values given on the constructor is equal to the number of
-argument Tuple values, and that each constructor value [code]+.equals()+ its
+argument Tuple values. Each constructor value [code]+.equals()+ its
 corresponding argument value.
 
 AssertNotEquals::
 
-The [classname]+cascading.operation.assertion.AssertNotEquals+ Assertion asserts
-that the number of values given on the constructor is equal to the number of
-argument Tuple values and that each constructor value is not [code]+.equals()+
-to its corresponding argument value.
+The [classname]+cascading.operation.assertion.AssertNotEquals+ assertion
+specifies that the number of values given on the constructor is equal to the
+number of argument Tuple values. Each constructor value is _not_ equal to its
+corresponding argument value.
 
 AssertEqualsAll::
 
-The [classname]+cascading.operation.assertion.AssertEqualsAll+ Assertion asserts
-that every value in the argument Tuple [code]+.equals()+ the single value given
-on the constructor.
+The [classname]+cascading.operation.assertion.AssertEqualsAll+ assertion
+specifies that every value in the argument Tuple [code]+.equals()+ the single
+value given on the constructor.
 
 AssertExpression::
 
-The [classname]+cascading.operation.assertion.AssertExpression+ Assertion
+The [classname]+cascading.operation.assertion.AssertExpression+ assertion
 dynamically resolves a given Java expression (see <<operation-expression>>)
 using argument Tuple values. Any Tuple that returns [code]+true+ for the given
 expression passes the assertion.
 
 AssertMatches::
 
-The [classname]+cascading.operation.assertion.AssertMatches+ Assertion matches
-the given regular expression pattern String against the entire argument Tuple.
+The [classname]+cascading.operation.assertion.AssertMatches+ assertion matches
+the given regular expression pattern String agains the entire argument Tuple.
 The comparison is made possible by concatenating all the fields of the Tuple,
 separated by the TAB character (\t). If a match is found, the Tuple passes the
 assertion.
 
 AssertMatchesAll::
 
-The [classname]+cascading.operation.assertion.AssertMatchesAll+ Assertion
+The [classname]+cascading.operation.assertion.AssertMatchesAll+ assertion
 matches the given regular expression pattern String against each argument Tuple
 value individually.
 
 AssertNotNull::
 
-The [classname]+cascading.operation.assertion.AssertNotNull+ Assertion asserts
-that every position/field in the argument Tuple is not [code]+null+.
+The [classname]+cascading.operation.assertion.AssertNotNull+ assertion specifies
+that every position or field in the argument Tuple is not [code]+null+.
 
 AssertNull::
 
-The [classname]+cascading.operation.assertion.AssertNull+ Assertion asserts that
-every position/field in the argument Tuple is [code]+null+.
+The [classname]+cascading.operation.assertion.AssertNull+ assertion specifies
+that every position or field in the argument Tuple is [code]+null+.
 
 AssertSizeEquals::
 
-The [classname]+cascading.operation.assertion.AssertSizeEquals+ Assertion
-asserts that the current Tuple in the tuple stream is exactly the given size.
-Size, here, is the number of fields in the Tuple, as returned by
-[code]+Tuple.size()+. Note that some or all fields may be [code]+null+.
+The [classname]+cascading.operation.assertion.AssertSizeEquals+ assertion
+specifies a size for the current Tuple in the tuple stream. Size here is the
+number of fields in the Tuple, as returned by [code]+Tuple.size()+. Note that
+some or all fields may be [code]+null+.
 
 AssertSizeLessThan::
 
@@ -472,32 +470,32 @@ be [code]+null+.
 
 AssertSizeMoreThan::
 
-The [classname]+cascading.operation.assertion.AssertSizeMoreThan+ Assertion
-asserts that the current Tuple in the stream has a size greater than
-([code]+&gt;+) the given size. Size, here, is the number of fields in the Tuple,
-as returned by [code]+Tuple.size()+. Note that some or all fields may be
+The [classname]+cascading.operation.assertion.AssertSizeMoreThan+ assertion
+specifies that the current Tuple in the stream has a size greater than
+([code]+&gt;+) a given size. Size here is the number of fields in the Tuple, as
+returned by [code]+Tuple.size()+. Note that some or all fields may be
 [code]+null+.
 
 AssertGroupSizeEquals::
 
-The [classname]+cascading.operation.assertion.AssertGroupSizeEquals+ Group
-Assertion asserts that the number of items in the current grouping is equal to
-([code]+==+) the given size. If a pattern String is given, only grouping keys
-that match the regular expression will have this assertion applied where
-multiple key values are delimited by a TAB character.
+The [classname]+cascading.operation.assertion.AssertGroupSizeEquals+ group
+assertion specifies the number of items in the current grouping, where "equals"
+is indicated with ([code]+==+) before the given size. If a pattern String is
+given, only grouping keys that match the regular expression will have this
+assertion applied where multiple key values are delimited by a TAB character.
 
 AssertGroupSizeLessThan::
 
 The [classname]+cascading.operation.assertion.AssertGroupSizeEquals+ Group
-Assertion asserts that the number of items in the current grouping is less than
-([code]+&lt;+) the given size. If a pattern String is given, only grouping keys
-that match the regular expression will have this assertion applied where
+assertion specifies that the number of items in the current grouping is less
+than ([code]+&lt;+) the given size. If a pattern String is given, only grouping
+keys that match the regular expression will have this assertion applied where
 multiple key values are delimited by a TAB character.
 
 AssertGroupSizeMoreThan::
 
-The [classname]+cascading.operation.assertion.AssertGroupSizeEquals+ Group
-Assertion asserts that the number of items in the current grouping is greater
+The [classname]+cascading.operation.assertion.AssertGroupSizeEquals+ group
+assertion specifies that the number of items in the current grouping is greater
 than ([code]+&gt;+) the given size. If a pattern String is given, only grouping
 keys that match the regular expression will have this assertion applied where
 multiple key values are delimited by a TAB character.
@@ -512,24 +510,24 @@ And::
 
 The [classname]+cascading.operation.filter.And+ [classname]+Filter+ performs a
 logical "and" on the results of the constructor-provided [classname]+Filter+
-instances. That is, if [methodname]+Filter#isRemove()+ returns [code]+true+ for
-all of the given instances, this filter returns [code]+true+.
+instances. If [methodname]+Filter#isRemove()+ returns [code]+true+ for all of
+the given instances, this filter returns [code]+true+.
 
 Or::
 
 The [classname]+cascading.operation.filter.Or+ [classname]+Filter+ performs a
 logical "or" on the results of the constructor-provided [classname]+Filter+
-instances. That is, if [methodname]+Filter#isRemove()+ returns [code]+true+ for
+instances. If [methodname]+Filter#isRemove()+ returns [code]+true+ for
 any of the given instances, this filter returns [code]+true+.
 
 Not::
 
 The [classname]+cascading.operation.filter.Not+ [classname]+Filter+ performs a
 logical "not" (negation) on the results of the constructor-provided
-[classname]+Filter+ instance. That is, if [methodname]+Filter#isRemove()+
-returns [code]+true+ for the given instance, this filter returns [code]+false+,
-and if [methodname]+Filter#isRemove()+ returns [code]+false+ for the given
-instance, this filter returns [code]+true+.
+[classname]+Filter+ instance. If [methodname]+Filter#isRemove()+ returns
+[code]+true+ for the given instance, this filter returns [code]+false+.
+Conversely, if [methodname]+Filter#isRemove()+ returns [code]+false+ for the
+given instance, this filter returns [code]+true+.
 
 Xor::
 
@@ -537,23 +535,23 @@ The [classname]+cascading.operation.filter.Xor+ [classname]+Filter+ performs a
 logical "xor" (exclusive or) on the results of the constructor-provided
 [classname]+Filter+ instances. Xor can only be applied to two instances at a
 time. It returns [code]+true+ if the two instances have different truth values,
-and [code]+false+ if they have the same truth value. That is, if
+and [code]+false+ if they have the same truth value. If
 [methodname]+Filter.isRemove()+ returns [code]+true+ for both, or returns
 [code]+false+ for both, this filter returns [code]+false+; otherwise it returns
 [code]+true+.
 
-.Combining Filters
+.Combining filters
 ====
 include::filter-and.adoc[]
 ====
 
-The example above performs a logical "and" on the two filters. Both must be
-satisfied for the data to pass through this one Pipe.
+The example above performs a logical "and" on the two filters. Criteria for both
+filters must be met for the data to pass through this one Pipe.
 
 === Buffers
 
-The [classname+FirstNBuffer+ Buffer is provided as an optimized means to
-determine the top N elements in a grouping.
+The [classname]+FirstNBuffer+ [classname]+Buffer+ is provided as an optimized
+means to determine the top N elements in a grouping.
 
 FirstNBuffer::
 
