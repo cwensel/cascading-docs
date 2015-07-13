@@ -4,19 +4,18 @@
 [[subassemblies]]
 == Built-in SubAssemblies
 
-There are a number of helper SubAssemblies provided by the core cascading
+There are a number of helper SubAssemblies provided by the core Cascading
 library.
 
-TIP: Many of the below assemblies can optionally ignore null values. This allows
-for an optional but closer resemblance to how similar functions in SQL perform.
+TIP: Many of the assemblies that are described below can be coded to ignore null
+values. This allows for an optional but closer resemblance to how similar
+functions in SQL perform.
 
 === Optimized Aggregations
 
-The following subassemblies are implementation or optimizations on more discrete
-aggregate functions.
-
-It should be noted many of these subassemblies rely on the
-[classname]+AggregateBy+ base class, which can be sub-classed by developers to
+The following SubAssemblies are implementations or optimizations of more
+discrete aggregate functions. Many of these SubAssemblies rely on the
+[classname]+AggregateBy+ base class, which can be subclassed by developers to
 create custom aggregations leveraging the internal partial aggregation
 implementation.
 
@@ -25,10 +24,10 @@ implementation.
 
 The [classname]+cascading.pipe.assembly.Unique+ SubAssembly is used to remove
 duplicate values in a Tuple stream. Uniqueness is determined by the values of
-all fields listed in [code]+uniqueFields+. Thus to find all distinct Tuples in a
-Tuple stream, use [classname]+Fields.ALL+ as the [code]+uniqueFields+ argument.
+all fields listed in [code]+uniqueFields+. Use [classname]+Fields.ALL+ as the
+[code]+uniqueFields+ argument to find all distinct Tuples in a stream.
 
-.Using Unique
+.Using the Unique SubAssembly
 ====
 include::subassembly-unique.adoc[]
 ====
@@ -40,14 +39,14 @@ determine unique values.
 ==== AggregateBy
 
 The [classname]+cascading.pipe.assembly.AggregateBy+ SubAssembly is an
-implementation of the Partial Aggregation pattern, and is the base class for
+implementation of the partial aggregation pattern, and is the base class for
 built-in and custom partial aggregation implementations like
 [classname]+AverageBy+ or [classname]+CountBy+.
 
 Generally the AggregateBy class is used to combine multiple AggregateBy
 subclasses into a single Pipe.
 
-.Composing partials with AggregateBy
+.Composing partial aggregations with AggregateBy
 ====
 include::partials-compose.adoc[]
 ====
@@ -58,8 +57,8 @@ implement the appropriate internal interfaces. See the Javadoc for details.
 [[AverageBy]]
 ==== AverageBy
 
-The [classname]+cascading.pipe.assembly.AverageBy+ SubAssembly performs an
-average over the given [code]+valueFields+ and returns the result in the
+The [classname]+cascading.pipe.assembly.AverageBy+ SubAssembly calculates an
+average of the given [code]+valueFields+ and returns the result in the
 [code]+averageField+ field. AverageBy may be combined with other AggregateBy
 subclasses so they may be executed simultaneously over the same grouping.
 
@@ -86,8 +85,8 @@ include::partials-countby.adoc[]
 
 The [classname]+cascading.pipe.assembly.SumBy+ SubAssembly performs a sum over
 the given [code]+valueFields+ and returns the result in the [code]+sumField+
-field. SumBy may be combined with other AggregateBy subclasses so they may be
-executed simultaneously over the same grouping.
+field. SumBy may be combined with other AggregateBy subclasses so that they may
+be executed simultaneously over the same grouping.
 
 .Using SumBy
 ====
@@ -107,17 +106,17 @@ include::partials-firstby.adoc[]
 ====
 
 Note if the [code]+valueFields+ Fields instance has field comparators, they will
-be used to sort the argument values to influence what values are seen first.
-Otherwise the fields will not be sorted in any deterministic order.
+be used to sort the order of argument values. Otherwise, the fields will not be
+sorted in any deterministic order.
 
 === Stream Shaping
 
 [[coerce]]
-+== Coerce
+==== Coerce
 
-The [classname]+cascading.pipe.assembly.SumBy+ SubAssembly is used to coerce a
-set of values from one type to another type - for example, to convert the field
-[code]+age+ from a [classname]+String+ to an [classname]+Integer+.
+The [classname]+cascading.pipe.assembly.Coerce+ SubAssembly is used to coerce a
+set of values from one type to another type -- for example, to convert the
+[code]+age+ field from a [classname]+String+ to an [classname]+Integer+.
 
 .Using Coerce
 ====
@@ -128,8 +127,8 @@ include::subassembly-coerce.adoc[]
 ==== Discard
 
 The [classname]+cascading.pipe.assembly.Discard+ SubAssembly is used to shape
-the Tuple stream by discarding all fields given on the constructor. All fields
-not listed are retained.
+the Tuple stream by discarding all fields given on the constructor. All unlisted
+fields are retained.
 
 .Using Discard
 ====
@@ -151,8 +150,8 @@ include::subassembly-rename.adoc[]
 ==== Retain
 
 The [classname]+cascading.pipe.assembly.Retain+ SubAssembly is used to shape the
-Tuple stream by retaining all fields given on the constructor. All fields not
-listed are discarded.
+Tuple stream by retaining all fields given on the constructor. All unlisted
+fields are discarded.
 
 .Using Retain
 ====
