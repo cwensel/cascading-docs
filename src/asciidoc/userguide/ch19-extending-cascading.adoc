@@ -7,8 +7,8 @@
 
 The Cascading API was designed with scripting in mind. Any JVM-compatible
 scripting language can import and instantiate Cascading classes, create pipe
-assemblies and flows, and execute those flows. And if the scripting language in
-question supports Domain Specific Language (DSL) creation, users can create
+assemblies and Flows, and execute those Flows. And if the scripting language in
+question supports domain-specific language (DSL) creation, users can create
 their own DSLs to handle common idioms.
 
 The Cascading website (http://cascading.org/extensions/) includes information on
@@ -20,40 +20,42 @@ scripting language bindings that are publicly available.
 The [classname]+Tuple+ class is a generic container for all
 [classname]+java.lang.Object+ instances.
 
-Thus any primitive value or custom Class can be stored in a [classname]+Tuple+
-instance - that is, returned by a [classname]+Function+,
+Thus any primitive value or custom class can be stored in a [classname]+Tuple+
+instance -- that is, returned by a [classname]+Function+,
 [classname]+Aggregator+, or [classname]+Buffer+ as a result value.
 
 Unfortunately there is no common method for managing the serialization of custom
-types that is cross platform. Please see the platform specific chapters for
-details on registering serializers that Cascading can adopt at runtime.
+types that is cross-platform. See the platform-specific topics of this _User
+Guide_ documentation for details about registering serializers that Cascading
+can adopt at runtime.
 
 === Custom Comparators and Hashing
 
 Frequently, objects in one [classname]+Tuple+ are compared to objects in a
 second [classname]+Tuple+. This is especially true during the sort phase of
-[classname]+GroupBy+ and [classname]+CoGroup+.
+[classname]+GroupBy+ and [classname]+CoGroup+. By default, Cascading uses the
+[methodname]+equals()+ and [methodname]+hashCode()+ [classname]+Object+ native
+methods to compare two values and get a consistent hash code for a given value,
+respectively.
 
-By default, Cascading uses the native [classname]+Object+ methods
-[methodname]+equals()+ and [methodname]+hashCode()+ to compare two values and
-get a consistent hash code for a given value, respectively.
+There are two different approaches that you can take to override the default
+behavior:
 
-To override this default behavior, you can create a custom
-[classname]+java.util.Comparator+ class to perform comparisons on a given field
-in a Tuple. For instance, to secondary-sort a collection of custom
-[classname]+Person+ objects in a [classname]+GroupBy+, use the
-[code]+Fields.setComparator()+ method to designate the custom
+* Create a [classname]+java.util.Comparator+ class to perform comparisons on
+given field in a [classname]+Tuple+. For instance, to secondary-sort a
+collection of custom [classname]+Person+ objects in a [classname]+GroupBy+,
+use the [code]+Fields.setComparator()+ method to designate the custom
 [classname]+Comparator+ to the [classname]+Fields+ instance that specifies the
 sort fields.
 
-Alternatively, you can set a default [classname]+Comparator+ to be used by a
-[classname]+Flow+, or used locally on a given [classname]+Pipe+ instance. There
-are two ways to do this. Call
-[code]+FlowProps.setDefaultTupleElementComparator()+ on a
-[classname]+Properties+ instance, or use the property key
-[code]+cascading.flow.tuple.element.comparator+.
+* Alternatively, you can set a default [classname]+Comparator+ for a
+[classname]+Flow+ or for a local [classname]+Pipe+ instance by one of the
+following ways:
+  - Either calling [code]+FlowProps.setDefaultTupleElementComparator()+ on a
+[classname]+Properties+ instance
+  - Or using the [code]+cascading.flow.tuple.element.comparator+ property key
 
-If the hash code must also be customized, the custom Comparator can implement
-the interface [classname]+cascading.tuple.Hasher+.
+If the hash code must also be customized, the custom [classname]+Comparator+
+can implement the [classname]+cascading.tuple.Hasher+ interface.
 
 For more information, see the Javadoc.
