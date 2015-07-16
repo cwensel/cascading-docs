@@ -1,7 +1,7 @@
 :toc2:
-:doctitle: {_doctitle} - Cascading Cookbook
+:doctitle: {_doctitle} - Cookbook: Code Examples of Cascading Idioms
 
-== Cascading Cookbook
+== Cookbook: Code Examples of Cascading Idioms
 
 This chapter demonstrates some common idioms used in Cascading applications.
 
@@ -25,7 +25,7 @@ include::cookbook-fieldssubtract.adoc[]
 
 === Stream Shaping
 
-Split (branch) a Tuple Stream::
+Split (branch) a Tuple stream::
 
 include::cookbook-split.adoc[]
 
@@ -59,7 +59,7 @@ Parse a String date/time value::
 
 include::cookbook-parsedate.adoc[]
 
-Format a time-stamp to a date/time value::
+Format a timestamp to a date/time value::
 
 include::cookbook-formatdate.adoc[]
 

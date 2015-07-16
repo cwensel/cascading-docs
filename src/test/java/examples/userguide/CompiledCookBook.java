@@ -301,25 +301,25 @@ public class CompiledCookBook
     FlowDef flowDef = new FlowDef()
       .setName( "flow-name" );
 
-    // bind source Taps to Pipe heads
+    // bind source taps to Pipe heads
     flowDef
       .addSource( headLeft, sourceLeft )
       .addSource( headRight, sourceRight );
 
-    // bind sink Taps to Pipe tails
+    // bind sink taps to Pipe tails
     flowDef
       .addSink( tailLeft, sinkLeft )
       .addTailSink( tailRight, sinkRight );
 
     // ALTERNATIVELY ...
 
-    // add named source Taps
+    // add named source taps
     // the head pipe name to bind to
     flowDef
       .addSource( "headLeft", sourceLeft )    // headLeft.getName()
       .addSource( "headRight", sourceRight ); // headRight.getName()
 
-    // add named sink Taps
+    // add named sink taps
     flowDef
       .addSink( "tailLeft", sinkLeft )    // tailLeft.getName()
       .addSink( "tailRight", sinkRight ); // tailRight.getName()
