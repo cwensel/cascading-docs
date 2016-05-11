@@ -16,7 +16,7 @@ buildscript {
   }
 }
 
-ext.majorVersion = '3.0'
+ext.majorVersion = '3.1'
 
 apply from: 'etc/properties.gradle'
 apply from: 'etc/s3Upload.gradle'
@@ -37,10 +37,10 @@ repositories {
   maven { url 'http://conjars.org/repo/' }
 }
 
-ext.cascadingVersion = '3.0.0-wip-115'
+ext.cascadingVersion = '3.1.0-wip-+'
 ext.cascadingChanging = false
 //ext.hadoopVersion = '1.2.1'
-ext.hadoop2Version = '2.6.0'
+ext.hadoop2Version = '2.7.1'
 //ext.tezVersion = '0.5.1'
 ext.buildDate = new SimpleDateFormat( "yyyyMMdd" ).format( new Date() )
 ext.buildTimestamp = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() )
