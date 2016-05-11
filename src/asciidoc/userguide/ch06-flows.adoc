@@ -152,7 +152,6 @@ runtime depending on which input data set is actually being processed.
 Hadoop MapReduce terms: _mapper_  and _reducer_ +
 Apache Tez term: _vertex_
 
-
 [classname]+FlowSlice+::
 
 The FlowSlice is the smallest unit of parallelization. At runtime, a FlowSlice

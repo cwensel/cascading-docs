@@ -131,13 +131,29 @@ rule
 
 === Optimizing Joins
 
+==== Key Value Cardinality
+
 When joining two streams via a [classname]+CoGroup+ pipe, try to put the larger
 stream in the leftmost argument to the [classname]+CoGroup+.
 
 The reason for this is that joining multiple streams requires some accumulation
-of values before the join operator can begin, but the leftmost stream is not
-accumulated. Consequently, this technique should improve the performance of most
-joins.
+of values associated with the current key before the join operator can begin,
+but the leftmost stream is not accumulated. Consequently, this technique should
+improve the performance of most joins.
+
+NOTE: The issues isn't file size specifically, but key to value cardinality. If
+one side  of the join has 'one to one' or 'one to few' key to value cardinality,
+that side of the join should be right-most. If one side has a 'one to many'
+relationship, it should be left-most so the values aren't loaded into memory.
+
+==== Declare Type Information
+
+As of *3.1*, Cascading will leverage that type information to improve
+serialization performance during CoGroup (and GroupBy) operations.
+
+With declared type information, Cascading no longer is required to store type
+information with every tuple value during serialization. Additionally this type
+information helps enforce the canonical type stored in the tuple.
 
 === Debugging Streams
 

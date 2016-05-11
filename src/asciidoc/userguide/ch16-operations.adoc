@@ -296,6 +296,9 @@ multiple Tuples, each of which contain only one value.
 [[operation-expression]]
 === Java Expression Operations
 
+As of *3.1*, all expression operations have moved to the
+[code]+cascading-expression-3.x.y.jar+ JAR.
+
 Cascading provides some support for dynamically-compiled Java expressions to be
 used in either [classname]+Functions+ or [classname]+Filters+. This capability
 is provided by the Janino-embedded Java compiler, which compiles the expressions

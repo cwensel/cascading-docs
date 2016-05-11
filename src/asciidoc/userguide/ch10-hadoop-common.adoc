@@ -26,7 +26,7 @@ The _Hadoop Distributed File System (HDFS)_ is the storage layer,  which serves
 as a single storage volume that is optimized for many concurrent serialized
 reads of large data files -- where "large" might be measured in gigabytes or
 petabytes. However, HDFS does have limitations. For example, random access to
-the data is  not really possible in an efficient manner. Also, Hadoop only
+the data is not really possible in an efficient manner. Also, Hadoop only
 supports a single  writer for output. But this limit helps make Hadoop
 high-performance and  reliable, in part because it allows for the data to be
 replicated across the  cluster. The replication reduces the chance of data loss.

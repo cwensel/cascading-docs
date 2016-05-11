@@ -23,7 +23,8 @@ directed acyclic graphs (DAGs) are provided.
 
 Additionally, Cascading can support new platforms as they emerge so business
 logic will not need to be rewritten in order to leverage state-of-the-art
-technologies.
+technologies. Visit http://www.cascading.org for announcements and details
+on newly added platforms.
 
 NOTE: Cascading is open-source under the Apache 2.0 License.
 
@@ -42,9 +43,8 @@ processing between the intermediate and executable models applies physical
 optimizations.
 
 Cascading provides both the intermediate model, and a planner that will
-translate that model into a physical executable model. The intermediate
-model is presented as a Java API, and the planner is both modifiable and
-pluggable.
+translate that model into a physical executable model. The intermediate model is
+presented as a Java API, and the planner is both modifiable and pluggable.
 
 === Why Use Cascading?
 
@@ -63,21 +63,21 @@ data that may become big data does not require changes to the application logic.
 Cascading provides many core data processing primitives and operations. Business
 logic can be coded directly against the Cascading APIs, or higher order
 frameworks or languages can be created on top. These frameworks or languages can
-be used to improve developer or analyst productivity for a specific use-case
-or type of enterprise.
+be used to improve developer or analyst productivity for a specific use-case or
+type of enterprise.
 
-Cascading as a platform allows for integration and
-business logic to remain decoupled until runtime so that different storage
-platforms can be bound to the logic on demand. New platforms can be
-leveraged during computation as business needs or infrastructure resources
-change.
+Cascading as a platform allows for integration and business logic to remain
+decoupled until runtime so that different storage platforms can be bound to the
+logic on demand. New platforms can be leveraged during computation as business
+needs or infrastructure resources change.
 
 Cascading can be managed. Besides a number of core features that allow for
 Cascading applications to be easily operationalized, Cascading works with
-commercial tools so that applications can be monitored in real-time. Developers
-gain in-depth understanding of application behavior at runtime in order to
-improve performance and reliability. Operations teams that are responsible for
-managing business processes can easily monitor application status.
+commercial tools (like http://driven.io[Driven]) so that applications can be
+monitored in real-time. Developers gain in-depth understanding of application
+behavior at runtime in order to improve performance and reliability. Operations
+teams that are responsible for managing business processes can easily monitor
+application status.
 
 === The Cascading Philosophy
 
@@ -103,10 +103,10 @@ versions of Cascading, any likely behavioral differences are documented (if not
 accompanied by a way to revert the behavior).
 
 * The Cascading planner creates all units of work up front. The planner verifies
-all dependencies are met from available resources like sources
-and sinks, down to the field level. If a downstream operation requires a
-specific field (for example, "zipcode"), the planner guarantees it is available
-upstream from a data source or operation.
+all dependencies are met from available resources like sources and sinks, down
+to the field level. If a downstream operation requires a specific field (for
+example, "zipcode"), the planner guarantees it is available upstream from a
+data source or operation.
 
 Many of these ideals seem obvious, but many systems regenerate plans on the fly
 or attempt shortcuts during execution. Even if these methods of other systems

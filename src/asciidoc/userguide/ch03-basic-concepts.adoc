@@ -43,7 +43,7 @@ http://en.wikipedia.org/wiki/Directed_acyclic_graph[DAG]
 
 | *Flow* | Pipe assemblies and their associated taps that form executable code
 
-| *Cascade* | An ordered collection of flows
+| *Cascade* | A topologically ordered collection of flows
 
 |====
 

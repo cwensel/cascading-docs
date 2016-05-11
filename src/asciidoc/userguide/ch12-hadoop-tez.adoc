@@ -4,26 +4,26 @@
 [[tez-platform]]
 == Apache Tez Platform
 
-The following documentation covers details about using Cascading on the 
-Apache Tez platform that are not covered in the  
-<<ch10-hadoop-common.adoc#apache-hadoop,Apache Hadoop>> documentation of this 
+The following documentation covers details about using Cascading on the
+Apache Tez platform that are not covered in the
+<<ch10-hadoop-common.adoc#apache-hadoop,Apache Hadoop>> documentation of this
 guide.
 
-The most up-to-date information about running Cascading on Apache Tez and 
+The most up-to-date information about running Cascading on Apache Tez and
 supported Tez releases can be found in a GitHub repo README at:
 
 Released Source::
-  https://github.com/cascading/cascading/tree/3.0/cascading-hadoop2-tez
+  https://github.com/cascading/cascading/tree/3.1/cascading-hadoop2-tez
 
 Work-in-Progress Source::
-  https://github.com/cwensel/cascading/tree/wip-3.0/cascading-hadoop2-tez
+  https://github.com/cwensel/cascading/tree/wip-3.1/cascading-hadoop2-tez
 
 Apache Tez is a noticeable improvement over MapReduce. Tez's merits include:
 
 * No more "identity mappers" -- mappers that simply forward data to a reducer
 * Support for multiple outputs
 * No prefixing data with join ordinality
-* Suppression of sorting when not needed
+* Suppression of sorting when not required
 * Removal of HDFS as an intermediate store between jobs
 
 === Configuring Applications
@@ -55,6 +55,11 @@ This JAR contains the Cascading Core class files. It should be packaged with
 
 This JAR contains the Cascading Hadoop 2 and Apache Tez specific dependencies.
 It should be packaged with [code]+lib/*.jar+ when using Hadoop.
+
+[code]+cascading-hadoop2-tez-stats-3.x.y.jar+::
+
+This JAR is a dependency of [code]+cascading-hadoop2-tez-3.x.y.jar+ and will
+be automatically included in a Maven or Gradle build.
 
 Cascading works with either of the Hadoop processing modes -- the default local
 stand-alone mode and the distributed cluster mode. As specified in the Hadoop

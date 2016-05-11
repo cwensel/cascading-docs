@@ -9,9 +9,9 @@
 In Cascading, a [classname]+SubAssembly+ is a reusable pipe assembly that can be
 joined with other instances of a [classname]+SubAssembly+ to form a larger pipe
 assembly. SubAssemblies are much like subroutines in a larger program.
-SubAssemblies are a good way to organize complex pipe assemblies, and they
-allow for commonly used pipe assemblies to be packaged into libraries for
-inclusion in other projects by other users.
+SubAssemblies are a good way to organize complex pipe assemblies, and they allow
+for commonly used pipe assemblies to be packaged into libraries for inclusion in
+other projects by other users.
 
 Many prebuilt SubAssemblies are available in the core Cascading library. See
 <<ch17-subassemblies.adoc#subassemblies,Built-in SubAssemblies>> for details.
@@ -344,10 +344,12 @@ should not be thrown again from the [code]+Flow.complete()+ or
 === PartitionTaps
 
 The [classname]+PartitionTap+ [classname]+Tap+ class provides a simple means to
-break large data sets into smaller sets based on data item values. This is also
-commonly called _binning_ the data, where each "bin" of data is named after some
-data value(s) shared by the members of that bin. For example, this is a simple
-way to organize log files by month and year.
+break large data sets into smaller sets based on data item values.
+
+==== Partitioning
+This is also commonly called _binning_ the data, where each "bin" of data is
+named after some data value(s) shared by the members of that bin. For example,
+this is a simple way to organize log files by month and year.
 
 .PartitionTap
 ====
@@ -367,8 +369,9 @@ sinks "entry" fields to a text-delimited file. But the [code]+monthsTap+ expects
 
 Here data is stored in the directory name for each partition when the
 PartitionTap is a sink, there is no need to redundantly store the data in the
-text delimited file. When reading from a [classname]+PartitionTap+, the
-directory name is parsed and its values are added to the outgoing tuple stream.
+text delimited file (even though it is still possible to do so). When reading
+from a [classname]+PartitionTap+, the directory name is parsed and its values
+are added to the outgoing tuple stream.
 
 One last thing to keep in mind is where writing happens when executing on a
 cluster. By doing a [classname]+GroupBy+ on the values used to define the
@@ -376,6 +379,24 @@ partition, binning will happen during the grouping (reducer or partitioning)
 phase, and will likely scale much better in cases where there are a very large
 number of unique partitions that will result in a large number of directories or
 files.
+
+==== Filtering Partitions
+
+As of *3.1*, using the [classname]+cascading.tap.partition.PartitionTapFilter+
+class, the input partitions can be filtered client side, before any jobs are
+submitted, if known values should be excluded or included.
+
+Considering the example above where data is partitioned by "year" and "month", a
+partition filter can be used to guarantee only data from "2016" is used in the
+resulting Flow. If you have 20 years of data, this can dramatically speed up an
+application.
+
+The best part of the PartitionTapFilter class is that it wraps a Cascading
+[classname]+Filter+ so existing filters can be re-used.
+
+NOTE: Future versions of the Cascading planner will support "push down
+predicates", that is, filters can be pushed down to the PartitionTap if they
+occur in the Pipe Assembly downstream.
 
 === Partial Aggregation instead of Combiners
 

@@ -54,10 +54,10 @@ independent of data inputs and outputs. The only dependency is the data scheme
 
 * In Cascading, every input or output file has field names associated with its
 contents, and every processing element of the pipe assembly either expects the
-specified fields from upstream or creates them. This allows developers to easily
-self-document their code. The Cascading planner "fails fast" if an
-expected dependency between elements is not satisfied -- for instance, if a needed
-field name is missing or incorrect.
+specified fields from upstream or creates them. This allows developers to
+easily self-document their code. The Cascading planner "fails fast" if an
+expected dependency between elements is not satisfied -- for instance, if a
+needed field name is missing or incorrect.
 
 * Pipe assemblies are assembled through constructor chaining. This may seem odd,
 but it is done for two reasons. First, constructor chaining  allows each object

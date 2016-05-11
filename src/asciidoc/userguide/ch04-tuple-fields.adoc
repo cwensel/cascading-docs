@@ -27,11 +27,10 @@ the following steps:
 incoming Tuple values and Operation Tuple results.
 
 This is achieved by providing new Fields instances that select or declare the
-required field names or ordinals as appropriate. When selecting arguments for
-an Operation, or the outgoing fields of the pipe, Cascading provides _Fields
-sets_, a feature of the [classname]+Fields+ class that provides a sort of
-wildcard tool for referencing sets of field values without declaring them
-specifically.
+required field names or ordinals as appropriate. When selecting arguments for an
+Operation, or the outgoing fields of the pipe, Cascading provides _Fields sets_,
+a feature of the [classname]+Fields+ class that provides a sort of wildcard tool
+for referencing sets of field values without declaring them specifically.
 
 There are also cases where _Fields sets_ can be used when fields should be
 declared. All these cases are described below.
@@ -163,6 +162,8 @@ This allows for:
   from switching arbitrarily between String and Integer types)
 * Pluggable coercion from one type to another type, even if either
   is not a Java primitive
+* Much improved data serialization/network performance between map and reduce
+  nodes, or between Tez vertices. *New in 3.1*
 
 To declare types, simply pass type information to the Fields instance either
 through the constructor or via a fluent API.
@@ -183,7 +184,7 @@ Cascading know that the null value can be set. If declared [classname]+long+ (a
 primitive) then, null becomes zero.
 
 In practice, typed fields can only be used when they declare the results of an
-Operation.
+Operation or the input/output of a Scheme.
 
 .Declaring typed results
 ====
