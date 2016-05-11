@@ -1,6 +1,6 @@
-
-:toc2:
 :doctitle: {_doctitle} - Configuring
+
+include::_toc.adoc[]
 
 == Configuring
 
@@ -43,7 +43,7 @@ class can be used for setting application-level configuration settings.
 
 .Configuring the application JAR
 ====
-include::app-props.adoc[]
+include::_app-props.adoc[]
 ====
 
 The [classname]+Props+ interface allows for both setting available values as
@@ -145,10 +145,10 @@ scopes.
 
 .Configuring properties at the FlowStep scope
 ====
-include::properties-step.adoc[]
+include::_properties-step.adoc[]
 ====
 
 .Configuring properties at the Pipe scope
 ====
-include::properties-pipe.adoc[]
+include::_properties-pipe.adoc[]
 ====

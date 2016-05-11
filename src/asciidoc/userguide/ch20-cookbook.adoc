@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Cookbook: Code Examples of Cascading Idioms
+
+include::_toc.adoc[]
 
 == Cookbook: Code Examples of Cascading Idioms
 
@@ -9,80 +10,80 @@ This chapter demonstrates some common idioms used in Cascading applications.
 
 Copy a Tuple instance::
 
-include::cookbook-copy.adoc[]
+include::_cookbook-copy.adoc[]
 
 Nest a Tuple instance within a Tuple::
 
-include::cookbook-nest.adoc[]
+include::_cookbook-nest.adoc[]
 
 Build a longer Fields instance::
 
-include::cookbook-fieldsappend.adoc[]
+include::_cookbook-fieldsappend.adoc[]
 
 Remove a field from a longer Fields instance::
 
-include::cookbook-fieldssubtract.adoc[]
+include::_cookbook-fieldssubtract.adoc[]
 
 === Stream Shaping
 
 Split (branch) a Tuple stream::
 
-include::cookbook-split.adoc[]
+include::_cookbook-split.adoc[]
 
 Copy a field value::
 
-include::cookbook-copyfield.adoc[]
+include::_cookbook-copyfield.adoc[]
 
 Discard (drop) a field::
 
-include::cookbook-discardfield.adoc[]
+include::_cookbook-discardfield.adoc[]
 
 Retain (keep) a field::
 
-include::cookbook-retainfield.adoc[]
+include::_cookbook-retainfield.adoc[]
 
 Rename a field::
 
-include::cookbook-renamefield.adoc[]
+include::_cookbook-renamefield.adoc[]
 
 Coerce field values from Strings to primitives::
 
-include::cookbook-coercefields.adoc[]
+include::_cookbook-coercefields.adoc[]
 
 Insert constant values into a stream::
 
-include::cookbook-insertvalue.adoc[]
+include::_cookbook-insertvalue.adoc[]
 
 === Common Operations
 
 Parse a String date/time value::
 
-include::cookbook-parsedate.adoc[]
+include::_cookbook-parsedate.adoc[]
 
 Format a timestamp to a date/time value::
 
-include::cookbook-formatdate.adoc[]
+include::_cookbook-formatdate.adoc[]
 
 === Stream Ordering
 
 Remove duplicate tuples in a stream::
 
-include::cookbook-distinctgroup.adoc[]
+include::_cookbook-distinctgroup.adoc[]
 
 Create a list of unique values::
 
-include::cookbook-distinctvalue.adoc[]
+include::_cookbook-distinctvalue.adoc[]
 
 Find first occurrence in time of a unique value::
 
-include::cookbook-distinctorder.adoc[]
+include::_cookbook-distinctorder.adoc[]
 
 === API Usage
 
 Pass properties to a custom Operation::
 
-include::cookbook-passproperties.adoc[]
+include::_cookbook-passproperties.adoc[]
 
 Bind multiple sources and sinks to a Flow::
 
-include::cookbook-sourcessinks.adoc[]
+include::_cookbook-sourcessinks.adoc[]

@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Introduction
+
+include::_toc.adoc[]
 
 == Introduction
 

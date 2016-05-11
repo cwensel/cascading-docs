@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Cascades
+
+include::_toc.adoc[]
 
 == Cascades
 
@@ -18,7 +19,7 @@ input data). For more about flows and sinks, see
 
 .Creating a new Cascade
 ====
-include::simple-cascade.adoc[]
+include::_simple-cascade.adoc[]
 ====
 
 When passing Flows to the CascadeConnector, order is not important. The

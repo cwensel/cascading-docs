@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Diving into the APIs
+
+include::_toc.adoc[]
 
 == Diving into the APIs
 
@@ -19,7 +20,7 @@ times each word appears.
 
 .Word Counting
 ====
-include::basic-word-count.adoc[]
+include::_basic-word-count.adoc[]
 
 <1> Read each line of text from a file and give it the field name "line"
 
@@ -100,7 +101,7 @@ could be coded with the Fluid fluent API (with all comments removed).
 
 .Word Counting with Fluid
 ====
-include::basic-word-count-fluid.adoc[]
+include::_basic-word-count-fluid.adoc[]
 
 <1> Read each line of text from a file and give it the field name "line"
 

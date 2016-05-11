@@ -1,3 +1,5 @@
 :doctitle: {_doctitle}
 
-include::toc.adoc[]
+== Table Of Contents
+
+include::_top-toc.adoc[]

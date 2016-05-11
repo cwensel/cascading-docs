@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Pipe Assemblies
+
+include::_toc.adoc[]
 
 == Pipe Assemblies
 
@@ -128,7 +129,7 @@ output of [classname]+Merge+ is in arbitrary order.
 
 .Merging two tuple streams
 ====
-include::simple-merge.adoc[]
+include::_simple-merge.adoc[]
 ====
 
 The example above simply combines all the tuples from two existing streams
@@ -159,7 +160,7 @@ specified to the [classname]+GroupBy+ instance, as seen below. In this example,
 
 .Secondary sorting
 ====
-include::simple-groupby-secondary.adoc[]
+include::_simple-groupby-secondary.adoc[]
 ====
 
 If the developer does not care about the order of [code]+value2+, it can be
@@ -170,7 +171,7 @@ natural order of [code]+value2+.
 
 .Reversing secondary sort order
 ====
-include::simple-groupby-secondary-comparator.adoc[]
+include::_simple-groupby-secondary-comparator.adoc[]
 ====
 
 Whenever there is an implied sort during grouping or secondary sorting, a custom
@@ -187,7 +188,7 @@ year", but the code reverses the order of the tuples within that grouping by
 
 .Reverse order by time
 ====
-include::simple-groupby-secondary-time.adoc[]
+include::_simple-groupby-secondary-time.adoc[]
 ====
 
 === CoGroup
@@ -232,7 +233,7 @@ tuple, as in the following example.
 
 .Joining two tuple streams with duplicate field names
 ====
-include::duplicate-cogroup.adoc[]
+include::_duplicate-cogroup.adoc[]
 ====
 
 image:images/cogrouping-fields-pass.svg[align="center"]
@@ -378,7 +379,7 @@ joins, refer to <<joiner-class>> or the Javadoc.
 
 .Joining two tuple streams
 ====
-include::simple-join.adoc[]
+include::_simple-join.adoc[]
 ====
 
 The example above performs an inner join on two streams ("lhs" and "rhs"), based

@@ -161,7 +161,7 @@ public class Extractor
         if( offset > -1 )
           {
           System.out.println( "Extracting from: " + file );
-          String name = line.substring( offset + start.length() + 1 ).trim().split( "\\s" )[ 0 ];
+          String name = "_" + line.substring( offset + start.length() + 1 ).trim().split( "\\s" )[ 0 ];
           extract = true;
           writer = openFile( packageName, name );
           }

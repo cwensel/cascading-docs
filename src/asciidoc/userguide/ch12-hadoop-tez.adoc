@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Apache Tez Platform
+
+include::_toc.adoc[]
 
 [[tez-platform]]
 == Apache Tez Platform

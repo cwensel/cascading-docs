@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Flows
+
+include::_toc.adoc[]
 
 == Flows
 
@@ -7,7 +8,7 @@
 
 .Creating a new Flow
 ====
-include::simple-flow.adoc[]
+include::_simple-flow.adoc[]
 ====
 
 To create a [classname]+Flow+, it must be planned though one of the
@@ -18,7 +19,7 @@ pipe assembly. Above is a trivial example that uses the local-mode connector.
 
 .Binding taps in a Flow
 ====
-include::complex-flow.adoc[]
+include::_complex-flow.adoc[]
 
 <1>The [classname]+FlowDef+ class is a fluent API for passing required and
 optional metadata to the [classname]+FlowConnector+.
@@ -47,7 +48,7 @@ production applications is the application JAR class or JAR path.
 
 .Configuring the application JAR
 ====
-include::flow-properties.adoc[]
+include::_flow-properties.adoc[]
 ====
 
 Since the [classname]+FlowConnector+ can be reused, any properties passed on the

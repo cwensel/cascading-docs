@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Apache Hadoop MapReduce Platform
+
+include::_toc.adoc[]
 
 [[mapreduce-platform]]
 == Apache Hadoop MapReduce Platform
@@ -26,7 +27,7 @@ below:
 
 .Configuring the application JAR with a JobConf
 ====
-include::flow-jobconf.adoc[]
+include::_flow-jobconf.adoc[]
 ====
 
 In the example above we see two ways to use methods to set the same property:

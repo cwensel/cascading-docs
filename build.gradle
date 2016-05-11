@@ -5,14 +5,14 @@ buildscript {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven { url 'http://repo.springsource.org/plugins-release' }
-    maven { url 'http://conjars.org/repo/' }
+    maven {url 'http://repo.springsource.org/plugins-release'}
+    maven {url 'http://conjars.org/repo/'}
   }
 
   dependencies {
     classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.4'
     classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
-    classpath 'concurrentinc:documentation-plugin:1.1.1-14'
+    classpath 'concurrentinc:documentation-plugin:1.4.1-2'
   }
 }
 
@@ -34,7 +34,7 @@ apply plugin: 'documentation-plugin'
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url 'http://conjars.org/repo/' }
+  maven {url 'http://conjars.org/repo/'}
 }
 
 ext.cascadingVersion = '3.1.0-wip-+'
@@ -97,50 +97,63 @@ createTopTOC {
   dependsOn << copyGuide
 
   inputFiles = fileTree( dir: "${buildDir}/asciidoc", include: ['**/ch?-*.adoc', '**/ch??-*.adoc'] )
-  outputFile = file( "${buildDir}/asciidoc/toc.adoc" )
+  outputFile = file( "${buildDir}/asciidoc/_toc.adoc" )
+
+  title = '{_doctitle}' // prevents chapter name from being included
+}
+
+task createTopTopTOC( type: com.concurrentinc.CreateTopTOCTask ) {
+
+  dependsOn << copyGuide
+
+  inputFiles = fileTree( dir: "${buildDir}/asciidoc", include: ['**/ch?-*.adoc', '**/ch??-*.adoc'] )
+  outputFile = file( "${buildDir}/asciidoc/_top-toc.adoc" )
+
+  headerFormat = "" // hides redundant book name
 }
 
 createDocs {
 
   dependsOn << copyGuide
   dependsOn << createTopTOC
+  dependsOn << createTopTopTOC
   dependsOn << extract
 
   sourceDir = file( "${buildDir}/asciidoc" )
-  sourceDocumentNames = fileTree( dir: "${buildDir}/asciidoc", include: ['index.adoc', '**/ch?-*.adoc', '**/ch??-*.adoc'] )
   outputDir = file( "${buildDir}/userguide" )
   targetStyle = "cascading"
 
   imagesDir = file( "src/site/" )
 
   attributes = [
-          _doctitle          : "Cascading ${majorVersion} User Guide",
-          revnumber          : "${majorVersion}-${buildDate}",
-          artifactsurl       : project.s3Bucket,
-          docsurl            : project.s3BucketDocs,
-          'highlightjs-theme': 'github',
-          sectlinks          : 'true',
-          sectanchors        : 'true',
-//          numbered           : 'true',
-          toc2               : null,
-          icons              : 'font', // enabled code callouts
+    _doctitle          : "Cascading ${majorVersion} User Guide",
+    revnumber          : "${majorVersion}-${buildDate}",
+    artifactsurl       : project.s3Bucket,
+    docsurl            : project.s3BucketDocs,
+    'highlightjs-theme': 'github',
+    sectlinks          : 'true',
+    sectanchors        : 'true',
+    toc2               : null,
+    icons              : 'font', // enabled code callouts
 
-          analyticsid        : System.properties[ 'analytics.id' ],
-          analyticsdomain    : System.properties[ 'analytics.domain' ]
+    analyticsid        : System.properties[ 'analytics.id' ],
+    analyticsdomain    : System.properties[ 'analytics.domain' ]
 
-          // disabled till attributes in docinfo are supported
-          //  docinfo1: ''
+    // disabled till attributes in docinfo are supported
+    //  docinfo1: ''
   ]
 
   options = [
-          doctype: "book"
+    doctype: "book"
   ]
 }
 
 task zipDocs( type: Zip, dependsOn: createDocs ) {
   description = "zip documentation"
   baseName = "userguide"
-  from createDocs.outputDir
+  from( "${createDocs.outputDir}/html5" ) {
+    include '*.*'
+  }
   into "userguide"
 }
 
@@ -149,7 +162,7 @@ task docDist( type: Copy, dependsOn: [test, createDocs, zipDocs] ) {
 
   s3UploadDocs.dependsOn << docDist
 
-  from createDocs.outputDir
+  from "${createDocs.outputDir}/html5"
   from zipDocs.archivePath
   into "${s3UploadDocs.source}/userguide/"
 }

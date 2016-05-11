@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Advanced Processing
+
+include::_toc.adoc[]
 
 == Advanced Processing
 
@@ -21,7 +22,7 @@ To create a [classname]+SubAssembly+, subclass the
 
 .Creating a SubAssembly
 ====
-include::custom-subassembly.adoc[]
+include::_custom-subassembly.adoc[]
 ====
 
 Notice that in Example 1:
@@ -39,7 +40,7 @@ Example 2 demonstrates how to include a SubAssembly in a new pipe assembly.
 
 .Using a SubAssembly
 ====
-include::simple-subassembly.adoc[]
+include::_simple-subassembly.adoc[]
 ====
 
 In a [classname]+SubAssembly+ that represents a split -- that is, a
@@ -49,12 +50,12 @@ the [methodname]+setTails()+ method.
 
 .Creating a split SubAssembly
 ====
-include::split-subassembly.adoc[]
+include::_split-subassembly.adoc[]
 ====
 
 .Using a split SubAssembly
 ====
-include::simple-split-subassembly.adoc[]
+include::_simple-split-subassembly.adoc[]
 ====
 
 To rephrase, if a [classname]+SubAssembly+ does not split the incoming
@@ -103,7 +104,7 @@ disabling the assertions).
 
 .Adding assertions
 ====
-include::simple-assertion.adoc[]
+include::_simple-assertion.adoc[]
 ====
 
 Again, assertions are added to a pipe assembly like any other operation, except
@@ -112,7 +113,7 @@ treat the assertion during planning.
 
 .Planning out assertions
 ====
-include::simple-assertion-planner.adoc[]
+include::_simple-assertion-planner.adoc[]
 ====
 
 To configure the planner to remove some or all assertions, a property can be set
@@ -170,7 +171,7 @@ acceptable, this can dramatically improve processing reliability.
 
 .Setting traps
 ====
-include::simple-traps.adoc[]
+include::_simple-traps.adoc[]
 ====
 
 The example above binds a trap Tap to the pipe assembly segment named
@@ -229,7 +230,7 @@ without any declared Fields.
 
 .Adding a Checkpoint
 ====
-include::h2mr1-checkpoint-flow.adoc[]
+include::_h2mr1-checkpoint-flow.adoc[]
 ====
 
 As can be seen above, we instantiate a new [classname]+Checkpoint+ Tap by
@@ -277,7 +278,7 @@ NOTE: Restartable Flows are only supported by some platforms.
 
 .Setting runID
 ====
-include::h2mr1-checkpoint-restart-flow.adoc[]
+include::_h2mr1-checkpoint-restart-flow.adoc[]
 ====
 
 NOTE: The example above is for Cascading running on the Hadoop platform.
@@ -353,7 +354,7 @@ this is a simple way to organize log files by month and year.
 
 .PartitionTap
 ====
-include::partition-tap.adoc[]
+include::_partition-tap.adoc[]
 ====
 
 In the example above, a parent [classname]+FileTap+ tap is constructed and
@@ -415,7 +416,7 @@ than a standard Aggregate operation.
 
 .Using a SumBy
 ====
-include::partials-sumby.adoc[]
+include::_partials-sumby.adoc[]
 ====
 
 For composing multiple partial aggregate operations, things are done a little
@@ -423,7 +424,7 @@ differently.
 
 .Composing partials with AggregateBy
 ====
-include::partials-compose.adoc[]
+include::_partials-compose.adoc[]
 ====
 
 NOTE: *Important:* A [classname]+GroupBy+ Pipe is embedded in the resulting

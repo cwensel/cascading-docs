@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Cascading Basic Concepts
+
+include::_toc.adoc[]
 
 == Cascading Basic Concepts
 
@@ -80,7 +81,7 @@ representation of the workflow.
 [[chaining-pipes]]
 .Chaining pipes
 ====
-include::simple-pipe-assembly.adoc[]
+include::_simple-pipe-assembly.adoc[]
 ====
 
 The following diagram is a visual representation of the example
@@ -458,7 +459,7 @@ is discarded, resulting in an input tuple stream with only "line" values.
 
 .Creating a new tap
 ====
-include::simple-tap.adoc[]
+include::_simple-tap.adoc[]
 ====
 
 Some Taps are functionally common across platforms but remain platform-specific
@@ -537,7 +538,7 @@ TIP: Visit http://cascading.org/extensions/ for a list of available
 
 .Overwriting an existing resource
 ====
-include::simple-replace-tap.adoc[]
+include::_simple-replace-tap.adoc[]
 ====
 
 All applications created with Cascading read data from one or more sources,

@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Local Platform
+
+include::_toc.adoc[]
 
 [[local-platform]]
 == Local Platform

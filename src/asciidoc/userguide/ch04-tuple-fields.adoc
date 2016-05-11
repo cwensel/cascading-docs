@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Tuple Fields
+
+include::_toc.adoc[]
 
 == Tuple Fields
 
@@ -50,7 +51,7 @@ Fields.ALL::
 The [classname]+cascading.tuple.Fields.ALL+ constant is a wildcard that
 represents all the current available fields.
 
-include::algebra-all.adoc[]
+include::_algebra-all.adoc[]
 
 Fields.RESULTS::
 
@@ -59,7 +60,7 @@ the field names of the current-operation return values. This Fields set can
 only be used as an output selector on a pipe, causing the pipe to output a tuple
 containing the operation results.
 
-include::algebra-results.adoc[]
+include::_algebra-results.adoc[]
 
 Fields.REPLACE::
 
@@ -70,7 +71,7 @@ stored in the specified field. The current operation must either specify the
 identical argument selector field names used by the pipe, or use the
 [classname]+ARGS+ Fields set.
 
-include::algebra-replace.adoc[]
+include::_algebra-replace.adoc[]
 
 Fields.SWAP::
 
@@ -80,7 +81,7 @@ and result field names, nor the size, need to be the same. This is useful for
 when the operation arguments are no longer necessary and the result Fields and
 values should be appended to the remainder of the input field names and Tuple.
 
-include::algebra-swap.adoc[]
+include::_algebra-swap.adoc[]
 
 Fields.ARGS::
 
@@ -90,7 +91,7 @@ convenience and is typically used when the Pipe output selector is
 [classname]+RESULTS+ or [classname]+REPLACE+. It is specifically used by the
 Identity function when coercing values from Strings to primitive types.
 
-include::algebra-replace.adoc[]
+include::_algebra-replace.adoc[]
 
 Fields.GROUP::
 
@@ -99,7 +100,7 @@ used as the grouping key in the most recent grouping. If no previous grouping
 exists in the pipe assembly, [classname]+GROUP+ represents all the current
 field names.
 
-include::algebra-group.adoc[]
+include::_algebra-group.adoc[]
 
 Fields.VALUES::
 
@@ -108,7 +109,7 @@ fields not used as grouping fields in a previous Group. That is, if you have
 fields _a_, _b_, and _c_, and group on _a_, [classname]+Fields.VALUES+
 resolves to _b_ and _c_.
 
-include::algebra-values.adoc[]
+include::_algebra-values.adoc[]
 
 Fields.UNKNOWN::
 
@@ -119,7 +120,7 @@ an operation.
 
 NOTE: Use [classname]+cascading.tuple.Fields.UNKNOWN+ with caution.
 
-include::algebra-unknown.adoc[]
+include::_algebra-unknown.adoc[]
 
 Fields.NONE::
 
@@ -127,7 +128,7 @@ The [classname]+cascading.tuple.Fields.NONE+ constant is used to specify no
 fields. This constant is typically used as an argument selector for Operations
 that do not process any tuples, like [classname]+cascading.operation.Insert+.
 
-include::algebra-none.adoc[]
+include::_algebra-none.adoc[]
 
 TIP: The [classname]+cascading.tuple.Fields.NONE+ constant can also be used
 when performing a join with [classname]+CoGroup+ or
@@ -170,12 +171,12 @@ through the constructor or via a fluent API.
 
 .Constructor
 ====
-include::fields-type-constructor.adoc[]
+include::_fields-type-constructor.adoc[]
 ====
 
 .Fluent
 ====
-include::fields-type-fluent.adoc[]
+include::_fields-type-fluent.adoc[]
 ====
 
 Note the first example uses [classname]+Long.class+, and the second
@@ -188,7 +189,7 @@ Operation or the input/output of a Scheme.
 
 .Declaring typed results
 ====
-include::partials-compose.adoc[]
+include::_partials-compose.adoc[]
 ====
 
 Here the type information serves two roles.
@@ -237,7 +238,7 @@ type.
 
 .Date type
 ====
-include::fields-date-type.adoc[]
+include::_fields-date-type.adoc[]
 ====
 
 In this example we declare the "dateString" field to be a [classname]+DateType+.

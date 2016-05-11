@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Custom Taps and Schemes
+
+include::_toc.adoc[]
 
 [[custom-taps-schemes]]
 == Custom Taps and Schemes

@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Using and Developing Operations
+
+include::_toc.adoc[]
 
 == Using and Developing Operations
 
@@ -86,7 +87,7 @@ has been subclassed, the [code]+operate+ method, as defined on the
 
 .Custom Function
 ====
-include::custom-function.adoc[]
+include::_custom-function.adoc[]
 ====
 
 Whenever possible, functions should declare both the number of argument values
@@ -109,7 +110,7 @@ implementation.
 
 .AddValuesFunction
 ====
-include::sum-function.adoc[]
+include::_sum-function.adoc[]
 ====
 
 The example above implements a [classname]+Function+ that accepts two values in
@@ -132,7 +133,7 @@ to the incoming stream.
 
 .AddValuesFunction and Context
 ====
-include::efficient-sum-function.adoc[]
+include::_efficient-sum-function.adoc[]
 ====
 
 This example, a minor variation on the previous one, introduces the use of a
@@ -174,7 +175,7 @@ interface, is the only method that must be implemented.
 
 .Custom Filter
 ====
-include::custom-filter.adoc[]
+include::_custom-filter.adoc[]
 ====
 
 Filters must accept one or more values in a Tuple as arguments. When coding a
@@ -189,7 +190,7 @@ the user via a constructor implementation.
 
 .StringLengthFilter
 ====
-include::stringlength-filter.adoc[]
+include::_stringlength-filter.adoc[]
 ====
 
 The example above implements a [classname]+Filter+ that accepts two arguments
@@ -216,7 +217,7 @@ be implemented.
 
 .Custom Aggregator
 ====
-include::custom-aggregator.adoc[]
+include::_custom-aggregator.adoc[]
 ====
 
 Whenever possible, Aggregators should declare both the number of argument values
@@ -240,7 +241,7 @@ implementation.
 
 .AddTuplesAggregator
 ====
-include::sum-aggregator.adoc[]
+include::_sum-aggregator.adoc[]
 ====
 
 The example above implements an [classname]+Aggregator+ that accepts a value in
@@ -283,7 +284,7 @@ interface, is the only method that must be implemented.
 
 .Custom Buffer
 ====
-include::custom-buffer.adoc[]
+include::_custom-buffer.adoc[]
 ====
 
 Buffers should declare both the number of argument values they expect and the
@@ -305,7 +306,7 @@ implementation.
 
 .Average Buffer
 ====
-include::average-buffer.adoc[]
+include::_average-buffer.adoc[]
 ====
 
 The example above implements a buffer that accepts a value in the argument

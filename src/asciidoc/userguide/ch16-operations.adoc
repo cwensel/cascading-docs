@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Built-In Operations
+
+include::_toc.adoc[]
 
 == Built-In Operations
 
@@ -24,7 +25,7 @@ Here the arguments of the Identity function are passed as results because the
 
 +
 
-include::identity-discard-fields-long.adoc[]
+include::_identity-discard-fields-long.adoc[]
 
 +
 
@@ -35,7 +36,7 @@ Thus, simpler code yields the same result:
 
 +
 
-include::identity-discard-fields.adoc[]
+include::_identity-discard-fields.adoc[]
 
 Rename all fields::
 
@@ -45,7 +46,7 @@ names as declared on Identity.
 
 +
 
-include::identity-rename-fields-explicit.adoc[]
+include::_identity-rename-fields-explicit.adoc[]
 
 +
 
@@ -55,7 +56,7 @@ for the next example, the Cascading query planner would fail.
 
 +
 
-include::identity-rename-fields-long.adoc[]
+include::_identity-rename-fields-long.adoc[]
 
 +
 
@@ -66,7 +67,7 @@ the incoming stream.
 
 +
 
-include::identity-rename-fields.adoc[]
+include::_identity-rename-fields.adoc[]
 
 Rename a single field::
 
@@ -75,7 +76,7 @@ the result. All other fields are dropped.
 
 +
 
-include::identity-rename-some.adoc[]
+include::_identity-rename-some.adoc[]
 
 Coerce values to specific primitive types::
 
@@ -85,7 +86,7 @@ are dropped.
 
 +
 
-include::identity-coerce.adoc[]
+include::_identity-coerce.adoc[]
 
 +
 
@@ -94,7 +95,7 @@ while keeping all the other values in the output Tuple.
 
 +
 
-include::identity-coerce-single.adoc[]
+include::_identity-coerce-single.adoc[]
 
 [[debug-function]]
 === Debug Function
@@ -151,7 +152,7 @@ convert a datestamp to a formatted String. This function expects a
 
 +
 
-include::text-format-date.adoc[]
+include::_text-format-date.adoc[]
 
 +
 
@@ -169,7 +170,7 @@ a text date-and-time String to a timestamp, using the
 
 +
 
-include::text-create-timestamp.adoc[]
+include::_text-create-timestamp.adoc[]
 
 +
 
@@ -216,7 +217,7 @@ specify which regex groups should be returned in which field names.
 
 +
 
-include::regex-parser.adoc[]
+include::_regex-parser.adoc[]
 
 +
 
@@ -235,7 +236,7 @@ Javadoc for the [classname]+java.util.regex.Matcher.replaceAll()+ and
 
 +
 
-include::regex-replace.adoc[]
+include::_regex-replace.adoc[]
 
 +
 
@@ -258,7 +259,7 @@ the [classname]+java.util.regex.Matcher.find()+ method.
 
 +
 
-include::regex-filter.adoc[]
+include::_regex-filter.adoc[]
 
 +
 
@@ -272,7 +273,7 @@ regex pattern.
 
 +
 
-include::regex-generator.adoc[]
+include::_regex-generator.adoc[]
 
 +
 
@@ -321,7 +322,7 @@ values to variables in the expression.
 +
 
 ====
-include::expression-function.adoc[]
+include::_expression-function.adoc[]
 
 <1> Converts all field values to a [classname]+String+
 ====
@@ -339,7 +340,7 @@ from the stream.
 
 +
 
-include::expression-filter.adoc[]
+include::_expression-filter.adoc[]
 
 +
 
@@ -545,7 +546,7 @@ and [code]+false+ if they have the same truth value. If
 
 .Combining filters
 ====
-include::filter-and.adoc[]
+include::_filter-and.adoc[]
 ====
 
 The example above performs a logical "and" on the two filters. Criteria for both

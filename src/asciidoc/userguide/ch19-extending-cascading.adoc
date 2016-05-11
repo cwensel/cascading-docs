@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - Extending Cascading
+
+include::_toc.adoc[]
 
 == Extending Cascading
 

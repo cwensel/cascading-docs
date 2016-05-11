@@ -1,5 +1,6 @@
-:toc2:
 :doctitle: {_doctitle} - The Apache Hadoop Platform
+
+include::_toc.adoc[]
 
 [[apache-hadoop]]
 == The Apache Hadoop Platforms
@@ -122,7 +123,7 @@ settings. Use this class for maximum portability.
 .Configuring the application JAR
 ====
 
-include::app-props.adoc[]
+include::_app-props.adoc[]
 
 ====
 
@@ -255,7 +256,7 @@ name is provided. The resulting input tuple stream has only "line" values.
 
 .Creating a new tap
 ====
-include::h2mr1-simple-tap.adoc[]
+include::_h2mr1-simple-tap.adoc[]
 ====
 
 Here are the most commonly-used tap types:
