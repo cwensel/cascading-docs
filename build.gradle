@@ -40,7 +40,7 @@ repositories {
 ext.cascadingVersion = '3.1.0-wip-+'
 ext.cascadingChanging = false
 //ext.hadoopVersion = '1.2.1'
-ext.hadoop2Version = '2.7.1'
+ext.hadoop2Version = '2.7.2'
 //ext.tezVersion = '0.5.1'
 ext.buildDate = new SimpleDateFormat( "yyyyMMdd" ).format( new Date() )
 ext.buildTimestamp = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() )
